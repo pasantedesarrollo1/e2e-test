@@ -1,0 +1,13 @@
+{
+  "name": "wanqara-e2e",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:release": "playwright test --grep @release"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}
