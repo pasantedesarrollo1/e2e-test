@@ -59,7 +59,7 @@ jobs:
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
 
           $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host" `
             -WorkingDirectory $env:FRONTEND_PATH `
             -PassThru -NoNewWindow
 
@@ -181,7 +181,7 @@ jobs:
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
 
           $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host" `
             -WorkingDirectory $env:FRONTEND_PATH `
             -PassThru -NoNewWindow
 
@@ -303,7 +303,7 @@ jobs:
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
 
           $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host" `
             -WorkingDirectory $env:FRONTEND_PATH `
             -PassThru -NoNewWindow
 
