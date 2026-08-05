@@ -54,7 +54,7 @@ const SESSION_PATH = path.join(
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  testDir: './e2e', 
+  testDir: './e2e',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   /* One retry locally too: a session revoked mid-test is infrastructure noise,
@@ -73,26 +73,34 @@ export default defineConfig({
   /* Bound how long a single failing assertion waits. Individual tests can still
      opt into longer waits (e.g. `expect(...).toBeVisible({ timeout })`). */
   expect: { timeout: process.env.CI ? 30 * 1000 : 10 * 1000 },
-  
+
   reporter: process.env.CI ? [['list'], ['github'], ['html']] : 'html',
-  
+
   use: {
     baseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    
+
     /* Without these, Playwright's default action timeout is 0 (wait forever),
        so one mistargeted click/fill stalls until the per-test cap (up to 120s)
        before failing. Bounding them makes broken locators fail fast. */
     actionTimeout: process.env.CI ? 45 * 1000 : 15 * 1000,
-    
+
     navigationTimeout: process.env.CI ? 60 * 1000 : 30 * 1000,
-    
+
     bypassCSP: true,
-    contextOptions: { reducedMotion: 'reduce' }
+    contextOptions: { reducedMotion: 'reduce' },
+
+    /* Resuelve *.localhost → 127.0.0.1 dentro de Chromium sin necesitar
+       permisos de administrador ni tocar el archivo hosts del sistema.
+       Solo aplica cuando el target es localhost (CI); en producción/staging
+       el DNS real resuelve correctamente. */
+    launchOptions: isLocalTarget
+      ? { args: ['--host-resolver-rules=MAP *.localhost 127.0.0.1'] }
+      : {},
   },
-  
+
   projects: [
     {
       name: 'setup',
@@ -123,9 +131,9 @@ export default defineConfig({
       dependencies: ['setup'],
     },
   ],
-  
-  /* Serve the app on localhost:5175 when the target is local AND we are NOT in CI. 
-     In CI, the GitHub Actions workflow explicitly starts and manages the server 
+
+  /* Serve the app on localhost:5175 when the target is local AND we are NOT in CI.
+     In CI, the GitHub Actions workflow explicitly starts and manages the server
      in a separate directory, so Playwright shouldn't try to start it here. */
   webServer: (isLocalTarget && !process.env.CI)
     ? {
