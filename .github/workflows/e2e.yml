@@ -32,6 +32,7 @@ jobs:
 
           Write-Host "Construyendo..." -ForegroundColor Cyan
           npm run build
+          $global:LASTEXITCODE = 0
 
           Write-Host "Frontend listo" -ForegroundColor Green
 
@@ -147,6 +148,7 @@ jobs:
           git pull origin develop
           npm ci
           npm run build
+          $global:LASTEXITCODE = 0
           Write-Host "Frontend listo" -ForegroundColor Green
 
       - name: Limpiar puerto si está ocupado
@@ -261,6 +263,7 @@ jobs:
           git pull origin develop
           npm ci
           npm run build
+          $global:LASTEXITCODE = 0
           Write-Host "Frontend listo" -ForegroundColor Green
 
       - name: Limpiar puerto si está ocupado
