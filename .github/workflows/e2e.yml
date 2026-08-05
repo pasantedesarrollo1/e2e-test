@@ -36,6 +36,22 @@ jobs:
 
           Write-Host "Frontend listo" -ForegroundColor Green
 
+      - name: Registrar subdominio en hosts de Windows
+        shell: pwsh
+        env:
+          TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
+        run: |
+          $hostsPath = "$env:SystemRoot\System32\drivers\etc\hosts"
+          $entry = "127.0.0.1 $env:TENANT_RUC.localhost"
+
+          $current = Get-Content $hostsPath -Raw -ErrorAction SilentlyContinue
+          if (-not ($current -match [regex]::Escape("$env:TENANT_RUC.localhost"))) {
+            Add-Content -Path $hostsPath -Value $entry -Encoding ASCII
+            Write-Host "Entrada agregada: $entry" -ForegroundColor Green
+          } else {
+            Write-Host "Entrada ya existe, sin cambios" -ForegroundColor Yellow
+          }
+
       - name: Limpiar puerto si está ocupado
         shell: pwsh
         run: |
@@ -103,7 +119,7 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: http://${{ secrets.PLAYWRIGHT_TENANT_RUC }}.localhost:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
@@ -157,6 +173,22 @@ jobs:
           npm run build
           $global:LASTEXITCODE = 0
           Write-Host "Frontend listo" -ForegroundColor Green
+
+      - name: Registrar subdominio en hosts de Windows
+        shell: pwsh
+        env:
+          TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
+        run: |
+          $hostsPath = "$env:SystemRoot\System32\drivers\etc\hosts"
+          $entry = "127.0.0.1 $env:TENANT_RUC.localhost"
+
+          $current = Get-Content $hostsPath -Raw -ErrorAction SilentlyContinue
+          if (-not ($current -match [regex]::Escape("$env:TENANT_RUC.localhost"))) {
+            Add-Content -Path $hostsPath -Value $entry -Encoding ASCII
+            Write-Host "Entrada agregada: $entry" -ForegroundColor Green
+          } else {
+            Write-Host "Entrada ya existe, sin cambios" -ForegroundColor Yellow
+          }
 
       - name: Limpiar puerto si está ocupado
         shell: pwsh
@@ -225,7 +257,7 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: http://${{ secrets.PLAYWRIGHT_TENANT_RUC }}.localhost:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
@@ -279,6 +311,22 @@ jobs:
           npm run build
           $global:LASTEXITCODE = 0
           Write-Host "Frontend listo" -ForegroundColor Green
+
+      - name: Registrar subdominio en hosts de Windows
+        shell: pwsh
+        env:
+          TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
+        run: |
+          $hostsPath = "$env:SystemRoot\System32\drivers\etc\hosts"
+          $entry = "127.0.0.1 $env:TENANT_RUC.localhost"
+
+          $current = Get-Content $hostsPath -Raw -ErrorAction SilentlyContinue
+          if (-not ($current -match [regex]::Escape("$env:TENANT_RUC.localhost"))) {
+            Add-Content -Path $hostsPath -Value $entry -Encoding ASCII
+            Write-Host "Entrada agregada: $entry" -ForegroundColor Green
+          } else {
+            Write-Host "Entrada ya existe, sin cambios" -ForegroundColor Yellow
+          }
 
       - name: Limpiar puerto si está ocupado
         shell: pwsh
@@ -347,7 +395,7 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: http://${{ secrets.PLAYWRIGHT_TENANT_RUC }}.localhost:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
