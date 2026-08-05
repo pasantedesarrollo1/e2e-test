@@ -39,7 +39,7 @@ jobs:
       - name: Limpiar puerto si está ocupado
         shell: pwsh
         run: |
-          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+          $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
             -WarningAction SilentlyContinue -InformationLevel Quiet
           if ($up) {
             Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
@@ -71,12 +71,19 @@ jobs:
           do {
             Start-Sleep -Seconds 2
             $elapsed += 2
-            $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
-              -WarningAction SilentlyContinue -InformationLevel Quiet
+            $up = $false
+            try {
+              $res = Invoke-WebRequest -Uri "http://127.0.0.1:$env:FRONTEND_PORT" -UseBasicParsing
+              $up = $true
+            } catch {
+              if ($_.Exception.Response) {
+                $up = $true
+              }
+            }
           } while (-not $up -and $elapsed -lt $timeout)
 
           if (-not $up) {
-            throw "El servidor no respondió en $timeout segundos"
+            throw "El servidor no respondió HTTP en $timeout segundos"
           }
 
           Write-Host "Servidor listo en http://127.0.0.1:$env:FRONTEND_PORT" -ForegroundColor Green
@@ -154,7 +161,7 @@ jobs:
       - name: Limpiar puerto si está ocupado
         shell: pwsh
         run: |
-          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+          $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
             -WarningAction SilentlyContinue -InformationLevel Quiet
           if ($up) {
             Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
@@ -186,12 +193,19 @@ jobs:
           do {
             Start-Sleep -Seconds 2
             $elapsed += 2
-            $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
-              -WarningAction SilentlyContinue -InformationLevel Quiet
+            $up = $false
+            try {
+              $res = Invoke-WebRequest -Uri "http://127.0.0.1:$env:FRONTEND_PORT" -UseBasicParsing
+              $up = $true
+            } catch {
+              if ($_.Exception.Response) {
+                $up = $true
+              }
+            }
           } while (-not $up -and $elapsed -lt $timeout)
 
           if (-not $up) {
-            throw "El servidor no respondió en $timeout segundos"
+            throw "El servidor no respondió HTTP en $timeout segundos"
           }
 
           Write-Host "Servidor listo en http://127.0.0.1:$env:FRONTEND_PORT" -ForegroundColor Green
@@ -269,7 +283,7 @@ jobs:
       - name: Limpiar puerto si está ocupado
         shell: pwsh
         run: |
-          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+          $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
             -WarningAction SilentlyContinue -InformationLevel Quiet
           if ($up) {
             Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
@@ -301,12 +315,19 @@ jobs:
           do {
             Start-Sleep -Seconds 2
             $elapsed += 2
-            $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
-              -WarningAction SilentlyContinue -InformationLevel Quiet
+            $up = $false
+            try {
+              $res = Invoke-WebRequest -Uri "http://127.0.0.1:$env:FRONTEND_PORT" -UseBasicParsing
+              $up = $true
+            } catch {
+              if ($_.Exception.Response) {
+                $up = $true
+              }
+            }
           } while (-not $up -and $elapsed -lt $timeout)
 
           if (-not $up) {
-            throw "El servidor no respondió en $timeout segundos"
+            throw "El servidor no respondió HTTP en $timeout segundos"
           }
 
           Write-Host "Servidor listo en http://127.0.0.1:$env:FRONTEND_PORT" -ForegroundColor Green
