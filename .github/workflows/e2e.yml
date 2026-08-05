@@ -39,7 +39,7 @@ jobs:
       - name: Limpiar puerto si está ocupado
         shell: pwsh
         run: |
-          $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
+          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
             -WarningAction SilentlyContinue -InformationLevel Quiet
           if ($up) {
             Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
@@ -59,7 +59,7 @@ jobs:
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
 
           $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host", "127.0.0.1" `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
             -WorkingDirectory $env:FRONTEND_PATH `
             -PassThru -NoNewWindow
 
@@ -73,7 +73,7 @@ jobs:
             $elapsed += 2
             $up = $false
             try {
-              $res = Invoke-WebRequest -Uri "http://127.0.0.1:$env:FRONTEND_PORT" -UseBasicParsing
+              $res = Invoke-WebRequest -Uri "http://localhost:$env:FRONTEND_PORT" -UseBasicParsing
               $up = $true
             } catch {
               if ($_.Exception.Response) {
@@ -86,7 +86,7 @@ jobs:
             throw "El servidor no respondió HTTP en $timeout segundos"
           }
 
-          Write-Host "Servidor listo en http://127.0.0.1:$env:FRONTEND_PORT" -ForegroundColor Green
+          Write-Host "Servidor listo en http://localhost:$env:FRONTEND_PORT" -ForegroundColor Green
 
       - uses: actions/checkout@v4
 
@@ -103,7 +103,7 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://127.0.0.1:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
@@ -161,7 +161,7 @@ jobs:
       - name: Limpiar puerto si está ocupado
         shell: pwsh
         run: |
-          $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
+          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
             -WarningAction SilentlyContinue -InformationLevel Quiet
           if ($up) {
             Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
@@ -181,7 +181,7 @@ jobs:
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
 
           $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host", "127.0.0.1" `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
             -WorkingDirectory $env:FRONTEND_PATH `
             -PassThru -NoNewWindow
 
@@ -195,7 +195,7 @@ jobs:
             $elapsed += 2
             $up = $false
             try {
-              $res = Invoke-WebRequest -Uri "http://127.0.0.1:$env:FRONTEND_PORT" -UseBasicParsing
+              $res = Invoke-WebRequest -Uri "http://localhost:$env:FRONTEND_PORT" -UseBasicParsing
               $up = $true
             } catch {
               if ($_.Exception.Response) {
@@ -208,7 +208,7 @@ jobs:
             throw "El servidor no respondió HTTP en $timeout segundos"
           }
 
-          Write-Host "Servidor listo en http://127.0.0.1:$env:FRONTEND_PORT" -ForegroundColor Green
+          Write-Host "Servidor listo en http://localhost:$env:FRONTEND_PORT" -ForegroundColor Green
 
       - uses: actions/checkout@v4
 
@@ -225,7 +225,7 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://127.0.0.1:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
@@ -283,7 +283,7 @@ jobs:
       - name: Limpiar puerto si está ocupado
         shell: pwsh
         run: |
-          $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
+          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
             -WarningAction SilentlyContinue -InformationLevel Quiet
           if ($up) {
             Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
@@ -303,7 +303,7 @@ jobs:
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
 
           $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host", "127.0.0.1" `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
             -WorkingDirectory $env:FRONTEND_PATH `
             -PassThru -NoNewWindow
 
@@ -317,7 +317,7 @@ jobs:
             $elapsed += 2
             $up = $false
             try {
-              $res = Invoke-WebRequest -Uri "http://127.0.0.1:$env:FRONTEND_PORT" -UseBasicParsing
+              $res = Invoke-WebRequest -Uri "http://localhost:$env:FRONTEND_PORT" -UseBasicParsing
               $up = $true
             } catch {
               if ($_.Exception.Response) {
@@ -330,7 +330,7 @@ jobs:
             throw "El servidor no respondió HTTP en $timeout segundos"
           }
 
-          Write-Host "Servidor listo en http://127.0.0.1:$env:FRONTEND_PORT" -ForegroundColor Green
+          Write-Host "Servidor listo en http://localhost:$env:FRONTEND_PORT" -ForegroundColor Green
 
       - uses: actions/checkout@v4
 
@@ -347,7 +347,7 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://127.0.0.1:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
