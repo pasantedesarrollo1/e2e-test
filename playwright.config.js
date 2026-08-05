@@ -132,7 +132,7 @@ export default defineConfig({
     ? {
         command: process.env.CI ? 'npm run preview' : 'npm run dev -- --port 5175',
         url: baseURL,
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: process.env.PLAYWRIGHT_REUSE_SERVER === '1' || !process.env.CI,
         timeout: 120 * 1000,
       }
     : undefined,

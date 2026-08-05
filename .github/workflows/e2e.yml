@@ -2,25 +2,100 @@ name: E2E Tests
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 13 * * 1-5'
+
+env:
+  FRONTEND_PORT: 5175
 
 jobs:
   smoke:
     name: Smoke (Chromium)
     runs-on: self-hosted
     timeout-minutes: 30
+
     steps:
+      - name: Pull y build del frontend
+        shell: pwsh
+        env:
+          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
+        run: |
+          if (-not (Test-Path $env:FRONTEND_PATH)) {
+            throw "No se encontró el frontend en: $env:FRONTEND_PATH"
+          }
+
+          Write-Host "Actualizando frontend en $env:FRONTEND_PATH..." -ForegroundColor Cyan
+          Set-Location $env:FRONTEND_PATH
+
+          git pull origin develop
+
+          Write-Host "Instalando dependencias..." -ForegroundColor Cyan
+          npm ci
+
+          Write-Host "Construyendo..." -ForegroundColor Cyan
+          npm run build
+
+          Write-Host "Frontend listo" -ForegroundColor Green
+
+      - name: Limpiar puerto si está ocupado
+        shell: pwsh
+        run: |
+          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+            -WarningAction SilentlyContinue -InformationLevel Quiet
+          if ($up) {
+            Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
+            Get-NetTCPConnection -LocalPort $env:FRONTEND_PORT `
+              -ErrorAction SilentlyContinue |
+              ForEach-Object {
+                Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue
+              }
+            Start-Sleep -Seconds 2
+          }
+
+      - name: Levantar servidor del frontend
+        shell: pwsh
+        env:
+          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
+        run: |
+          $pidFile = "${{ runner.temp }}\frontend-pid.txt"
+
+          $proc = Start-Process npm `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
+            -WorkingDirectory $env:FRONTEND_PATH `
+            -PassThru -NoNewWindow
+
+          $proc.Id | Out-File $pidFile -Encoding utf8
+          Write-Host "Servidor iniciado con PID $($proc.Id)"
+
+          $timeout = 60
+          $elapsed = 0
+          do {
+            Start-Sleep -Seconds 2
+            $elapsed += 2
+            $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+              -WarningAction SilentlyContinue -InformationLevel Quiet
+          } while (-not $up -and $elapsed -lt $timeout)
+
+          if (-not $up) {
+            throw "El servidor no respondió en $timeout segundos"
+          }
+
+          Write-Host "Servidor listo en http://localhost:$env:FRONTEND_PORT" -ForegroundColor Green
+
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
       - run: npm ci
+
       - run: npx playwright install chromium
+
       - name: Run smoke
+        shell: pwsh
         env:
           CI: true
-          PLAYWRIGHT_BASE_URL: ${{ secrets.PLAYWRIGHT_BASE_URL }}
+          PLAYWRIGHT_REUSE_SERVER: '1'
+          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
@@ -29,6 +104,21 @@ jobs:
           PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
           PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
         run: npx playwright test --project=chromium --grep "@smoke"
+
+      - name: Apagar servidor del frontend
+        if: always()
+        shell: pwsh
+        run: |
+          $pidFile = "${{ runner.temp }}\frontend-pid.txt"
+          if (Test-Path $pidFile) {
+            $pid = Get-Content $pidFile -ErrorAction SilentlyContinue
+            if ($pid) {
+              Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+              Write-Host "Servidor (PID $pid) detenido"
+            }
+            Remove-Item $pidFile -Force -ErrorAction SilentlyContinue
+          }
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -42,17 +132,84 @@ jobs:
     needs: smoke
     if: always()
     timeout-minutes: 60
+
     steps:
+      - name: Pull y build del frontend
+        shell: pwsh
+        env:
+          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
+        run: |
+          if (-not (Test-Path $env:FRONTEND_PATH)) {
+            throw "No se encontró el frontend en: $env:FRONTEND_PATH"
+          }
+
+          Set-Location $env:FRONTEND_PATH
+          git pull origin develop
+          npm ci
+          npm run build
+          Write-Host "Frontend listo" -ForegroundColor Green
+
+      - name: Limpiar puerto si está ocupado
+        shell: pwsh
+        run: |
+          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+            -WarningAction SilentlyContinue -InformationLevel Quiet
+          if ($up) {
+            Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
+            Get-NetTCPConnection -LocalPort $env:FRONTEND_PORT `
+              -ErrorAction SilentlyContinue |
+              ForEach-Object {
+                Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue
+              }
+            Start-Sleep -Seconds 2
+          }
+
+      - name: Levantar servidor del frontend
+        shell: pwsh
+        env:
+          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
+        run: |
+          $pidFile = "${{ runner.temp }}\frontend-pid.txt"
+
+          $proc = Start-Process npm `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
+            -WorkingDirectory $env:FRONTEND_PATH `
+            -PassThru -NoNewWindow
+
+          $proc.Id | Out-File $pidFile -Encoding utf8
+          Write-Host "Servidor iniciado con PID $($proc.Id)"
+
+          $timeout = 60
+          $elapsed = 0
+          do {
+            Start-Sleep -Seconds 2
+            $elapsed += 2
+            $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+              -WarningAction SilentlyContinue -InformationLevel Quiet
+          } while (-not $up -and $elapsed -lt $timeout)
+
+          if (-not $up) {
+            throw "El servidor no respondió en $timeout segundos"
+          }
+
+          Write-Host "Servidor listo en http://localhost:$env:FRONTEND_PORT" -ForegroundColor Green
+
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
       - run: npm ci
+
       - run: npx playwright install chromium
+
       - name: Run release
+        shell: pwsh
         env:
           CI: true
-          PLAYWRIGHT_BASE_URL: ${{ secrets.PLAYWRIGHT_BASE_URL }}
+          PLAYWRIGHT_REUSE_SERVER: '1'
+          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
@@ -61,6 +218,21 @@ jobs:
           PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
           PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
         run: npx playwright test --project=chromium --grep "@release"
+
+      - name: Apagar servidor del frontend
+        if: always()
+        shell: pwsh
+        run: |
+          $pidFile = "${{ runner.temp }}\frontend-pid.txt"
+          if (Test-Path $pidFile) {
+            $pid = Get-Content $pidFile -ErrorAction SilentlyContinue
+            if ($pid) {
+              Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+              Write-Host "Servidor (PID $pid) detenido"
+            }
+            Remove-Item $pidFile -Force -ErrorAction SilentlyContinue
+          }
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -74,17 +246,84 @@ jobs:
     needs: release
     if: always()
     timeout-minutes: 45
+
     steps:
+      - name: Pull y build del frontend
+        shell: pwsh
+        env:
+          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
+        run: |
+          if (-not (Test-Path $env:FRONTEND_PATH)) {
+            throw "No se encontró el frontend en: $env:FRONTEND_PATH"
+          }
+
+          Set-Location $env:FRONTEND_PATH
+          git pull origin develop
+          npm ci
+          npm run build
+          Write-Host "Frontend listo" -ForegroundColor Green
+
+      - name: Limpiar puerto si está ocupado
+        shell: pwsh
+        run: |
+          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+            -WarningAction SilentlyContinue -InformationLevel Quiet
+          if ($up) {
+            Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
+            Get-NetTCPConnection -LocalPort $env:FRONTEND_PORT `
+              -ErrorAction SilentlyContinue |
+              ForEach-Object {
+                Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue
+              }
+            Start-Sleep -Seconds 2
+          }
+
+      - name: Levantar servidor del frontend
+        shell: pwsh
+        env:
+          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
+        run: |
+          $pidFile = "${{ runner.temp }}\frontend-pid.txt"
+
+          $proc = Start-Process npm `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
+            -WorkingDirectory $env:FRONTEND_PATH `
+            -PassThru -NoNewWindow
+
+          $proc.Id | Out-File $pidFile -Encoding utf8
+          Write-Host "Servidor iniciado con PID $($proc.Id)"
+
+          $timeout = 60
+          $elapsed = 0
+          do {
+            Start-Sleep -Seconds 2
+            $elapsed += 2
+            $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+              -WarningAction SilentlyContinue -InformationLevel Quiet
+          } while (-not $up -and $elapsed -lt $timeout)
+
+          if (-not $up) {
+            throw "El servidor no respondió en $timeout segundos"
+          }
+
+          Write-Host "Servidor listo en http://localhost:$env:FRONTEND_PORT" -ForegroundColor Green
+
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
       - run: npm ci
+
       - run: npx playwright install chromium
+
       - name: Run regression
+        shell: pwsh
         env:
           CI: true
-          PLAYWRIGHT_BASE_URL: ${{ secrets.PLAYWRIGHT_BASE_URL }}
+          PLAYWRIGHT_REUSE_SERVER: '1'
+          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
@@ -93,6 +332,21 @@ jobs:
           PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
           PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
         run: npx playwright test --project=chromium --grep "@regression"
+
+      - name: Apagar servidor del frontend
+        if: always()
+        shell: pwsh
+        run: |
+          $pidFile = "${{ runner.temp }}\frontend-pid.txt"
+          if (Test-Path $pidFile) {
+            $pid = Get-Content $pidFile -ErrorAction SilentlyContinue
+            if ($pid) {
+              Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+              Write-Host "Servidor (PID $pid) detenido"
+            }
+            Remove-Item $pidFile -Force -ErrorAction SilentlyContinue
+          }
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
