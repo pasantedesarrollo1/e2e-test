@@ -59,7 +59,7 @@ jobs:
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
 
           $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host", "127.0.0.1" `
             -WorkingDirectory $env:FRONTEND_PATH `
             -PassThru -NoNewWindow
 
@@ -71,7 +71,7 @@ jobs:
           do {
             Start-Sleep -Seconds 2
             $elapsed += 2
-            $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+            $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
               -WarningAction SilentlyContinue -InformationLevel Quiet
           } while (-not $up -and $elapsed -lt $timeout)
 
@@ -79,7 +79,7 @@ jobs:
             throw "El servidor no respondió en $timeout segundos"
           }
 
-          Write-Host "Servidor listo en http://localhost:$env:FRONTEND_PORT" -ForegroundColor Green
+          Write-Host "Servidor listo en http://127.0.0.1:$env:FRONTEND_PORT" -ForegroundColor Green
 
       - uses: actions/checkout@v4
 
@@ -96,7 +96,7 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
@@ -112,10 +112,10 @@ jobs:
         run: |
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
           if (Test-Path $pidFile) {
-            $pid = Get-Content $pidFile -ErrorAction SilentlyContinue
-            if ($pid) {
-              Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
-              Write-Host "Servidor (PID $pid) detenido"
+            $serverPid = Get-Content $pidFile -ErrorAction SilentlyContinue
+            if ($serverPid) {
+              Stop-Process -Id $serverPid -Force -ErrorAction SilentlyContinue
+              Write-Host "Servidor (PID $serverPid) detenido"
             }
             Remove-Item $pidFile -Force -ErrorAction SilentlyContinue
           }
@@ -174,7 +174,7 @@ jobs:
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
 
           $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host", "127.0.0.1" `
             -WorkingDirectory $env:FRONTEND_PATH `
             -PassThru -NoNewWindow
 
@@ -186,7 +186,7 @@ jobs:
           do {
             Start-Sleep -Seconds 2
             $elapsed += 2
-            $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+            $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
               -WarningAction SilentlyContinue -InformationLevel Quiet
           } while (-not $up -and $elapsed -lt $timeout)
 
@@ -194,7 +194,7 @@ jobs:
             throw "El servidor no respondió en $timeout segundos"
           }
 
-          Write-Host "Servidor listo en http://localhost:$env:FRONTEND_PORT" -ForegroundColor Green
+          Write-Host "Servidor listo en http://127.0.0.1:$env:FRONTEND_PORT" -ForegroundColor Green
 
       - uses: actions/checkout@v4
 
@@ -211,7 +211,7 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
@@ -227,10 +227,10 @@ jobs:
         run: |
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
           if (Test-Path $pidFile) {
-            $pid = Get-Content $pidFile -ErrorAction SilentlyContinue
-            if ($pid) {
-              Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
-              Write-Host "Servidor (PID $pid) detenido"
+            $serverPid = Get-Content $pidFile -ErrorAction SilentlyContinue
+            if ($serverPid) {
+              Stop-Process -Id $serverPid -Force -ErrorAction SilentlyContinue
+              Write-Host "Servidor (PID $serverPid) detenido"
             }
             Remove-Item $pidFile -Force -ErrorAction SilentlyContinue
           }
@@ -289,7 +289,7 @@ jobs:
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
 
           $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT" `
+            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host", "127.0.0.1" `
             -WorkingDirectory $env:FRONTEND_PATH `
             -PassThru -NoNewWindow
 
@@ -301,7 +301,7 @@ jobs:
           do {
             Start-Sleep -Seconds 2
             $elapsed += 2
-            $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
+            $up = Test-NetConnection 127.0.0.1 -Port $env:FRONTEND_PORT `
               -WarningAction SilentlyContinue -InformationLevel Quiet
           } while (-not $up -and $elapsed -lt $timeout)
 
@@ -309,7 +309,7 @@ jobs:
             throw "El servidor no respondió en $timeout segundos"
           }
 
-          Write-Host "Servidor listo en http://localhost:$env:FRONTEND_PORT" -ForegroundColor Green
+          Write-Host "Servidor listo en http://127.0.0.1:$env:FRONTEND_PORT" -ForegroundColor Green
 
       - uses: actions/checkout@v4
 
@@ -326,7 +326,7 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://localhost:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:${{ env.FRONTEND_PORT }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
           PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
           PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
@@ -342,10 +342,10 @@ jobs:
         run: |
           $pidFile = "${{ runner.temp }}\frontend-pid.txt"
           if (Test-Path $pidFile) {
-            $pid = Get-Content $pidFile -ErrorAction SilentlyContinue
-            if ($pid) {
-              Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
-              Write-Host "Servidor (PID $pid) detenido"
+            $serverPid = Get-Content $pidFile -ErrorAction SilentlyContinue
+            if ($serverPid) {
+              Stop-Process -Id $serverPid -Force -ErrorAction SilentlyContinue
+              Write-Host "Servidor (PID $serverPid) detenido"
             }
             Remove-Item $pidFile -Force -ErrorAction SilentlyContinue
           }
