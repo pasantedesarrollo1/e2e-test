@@ -124,15 +124,14 @@ export default defineConfig({
     },
   ],
   
-  /* Serve the app on localhost:5175 when the target is local. In CI we serve
-     the built app with `vite preview` (the workflow runs `npm run build`
-     first); locally we use the dev server so no build is required. When
-     PLAYWRIGHT_BASE_URL points at a remote host, nothing is started. */
-  webServer: isLocalTarget
+  /* Serve the app on localhost:5175 when the target is local AND we are NOT in CI. 
+     In CI, the GitHub Actions workflow explicitly starts and manages the server 
+     in a separate directory, so Playwright shouldn't try to start it here. */
+  webServer: (isLocalTarget && !process.env.CI)
     ? {
-        command: process.env.CI ? 'npm run preview' : 'npm run dev -- --port 5175',
+        command: 'npm run dev -- --port 5175',
         url: baseURL,
-        reuseExistingServer: process.env.PLAYWRIGHT_REUSE_SERVER === '1' || !process.env.CI,
+        reuseExistingServer: true,
         timeout: 120 * 1000,
       }
     : undefined,
