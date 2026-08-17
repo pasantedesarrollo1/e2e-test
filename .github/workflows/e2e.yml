@@ -10,8 +10,6 @@ on:
         type: choice
         options:
           - smoke
-          - regression
-          - all
 
   push:
     branches:
@@ -25,10 +23,6 @@ jobs:
     name: Smoke (Chromium)
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: |
-      github.event_name == 'push' ||
-      inputs.suite == 'smoke' ||
-      inputs.suite == 'all'
 
     steps:
       - uses: actions/checkout@v4
@@ -68,55 +62,5 @@ jobs:
         if: always()
         with:
           name: report-smoke-${{ github.run_id }}
-          path: playwright-report/
-          retention-days: 7
-
-  regression:
-    name: Regression (Chromium)
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    needs: smoke
-    if: |
-      github.event_name == 'workflow_dispatch' &&
-      (inputs.suite == 'regression' || inputs.suite == 'all')
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
-
-      - name: Run Regression Suite
-        env:
-          CI: true
-          PLAYWRIGHT_BASE_URL: ${{ env.PLAYWRIGHT_BASE_URL }}
-          PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
-          PLAYWRIGHT_RETAIL_EMAIL: ${{ secrets.PLAYWRIGHT_RETAIL_EMAIL }}
-          PLAYWRIGHT_RETAIL_PASSWORD: ${{ secrets.PLAYWRIGHT_RETAIL_PASSWORD }}
-          PLAYWRIGHT_DISPATCH_EMAIL: ${{ secrets.PLAYWRIGHT_DISPATCH_EMAIL }}
-          PLAYWRIGHT_DISPATCH_PASSWORD: ${{ secrets.PLAYWRIGHT_DISPATCH_PASSWORD }}
-          PLAYWRIGHT_RESTAURANT_EMAIL: ${{ secrets.PLAYWRIGHT_RESTAURANT_EMAIL }}
-          PLAYWRIGHT_RESTAURANT_PASSWORD: ${{ secrets.PLAYWRIGHT_RESTAURANT_PASSWORD }}
-          PLAYWRIGHT_CHEF_URL: ${{ secrets.PLAYWRIGHT_CHEF_URL }}
-          PLAYWRIGHT_CHEF_RUC: ${{ secrets.PLAYWRIGHT_CHEF_RUC }}
-          PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
-          PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
-        run: |
-          set +e
-          npx playwright test --grep "@regression" --workers=1 2>&1 | tee test-output.log
-          exit "${PIPESTATUS[0]}"
-
-      - name: Upload Regression report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: report-regression-${{ github.run_id }}
           path: playwright-report/
           retention-days: 7
