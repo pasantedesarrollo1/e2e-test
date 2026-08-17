@@ -1,0 +1,171 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+name: Notify Telegram (Playwright)
+description: Send a Playwright suite result summary to Telegram.
+
+inputs:
+  suite:
+    description: Human-readable suite name (e.g. Smoke).
+    required: true
+  scope:
+    description: Short description of what the suite exercises.
+    required: false
+    default: ""
+  status:
+    description: Job status (success/failure/cancelled).
+    required: true
+  bot_token:
+    description: Telegram bot token.
+    required: true
+  chat_id:
+    description: Telegram chat id.
+    required: true
+  log_file:
+    description: Path to the captured test output log.
+    required: false
+    default: test-output.log
+
+runs:
+  using: composite
+  steps:
+    - name: Send Telegram notification
+      shell: bash
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ inputs.bot_token }}
+        TELEGRAM_CHAT_ID: ${{ inputs.chat_id }}
+        SUITE: ${{ inputs.suite }}
+        SCOPE: ${{ inputs.scope }}
+        JOB_STATUS: ${{ inputs.status }}
+        LOG_FILE: ${{ inputs.log_file }}
+        REPOSITORY: ${{ github.repository }}
+        BRANCH: ${{ github.ref_name }}
+        COMMIT_SHA: ${{ github.sha }}
+        COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        EVENT_NAME: ${{ github.event_name }}
+        ACTOR: ${{ github.actor }}
+        RUN_ID: ${{ github.run_id }}
+        RUN_NUMBER: ${{ github.run_number }}
+        RUN_ATTEMPT: ${{ github.run_attempt }}
+        SERVER_URL: ${{ github.server_url }}
+      run: |
+        if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+          echo "Telegram secrets are not configured. Skipping notification."
+          exit 0
+        fi
+
+        # Escape a value (or whole stdin) so it is safe inside Telegram HTML.
+        html_escape() {
+          python3 -c 'import html, sys; print(html.escape(sys.stdin.read().strip(), quote=False))'
+        }
+
+        short_sha="${COMMIT_SHA:0:7}"
+        run_url="${SERVER_URL}/${REPOSITORY}/actions/runs/${RUN_ID}"
+        commit_url="${SERVER_URL}/${REPOSITORY}/commit/${COMMIT_SHA}"
+
+        # --- Parse the Playwright run from the captured log ------------------
+        # `|| true`: grep exits 1 when a token is absent (e.g. nothing failed),
+        # which would otherwise abort the step under `set -e`.
+        passed_n=0
+        failed_n=0
+        flaky_n=0
+        skipped_n=0
+        total="?"
+        duration="n/a"
+        failures_block=""
+
+        if [ -f "$LOG_FILE" ]; then
+          clean_output="$(perl -pe 's/\e\[[0-9;]*m//g' "$LOG_FILE")"
+
+          passed_n="$(printf '%s\n' "$clean_output" | grep -oE '[0-9]+ passed' | tail -n1 | grep -oE '[0-9]+' || true)"
+          failed_n="$(printf '%s\n' "$clean_output" | grep -oE '[0-9]+ failed' | tail -n1 | grep -oE '[0-9]+' || true)"
+          flaky_n="$(printf '%s\n' "$clean_output" | grep -oE '[0-9]+ flaky' | tail -n1 | grep -oE '[0-9]+' || true)"
+          skipped_n="$(printf '%s\n' "$clean_output" | grep -oE '[0-9]+ skipped' | tail -n1 | grep -oE '[0-9]+' || true)"
+          : "${passed_n:=0}"
+          : "${failed_n:=0}"
+          : "${flaky_n:=0}"
+          : "${skipped_n:=0}"
+
+          # Total run count from Playwright's "Running N tests" banner.
+          total="$(printf '%s\n' "$clean_output" | grep -oE 'Running [0-9]+ test' | tail -n1 | grep -oE '[0-9]+' || true)"
+          [ -z "$total" ] && total="$((passed_n + failed_n + skipped_n))"
+
+          # Total duration is the parenthetical on the final summary line.
+          duration="$(printf '%s\n' "$clean_output" | grep -oE '\([0-9][0-9.]*(ms|s|m)\)' | tail -n1 | tr -d '()' || true)"
+          [ -z "$duration" ] && duration="n/a"
+
+          # Titles of failing tests (list reporter prints "  1) [proj] > ...").
+          failing_titles="$(printf '%s\n' "$clean_output" \
+            | grep -E '^[[:space:]]*[0-9]+\) ' \
+            | sed -E 's/^[[:space:]]*[0-9]+\) //' \
+            | head -n 6 \
+            | html_escape || true)"
+          if [ -n "$failing_titles" ]; then
+            bullets="$(printf '%s\n' "$failing_titles" | sed 's/^/• /')"
+            failures_block="$(printf '\n\n<b>❌ Failing tests</b>\n%s' "$bullets")"
+          fi
+        fi
+
+        # --- Status styling --------------------------------------------------
+        if [ "$JOB_STATUS" = "success" ]; then
+          status_icon="✅"
+          status_label="PASSED"
+          headline="All ${SUITE} tests passed."
+        elif [ "$JOB_STATUS" = "cancelled" ]; then
+          status_icon="⚪"
+          status_label="CANCELLED"
+          headline="The ${SUITE} suite was cancelled before finishing."
+        else
+          status_icon="❌"
+          status_label="FAILED"
+          headline="The ${SUITE} suite failed — see the failing tests below."
+        fi
+
+        # --- Optional sections ----------------------------------------------
+        scope_block=""
+        if [ -n "$SCOPE" ]; then
+          scope_block="$(printf '\n<b>🎯 What was tested</b>\n%s\n' "$(printf '%s' "$SCOPE" | html_escape)")"
+        fi
+
+        commit_block=""
+        commit_line="$(printf '%s' "$COMMIT_MESSAGE" | head -n1)"
+        if [ -n "$commit_line" ]; then
+          commit_block="$(printf '\n• <i>%s</i>' "$(printf '%s' "$commit_line" | html_escape)")"
+        fi
+
+        safe_suite="$(printf '%s' "$SUITE" | html_escape)"
+        safe_repository="$(printf '%s' "$REPOSITORY" | html_escape)"
+        safe_branch="$(printf '%s' "$BRANCH" | html_escape)"
+        safe_short_sha="$(printf '%s' "$short_sha" | html_escape)"
+        safe_actor="$(printf '%s' "$ACTOR" | html_escape)"
+        safe_event="$(printf '%s' "$EVENT_NAME" | html_escape)"
+
+        message="$(cat <<EOF
+        <b>${status_icon} Wanqara E2E · ${safe_suite} · ${status_label}</b>
+        ${headline}
+        ${scope_block}
+        <b>🧪 Results</b>
+        • Total: <b>${total}</b> · ⏱️ ${duration}
+        • ✅ Passed: ${passed_n}
+        • ❌ Failed: ${failed_n}
+        • ⚠️ Flaky: ${flaky_n}
+        • ⏭️ Skipped: ${skipped_n}${failures_block}
+
+        <b>📝 Commit</b>
+        • <code>${safe_short_sha}</code> by ${safe_actor}${commit_block}
+
+        <b>⚙️ Run</b>
+        • Branch: <code>${safe_branch}</code>
+        • Trigger: ${safe_event} · attempt #${RUN_NUMBER}.${RUN_ATTEMPT}
+        • Repo: <code>${safe_repository}</code>
+
+        🔎 <a href="${run_url}">Logs &amp; HTML report</a> | 🔗 <a href="${commit_url}">View commit</a>
+        EOF
+        )"
+
+        # Post to Telegram. Response body is discarded so chat metadata never
+        # lands in the workflow logs.
+        curl -o /dev/null \
+          -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+          -d "chat_id=${TELEGRAM_CHAT_ID}" \
+          -d "parse_mode=HTML" \
+          -d "disable_web_page_preview=true" \
+          --data-urlencode "text=${message}"

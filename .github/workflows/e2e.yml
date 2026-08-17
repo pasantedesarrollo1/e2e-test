@@ -38,6 +38,7 @@ jobs:
         run: npx playwright install chromium --with-deps
 
       - name: Run Smoke Suite
+        id: smoke
         env:
           CI: true
           PLAYWRIGHT_BASE_URL: ${{ env.PLAYWRIGHT_BASE_URL }}
@@ -56,6 +57,17 @@ jobs:
           set +e
           npx playwright test --project=Smoke --workers=1 2>&1 | tee test-output.log
           exit "${PIPESTATUS[0]}"
+
+      - name: Notify Telegram
+        if: always()
+        continue-on-error: true
+        uses: ./.github/actions/notify-telegram
+        with:
+          suite: Smoke
+          scope: "Base rendering check (Admin, Retail, Restaurant)."
+          status: ${{ steps.smoke.outcome }}
+          bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
 
       - name: Upload Smoke report
         uses: actions/upload-artifact@v4
