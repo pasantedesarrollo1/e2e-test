@@ -55,7 +55,7 @@ jobs:
           PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
         run: |
           set +e
-          npx playwright test --project=Smoke --workers=3 2>&1 | tee test-output.log
+          npx playwright test --project=Smoke --workers=2 2>&1 | tee test-output.log
           exit "${PIPESTATUS[0]}"
 
       - name: Notify Telegram
