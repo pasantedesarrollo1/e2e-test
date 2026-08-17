@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../harness/settings.js";
 import { generateSmokeTests } from "./harness/smoke-nav.js";
 import { assertTextContains, assertMainContains } from "./harness/smoke-assertions.js";
 

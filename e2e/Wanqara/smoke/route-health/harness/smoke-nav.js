@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { ensureAuthenticated, withSessionWatchdog } from "../../harness/auth.js";
+import { ensureAuthenticated, withSessionWatchdog } from "../../../harness/auth.js";
 
 export async function smokeGo(page, tenantBaseUrl, path) {
   await ensureAuthenticated(page, { tenantBaseUrl, targetPath: path });
