@@ -2,334 +2,119 @@ name: E2E Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Suite to run'
+        required: true
+        default: 'smoke'
+        type: choice
+        options:
+          - smoke
+          - regression
+          - all
+
+  push:
+    branches:
+      - develop
 
 env:
-  FRONTEND_PORT: 5175
+  PLAYWRIGHT_BASE_URL: https://1792780241001.wanqara.org
 
 jobs:
   smoke:
     name: Smoke (Chromium)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 30
+    if: |
+      github.event_name == 'push' ||
+      inputs.suite == 'smoke' ||
+      inputs.suite == 'all'
 
     steps:
-      - name: Pull y build del frontend
-        shell: pwsh
-        env:
-          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
-        run: |
-          if (-not (Test-Path $env:FRONTEND_PATH)) {
-            throw "No se encontró el frontend en: $env:FRONTEND_PATH"
-          }
-
-          Write-Host "Actualizando frontend en $env:FRONTEND_PATH..." -ForegroundColor Cyan
-          Set-Location $env:FRONTEND_PATH
-
-          git pull origin develop
-
-          Write-Host "Instalando dependencias..." -ForegroundColor Cyan
-          npm ci
-
-          Write-Host "Construyendo..." -ForegroundColor Cyan
-          npm run build
-          $global:LASTEXITCODE = 0
-
-          Write-Host "Frontend listo" -ForegroundColor Green
-
-      - name: Limpiar puerto si está ocupado
-        shell: pwsh
-        run: |
-          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
-            -WarningAction SilentlyContinue -InformationLevel Quiet
-          if ($up) {
-            Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
-            Get-NetTCPConnection -LocalPort $env:FRONTEND_PORT `
-              -ErrorAction SilentlyContinue |
-              ForEach-Object {
-                Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue
-              }
-            Start-Sleep -Seconds 2
-          }
-
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - run: npx playwright install chromium
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
 
-      - name: Levantar Servidor y Ejecutar Smoke
-        shell: pwsh
+      - name: Run Smoke Suite
         env:
-          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
           CI: true
-          PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://${{ secrets.PLAYWRIGHT_TENANT_RUC }}.localhost:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: ${{ env.PLAYWRIGHT_BASE_URL }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
-          PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
-          PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
+          PLAYWRIGHT_RETAIL_EMAIL: ${{ secrets.PLAYWRIGHT_RETAIL_EMAIL }}
+          PLAYWRIGHT_RETAIL_PASSWORD: ${{ secrets.PLAYWRIGHT_RETAIL_PASSWORD }}
+          PLAYWRIGHT_DISPATCH_EMAIL: ${{ secrets.PLAYWRIGHT_DISPATCH_EMAIL }}
+          PLAYWRIGHT_DISPATCH_PASSWORD: ${{ secrets.PLAYWRIGHT_DISPATCH_PASSWORD }}
+          PLAYWRIGHT_RESTAURANT_EMAIL: ${{ secrets.PLAYWRIGHT_RESTAURANT_EMAIL }}
+          PLAYWRIGHT_RESTAURANT_PASSWORD: ${{ secrets.PLAYWRIGHT_RESTAURANT_PASSWORD }}
           PLAYWRIGHT_CHEF_URL: ${{ secrets.PLAYWRIGHT_CHEF_URL }}
           PLAYWRIGHT_CHEF_RUC: ${{ secrets.PLAYWRIGHT_CHEF_RUC }}
           PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
           PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
         run: |
-          Write-Host "Iniciando servidor frontend en segundo plano..." -ForegroundColor Cyan
-          $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host" `
-            -WorkingDirectory $env:FRONTEND_PATH `
-            -PassThru -NoNewWindow
+          set +e
+          npx playwright test --project=Smoke --workers=1 2>&1 | tee test-output.log
+          exit "${PIPESTATUS[0]}"
 
-          $timeout = 60
-          $elapsed = 0
-          $up = $false
-          do {
-            Start-Sleep -Seconds 2
-            $elapsed += 2
-            try {
-              $res = Invoke-WebRequest -Uri "http://localhost:$env:FRONTEND_PORT" -UseBasicParsing
-              $up = $true
-            } catch {
-              if ($_.Exception.Response) { $up = $true }
-            }
-          } while (-not $up -and $elapsed -lt $timeout)
-
-          if (-not $up) {
-            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-            throw "El servidor no respondió HTTP en $timeout segundos"
-          }
-          
-          Write-Host "Servidor listo con PID $($proc.Id). Ejecutando Playwright..." -ForegroundColor Green
-
-          npx playwright test --project=chromium --grep "@smoke"
-          $testExitCode = $LASTEXITCODE
-
-          Write-Host "Apagando servidor frontend..." -ForegroundColor Cyan
-          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-          
-          if ($testExitCode -ne 0) {
-            exit $testExitCode
-          }
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload Smoke report
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: report-smoke-${{ github.run_id }}
           path: playwright-report/
           retention-days: 7
 
-  release:
-    name: Release (Chromium)
-    runs-on: self-hosted
-    needs: smoke
-    if: always()
-    timeout-minutes: 60
-
-    steps:
-      - name: Pull y build del frontend
-        shell: pwsh
-        env:
-          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
-        run: |
-          if (-not (Test-Path $env:FRONTEND_PATH)) {
-            throw "No se encontró el frontend en: $env:FRONTEND_PATH"
-          }
-
-          Set-Location $env:FRONTEND_PATH
-          git pull origin develop
-          npm ci
-          npm run build
-          $global:LASTEXITCODE = 0
-          Write-Host "Frontend listo" -ForegroundColor Green
-
-      - name: Limpiar puerto si está ocupado
-        shell: pwsh
-        run: |
-          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
-            -WarningAction SilentlyContinue -InformationLevel Quiet
-          if ($up) {
-            Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
-            Get-NetTCPConnection -LocalPort $env:FRONTEND_PORT `
-              -ErrorAction SilentlyContinue |
-              ForEach-Object {
-                Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue
-              }
-            Start-Sleep -Seconds 2
-          }
-
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - run: npm ci
-
-      - run: npx playwright install chromium
-
-      - name: Levantar Servidor y Ejecutar Release
-        shell: pwsh
-        env:
-          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
-          CI: true
-          PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://${{ secrets.PLAYWRIGHT_TENANT_RUC }}.localhost:${{ env.FRONTEND_PORT }}
-          PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
-          PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
-          PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
-          PLAYWRIGHT_CHEF_URL: ${{ secrets.PLAYWRIGHT_CHEF_URL }}
-          PLAYWRIGHT_CHEF_RUC: ${{ secrets.PLAYWRIGHT_CHEF_RUC }}
-          PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
-          PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
-        run: |
-          Write-Host "Iniciando servidor frontend en segundo plano..." -ForegroundColor Cyan
-          $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host" `
-            -WorkingDirectory $env:FRONTEND_PATH `
-            -PassThru -NoNewWindow
-
-          $timeout = 60
-          $elapsed = 0
-          $up = $false
-          do {
-            Start-Sleep -Seconds 2
-            $elapsed += 2
-            try {
-              $res = Invoke-WebRequest -Uri "http://localhost:$env:FRONTEND_PORT" -UseBasicParsing
-              $up = $true
-            } catch {
-              if ($_.Exception.Response) { $up = $true }
-            }
-          } while (-not $up -and $elapsed -lt $timeout)
-
-          if (-not $up) {
-            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-            throw "El servidor no respondió HTTP en $timeout segundos"
-          }
-          
-          Write-Host "Servidor listo con PID $($proc.Id). Ejecutando Playwright..." -ForegroundColor Green
-
-          npx playwright test --project=chromium --grep "@release"
-          $testExitCode = $LASTEXITCODE
-
-          Write-Host "Apagando servidor frontend..." -ForegroundColor Cyan
-          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-          
-          if ($testExitCode -ne 0) {
-            exit $testExitCode
-          }
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: report-release-${{ github.run_id }}
-          path: playwright-report/
-          retention-days: 7
-
   regression:
     name: Regression (Chromium)
-    runs-on: self-hosted
-    needs: release
-    if: always()
-    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    needs: smoke
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      (inputs.suite == 'regression' || inputs.suite == 'all')
 
     steps:
-      - name: Pull y build del frontend
-        shell: pwsh
-        env:
-          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
-        run: |
-          if (-not (Test-Path $env:FRONTEND_PATH)) {
-            throw "No se encontró el frontend en: $env:FRONTEND_PATH"
-          }
-
-          Set-Location $env:FRONTEND_PATH
-          git pull origin develop
-          npm ci
-          npm run build
-          $global:LASTEXITCODE = 0
-          Write-Host "Frontend listo" -ForegroundColor Green
-
-      - name: Limpiar puerto si está ocupado
-        shell: pwsh
-        run: |
-          $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
-            -WarningAction SilentlyContinue -InformationLevel Quiet
-          if ($up) {
-            Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
-            Get-NetTCPConnection -LocalPort $env:FRONTEND_PORT `
-              -ErrorAction SilentlyContinue |
-              ForEach-Object {
-                Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue
-              }
-            Start-Sleep -Seconds 2
-          }
-
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - run: npx playwright install chromium
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
 
-      - name: Levantar Servidor y Ejecutar Regression
-        shell: pwsh
+      - name: Run Regression Suite
         env:
-          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
           CI: true
-          PLAYWRIGHT_REUSE_SERVER: '1'
-          PLAYWRIGHT_BASE_URL: http://${{ secrets.PLAYWRIGHT_TENANT_RUC }}.localhost:${{ env.FRONTEND_PORT }}
+          PLAYWRIGHT_BASE_URL: ${{ env.PLAYWRIGHT_BASE_URL }}
           PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
-          PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
-          PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
+          PLAYWRIGHT_RETAIL_EMAIL: ${{ secrets.PLAYWRIGHT_RETAIL_EMAIL }}
+          PLAYWRIGHT_RETAIL_PASSWORD: ${{ secrets.PLAYWRIGHT_RETAIL_PASSWORD }}
+          PLAYWRIGHT_DISPATCH_EMAIL: ${{ secrets.PLAYWRIGHT_DISPATCH_EMAIL }}
+          PLAYWRIGHT_DISPATCH_PASSWORD: ${{ secrets.PLAYWRIGHT_DISPATCH_PASSWORD }}
+          PLAYWRIGHT_RESTAURANT_EMAIL: ${{ secrets.PLAYWRIGHT_RESTAURANT_EMAIL }}
+          PLAYWRIGHT_RESTAURANT_PASSWORD: ${{ secrets.PLAYWRIGHT_RESTAURANT_PASSWORD }}
           PLAYWRIGHT_CHEF_URL: ${{ secrets.PLAYWRIGHT_CHEF_URL }}
           PLAYWRIGHT_CHEF_RUC: ${{ secrets.PLAYWRIGHT_CHEF_RUC }}
           PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
           PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
         run: |
-          Write-Host "Iniciando servidor frontend en segundo plano..." -ForegroundColor Cyan
-          $proc = Start-Process npm.cmd `
-            -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host" `
-            -WorkingDirectory $env:FRONTEND_PATH `
-            -PassThru -NoNewWindow
+          set +e
+          npx playwright test --grep "@regression" --workers=1 2>&1 | tee test-output.log
+          exit "${PIPESTATUS[0]}"
 
-          $timeout = 60
-          $elapsed = 0
-          $up = $false
-          do {
-            Start-Sleep -Seconds 2
-            $elapsed += 2
-            try {
-              $res = Invoke-WebRequest -Uri "http://localhost:$env:FRONTEND_PORT" -UseBasicParsing
-              $up = $true
-            } catch {
-              if ($_.Exception.Response) { $up = $true }
-            }
-          } while (-not $up -and $elapsed -lt $timeout)
-
-          if (-not $up) {
-            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-            throw "El servidor no respondió HTTP en $timeout segundos"
-          }
-          
-          Write-Host "Servidor listo con PID $($proc.Id). Ejecutando Playwright..." -ForegroundColor Green
-
-          npx playwright test --project=chromium --grep "@regression"
-          $testExitCode = $LASTEXITCODE
-
-          Write-Host "Apagando servidor frontend..." -ForegroundColor Cyan
-          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-          
-          if ($testExitCode -ne 0) {
-            exit $testExitCode
-          }
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload Regression report
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: report-regression-${{ github.run_id }}
