@@ -5,8 +5,20 @@ export const SEED = {
     retail:     { name: playwrightHarness.subsidiaries.retail, code: "100" },
     dispatch:   { name: playwrightHarness.subsidiaries.dispatch, code: "101" },
     restaurant: { name: playwrightHarness.subsidiaries.restaurant, code: "102" },
+    crud: [
+      { type: 'Comercios (Sin Despacho)', name: 'Sucursal Comercios Test', code: '901', isRestaurant: false, hasDispatch: false },
+      { type: 'Comercios (Con Despacho)', name: 'Sucursal Despacho Test', code: '902', isRestaurant: false, hasDispatch: true },
+      { type: 'Restaurantes (Sin Despacho)', name: 'Sucursal Restaurante Test', code: '903', isRestaurant: true, hasDispatch: false }
+    ]
   },
-
+  warehouses: {
+    crud: [
+      { authType: 'retail', name: 'Bodega Test Ret', code: '1001', address: 'Automated Test Address Ret', description: 'Automated Test Desc Ret' },
+      { authType: 'dispatch', name: 'Bodega Test Dis', code: '1002', address: 'Automated Test Address Dis', description: 'Automated Test Desc Dis' },
+      { authType: 'restaurant', name: 'Bodega Test Res', code: '1003', address: 'Automated Test Address Res', description: 'Automated Test Desc Res' }
+    ]
+  },
+  
   clients: {
     test:            { name: "Usuario Test",    cedula: "0000000001" },
     consumidorFinal: { cedula: "0000000001" },
@@ -64,7 +76,7 @@ export const SEED = {
     preElaborado:       { name: "Bowl de Alitas Marinadas (20 u)", code: "Bow000000001", type: "Pre-Elaborado"       },
     elaborado:          { name: "Porción de Alitas Marinadas",     code: "Por000000001", type: "Elaborado"           },
     combo:              { name: "Combo alitas",                    code: "Com000000019", type: "Combo"               },
-    servicio:           { name: "servicio alita",                   code: "ser000000002", type: "Servicio"            },
+    servicio:           { name: "servicio alita",                  code: "ser000000002", type: "Servicio"            },
     serie:              { name: "series test",                     code: "ser000000001", type: "Serie"               },
     tallaColor:         { name: "test talla color",                code: "tes000000002", type: "TallaColor"          },
     tallaColorVariante: { name: "test talla color",                code: "0001",         type: "TallaColor-variante" },

@@ -73,7 +73,7 @@ export default defineConfig({
     {
       name: 'Admin-Inventory',
       dependencies: ['setup'],
-      testMatch: /.*regression\/(inventory|transactions)\/.*\.spec\.js/,
+      testMatch: /.*regression\/(inventory|transactions|settings)\/.*\.spec\.js/,
       use: {
         ...devices['Desktop Chrome'],
         storageState: path.join(AUTH_DIR, 'retail-session.json'),
