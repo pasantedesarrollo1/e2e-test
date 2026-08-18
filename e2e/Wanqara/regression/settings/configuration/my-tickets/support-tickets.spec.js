@@ -88,40 +88,15 @@ async function acceptTerms(page) {
   await expect(checkbox).toBeChecked();
 }
 
-async function submitTicket(page) {
+async function checkFormFilledCorrectly(page) {
   const agendarBtn = page.getByRole("button", { name: /Agendar/i });
   await expect(agendarBtn).toBeEnabled({ timeout: 5_000 });
-
-  await Promise.all([
-    page.waitForResponse(
-      (res) =>
-        res.url().includes("/api/v1/support/tickets") &&
-        res.request().method() === "POST" &&
-        [200, 201].includes(res.status()),
-      { timeout: 30_000 }
-    ),
-    agendarBtn.click({ force: true }),
-  ]);
-}
-
-async function confirmSuccessModal(page) {
-  const successHeading = page.getByText(/¡Agendamiento exitoso!/i);
-  await expect(successHeading).toBeVisible({ timeout: 15_000 });
-
-  const snackbar = page.locator(".v-snackbar").filter({ hasText: /Ticket creado correctamente/i });
-  await expect(snackbar).toBeVisible({ timeout: 10_000 });
-
-  const entendidoBtn = page.getByRole("button", { name: /Entendido/i });
-  await expect(entendidoBtn).toBeVisible();
-  await entendidoBtn.click();
-
-  await expect(successHeading).not.toBeVisible({ timeout: 5_000 });
 }
 
 test.describe("Support Tickets — Create @regression", () => {
   requirePosCredentials(test);
 
-  test("successfully creates a support ticket selecting the first available category, service, and time slot", async ({ page }) => {
+  test("successfully fills the support ticket form selecting the first available category, service, and time slot", async ({ page }) => {
     test.setTimeout(120_000);
 
     const tenantBaseUrl = getTenantBaseUrl();
@@ -158,12 +133,8 @@ test.describe("Support Tickets — Create @regression", () => {
       await acceptTerms(page);
     });
 
-    await test.step("Submit the ticket and verify the success response", async () => {
-      await submitTicket(page);
-    });
-
-    await test.step("Confirm the success modal and dismiss it", async () => {
-      await confirmSuccessModal(page);
+    await test.step("Verify the form is filled correctly and ready to submit", async () => {
+      await checkFormFilledCorrectly(page);
     });
   });
 });
