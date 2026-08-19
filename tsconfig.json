@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"],
+    "esModuleInterop": true,
+    "allowJs": true,
+    "strict": false,
+    "noEmit": true
+  },
+  "include": [
+    "e2e/**/*",
+    "playwright.config.js"
+  ]
+}

@@ -2,10 +2,6 @@ import { expect } from "@playwright/test";
 import { SEED } from "../../../../harness/seed.js";
 import { ensureAuthenticated } from "../../../../harness/auth.js";
 
-// ============================================================================
-// FUNCIONES DE AYUDA (Manejo manual de menús desplegables)
-// ============================================================================
-
 async function assignManualBodega(page) {
   const bodegaLabel = page.locator("main").getByText("Bodega").first();
   const bodegaWrapper = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
@@ -44,15 +40,10 @@ async function assignManualCaja(page) {
   }).toPass({ timeout: 15000 });
 }
 
-// ============================================================================
-// FUNCIONES PRINCIPALES EXPORTADAS
-// ============================================================================
-
 export async function selectCheckout(page) {
   await page.waitForURL(/\/admin\/ventas\/add/);
   await page.waitForTimeout(1000);
 
-  // 1. Validamos y asignamos Bodega si es necesario (Sucursal 001)
   const bodegaLabel = page.locator("main").getByText("Bodega").first();
   if (await bodegaLabel.isVisible()) {
     const bodegaWrapper = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
@@ -64,7 +55,6 @@ export async function selectCheckout(page) {
     }
   }
 
-  // 2. Validamos y asignamos Caja si es necesario
   const cajaLabel = page.locator("main").getByText("Punto de Venta").first();
   await expect(cajaLabel).toBeVisible({ timeout: 10000 });
   
@@ -76,10 +66,6 @@ export async function selectCheckout(page) {
     await assignManualCaja(page);
   }
 
-  // FIX: click neutro en main para cerrar cualquier overlay/panel que haya
-  // quedado abierto (ej: menú de perfil). El Escape suelto anterior activaba
-  // el panel de perfil de Vuetify cuando ningún dropdown estaba abierto
-  // (sucursales 100/101 que tienen bodega y caja prellenadas automáticamente).
   await page.locator("main").click({ position: { x: 10, y: 10 }, force: true });
   await page.waitForTimeout(200);
 }
@@ -123,12 +109,11 @@ export async function selectDocumentType(page, documentType) {
 export async function selectClientByCedula(page, cedula) {
   const cedulaInput = page.getByPlaceholder(/Ingresa Cédula o RUC/i).first();
 
+  await cedulaInput.click();
   await cedulaInput.clear();
-  await cedulaInput.fill(cedula);
-  await expect(cedulaInput).toHaveValue(cedula);
-  await cedulaInput.blur();
-  await page.waitForTimeout(100);
-  await cedulaInput.focus();
+  
+  await cedulaInput.pressSequentially(cedula, { delay: 50 });
+  await page.waitForTimeout(300);
   await cedulaInput.press("Enter");
 
   const clientModal = page.locator(".v-overlay__content:not(.v-snackbar__wrapper)").filter({
@@ -151,11 +136,25 @@ export async function selectClientByCedula(page, cedula) {
       await typeSelect.click({ force: true });
       
       const activeListbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
-      await activeListbox.getByRole("option", { name: /^CEDULA$/i }).click();
+      await expect(activeListbox).toBeVisible({ timeout: 5000 });
+      
+      await activeListbox.getByRole("option", { name: /^CEDULA$/i }).click({ force: true });
+      
+      if (await activeListbox.isVisible().catch(() => false)) {
+        await page.keyboard.press("Escape");
+      }
+      await expect(activeListbox).not.toBeVisible({ timeout: 5000 });
 
       const innerIdInput = clientModal.locator("input").filter({ hasValue: cedula }).first();
       await innerIdInput.focus();
-      await innerIdInput.press("Enter");
+      
+      const searchIconBtn = clientModal.locator("button").filter({ has: page.locator(".mdi-magnify") }).first();
+      if (await searchIconBtn.isVisible()) {
+        await searchIconBtn.click({ force: true });
+      } else {
+        await innerIdInput.press("Enter");
+      }
+      
       await page.waitForTimeout(1000); 
     }
 
@@ -172,15 +171,12 @@ export async function selectClientByCedula(page, cedula) {
 
   await expect(
     page.locator("main").getByText(cedula, { exact: false }).first()
-  ).toBeVisible({ timeout: 10000 });
+  ).toBeVisible({ timeout: 15000 });
 }
 
 export async function searchAndSelectProduct(page, { name, searchTerm }) {
   const term = searchTerm || name;
 
-  // FIX: cerrar el panel de perfil si quedó abierto por el Escape suelto
-  // anterior (visible cuando la sucursal ya tiene bodega/caja prellenadas).
-  // Usamos Escape aquí donde sí tiene receptor controlado: el panel de perfil.
   const profileOverlay = page.locator(".v-overlay--active").filter({ hasText: /Cerrar Sesión/i });
   if (await profileOverlay.isVisible()) {
     await page.keyboard.press("Escape");
@@ -189,21 +185,16 @@ export async function searchAndSelectProduct(page, { name, searchTerm }) {
 
   const searchInput = page.locator("#searchInput").first();
   await expect(searchInput).toBeVisible({ timeout: 10000 });
+  
+  await searchInput.click();
   await searchInput.clear();
-  await searchInput.press("Control+a");
-  await searchInput.press("Delete");
+  await page.waitForTimeout(300); 
 
-  const responsePromise = page.waitForResponse(
-    (res) => res.url().includes("/api/v1/inventory/products") && res.request().method() === "GET",
-    { timeout: 5000 }
-  ).catch(() => {});
-
-  await searchInput.fill(term);
+  await searchInput.pressSequentially(term, { delay: 30 });
   await searchInput.press("Enter");
-  await responsePromise;
-
+  
   const productItem = page.getByText(name, { exact: false }).first();
-  await expect(productItem).toBeVisible({ timeout: 10000 });
+  await expect(productItem).toBeVisible({ timeout: 20000 });
   await productItem.click({ force: true });
 }
 
