@@ -98,6 +98,16 @@ export default defineConfig({
         storageState: path.join(AUTH_DIR, 'retail-session.json'),
       },
     },
+    {
+      name: 'Release',
+      dependencies: ['setup'],
+      testMatch: /Wanqara\/release\/.*\.spec\.js/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL,
+        storageState: path.join(AUTH_DIR, 'retail-session.json'),
+      },
+    },
 
     // ==========================================
     // WANQARA CHEF (Meseros) PROJECTS
