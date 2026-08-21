@@ -80,6 +80,7 @@ export const SEED = {
     serie:              { name: "series test",                     code: "ser000000001", type: "Serie"               },
     tallaColor:         { name: "test talla color",                code: "tes000000002", type: "TallaColor"          },
     tallaColorVariante: { name: "test talla color",                code: "0001",         type: "TallaColor-variante" },
+    estandarLargo:      { name: "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompañadas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada", code: "Ali000000002", type: "Estandar Fisico" },
   },
 
   discount: {
