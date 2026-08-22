@@ -83,6 +83,21 @@ export const SEED = {
     estandarLargo:      { name: "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompañadas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada", code: "Ali000000002", type: "Estandar Fisico" },
   },
 
+  recipeDecimals: {
+    elaborado: {
+      productName: "Porción de Alitas Marinadas - ToolTip",
+      ingredientName: "Bowl de Alitas Marinadas (20 u)",
+      exactAmount: "0.74626865671642",
+      roundedAmount: "0.75",
+    },
+    preElaborado: {
+      productName: "Bowl de Alitas Marinadas (20 u) - ToolTip",
+      ingredientName: "Alita Individual",
+      exactAmount: "0.30000300003",
+      roundedAmount: "0.3",
+    }
+  },
+
   discount: {
     rate: "3.3337373372323",
     name: "Descuento General",
