@@ -17,7 +17,7 @@ test.describe("Smoke — Finanzas > Cuentas", { tag: "@smoke" }, () => {
     { path: "/admin/authorize-dispatch-sales?filter_delivered=false&filter_can_dispatch=false&filter_is_canceled=false", assert: (p) => assertPageTitle(p, "Aprobar despachos") },
     { path: "/admin/payments/add/receivables",                                                                            assert: (p) => assertTextContains(p, "Registrar un Pago") },
     { path: "/admin/payments/add/paymentAccounts",                                                                        assert: (p) => assertTextContains(p, "Registrar un Pago") },
-    { path: "/admin/payments/add/multiple-receivables",                                                                   assert: (p) => assertTextContains(p, "Abono Múltiple") },
+    { path: "/admin/payments/add/multiple-receivables",                                                                   assert: (p) => assertMainContains(p, "Abono Múltiple") },
     { path: "/admin/advances/customer",                                                                                   assert: (p) => assertTextContains(p, "Anticipo de Clientes") },
     { path: "/admin/advances/provider",                                                                                   assert: (p) => assertTextContains(p, "Anticipo a Proveedores") },
   ]);
