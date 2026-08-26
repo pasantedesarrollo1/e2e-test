@@ -26,6 +26,8 @@ All release specs import helpers from **`e2e/Wanqara/release/herness/`** (note t
 | `cancel-sale-flow.js` | Navigates to `/admin/sales/list`, finds the most recent sale, opens the cancellation modal, asserts business-rule UI (inventory switch vs. no-inventory message), then closes without actually cancelling. |
 | `multiple-receivables-flow.js` | Step-by-step helpers for the entire multiple-receivables payment flow: selecting a client, picking accounts from the modal, filling amounts, submitting, attempting deletion to trigger an expected error, navigating to settlement detail, generating a PDF voucher, and confirming final deletion. |
 | `recipe-helpers.js` | Navigates to the product list, opens a product's detail view via tooltip, and asserts that recipe ingredient amounts are displayed rounded to 2 decimals in the UI but show the exact long decimal in the hover tooltip. |
+| `subscriptions-flow.js` | Two exported functions: `validateSubscriptionsOverview` (asserts that all rendered plan, module, and receipt-pack data on the subscriptions page is present in `SEED_SUBSCRIPTIONS`) and `validateSubsidiaryCapabilityBadges` (navigates to the subsidiary creation form and asserts every blue capability badge matches a known module name or capability label from the seed). |
+| `subscriptions-seed.js` | Exports `SEED_SUBSCRIPTIONS` — the authoritative catalogue of valid module codes/names, receipt-pack quantities, plan codes/names, and capability label strings. Used exclusively by `subscriptions-flow.js`. |
 
 These helpers also rely on the global harness in `e2e/Wanqara/harness/`:
 
@@ -172,7 +174,73 @@ These helpers also rely on the global harness in `e2e/Wanqara/harness/`:
 
 ---
 
-### 5. `waybill-long-product-name.spec.js`
+### 5. `subscriptions-overview.spec.js`
+
+**What it tests:** That the subscriptions page and the subsidiary creation form display only data that exists in the known catalogue (`SEED_SUBSCRIPTIONS`). This catches cases where new plans, modules, receipt packs, or capability badges are added to the backend without a corresponding entry in the seed — which would indicate either an undocumented feature or a misconfigured tenant.
+
+**authType:** `retail`
+
+**Routes touched:**
+- `/admin/settings/subscriptions` (test 1)
+- `/admin/home` → navigates internally to `/admin/subsidiaries/add` (test 2)
+
+**Test structure:** `test.describe` (not serial), two independent tests.
+
+| Test | `setTimeout` | Route entered via | Helper called |
+|---|---|---|---|
+| "Validates that displayed subscription cards match the seed data" | 120 000 ms | `ensureAuthenticated` to `/admin/settings/subscriptions` | `validateSubscriptionsOverview(page)` |
+| "Validates that capability badges in subsidiary form match the seed data" | 60 000 ms | `ensureAuthenticated` to `/admin/home`, then internal `page.goto` inside the helper | `validateSubsidiaryCapabilityBadges(page, tenantBaseUrl)` |
+
+**`validateSubscriptionsOverview` — what it checks:**
+
+The function runs three `test.step` blocks in sequence. All comparisons are accent-insensitive (uses `str.normalize("NFD")` to strip diacritics before comparing).
+
+1. **Page load** — waits for `span.tw-text-2xl` containing "Suscripciones" to be visible.
+2. **Plan validation** — reads the text of `.tw-bg-primary .tw-text-base.tw-font-semibold.tw-text-white`. If the element is visible and the text is neither `"Sin plan"` nor a subsidiary code pattern (`/^\d{3}\s-/`), it asserts the plan name exists in `SEED_SUBSCRIPTIONS.plans`.
+3. **Module validation** — iterates every `div.tw-min-w-0.tw-flex-1` that contains a `div.tw-text-xs:not(.tw-text-textSecondary)`. Reads the module code text and asserts a matching entry exists in `SEED_SUBSCRIPTIONS.modules` by `code`. Fails with a message naming the unrecognized code.
+4. **Receipt pack validation** — if the "Paquetes de comprobantes" header is visible, iterates the `.v-chip` elements in the adjacent grid and asserts each chip text matches a `quantity` in `SEED_SUBSCRIPTIONS.receipts`. The special value `"-1"` is treated as equivalent to `"Ilimitados"`.
+
+**`validateSubsidiaryCapabilityBadges` — what it checks:**
+
+1. Navigates to `/admin/subsidiaries/add` and waits for "Agregar una Sucursal" to appear.
+2. Waits for `span.tw-bg-primary.tw-text-white.tw-rounded-br-md.tw-rounded-tl-md` (blue badge chips) to be visible.
+3. For each badge, asserts that its text matches **either** a `name` in `SEED_SUBSCRIPTIONS.modules` **or** a label in `SEED_SUBSCRIPTIONS.capabilityLabels`. Both lookups are accent-insensitive. Fails with a message naming the unrecognized badge text.
+
+**`SEED_SUBSCRIPTIONS` catalogue (in `herness/subscriptions-seed.js`):**
+
+Modules (15 entries):
+
+| Code | Name |
+|---|---|
+| `BN001` | Módulo para uso de banner |
+| `CS001` | Módulo para uso de productos talla color |
+| `VB001` | Módulo para multinegocio |
+| `PS001` | Módulo para uso de productos Serie |
+| `KDS001` | Módulo para uso de KDS en restaurantes |
+| `WR001` | Módulo para garantías |
+| `DT001` | Módulo para documentos personalizados |
+| `TS001` | Tesorería |
+| `Res001` | Suscripción Restaurantes |
+| `S001` | Subsidios |
+| `BD008` | Balanzas digitales |
+| `SC001` | Recargos |
+| `MW001` | Multibodegas |
+| `US-001` | Sucursales ilimitadas |
+| `AC001` | Modulo Contable |
+
+Receipt packs (13 entries): quantities `10`, `25`, `50`, `100`, `500`, `600`, `1000`, `1200`, `5000`, `10000`, `20000`, `50000`, `Ilimitados`.
+
+Plans (7 entries): `Todos los permisos`, `Gratuito`, `Lite`, `Básico`, `Pyme`, `MAX`, `One (pyme limitado)`.
+
+Capability labels (7 entries): `Maneja Restaurantes`, `Maneja Varios Negocios`, `Maneja Balanzas`, `Maneja Subsidios`, `Maneja Listado de Precios`, `Maneja Cotizaciones`, `Multibodegas`.
+
+**No API endpoints are exercised** — both functions are pure UI read/assertion.
+
+**Precondition:** The tenant must have a subscription plan assigned. If the tenant has no plan or the plan element is hidden, the plan-validation step is silently skipped (guarded by `isVisible()`). The receipt-pack step is similarly skipped if the "Paquetes de comprobantes" section is absent.
+
+---
+
+### 6. `waybill-long-product-name.spec.js`
 
 **What it tests:** That internal and external waybills render correctly when the product name is very long, catching layout/truncation bugs.
 
@@ -241,7 +309,7 @@ Sessions are pre-minted by the `setup` project (`auth.setup.js`) before any Rele
 
 ## Seed data summary
 
-All constants live in `e2e/Wanqara/harness/seed.js`.
+All global constants live in `e2e/Wanqara/harness/seed.js`. The subscriptions spec uses its own catalogue in `herness/subscriptions-seed.js`.
 
 | Constant | Value | Used by |
 |---|---|---|
@@ -255,6 +323,7 @@ All constants live in `e2e/Wanqara/harness/seed.js`.
 | `SEED.waybills.vehiclePlate` | `"AAC-0123"` | `waybill-long-product-name` |
 | `SEED.recipeDecimals` | See recipe table above | `recipe-decimals-validation` |
 | `SEED.documentTypes.facturaElectronica` | `"Factura electrónica"` | `waybill-long-product-name` |
+| `SEED_SUBSCRIPTIONS` | Catalogue of 15 modules, 13 receipt packs, 7 plans, 7 capability labels | `subscriptions-overview` |
 
 `getDynamicDocumentType(authType)` returns `"Factura electrónica"` when the authType's subsidiary is `"Wanqara 001"`, otherwise `"Recibos"`.
 
@@ -262,8 +331,10 @@ All constants live in `e2e/Wanqara/harness/seed.js`.
 
 ## Conventions this suite follows
 
-- **`test.describe.serial`** is used when tests inside a group are order-dependent (one test creates data the next test consumes). `multiple-receivables` uses plain `describe` because it is fully self-contained.
+- **`test.describe.serial`** is used when tests inside a group are order-dependent (one test creates data the next test consumes). `multiple-receivables` and `subscriptions-overview` use plain `describe` because both are fully self-contained.
 - **`browser.newContext`** is used instead of the project `storageState` when a single file needs more than one authType (only `cancel-sales.spec.js`).
 - **Soft assertions** (`expect.soft`) are used in `generateAndViewPDF` because PDF rendering failures are monitored but should not block the deletion step that follows.
-- **`test.setTimeout`** is set explicitly on each test (120 000 – 180 000 ms) because release flows are longer than the project default.
-- Helper functions in `herness/` do not call `page.goto` for navigation — they assume the caller has already landed on the correct page or route, except where documented otherwise (e.g., `cancelFirstSaleAndVerify` always starts by going to `/admin/sales/list`).
+- **`test.setTimeout`** is set explicitly on each test (60 000 – 240 000 ms) because release flows are longer than the project default.
+- **Conditional assertions** (`if (await element.isVisible())`) are used in `validateSubscriptionsOverview` where the presence of a plan or receipt-pack section depends on tenant configuration. This allows the spec to run on any tenant without failing due to features that are simply inactive.
+- Helper functions in `herness/` do not call `page.goto` for navigation — they assume the caller has already landed on the correct page or route, except where documented otherwise (e.g., `cancelFirstSaleAndVerify` always starts by going to `/admin/sales/list`; `validateSubsidiaryCapabilityBadges` calls `page.goto` internally to reach `/admin/subsidiaries/add`).
+- **Spec-local seed** (`subscriptions-seed.js`) is used when the catalogue belongs exclusively to one spec's domain and would be noise in the global `seed.js`. The global `seed.js` remains for cross-spec shared data only.

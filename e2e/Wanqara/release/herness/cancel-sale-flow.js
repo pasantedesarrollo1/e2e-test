@@ -1,24 +1,34 @@
 import { test, expect } from "@playwright/test";
 import { withPath } from "../../harness/urls.js";
 
-export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwitch, expectMessage }) {
+export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwitch, expectMessage, confirmCancellation = true }) {
+  const getSalesPromise = page.waitForResponse(res => 
+    res.url().includes('/api/v1/billing/sales') && 
+    res.request().method() === 'GET'
+  );
+
   await test.step("Navigate to sales list", async () => {
     await page.goto(withPath(tenantBaseUrl, '/admin/sales/list'));
+    await page.reload(); 
+    
     await expect(
       page.locator('.v-toolbar-title').filter({ hasText: /Historial de Ventas/i }).first()
     ).toBeVisible({ timeout: 15000 });
+  });
+
+  await test.step("Validate 'can_return_inventory' append is present", async () => {
+    const getResponse = await getSalesPromise;
+    expect(getResponse.url()).toContain('can_return_inventory');
   });
 
   const firstRow = page.locator('.v-data-table__tr').first();
 
   await test.step("Locate the latest sale and click Cancel", async () => {
     await expect(firstRow).toBeVisible({ timeout: 15000 });
-
     const actionsCell = firstRow.locator('td').last();
     const threeDotsBtn = actionsCell.locator('button.v-btn').last();
     await expect(threeDotsBtn).toBeVisible();
     await threeDotsBtn.click();
-
     await page.waitForTimeout(500);
 
     const buttons = await actionsCell.locator("button.v-btn").all();
@@ -28,10 +38,8 @@ export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwit
       if (await btn.isDisabled()) {
         continue;
       }
-
       await btn.hover();
       const tooltip = page.locator(".v-overlay__content").filter({ hasText: "Anular esta Venta" }).first();
-      
       try {
         await tooltip.waitFor({ state: "visible", timeout: 800 });
         await btn.click();
@@ -41,7 +49,6 @@ export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwit
         continue;
       }
     }
-
     if (!clicked) {
       throw new Error("Could not find the 'Anular esta Venta' button in the row.");
     }
@@ -51,7 +58,6 @@ export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwit
 
   await test.step("Validate cancellation business rules in the modal", async () => {
     await expect(modal).toBeVisible({ timeout: 5000 });
-
     const inventorySwitch = modal.locator('.v-switch').filter({ hasText: /Mover inventario/i });
     const noInventoryMsg = modal.getByText(/Esta venta no tiene movimientos de inventario/i);
 
@@ -68,9 +74,45 @@ export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwit
     }
   });
 
-  await test.step("Close modal without cancelling", async () => {
-    const closeBtn = modal.getByRole('button', { name: 'Cancelar', exact: true }).first();
-    await closeBtn.click();
-    await expect(modal).not.toBeVisible();
-  });
+  if (confirmCancellation) {
+    await test.step("Confirm cancellation and validate POST payload", async () => {
+      const postCancelPromise = page.waitForResponse(res => 
+        res.url().includes('/cancel') && 
+        res.request().method() === 'POST'
+      );
+
+      const observationInput = modal.getByRole("textbox", { name: /Motivo de anulación/i });
+      await observationInput.fill("test");
+
+      if (expectSwitch) {
+        const inventorySwitch = modal.locator('.v-switch').filter({ hasText: /Mover inventario/i });
+        await inventorySwitch.locator('input[type="checkbox"]').check({ force: true });
+      }
+
+      const anularBtn = modal.getByRole('button', { name: 'Anular Venta', exact: true });
+      await anularBtn.click();
+
+      const confirmDialog = page.locator('.v-overlay__content').filter({ hasText: /Confirmar anulación/i }).last();
+      const finalConfirmBtn = confirmDialog.getByRole('button', { name: /Confirmar anulación/i });
+      await finalConfirmBtn.click();
+
+      const postResponse = await postCancelPromise;
+      const postData = postResponse.request().postDataJSON();
+
+      expect(postData).toHaveProperty('moves_inventory');
+      expect(typeof postData.moves_inventory).toBe('boolean');
+      
+      if (expectSwitch) {
+        expect(postData.moves_inventory).toBe(true);
+      } else {
+        expect(postData.moves_inventory).toBe(false);
+      }
+    });
+  } else {
+    await test.step("Close modal without cancelling", async () => {
+      const closeBtn = modal.getByRole('button', { name: 'Cancelar', exact: true }).first();
+      await closeBtn.click();
+      await expect(modal).not.toBeVisible();
+    });
+  }
 }

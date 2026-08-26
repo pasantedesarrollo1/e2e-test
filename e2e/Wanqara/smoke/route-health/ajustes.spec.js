@@ -16,6 +16,7 @@ test.describe("Smoke — Admin Ajustes", { tag: "@smoke" }, () => {
     { path: "/admin/settings/printers",      assert: (p) => assertTextContains(p, "Configuraciones de Impresoras") },
     { path: "/admin/settings/notifications", assert: (p) => assertTextContains(p, "Notificaciones") },
     { path: "/admin/settings/forms",         assert: (p) => assertTextContains(p, "Formularios") },
+    { path: "/admin/settings/subscriptions", assert: (p) => assertTextContains(p, "Suscripciones") },
     { path: "/admin/account",                assert: (p) => assertTextContains(p, "Perfil de Usuario") },
     { path: "/admin/subsidiaries/list",      assert: (p) => assertPageTitle(p, "Sucursales") },
     { path: "/admin/subsidiaries/add",       assert: (p) => assertTextContains(p, "Agregar una Sucursal") },

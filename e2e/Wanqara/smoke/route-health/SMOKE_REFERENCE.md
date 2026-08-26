@@ -79,7 +79,7 @@ test.describe("Smoke — [Section]", { tag: "@smoke" }, () => {
 
 ## Specs — routes covered
 
-### `ajustes.spec.js` — Admin Settings (20 routes)
+### `ajustes.spec.js` — Admin Settings (21 routes)
 
 | Route | Assert | Expected text |
 |---|---|---|
@@ -90,6 +90,7 @@ test.describe("Smoke — [Section]", { tag: "@smoke" }, () => {
 | `/admin/settings/printers` | `assertTextContains` | "Configuraciones de Impresoras" |
 | `/admin/settings/notifications` | `assertTextContains` | "Notificaciones" |
 | `/admin/settings/forms` | `assertTextContains` | "Formularios" |
+| `/admin/settings/subscriptions` | `assertTextContains` | "Suscripciones" |
 | `/admin/account` | `assertTextContains` | "Perfil de Usuario" |
 | `/admin/subsidiaries/list` | `assertPageTitle` | "Sucursales" |
 | `/admin/subsidiaries/add` | `assertTextContains` | "Agregar una Sucursal" |
@@ -323,7 +324,7 @@ test.describe("Smoke — [Section]", { tag: "@smoke" }, () => {
 
 | Spec | Routes |
 |---|---|
-| `ajustes.spec.js` | 20 |
+| `ajustes.spec.js` | 21 |
 | `finanzas-cuentas.spec.js` | 11 |
 | `finanzas-tesoreria.spec.js` | 5 |
 | `inventario-garantias.spec.js` | 6 |
@@ -338,7 +339,7 @@ test.describe("Smoke — [Section]", { tag: "@smoke" }, () => {
 | `transacciones-compras.spec.js` | 6 |
 | `transacciones-otros-documentos.spec.js` | 7 |
 | `transacciones-ventas.spec.js` | 7 |
-| **Total** | **131** |
+| **Total** | **132** |
 
 ---
 
