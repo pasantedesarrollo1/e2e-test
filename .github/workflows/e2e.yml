@@ -8,7 +8,7 @@ env:
 
 jobs:
   smoke:
-    name: Smoke (Chromium)
+    name: Smoke
     runs-on: self-hosted
     timeout-minutes: 30
 
@@ -107,7 +107,7 @@ jobs:
           
           Write-Host "Servidor listo con PID $($proc.Id). Ejecutando Playwright..." -ForegroundColor Green
 
-          npx playwright test --project=chromium --grep "@smoke"
+          npm run test:smoke
           $testExitCode = $LASTEXITCODE
 
           Write-Host "Apagando servidor frontend..." -ForegroundColor Cyan
@@ -125,7 +125,7 @@ jobs:
           retention-days: 7
 
   release:
-    name: Release (Chromium)
+    name: Release
     runs-on: self-hosted
     needs: smoke
     if: always()
@@ -219,7 +219,7 @@ jobs:
           
           Write-Host "Servidor listo con PID $($proc.Id). Ejecutando Playwright..." -ForegroundColor Green
 
-          npx playwright test --project=chromium --grep "@release"
+          npm run test:release
           $testExitCode = $LASTEXITCODE
 
           Write-Host "Apagando servidor frontend..." -ForegroundColor Cyan
@@ -237,10 +237,10 @@ jobs:
           retention-days: 7
 
   regression:
-    name: Regression (Chromium)
+    name: Regression
     runs-on: self-hosted
     needs: release
-    if: false 
+    if: false
     timeout-minutes: 45
 
     steps:
@@ -331,7 +331,7 @@ jobs:
           
           Write-Host "Servidor listo con PID $($proc.Id). Ejecutando Playwright..." -ForegroundColor Green
 
-          npx playwright test --project=chromium --grep "@regression"
+          npx playwright test --grep "@regression"
           $testExitCode = $LASTEXITCODE
 
           Write-Host "Apagando servidor frontend..." -ForegroundColor Cyan
