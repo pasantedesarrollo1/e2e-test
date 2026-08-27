@@ -25,7 +25,9 @@ jobs:
           Write-Host "Actualizando frontend en $env:FRONTEND_PATH..." -ForegroundColor Cyan
           Set-Location $env:FRONTEND_PATH
 
-          git pull origin develop
+          git fetch origin
+          git checkout ${{ github.ref_name }}
+          git pull origin ${{ github.ref_name }}
 
           Write-Host "Instalando dependencias..." -ForegroundColor Cyan
           npm ci
@@ -142,7 +144,9 @@ jobs:
           }
 
           Set-Location $env:FRONTEND_PATH
-          git pull origin develop
+          git fetch origin
+          git checkout ${{ github.ref_name }}
+          git pull origin ${{ github.ref_name }}
           npm ci
           npm run build
           $global:LASTEXITCODE = 0
@@ -219,7 +223,7 @@ jobs:
           
           Write-Host "Servidor listo con PID $($proc.Id). Ejecutando Playwright..." -ForegroundColor Green
 
-          npm run test:release
+          npm run test:release -- --workers=1
           $testExitCode = $LASTEXITCODE
 
           Write-Host "Apagando servidor frontend..." -ForegroundColor Cyan
@@ -254,7 +258,9 @@ jobs:
           }
 
           Set-Location $env:FRONTEND_PATH
-          git pull origin develop
+          git fetch origin
+          git checkout ${{ github.ref_name }}
+          git pull origin ${{ github.ref_name }}
           npm ci
           npm run build
           $global:LASTEXITCODE = 0
