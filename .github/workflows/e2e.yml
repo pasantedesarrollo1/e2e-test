@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Pull y build del frontend
-        shell: pwsh
+        shell: powershell
         env:
           FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
         run: |
@@ -37,7 +37,7 @@ jobs:
           Write-Host "Frontend listo" -ForegroundColor Green
 
       - name: Limpiar puerto si está ocupado
-        shell: pwsh
+        shell: powershell
         run: |
           $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
             -WarningAction SilentlyContinue -InformationLevel Quiet
@@ -62,7 +62,7 @@ jobs:
       - run: npx playwright install chromium
 
       - name: Levantar Servidor y Ejecutar Smoke
-        shell: pwsh
+        shell: powershell
         env:
           FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
           CI: true
@@ -133,7 +133,7 @@ jobs:
 
     steps:
       - name: Pull y build del frontend
-        shell: pwsh
+        shell: powershell
         env:
           FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
         run: |
@@ -149,7 +149,7 @@ jobs:
           Write-Host "Frontend listo" -ForegroundColor Green
 
       - name: Limpiar puerto si está ocupado
-        shell: pwsh
+        shell: powershell
         run: |
           $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
             -WarningAction SilentlyContinue -InformationLevel Quiet
@@ -174,7 +174,7 @@ jobs:
       - run: npx playwright install chromium
 
       - name: Levantar Servidor y Ejecutar Release
-        shell: pwsh
+        shell: powershell
         env:
           FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
           CI: true
@@ -245,7 +245,7 @@ jobs:
 
     steps:
       - name: Pull y build del frontend
-        shell: pwsh
+        shell: powershell
         env:
           FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
         run: |
@@ -261,7 +261,7 @@ jobs:
           Write-Host "Frontend listo" -ForegroundColor Green
 
       - name: Limpiar puerto si está ocupado
-        shell: pwsh
+        shell: powershell
         run: |
           $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
             -WarningAction SilentlyContinue -InformationLevel Quiet
@@ -286,7 +286,7 @@ jobs:
       - run: npx playwright install chromium
 
       - name: Levantar Servidor y Ejecutar Regression
-        shell: pwsh
+        shell: powershell
         env:
           FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
           CI: true
