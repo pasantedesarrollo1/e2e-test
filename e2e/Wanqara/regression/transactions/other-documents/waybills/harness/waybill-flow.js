@@ -86,18 +86,36 @@ export async function fillWaybillDates(page, { startDate, finishDate }) {
 
 export async function selectWarehouse(page, warehouseName) {
   const warehouseAutocomplete = page.getByRole("combobox", { name: "Seleccione una bodega" });
-  await warehouseAutocomplete.click();
+  await warehouseAutocomplete.scrollIntoViewIfNeeded();
+  await warehouseAutocomplete.click({ delay: 100 });
 
   const option = page.locator(".v-list-item").filter({ hasText: warehouseName }).first();
+  
+  try {
+    await option.waitFor({ state: "visible", timeout: 3000 });
+  } catch {
+    await warehouseAutocomplete.click({ force: true, delay: 100 });
+    await option.waitFor({ state: "visible", timeout: 5000 });
+  }
+  
   await option.click();
   await expect(option).not.toBeVisible();
 }
 
 export async function selectCheckout(page, checkoutName) {
   const checkoutAutocomplete = page.getByRole("combobox", { name: "Seleccione un Punto de Venta" });
-  await checkoutAutocomplete.click();
+  await checkoutAutocomplete.scrollIntoViewIfNeeded();
+  await checkoutAutocomplete.click({ delay: 100 });
 
   const option = page.locator(".v-list-item").filter({ hasText: checkoutName }).first();
+  
+  try {
+    await option.waitFor({ state: "visible", timeout: 3000 });
+  } catch {
+    await checkoutAutocomplete.click({ force: true, delay: 100 });
+    await option.waitFor({ state: "visible", timeout: 5000 });
+  }
+  
   await option.click();
   await expect(option).not.toBeVisible();
 }
@@ -162,10 +180,18 @@ export async function fillAddressDetails(page, { address, reason, route, destina
 
   if (destinationSubsidiary) {
     const subsidiaryAutocomplete = page.getByRole("combobox", { name: "Seleccione Sucursal Destino" });
-    await subsidiaryAutocomplete.click();
+    await subsidiaryAutocomplete.scrollIntoViewIfNeeded();
+    await subsidiaryAutocomplete.click({ delay: 100 });
 
     const firstOption = page.locator(".v-overlay-container .v-overlay--active .v-list-item").first();
-    await expect(firstOption).toBeVisible({ timeout: 10_000 });
+    
+    try {
+      await firstOption.waitFor({ state: "visible", timeout: 3000 });
+    } catch {
+      await subsidiaryAutocomplete.click({ force: true, delay: 100 });
+      await firstOption.waitFor({ state: "visible", timeout: 10000 });
+    }
+    
     await firstOption.click();
     await expect(firstOption).not.toBeVisible();
   }
@@ -231,9 +257,18 @@ export async function addCarrierViaEmployeeForm(page, {
   const dialog = page.locator(".v-dialog").filter({ hasText: /Agregar Empleado/i }).first();
 
   const identityTypeSelect = dialog.locator(".v-select").first();
-  await identityTypeSelect.click();
+  await identityTypeSelect.scrollIntoViewIfNeeded();
+  await identityTypeSelect.click({ delay: 100 });
 
   const identityTypeOption = page.locator(".v-list-item").filter({ hasText: new RegExp(`^\\s*${identityType}\\s*$`) }).first();
+  
+  try {
+    await identityTypeOption.waitFor({ state: "visible", timeout: 3000 });
+  } catch {
+    await identityTypeSelect.click({ force: true, delay: 100 });
+    await identityTypeOption.waitFor({ state: "visible", timeout: 5000 });
+  }
+  
   await identityTypeOption.click();
   await expect(identityTypeOption).not.toBeVisible();
 
@@ -290,13 +325,19 @@ export async function fillExternalWaybillForm(page, {
 
 export async function selectFirstAvailableShipmentProductFromSale(page) {
   const productField = page.locator('.v-autocomplete').last().locator('.v-field').first();
-  await productField.click();
+  await productField.scrollIntoViewIfNeeded();
+  await productField.click({ delay: 100 });
 
   const option = page.locator(".v-overlay-container .v-overlay--active .v-list-item").first();
   
-  await expect(option).toBeVisible({ timeout: 5_000 }).catch(() => {
-    throw new Error("The dropdown opened, but it is empty. The selected sale has no remaining quantity available for shipment.");
-  });
+  try {
+    await option.waitFor({ state: "visible", timeout: 3000 });
+  } catch {
+    await productField.click({ force: true, delay: 100 });
+    await option.waitFor({ state: "visible", timeout: 5000 }).catch(() => {
+      throw new Error("The dropdown opened, but it is empty. The selected sale has no remaining quantity available for shipment.");
+    });
+  }
   
   await option.click();
   await expect(option).not.toBeVisible();
