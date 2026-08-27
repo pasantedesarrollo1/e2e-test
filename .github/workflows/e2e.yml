@@ -81,6 +81,7 @@ jobs:
           PLAYWRIGHT_CHEF_RUC: ${{ secrets.PLAYWRIGHT_CHEF_RUC }}
           PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
           PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
+          PLAYWRIGHT_RESTAURANT_SUBSIDIARY: ${{ secrets.PLAYWRIGHT_RESTAURANT_SUBSIDIARY }}
         run: |
           Write-Host "Iniciando servidor frontend en segundo plano..." -ForegroundColor Cyan
           $proc = Start-Process npm.cmd `
@@ -195,6 +196,7 @@ jobs:
           PLAYWRIGHT_CHEF_RUC: ${{ secrets.PLAYWRIGHT_CHEF_RUC }}
           PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
           PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
+          PLAYWRIGHT_RESTAURANT_SUBSIDIARY: ${{ secrets.PLAYWRIGHT_RESTAURANT_SUBSIDIARY }}
         run: |
           Write-Host "Iniciando servidor frontend en segundo plano..." -ForegroundColor Cyan
           $proc = Start-Process npm.cmd `
@@ -309,6 +311,7 @@ jobs:
           PLAYWRIGHT_CHEF_RUC: ${{ secrets.PLAYWRIGHT_CHEF_RUC }}
           PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
           PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
+          PLAYWRIGHT_RESTAURANT_SUBSIDIARY: ${{ secrets.PLAYWRIGHT_RESTAURANT_SUBSIDIARY }}
         run: |
           Write-Host "Iniciando servidor frontend en segundo plano..." -ForegroundColor Cyan
           $proc = Start-Process npm.cmd `
