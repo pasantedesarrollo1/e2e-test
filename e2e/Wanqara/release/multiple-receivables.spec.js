@@ -15,6 +15,7 @@ const tenantBaseUrl = getTenantBaseUrl();
 const authType001 = getElectronicInvoicingAuthType(); 
 
 test.describe("Admin Payments — Multiple Receivables @release", () => {
+  test.skip(true, "Skipped in develop: Feature WS-840 belongs to an unmerged branch.");
   requirePosCredentials(test);
   
   test.use({ storageState: getSessionPath(authType001) });

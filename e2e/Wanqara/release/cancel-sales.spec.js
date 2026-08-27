@@ -10,6 +10,7 @@ import { cancelFirstSaleAndVerify } from "./herness/cancel-sale-flow.js";
 const tenantBaseUrl = getTenantBaseUrl();
 
 test.describe.serial("Cancel Normal Sales (Admin) @release", () => {
+  test.skip(true, "Skipped in develop: Feature WS-840 belongs to an unmerged branch.");
   requirePosCredentials(test);
 
   test("Restaurant (No Dispatch) - Creates a normal sale and cancels it, verifying that the inventory switch is displayed", async ({ browser }) => {
@@ -64,6 +65,7 @@ test.describe.serial("Cancel Normal Sales (Admin) @release", () => {
 });
 
 test.describe.serial("Cancel Pre-Sales (Admin) @release", () => {
+  test.skip(true, "Skipped in develop: Feature WS-840 belongs to an unmerged branch.");
   requirePosCredentials(test);
 
   test("Restaurant (No Dispatch) - Creates a pre-sale and cancels it, verifying that the message is displayed without the switch", async ({ browser }) => {
@@ -118,6 +120,7 @@ test.describe.serial("Cancel Pre-Sales (Admin) @release", () => {
 });
 
 test.describe.serial("Cancel Sales (POS) @release", () => {
+  test.skip(true, "Skipped in develop: Feature WS-840 belongs to an unmerged branch.");
   requirePosCredentials(test);
 
   test("Retail (100) - Creates a POS sale and cancels it, verifying that the inventory switch is displayed", async ({ browser }) => {
