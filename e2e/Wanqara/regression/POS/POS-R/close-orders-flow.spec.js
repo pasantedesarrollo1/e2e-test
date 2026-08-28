@@ -5,6 +5,7 @@ import {
   getTenantBaseUrl,
 } from "../../../harness/settings.js";
 import { getSessionPath } from "../../../harness/auth.js";
+import { SEED } from "../../../harness/seed.js";
 import {
   createChefOrder,
   navigateToRestaurantPOS,
@@ -22,6 +23,8 @@ test.describe("POS Restaurant — Close Orders @regression", () => {
   requirePosCredentials(test);
   requireChefCredentials(test);
 
+  let activeTableName;
+
   test.use({ storageState: getSessionPath("restaurant") });
 
   test.beforeAll(async ({ browser }) => {
@@ -35,7 +38,7 @@ test.describe("POS Restaurant — Close Orders @regression", () => {
 
   test("creates a new order from Chef for closure", async ({ page }) => {
     test.setTimeout(120_000);
-    await createChefOrder(page);
+    activeTableName = await createChefOrder(page);
   });
 
   test("closes an existing order from the POS", async ({ page }) => {
@@ -48,7 +51,7 @@ test.describe("POS Restaurant — Close Orders @regression", () => {
     });
 
     await test.step("Open orders modal and select order", async () => {
-      await openAndSelectOrder(page);
+      await openAndSelectOrder(page, activeTableName);
     });
 
     await test.step("Navigate to close order screen", async () => {
@@ -56,7 +59,7 @@ test.describe("POS Restaurant — Close Orders @regression", () => {
     });
 
     await test.step("Process order closure with observations", async () => {
-      await processOrderClosure(page, "test");
+      await processOrderClosure(page, SEED.restaurant.closeReason);
     });
   });
 });

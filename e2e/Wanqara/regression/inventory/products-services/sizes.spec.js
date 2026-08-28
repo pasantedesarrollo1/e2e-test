@@ -1,17 +1,15 @@
 import { test, expect } from "@playwright/test";
-import {
-  requirePosCredentials,
-  getTenantBaseUrl,
-} from "../../../harness/settings.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
 import { ensureCleanRecord } from "../../../harness/crud-helpers.js";
 import { withPath } from "../../../harness/urls.js";
+import { SEED } from "../../../harness/seed.js";
 
 test.describe("Inventory — Sizes @regression", () => {
   requirePosCredentials(test);
 
   test("ensures a size is cleanly created and verified in the list", async ({ page }) => {
     const tenantBaseUrl = getTenantBaseUrl();
-    const SIZE_NAME = "Talla Test Automatizado";
+    const { name, observation } = SEED.attributes.size;
 
     test.info().annotations.push({
       type: "issue",
@@ -26,10 +24,10 @@ test.describe("Inventory — Sizes @regression", () => {
     await ensureCleanRecord(page, {
       listPath: withPath(tenantBaseUrl, "/admin/sizes/list"),
       addPath: withPath(tenantBaseUrl, "/admin/sizes/add"),
-      name: SIZE_NAME,
+      name: name,
       fillForm: async (page) => {
-        await page.getByRole("textbox", { name: /Nombre de la Talla/i }).fill(SIZE_NAME);
-        await page.getByRole("textbox", { name: /Observación de la talla/i }).fill("Observación de prueba automatizada");
+        await page.getByRole("textbox", { name: /Nombre de la Talla/i }).fill(name);
+        await page.getByRole("textbox", { name: /Observación de la talla/i }).fill(observation);
       },
       endpointPattern: "/api/v1/general/sizes",
       successMessage: "Talla Creada",

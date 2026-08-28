@@ -1,26 +1,24 @@
 import { test, expect } from "@playwright/test";
-import {
-  requirePosCredentials,
-  getTenantBaseUrl,
-} from "../../../harness/settings.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
 import { ensureCleanRecord } from "../../../harness/crud-helpers.js";
 import { withPath } from "../../../harness/urls.js";
+import { SEED } from "../../../harness/seed.js";
 
 test.describe("Inventory — Surcharges @regression", () => {
   requirePosCredentials(test);
 
-  test("ensures a 10% surcharge is cleanly created and verified", async ({ page }) => {
+  test("ensures a manual surcharge is cleanly created and verified", async ({ page }) => {
     const tenantBaseUrl = getTenantBaseUrl();
-    const SURCHARGE_NAME = "Recargo Test Automatizado";
+    const { name, percentage } = SEED.surcharge.crud;
 
     await ensureCleanRecord(page, {
       listPath: withPath(tenantBaseUrl, "/admin/surcharges/list"),
       addPath: withPath(tenantBaseUrl, "/admin/surcharges/add"),
-      name: SURCHARGE_NAME,
+      name: name,
       fillForm: async (page) => {
-        await page.getByRole("textbox", { name: /Nombre del recargo/i }).fill(SURCHARGE_NAME);
+        await page.getByRole("textbox", { name: /Nombre del recargo/i }).fill(name);
         const percentageInput = page.getByPlaceholder("Porcentaje del recargo");
-        await percentageInput.fill("10");
+        await percentageInput.fill(percentage);
         await percentageInput.press("Tab");
       },
       endpointPattern: "/api/v1/general/surcharges",

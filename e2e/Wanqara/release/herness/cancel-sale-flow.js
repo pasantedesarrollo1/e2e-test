@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { withPath } from "../../harness/urls.js";
+import { SEED } from "../../harness/seed.js";
 
 export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwitch, expectMessage, confirmCancellation = true }) {
   const getSalesPromise = page.waitForResponse(res => 
@@ -82,7 +83,7 @@ export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwit
       );
 
       const observationInput = modal.getByRole("textbox", { name: /Motivo de anulación/i });
-      await observationInput.fill("test");
+      await observationInput.fill(SEED.sale.annulmentReason);
 
       if (expectSwitch) {
         const inventorySwitch = modal.locator('.v-switch').filter({ hasText: /Mover inventario/i });

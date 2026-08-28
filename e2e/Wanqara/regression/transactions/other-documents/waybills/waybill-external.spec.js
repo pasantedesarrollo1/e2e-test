@@ -1,10 +1,8 @@
 import { test, expect } from "@playwright/test";
-import {
-  requirePosCredentials,
-  getTenantBaseUrl,
-} from "../../../../harness/settings.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
 import { SEED, getElectronicInvoicingAuthType } from "../../../../harness/seed.js";
 import { getSessionPath } from "../../../../harness/auth.js";
+import { runAdminSaleFlow } from "../../sales/harness/admin-sale-flow.js";
 import {
   CARRIER_CASES,
   assignCarrier,
@@ -16,10 +14,11 @@ import {
   submitWaybillAndVerify,
 } from "./harness/waybill-flow.js";
 
-test.describe("Waybills — External Waybill @regression", () => {
+test.describe.serial("Waybills — External Waybill @regression", () => {
   requirePosCredentials(test);
 
-  test.use({ storageState: getSessionPath(getElectronicInvoicingAuthType()) });
+  const authType = getElectronicInvoicingAuthType();
+  test.use({ storageState: getSessionPath(authType) });
 
   const tenantBaseUrl = getTenantBaseUrl();
 
@@ -45,15 +44,15 @@ test.describe("Waybills — External Waybill @regression", () => {
         await expect(page.getByText(/Empleado Test 1.*Identificación:/i)).toBeVisible();
       });
 
-        if (!isLast) {
-          await test.step(`Clear carrier assignment after ${label}`, async () => {
-            const clearBtn = page.locator(".tw-flex > .tw-flex.tw-gap-1")
-              .getByRole("button")
-              .last();
-            await clearBtn.click();
-            await expect(page.getByText(/Empleado Test 1.*Identificación:/i)).not.toBeVisible();
-          });
-        }
+      if (!isLast) {
+        await test.step(`Clear carrier assignment after ${label}`, async () => {
+          const clearBtn = page.locator(".tw-flex > .tw-flex.tw-gap-1")
+            .getByRole("button")
+            .last();
+          await clearBtn.click();
+          await expect(page.getByText(/Empleado Test 1.*Identificación:/i)).not.toBeVisible();
+        });
+      }
     }
 
     await test.step("Enter the delivery information", async () => {
@@ -73,6 +72,53 @@ test.describe("Waybills — External Waybill @regression", () => {
     });
 
     await test.step("Save the waybill and verify the redirect", async () => {
+      await submitWaybillAndVerify(page, { tenantBaseUrl });
+    });
+  });
+
+  test("creates a sale and an external waybill with a long product name", async ({ page }) => {
+    test.setTimeout(240_000);
+
+    await test.step("Create a sale with electronic invoice and the long product", async () => {
+      await runAdminSaleFlow(page, {
+        tenantBaseUrl,
+        authType,
+        documentType: SEED.documentTypes.facturaElectronica,
+        clientCedula: SEED.clients.test.cedula,
+        productName: SEED.products.estandarLargo.name,
+      });
+    });
+
+    await test.step("Fill external waybill form using the newly created sale", async () => {
+      await fillExternalWaybillForm(page, {
+        tenantBaseUrl,
+        checkoutName: SEED.pos.checkout,
+        saleIndex: 0,
+      });
+    });
+
+    await test.step("Enter vehicle plate and carrier", async () => {
+      await fillVehiclePlate(page, SEED.waybills.vehiclePlate);
+      await assignCarrier(page, "cedula");
+    });
+
+    await test.step("Enter delivery information", async () => {
+      await fillAddressDetails(page, {
+        address: SEED.waybills.address,
+        reason: SEED.waybills.reason,
+        route: SEED.waybills.route,
+      });
+    });
+
+    await test.step("Select the long product from the sale items", async () => {
+      await selectFirstAvailableShipmentProductFromSale(page);
+    });
+
+    await test.step("Enter shipment quantity", async () => {
+      await fillShipmentAmount(page, SEED.waybills.shipmentAmountExternal);
+    });
+
+    await test.step("Save external waybill and verify", async () => {
       await submitWaybillAndVerify(page, { tenantBaseUrl });
     });
   });

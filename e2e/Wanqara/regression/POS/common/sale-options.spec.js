@@ -91,11 +91,17 @@ for (const env of environments) {
         await closeDrawer(page, drawerFilter);
       });
 
-      await test.step("Complete the sale", async () => {
+      await test.step("Complete the sale and print ticket", async () => {
         const finishBtn = page.getByRole("button", { name: /Terminar Venta/i });
         await finishBtn.click();
         await page.waitForURL(env.paymentUrl);
-        await completePayment(page);
+        await completePayment(page, { printTicket: true });
+      });
+
+      await test.step("Verify 'Comprobante Impreso' notification", async () => {
+        await expect(
+          page.locator(".v-snackbar").filter({ hasText: /Comprobante Impreso/i }).first()
+        ).toBeVisible({ timeout: 15000 });
       });
     });
 
@@ -126,11 +132,17 @@ for (const env of environments) {
         await expandAndRecoverFirstSavedSale(page);
       });
 
-      await test.step("Complete the recovered sale", async () => {
+      await test.step("Complete the recovered sale and print ticket", async () => {
         const finishBtn = page.getByRole("button", { name: /Terminar Venta/i });
         await finishBtn.click();
         await page.waitForURL(env.paymentUrl);
-        await completePayment(page);
+        await completePayment(page, { printTicket: true });
+      });
+
+      await test.step("Verify 'Comprobante Impreso' notification", async () => {
+        await expect(
+          page.locator(".v-snackbar").filter({ hasText: /Comprobante Impreso/i }).first()
+        ).toBeVisible({ timeout: 15000 });
       });
     });
   });

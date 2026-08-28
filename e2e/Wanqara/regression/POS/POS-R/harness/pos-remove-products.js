@@ -8,7 +8,10 @@ export async function navigateToRemoveProducts(page) {
 }
 
 export async function selectProductToRemove(page, productName) {
-  const productCard = page.locator(".tw-cursor-pointer").filter({ hasText: new RegExp(productName, "i") }).first();
+  const productCard = page
+    .locator(".tw-cursor-pointer")
+    .filter({ hasText: productName })
+    .first();   
   await expect(productCard).toBeVisible();
   await productCard.click();
 }

@@ -5,6 +5,7 @@ import {
   getTenantBaseUrl,
 } from "../../../harness/settings.js";
 import { getSessionPath } from "../../../harness/auth.js";
+import { SEED } from "../../../harness/seed.js";
 import {
   createChefOrder,
   navigateToRestaurantPOS,
@@ -21,6 +22,8 @@ test.describe("POS Restaurant — Update Order Flow @regression", () => {
   requirePosCredentials(test);
   requireChefCredentials(test);
 
+  let activeTableName;
+
   test.use({ storageState: getSessionPath("restaurant") });
 
   test.beforeAll(async ({ browser }) => {
@@ -34,7 +37,7 @@ test.describe("POS Restaurant — Update Order Flow @regression", () => {
 
   test("creates a new order from Chef", async ({ page }) => {
     test.setTimeout(120_000);
-    await createChefOrder(page);
+    activeTableName = await createChefOrder(page);
   });
 
   test("adds a product to an existing order and completes the sale", async ({ page }) => {
@@ -47,11 +50,11 @@ test.describe("POS Restaurant — Update Order Flow @regression", () => {
     });
 
     await test.step("Open orders modal and select order", async () => {
-      await openAndSelectOrder(page);
+      await openAndSelectOrder(page, activeTableName);
     });
 
     await test.step("Add a product to the existing order", async () => {
-      await addProductToExistingOrder(page, "Caja de alitas de pollo (100 u)");
+      await addProductToExistingOrder(page, SEED.products.estandar.name);
     });
 
     await test.step("Collect order and verify payments screen", async () => {

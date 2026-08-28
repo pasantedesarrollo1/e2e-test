@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { withPath } from "../../harness/urls.js";
-import { SEED_SUBSCRIPTIONS } from "./subscriptions-seed.js";
+import { withPath } from "../../../../../harness/urls.js";
+import { SEED_SUBSCRIPTIONS } from "../../../../../harness/seeds/subscriptions-seed.js";
 
 const normalizeText = (str) => {
   return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase() : "";

@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { withPath } from "../../harness/urls.js";
+import { withPath } from "../../../../harness/urls.js";
 
 export async function navigateToProductAndVerifyRecipeDecimals(page, {
   tenantBaseUrl,

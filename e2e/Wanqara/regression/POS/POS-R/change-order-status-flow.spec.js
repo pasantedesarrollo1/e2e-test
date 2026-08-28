@@ -40,7 +40,7 @@ test.describe("POS Restaurant — Change Order Status Flow @regression", () => {
     const tenantBaseUrl = getTenantBaseUrl();
 
     await test.step("Create order and print preticket from Chef", async () => {
-      await createChefOrder(page, { tableName: "mesa 1" });
+      await createChefOrder(page);
       await printPreticket(page);
     });
 

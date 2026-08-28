@@ -1,9 +1,13 @@
 import { expect } from "@playwright/test";
 
-export async function selectTable(page, tableName) {
-  const tableCard = page.getByRole("button", { name: new RegExp(tableName, "i") });
+export async function selectTable(page) {
+  const tableCard = page.locator("ion-card").filter({ hasText: "Disponible" }).first();
   await expect(tableCard).toBeVisible();
+
+  const tableName = await tableCard.locator(".text-lg").innerText();
   await tableCard.click();
+
+  return tableName.trim();
 }
 
 export async function searchAndSelectProduct(page, productName) {
@@ -16,7 +20,7 @@ export async function searchAndSelectProduct(page, productName) {
   await searchbar.click();
   await searchbar.fill(productName);
 
-  const productButton = page.getByRole("button", { name: new RegExp(productName, "i") }).first();
+  const productButton = page.getByRole("button", { name: productName }).first();
   await expect(productButton).toBeVisible();
   await productButton.click();
 }

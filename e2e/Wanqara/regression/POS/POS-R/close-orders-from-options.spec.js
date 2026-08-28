@@ -5,6 +5,7 @@ import {
   getTenantBaseUrl,
 } from "../../../harness/settings.js";
 import { getSessionPath } from "../../../harness/auth.js";
+import { SEED } from "../../../harness/seed.js";
 import {
   createChefOrder,
   navigateToRestaurantPOS,
@@ -65,7 +66,7 @@ test.describe("POS Restaurant — Close Orders from Options Menu @regression", (
     });
 
     await test.step("Process order closure with observations", async () => {
-      await processOrderClosure(page, "test");
+      await processOrderClosure(page, SEED.restaurant.closeReason);
     });
   });
 });

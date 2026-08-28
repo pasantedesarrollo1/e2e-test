@@ -10,9 +10,8 @@ export async function navigateToSeparateOrder(page) {
 export async function selectProductToSeparate(page, productName) {
   const productCard = page
     .locator(".tw-cursor-pointer")
-    .filter({ hasText: new RegExp(productName, "i") })
+    .filter({ hasText: productName })
     .first();
-    
   await expect(productCard).toBeVisible();
   await productCard.click();
 }

@@ -1,8 +1,5 @@
 import { test, expect } from "@playwright/test";
-import {
-  requirePosCredentials,
-  getTenantBaseUrl,
-} from "../../../../harness/settings.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
 import { SEED, getElectronicInvoicingAuthType } from "../../../../harness/seed.js";
 import { getSessionPath } from "../../../../harness/auth.js";
 import {
@@ -16,7 +13,7 @@ import {
   submitWaybillAndVerify,
 } from "./harness/waybill-flow.js";
 
-test.describe("Waybills — Internal Waybill @regression", () => {
+test.describe.serial("Waybills — Internal Waybill @regression", () => {
   requirePosCredentials(test);
 
   test.use({ storageState: getSessionPath(getElectronicInvoicingAuthType()) });
@@ -75,6 +72,44 @@ test.describe("Waybills — Internal Waybill @regression", () => {
     });
 
     await test.step("Save the waybill and verify the redirect", async () => {
+      await submitWaybillAndVerify(page, { tenantBaseUrl });
+    });
+  });
+
+  test("creates an internal waybill with a long product name", async ({ page }) => {
+    test.setTimeout(180_000);
+
+    await test.step("Fill internal waybill form", async () => {
+      await fillInternalWaybillForm(page, {
+        tenantBaseUrl,
+        warehouseName: SEED.pos.warehouse,
+        checkoutName: SEED.pos.checkout,
+      });
+    });
+
+    await test.step("Enter vehicle plate and carrier", async () => {
+      await fillVehiclePlate(page, SEED.waybills.vehiclePlate);
+      await assignCarrier(page, "cedula");
+    });
+
+    await test.step("Enter delivery information", async () => {
+      await fillAddressDetails(page, {
+        address: SEED.waybills.address,
+        reason: SEED.waybills.reason,
+        route: SEED.waybills.route,
+        destinationSubsidiary: SEED.waybills.destinationSubsidiary,
+      });
+    });
+
+    await test.step("Search and select the long product name", async () => {
+      await searchAndSelectShipmentProduct(page, SEED.products.estandarLargo.name);
+    });
+
+    await test.step("Enter shipment quantity", async () => {
+      await fillShipmentAmount(page, SEED.waybills.shipmentAmountInternal);
+    });
+
+    await test.step("Save internal waybill and verify", async () => {
       await submitWaybillAndVerify(page, { tenantBaseUrl });
     });
   });

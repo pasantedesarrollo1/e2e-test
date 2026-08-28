@@ -1,14 +1,14 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../harness/auth.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
+import { getSessionPath, ensureAuthenticated } from "../../../../harness/auth.js";
 import { 
   validateSubscriptionsOverview, 
   validateSubsidiaryCapabilityBadges 
-} from "./herness/subscriptions-flow.js";
+} from "./harness/subscriptions-flow.js";
 
 const tenantBaseUrl = getTenantBaseUrl();
 
-test.describe("Subscriptions Overview @release", () => {
+test.describe("Subscriptions Overview @regression", () => {
   requirePosCredentials(test);
 
   test.use({ storageState: getSessionPath("retail") });

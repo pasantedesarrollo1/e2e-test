@@ -135,12 +135,19 @@ for (const env of environments) {
         ).toBeVisible();
       });
 
-      await test.step("Complete the sale with the assigned customer", async () => {
+      await test.step("Complete the sale with the assigned customer and print ticket", async () => {
         await runPosSaleFlow(page, {
           tenantBaseUrl: getTenantBaseUrl(),
           productName: SEED.products.estandar.name,
           skipNavigation: true,
+          printTicket: true,
         });
+      });
+
+      await test.step("Verify 'Comprobante Impreso' notification", async () => {
+        await expect(
+          page.locator(".v-snackbar").filter({ hasText: /Comprobante Impreso/i }).first()
+        ).toBeVisible({ timeout: 15000 });
       });
     });
   });

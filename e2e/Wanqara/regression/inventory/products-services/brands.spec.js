@@ -1,26 +1,24 @@
 import { test } from "@playwright/test";
-import {
-  requirePosCredentials,
-  getTenantBaseUrl,
-} from "../../../harness/settings.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
 import { ensureCleanRecord } from "../../../harness/crud-helpers.js";
 import { withPath } from "../../../harness/urls.js";
+import { SEED } from "../../../harness/seed.js";
 
 test.describe("Inventory — Brands @regression", () => {
   requirePosCredentials(test);
 
   test("ensures a brand is cleanly created and verified in the list", async ({ page }) => {
     const tenantBaseUrl = getTenantBaseUrl();
-    const BRAND_NAME = "Marca Test Automatizado";
+    const { name, order, observation } = SEED.attributes.brand;
 
     await ensureCleanRecord(page, {
       listPath: withPath(tenantBaseUrl, "/admin/brands/list"),
       addPath: withPath(tenantBaseUrl, "/admin/brands/add"),
-      name: BRAND_NAME,
+      name: name,
       fillForm: async (page) => {
-        await page.getByPlaceholder("Nombre de la Marca").fill(BRAND_NAME);
-        await page.getByPlaceholder("Orden de la Marca").fill("1");
-        await page.getByPlaceholder("Observaciones").fill("test");
+        await page.getByPlaceholder("Nombre de la Marca").fill(name);
+        await page.getByPlaceholder("Orden de la Marca").fill(order);
+        await page.getByPlaceholder("Observaciones").fill(observation);
       },
       endpointPattern: "/api/v1/inventory/brands",
       confirmButtonRegex: /^Aceptar$/i,

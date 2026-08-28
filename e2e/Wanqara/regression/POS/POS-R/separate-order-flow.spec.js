@@ -5,6 +5,7 @@ import {
   getTenantBaseUrl,
 } from "../../../harness/settings.js";
 import { getSessionPath } from "../../../harness/auth.js";
+import { SEED } from "../../../harness/seed.js";
 import {
   createChefOrder,
   navigateToRestaurantPOS,
@@ -24,6 +25,8 @@ test.describe("POS Restaurant — Separate Order Flow @regression", () => {
   requirePosCredentials(test);
   requireChefCredentials(test);
 
+  let activeTableName;
+
   test.use({ storageState: getSessionPath("restaurant") });
 
   test.beforeAll(async ({ browser }) => {
@@ -37,7 +40,7 @@ test.describe("POS Restaurant — Separate Order Flow @regression", () => {
 
   test("creates an order from Chef with 2 units", async ({ page }) => {
     test.setTimeout(120_000);
-    await createChefOrder(page, { quantity: 2 });
+    activeTableName = await createChefOrder(page, { quantity: 2 });
   });
 
   test("separates a product from an existing order and completes the sale", async ({ page }) => {
@@ -50,7 +53,7 @@ test.describe("POS Restaurant — Separate Order Flow @regression", () => {
     });
 
     await test.step("Open orders modal and select order", async () => {
-      await openAndSelectOrder(page);
+      await openAndSelectOrder(page, activeTableName);
     });
 
     await test.step("Navigate to separate order screen", async () => {
@@ -58,7 +61,7 @@ test.describe("POS Restaurant — Separate Order Flow @regression", () => {
     });
 
     await test.step("Select a product to separate", async () => {
-      await selectProductToSeparate(page, "caja de alitas");
+      await selectProductToSeparate(page, SEED.products.estandar.name);
     });
 
     await test.step("Confirm separation and verify POS is ready", async () => {

@@ -28,8 +28,8 @@ export async function navigateToRestaurantPOS(page, tenantBaseUrl) {
   if (await loginBtn.isVisible()) {
     await loginAndSelectSubsidiary(page, {
       tenantBaseUrl,
-      login: playwrightHarness.login,
-      subsidiaryName: SEED.subsidiary.name,
+      login: playwrightHarness.users.restaurant,
+      subsidiaryName: SEED.subsidiaries.restaurant.name,
     });
     await page.goto(`${tenantBaseUrl}/pos/restaurant-home`);
     await expect(clienteLabel).toBeVisible({ timeout: 60_000 });
@@ -37,8 +37,7 @@ export async function navigateToRestaurantPOS(page, tenantBaseUrl) {
 }
 
 export async function createChefOrder(page, {
-  tableName   = "mesa 1",
-  productName = "caja de alitas",
+  productName = SEED.products.estandar.name,
   quantity    = 1,
 } = {}) {
   await ensureChefAuthenticated(page, {
@@ -52,10 +51,12 @@ export async function createChefOrder(page, {
     page.locator("ion-segment-button").filter({ hasText: "Todos" })
   ).toBeVisible();
 
-  await selectTable(page, tableName);
+  const tableName = await selectTable(page);
   await searchAndSelectProduct(page, productName);
   await addProductToCart(page, quantity);
   await submitOrder(page);
+
+  return tableName;
 }
 
 export async function finalizeSaleWithPayment(page) {
@@ -141,7 +142,7 @@ export async function navigateToCloseOrderFromOptions(page) {
   await page.waitForURL(/\/pos\/close-restaurant-order/);
 }
 
-export async function openAndSelectOrder(page, tableName = "mesa 1") {
+export async function openAndSelectOrder(page, tableName) {
   const cobrarBtn = page.getByRole("button", { name: /Cobrar pedidos/i });
   await expect(cobrarBtn).toBeVisible();
   await cobrarBtn.click({ force: true });
@@ -195,7 +196,7 @@ export async function closeAllActiveOrders(page, tenantBaseUrl) {
     }
 
     await orderCard.click();
-    await processOrderClosure(page, "Limpieza automática pre-prueba (Basura residual)");
+    await processOrderClosure(page, SEED.restaurant.cleanupReason);
 
     await page.goto(`${tenantBaseUrl}/pos/restaurant-home`);
   }

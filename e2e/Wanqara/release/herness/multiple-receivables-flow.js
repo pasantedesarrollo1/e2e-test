@@ -43,13 +43,13 @@ export async function fillPaymentDetailsAndSubmit(page) {
     await amountInput.click();
     await amountInput.click();
     await amountInput.press("End");
-    await amountInput.fill("0.01");
+    await amountInput.fill(SEED.receivables.paymentAmount);
     await amountInput.press("Tab");
   }
 
   const descriptionInput = page.getByRole("textbox", { name: /Agrega una Descripción al/i });
   await descriptionInput.click();
-  await descriptionInput.fill("Automated test payment");
+  await descriptionInput.fill(SEED.receivables.paymentDescription);
   await descriptionInput.press("Tab");
 
   const efectivoCard = page.locator(".multi-method-card").filter({ hasText: /^EFECTIVO$/i }).first();
@@ -86,7 +86,7 @@ export async function validateInitialDeletionError(page) {
   await expect(modal).toBeVisible();
 
   const reasonInput = modal.getByRole("textbox", { name: /Motivo de eliminación/i });
-  await reasonInput.fill("test");
+  await reasonInput.fill(SEED.receivables.initialDeleteReason);
 
   const confirmDeleteBtn = modal.getByRole("button", { name: /Eliminar Abono/i });
   await confirmDeleteBtn.click();
@@ -133,7 +133,7 @@ export async function confirmFinalDeletion(page) {
 
   const reasonInput = deleteModal.getByRole("textbox", { name: /Motivo de eliminación/i });
   await reasonInput.click();
-  await reasonInput.fill("test deletion reason");
+  await reasonInput.fill(SEED.receivables.finalDeleteReason);
 
   const confirmDeleteBtn = deleteModal.getByRole("button", { name: /^Eliminar Abono$/i });
 

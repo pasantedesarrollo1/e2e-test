@@ -19,6 +19,8 @@ test.describe("POS Restaurant — Collect Orders @regression", () => {
   requirePosCredentials(test);
   requireChefCredentials(test);
 
+  let activeTableName;
+
   test.use({ storageState: getSessionPath("restaurant") });
 
   test.beforeAll(async ({ browser }) => {
@@ -32,7 +34,7 @@ test.describe("POS Restaurant — Collect Orders @regression", () => {
 
   test("creates a new order from Chef", async ({ page }) => {
     test.setTimeout(120_000);
-    await createChefOrder(page);
+    activeTableName = await createChefOrder(page);
   });
 
   test("collects an existing order, assigns a client and completes the sale", async ({ page }) => {
@@ -45,7 +47,7 @@ test.describe("POS Restaurant — Collect Orders @regression", () => {
     });
 
     await test.step("Open orders modal and select order", async () => {
-      await openAndSelectOrder(page);
+      await openAndSelectOrder(page, activeTableName);
     });
 
     await test.step("Load order into POS via Procesar pago", async () => {

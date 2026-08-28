@@ -1,8 +1,6 @@
 import { test, expect } from "@playwright/test";
-import {
-  requirePosCredentials,
-  getTenantBaseUrl,
-} from "../../../harness/settings.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
+import { SEED } from "../../../harness/seed.js";
 import {
   fillDiscountForm,
   saveDiscount,
@@ -14,24 +12,23 @@ import {
 test.describe("Inventory — Discounts @regression", () => {
   requirePosCredentials(test);
 
-  const DISCOUNT_NAME = "Descuento Siempre Porcentaje";
-
   test("verifies discount summary for 'Siempre' + 'Porcentaje' and creates the discount", async ({ page }) => {
     const tenantBaseUrl = getTenantBaseUrl();
+    const data = SEED.discount.crud.alwaysPercentage;
     test.setTimeout(120_000);
 
     await test.step("Search for the discount and delete it if found", async () => {
-      await deleteDiscountIfExists(page, { tenantBaseUrl, name: DISCOUNT_NAME });
+      await deleteDiscountIfExists(page, { tenantBaseUrl, name: data.name });
     });
 
     await test.step("Navigate to the add discount form", async () => {
       await fillDiscountForm(page, {
         tenantBaseUrl,
-        name: DISCOUNT_NAME,
-        description: "test automatizado",
+        name: data.name,
+        description: data.description,
         applicationMethod: "always",
         type: "porcentaje",
-        discount: 10,
+        discount: data.discount,
       });
     });
 
@@ -39,7 +36,7 @@ test.describe("Inventory — Discounts @regression", () => {
       await assertDiscountSummary(page, {
         applicationMethod: "always",
         type: "porcentaje",
-        discount: 10,
+        discount: data.discount,
       });
     });
 
@@ -48,23 +45,24 @@ test.describe("Inventory — Discounts @regression", () => {
     });
 
     await test.step("Verify the discount appears in the list", async () => {
-      await verifyDiscountInList(page, { tenantBaseUrl, name: DISCOUNT_NAME });
+      await verifyDiscountInList(page, { tenantBaseUrl, name: data.name });
     });
   });
 
   test("verifies discount summary for 'Por Cada' + 'Fijo'", async ({ page }) => {
     const tenantBaseUrl = getTenantBaseUrl();
+    const data = SEED.discount.crud.everyFixed;
     test.setTimeout(120_000);
 
     await test.step("Navigate to the add discount form", async () => {
       await fillDiscountForm(page, {
         tenantBaseUrl,
-        name: "Descuento Por Cada Fijo",
-        description: "test automatizado",
+        name: data.name,
+        description: data.description,
         applicationMethod: "every_to",
         type: "fijo",
-        discount: 1,
-        quantity: 10,
+        discount: data.discount,
+        quantity: data.quantity,
       });
     });
 
@@ -72,25 +70,26 @@ test.describe("Inventory — Discounts @regression", () => {
       await assertDiscountSummary(page, {
         applicationMethod: "every_to",
         type: "fijo",
-        discount: 1,
-        quantity: 10,
+        discount: data.discount,
+        quantity: data.quantity,
       });
     });
   });
 
   test("verifies discount summary for 'A partir de' + 'Porcentaje'", async ({ page }) => {
     const tenantBaseUrl = getTenantBaseUrl();
+    const data = SEED.discount.crud.fromPercentage;
     test.setTimeout(120_000);
 
     await test.step("Navigate to the add discount form", async () => {
       await fillDiscountForm(page, {
         tenantBaseUrl,
-        name: "Descuento A Partir De Porcentaje",
-        description: "test automatizado",
+        name: data.name,
+        description: data.description,
         applicationMethod: "from_to",
         type: "porcentaje",
-        discount: 5,
-        quantity: 3,
+        discount: data.discount,
+        quantity: data.quantity,
       });
     });
 
@@ -98,8 +97,8 @@ test.describe("Inventory — Discounts @regression", () => {
       await assertDiscountSummary(page, {
         applicationMethod: "from_to",
         type: "porcentaje",
-        discount: 5,
-        quantity: 3,
+        discount: data.discount,
+        quantity: data.quantity,
       });
     });
   });

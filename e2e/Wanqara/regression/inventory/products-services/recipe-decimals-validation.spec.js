@@ -1,12 +1,12 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../harness/auth.js";
-import { SEED } from "../harness/seed.js";
-import { navigateToProductAndVerifyRecipeDecimals } from "./herness/recipe-helpers.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
+import { getSessionPath, ensureAuthenticated } from "../../../harness/auth.js";
+import { SEED } from "../../../harness/seed.js";
+import { navigateToProductAndVerifyRecipeDecimals } from "./harness/recipe-helpers.js";
 
 const tenantBaseUrl = getTenantBaseUrl();
 
-test.describe.serial("Recipe Decimals Validation @release", () => {
+test.describe.serial("Recipe Decimals Validation @regression", () => {
   requirePosCredentials(test);
 
   test.use({ storageState: getSessionPath("retail") });
