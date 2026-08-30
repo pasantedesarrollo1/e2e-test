@@ -38,8 +38,11 @@ jobs:
 
           Write-Host "3. Instalando dependencias y construyendo..." -ForegroundColor Cyan
           npm ci
+          npm config set script-shell "C:\Program Files\Git\bin\bash.exe"
           npm run build
-          if ($LASTEXITCODE -ne 0) { throw "Fallo en la construcción (build)" }
+          $Exit = $LASTEXITCODE
+          npm config delete script-shell
+          if ($Exit -ne 0) { throw "Fallo en la construcción (build)" }
 
           Write-Host "Frontend listo en develop" -ForegroundColor Green
 
@@ -188,8 +191,11 @@ jobs:
 
           Write-Host "3. Instalando dependencias y construyendo..." -ForegroundColor Cyan
           npm ci
+          npm config set script-shell "C:\Program Files\Git\bin\bash.exe"
           npm run build
-          if ($LASTEXITCODE -ne 0) { throw "Fallo en la construcción (build)" }
+          $Exit = $LASTEXITCODE
+          npm config delete script-shell
+          if ($Exit -ne 0) { throw "Fallo en la construcción (build)" }
 
       - name: Limpiar puerto si está ocupado
         shell: powershell
@@ -328,8 +334,11 @@ jobs:
           git clean -fd
           
           npm ci
+          npm config set script-shell "C:\Program Files\Git\bin\bash.exe"
           npm run build
-          if ($LASTEXITCODE -ne 0) { throw "Fallo en la construcción (build)" }
+          $Exit = $LASTEXITCODE
+          npm config delete script-shell
+          if ($Exit -ne 0) { throw "Fallo en la construcción (build)" }
 
       - name: Limpiar puerto si está ocupado
         shell: powershell
