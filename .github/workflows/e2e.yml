@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - name: Pull y build del frontend
+      - name: Preparar y compilar frontend en develop
         shell: powershell
         env:
           FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
@@ -22,21 +22,26 @@ jobs:
             throw "No se encontró el frontend en: $env:FRONTEND_PATH"
           }
 
-          Write-Host "Actualizando frontend en $env:FRONTEND_PATH..." -ForegroundColor Cyan
           Set-Location $env:FRONTEND_PATH
 
+          Write-Host "1. Guardando estado local del desarrollador..." -ForegroundColor Yellow
+          $CurrentBranch = git rev-parse --abbrev-ref HEAD
+          Set-Content -Path ".e2e-original-branch.txt" -Value $CurrentBranch
+          
+          git stash push -u -m "stash-e2e-runner"
+
+          Write-Host "2. Cambiando obligatoriamente a develop..." -ForegroundColor Cyan
           git fetch origin
-          git checkout ${{ github.ref_name }}
-          git pull origin ${{ github.ref_name }}
+          git checkout --force develop
+          git reset --hard origin/develop
+          git clean -fd
 
-          Write-Host "Instalando dependencias..." -ForegroundColor Cyan
+          Write-Host "3. Instalando dependencias y construyendo..." -ForegroundColor Cyan
           npm ci
-
-          Write-Host "Construyendo..." -ForegroundColor Cyan
           npm run build
-          $global:LASTEXITCODE = 0
+          if ($LASTEXITCODE -ne 0) { throw "Fallo en la construcción (build)" }
 
-          Write-Host "Frontend listo" -ForegroundColor Green
+          Write-Host "Frontend listo en develop" -ForegroundColor Green
 
       - name: Limpiar puerto si está ocupado
         shell: powershell
@@ -127,6 +132,33 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
+      - name: Restaurar entorno local del desarrollador
+        if: always()
+        shell: powershell
+        env:
+          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
+        run: |
+          Set-Location $env:FRONTEND_PATH
+          
+          if (Test-Path ".e2e-original-branch.txt") {
+            $OriginalBranch = Get-Content ".e2e-original-branch.txt"
+            
+            Write-Host "Limpiando residuos del build en develop..." -ForegroundColor Yellow
+            git reset --hard HEAD
+            
+            Write-Host "Regresando a tu rama original: $OriginalBranch..." -ForegroundColor Cyan
+            git checkout $OriginalBranch
+            
+            $StashCheck = git stash list -1
+            if ($StashCheck -match "stash-e2e-runner") {
+              Write-Host "Recuperando tus cambios locales..." -ForegroundColor Cyan
+              git stash pop
+            }
+            
+            Remove-Item ".e2e-original-branch.txt"
+            Write-Host "Entorno restaurado exitosamente." -ForegroundColor Green
+          }
+
   release:
     name: Release
     runs-on: self-hosted
@@ -135,23 +167,29 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - name: Pull y build del frontend
+      - name: Preparar y compilar frontend en develop
         shell: powershell
         env:
           FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
         run: |
-          if (-not (Test-Path $env:FRONTEND_PATH)) {
-            throw "No se encontró el frontend en: $env:FRONTEND_PATH"
-          }
-
+          if (-not (Test-Path $env:FRONTEND_PATH)) { throw "No se encontró el frontend" }
           Set-Location $env:FRONTEND_PATH
+
+          Write-Host "1. Guardando estado local del desarrollador..." -ForegroundColor Yellow
+          $CurrentBranch = git rev-parse --abbrev-ref HEAD
+          Set-Content -Path ".e2e-original-branch.txt" -Value $CurrentBranch
+          git stash push -u -m "stash-e2e-runner"
+
+          Write-Host "2. Cambiando obligatoriamente a develop..." -ForegroundColor Cyan
           git fetch origin
-          git checkout ${{ github.ref_name }}
-          git pull origin ${{ github.ref_name }}
+          git checkout --force develop
+          git reset --hard origin/develop
+          git clean -fd
+
+          Write-Host "3. Instalando dependencias y construyendo..." -ForegroundColor Cyan
           npm ci
           npm run build
-          $global:LASTEXITCODE = 0
-          Write-Host "Frontend listo" -ForegroundColor Green
+          if ($LASTEXITCODE -ne 0) { throw "Fallo en la construcción (build)" }
 
       - name: Limpiar puerto si está ocupado
         shell: powershell
@@ -242,6 +280,29 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
+      - name: Restaurar entorno local del desarrollador
+        if: always()
+        shell: powershell
+        env:
+          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
+        run: |
+          Set-Location $env:FRONTEND_PATH
+          
+          if (Test-Path ".e2e-original-branch.txt") {
+            $OriginalBranch = Get-Content ".e2e-original-branch.txt"
+            Write-Host "Limpiando residuos del build en develop..." -ForegroundColor Yellow
+            git reset --hard HEAD
+            Write-Host "Regresando a tu rama original: $OriginalBranch..." -ForegroundColor Cyan
+            git checkout $OriginalBranch
+            
+            $StashCheck = git stash list -1
+            if ($StashCheck -match "stash-e2e-runner") {
+              Write-Host "Recuperando tus cambios locales..." -ForegroundColor Cyan
+              git stash pop
+            }
+            Remove-Item ".e2e-original-branch.txt"
+          }
+
   regression:
     name: Regression
     runs-on: self-hosted
@@ -250,23 +311,25 @@ jobs:
     timeout-minutes: 45
 
     steps:
-      - name: Pull y build del frontend
+      - name: Preparar y compilar frontend en develop
         shell: powershell
         env:
           FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
         run: |
-          if (-not (Test-Path $env:FRONTEND_PATH)) {
-            throw "No se encontró el frontend en: $env:FRONTEND_PATH"
-          }
-
+          if (-not (Test-Path $env:FRONTEND_PATH)) { throw "No se encontró el frontend" }
           Set-Location $env:FRONTEND_PATH
+          $CurrentBranch = git rev-parse --abbrev-ref HEAD
+          Set-Content -Path ".e2e-original-branch.txt" -Value $CurrentBranch
+          git stash push -u -m "stash-e2e-runner"
+          
           git fetch origin
-          git checkout ${{ github.ref_name }}
-          git pull origin ${{ github.ref_name }}
+          git checkout --force develop
+          git reset --hard origin/develop
+          git clean -fd
+          
           npm ci
           npm run build
-          $global:LASTEXITCODE = 0
-          Write-Host "Frontend listo" -ForegroundColor Green
+          if ($LASTEXITCODE -ne 0) { throw "Fallo en la construcción (build)" }
 
       - name: Limpiar puerto si está ocupado
         shell: powershell
@@ -274,23 +337,16 @@ jobs:
           $up = Test-NetConnection localhost -Port $env:FRONTEND_PORT `
             -WarningAction SilentlyContinue -InformationLevel Quiet
           if ($up) {
-            Write-Host "Puerto $env:FRONTEND_PORT ocupado, liberando..." -ForegroundColor Yellow
-            Get-NetTCPConnection -LocalPort $env:FRONTEND_PORT `
-              -ErrorAction SilentlyContinue |
-              ForEach-Object {
-                Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue
-              }
+            Get-NetTCPConnection -LocalPort $env:FRONTEND_PORT -ErrorAction SilentlyContinue |
+              ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
             Start-Sleep -Seconds 2
           }
 
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - run: npm ci
-
       - run: npx playwright install chromium
 
       - name: Levantar Servidor y Ejecutar Regression
@@ -313,7 +369,6 @@ jobs:
           PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
           PLAYWRIGHT_RESTAURANT_SUBSIDIARY: ${{ secrets.PLAYWRIGHT_RESTAURANT_SUBSIDIARY }}
         run: |
-          Write-Host "Iniciando servidor frontend en segundo plano..." -ForegroundColor Cyan
           $proc = Start-Process npm.cmd `
             -ArgumentList "run", "preview", "--", "--port", "$env:FRONTEND_PORT", "--host" `
             -WorkingDirectory $env:FRONTEND_PATH `
@@ -335,20 +390,14 @@ jobs:
 
           if (-not $up) {
             Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-            throw "El servidor no respondió HTTP en $timeout segundos"
+            throw "El servidor no respondió HTTP"
           }
-          
-          Write-Host "Servidor listo con PID $($proc.Id). Ejecutando Playwright..." -ForegroundColor Green
 
           npx playwright test --grep "@regression"
           $testExitCode = $LASTEXITCODE
 
-          Write-Host "Apagando servidor frontend..." -ForegroundColor Cyan
           Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-          
-          if ($testExitCode -ne 0) {
-            exit $testExitCode
-          }
+          if ($testExitCode -ne 0) { exit $testExitCode }
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -356,3 +405,19 @@ jobs:
           name: report-regression-${{ github.run_id }}
           path: playwright-report/
           retention-days: 7
+
+      - name: Restaurar entorno local del desarrollador
+        if: always()
+        shell: powershell
+        env:
+          FRONTEND_PATH: ${{ secrets.FRONTEND_PATH }}
+        run: |
+          Set-Location $env:FRONTEND_PATH
+          if (Test-Path ".e2e-original-branch.txt") {
+            $OriginalBranch = Get-Content ".e2e-original-branch.txt"
+            git reset --hard HEAD
+            git checkout $OriginalBranch
+            $StashCheck = git stash list -1
+            if ($StashCheck -match "stash-e2e-runner") { git stash pop }
+            Remove-Item ".e2e-original-branch.txt"
+          }
