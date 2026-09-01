@@ -22,7 +22,7 @@ export async function completeValidatedPosPayment(page) {
   if (payload.subsidiary?.open_cash_register?.checkout?.subsidiary_id) {
     expect(
       payload.subsidiary.id,
-      `CRUCE DETECTADO EN POS: Sucursal (${payload.subsidiary.id}) vs Caja (${payload.subsidiary.open_cash_register.checkout.subsidiary_id})`
+      `CROSSMATCH DETECTED IN POS: Subsidiary (${payload.subsidiary.id}) vs Cash Register (${payload.subsidiary.open_cash_register.checkout.subsidiary_id})`
     ).toBe(payload.subsidiary.open_cash_register.checkout.subsidiary_id);
   }
 

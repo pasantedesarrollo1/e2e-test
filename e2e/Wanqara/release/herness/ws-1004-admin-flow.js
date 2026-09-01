@@ -39,13 +39,13 @@ export async function submitValidatedAdminTransaction(page, endpointPattern) {
 
   const payload = response.request().postDataJSON();
 
-  expect(payload.subsidiary, 'El payload de la venta debe contener el objeto subsidiary').toBeDefined();
-  expect(payload.checkout, 'El payload de la venta debe contener el objeto checkout').toBeDefined();
+  expect(payload.subsidiary, 'The sale payload must contain the subsidiary object').toBeDefined();
+  expect(payload.checkout, 'The sale payload must contain the checkout object').toBeDefined();
   
   if (payload.checkout.subsidiary_id) {
     expect(
       payload.subsidiary.id, 
-      `ALERTA DE SECUENCIAL: Se intentó facturar con la sucursal ${payload.subsidiary.id} pero la caja pertenece a ${payload.checkout.subsidiary_id}`
+      `SEQUENTIAL ALERT: Attempted to bill with subsidiary ${payload.subsidiary.id} but the checkout belongs to ${payload.checkout.subsidiary_id}`
     ).toBe(payload.checkout.subsidiary_id);
   }
 

@@ -15,23 +15,23 @@ import {
 
 const tenantBaseUrl = getTenantBaseUrl();
 
-test.describe("ws-1004-admin-cross-sales: Validación Anti-Cruce en Ventas Administrativas @release", () => {
+test.describe("ws-1004-admin-cross-sales: Anti-Cross Validation in Administrative Sales @release", () => {
   requirePosCredentials(test);
   test.use({ storageState: getSessionPath("retail") });
 
-  test("ws-1004-sale-combinations: Cambia dinámicamente de sucursales y valida bodegas/cajas en VENTAS", async ({ page }) => {
+  test("ws-1004-sale-combinations: Dynamically switches branches and validates warehouses/checkouts in SALES", async ({ page }) => {
     test.setTimeout(300_000); 
     
     await page.goto(`${tenantBaseUrl}/admin/home`);
     await page.waitForURL(/\/admin\/home/);
 
     for (const sucursal of RELEASE_SEED.sucursales) {
-      await test.step(`Cambiando contexto UI a la sucursal: ${sucursal.name}`, async () => {
+      await test.step(`Switching UI context to branch: ${sucursal.name}`, async () => {
         await switchSubsidiaryFromProfile(page, sucursal.name);
       });
 
       for (const combo of sucursal.combinations) {
-        await test.step(`Venta Administrativa en: ${combo.bodega} / ${combo.caja}`, async () => {
+        await test.step(`Administrative Sale in: ${combo.bodega} / ${combo.caja}`, async () => {
           await page.goto(`${tenantBaseUrl}/admin/ventas/add`);
           await page.waitForURL(/\/admin\/ventas\/add/);
 
@@ -47,19 +47,19 @@ test.describe("ws-1004-admin-cross-sales: Validación Anti-Cruce en Ventas Admin
     }
   });
 
-  test("ws-1004-presale-combinations: Cambia dinámicamente de sucursales y valida bodegas/cajas en PREVENTAS", async ({ page }) => {
+  test("ws-1004-presale-combinations: Dynamically switches branches and validates warehouses/checkouts in PRESALES", async ({ page }) => {
     test.setTimeout(300_000);
     
     await page.goto(`${tenantBaseUrl}/admin/home`);
     await page.waitForURL(/\/admin\/home/);
 
     for (const sucursal of RELEASE_SEED.sucursales) {
-      await test.step(`Cambiando contexto UI a la sucursal: ${sucursal.name}`, async () => {
+      await test.step(`Switching UI context to branch: ${sucursal.name}`, async () => {
         await switchSubsidiaryFromProfile(page, sucursal.name);
       });
 
       for (const combo of sucursal.combinations) {
-        await test.step(`Preventa en: ${combo.bodega} / ${combo.caja}`, async () => {
+        await test.step(`Presale in: ${combo.bodega} / ${combo.caja}`, async () => {
           await page.goto(`${tenantBaseUrl}/admin/pre-sale/add`);
           await page.waitForURL(/\/admin\/pre-sale\/add/);
 
