@@ -2,11 +2,9 @@ import { expect } from "@playwright/test";
 import { ensureAuthenticated } from "../../harness/auth.js";
 
 export async function selectCustomCheckout(page, bodegaName, cajaName) {
-  // 1. Selección de Bodega
   const bodegaLabel = page.locator("main").getByText(/Bodega/i).first();
   const bodegaInput = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
   
-  // Clic seguro directamente en el ícono del chevron (.v-icon)
   await bodegaInput.locator('.v-icon').last().click();
   
   const listboxBodega = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
@@ -14,10 +12,8 @@ export async function selectCustomCheckout(page, bodegaName, cajaName) {
   await listboxBodega.getByRole("option", { name: new RegExp(bodegaName, "i") }).first().click();
   await expect(listboxBodega).not.toBeVisible({ timeout: 5000 });
 
-  // Pausa vital: Vuetify deshabilita la Caja, hace un fetch al backend y la rehabilita
   await page.waitForTimeout(1500);
 
-  // 2. Selección de Caja
   const cajaLabel = page.locator("main").getByText(/Punto de Venta/i).first();
   const cajaInput = cajaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
   
@@ -43,11 +39,14 @@ export async function submitValidatedAdminTransaction(page, endpointPattern) {
 
   const payload = response.request().postDataJSON();
 
-  expect(payload.subsidiary).toBeDefined();
-  expect(payload.checkout).toBeDefined();
+  expect(payload.subsidiary, 'El payload de la venta debe contener el objeto subsidiary').toBeDefined();
+  expect(payload.checkout, 'El payload de la venta debe contener el objeto checkout').toBeDefined();
   
   if (payload.checkout.subsidiary_id) {
-    expect(payload.subsidiary.id).toBe(payload.checkout.subsidiary_id);
+    expect(
+      payload.subsidiary.id, 
+      `ALERTA DE SECUENCIAL: Se intentó facturar con la sucursal ${payload.subsidiary.id} pero la caja pertenece a ${payload.checkout.subsidiary_id}`
+    ).toBe(payload.checkout.subsidiary_id);
   }
 
   await expect(
@@ -241,7 +240,7 @@ export async function applyManualSurcharge(page, rate) {
   const assignBtn = page.getByRole("button", { name: /Asignar recargo/i });
   await expect(assignBtn).toBeVisible({ timeout: 5000 });
 
-  await Promise.all([
+  const [response] = await Promise.all([
     page.waitForResponse(
       (res) => res.url().includes("/api/v1/pos") && res.request().method() === "POST",
       { timeout: 10000 }

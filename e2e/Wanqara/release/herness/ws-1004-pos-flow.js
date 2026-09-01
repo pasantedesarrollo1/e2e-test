@@ -10,7 +10,6 @@ export async function completeValidatedPosPayment(page) {
 
   const finalizarVentaButton = page.getByRole("button", { name: /Finalizar Venta/i });
 
-  // Interceptar venta de POS
   const [response] = await Promise.all([
     page.waitForResponse(res => res.url().includes('/api/v2/pos/sales') && res.request().method() === 'POST'),
     finalizarVentaButton.click({ force: true }),
@@ -18,8 +17,8 @@ export async function completeValidatedPosPayment(page) {
 
   const payload = response.request().postDataJSON();
 
-  // VALIDACIÓN ESTRICTA EN POS
   expect(payload.subsidiary).toBeDefined();
+  
   if (payload.subsidiary?.open_cash_register?.checkout?.subsidiary_id) {
     expect(
       payload.subsidiary.id,
@@ -34,9 +33,9 @@ export async function runReleasePosSaleFlow(page, tenantBaseUrl, documentType) {
   await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/pos/home" });
   await page.waitForURL(/\/pos\/home/);
 
-  // Seleccionar documento dinámico (Recibos o Factura)
   const documentTypeSelect = page.locator(".v-select").filter({ hasText: /Factura|Recibo|Tipo de documento/i }).first();
   const currentValue = await documentTypeSelect.innerText();
+  
   if (!currentValue.includes(documentType)) {
     await documentTypeSelect.click();
     await page.getByRole("option", { name: documentType, exact: true }).click();
