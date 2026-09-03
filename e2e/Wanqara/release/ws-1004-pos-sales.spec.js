@@ -44,18 +44,13 @@ test.describe.serial("ws-1004-pos-restaurant: POS Restaurant Sale with Electroni
 
   test("ws-1004-pos-restaurant: Creates order in Chef and charges it verifying access_key", async ({ page }) => {
     test.setTimeout(180_000);
-    
-    // 1. Chef
     const activeTableName = await createChefOrder(page);
-
-    // 2. POS
     await navigateToRestaurantPOS(page, tenantBaseUrl);
     await openAndSelectOrder(page, activeTableName);
     
     const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar pago/i }).first();
     await cobrarBtn.click();
     
-    // 3. Finalize and intercept (Using Electronic Invoicing by default in seed config)
     await finalizeValidatedRestaurantSale(page);
   });
 });

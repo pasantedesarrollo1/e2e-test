@@ -36,15 +36,6 @@ test.describe("Orders Reconciliations - Waiter Filter @release", () => {
 
     await page.getByRole("dialog").getByRole("button", { name: "Seleccionar", exact: true }).first().click();
 
-    test.info().annotations.push({
-      type: "issue",
-      description: "https://wanqara-team.atlassian.net/browse/WS-1023",
-    });
-
-    test.fixme(
-      true,
-      "Bypassed due to backend bug WS-1023: API returns 400 Bad Request for filter[user_id] on /api/v1/inventory/reconciliations/orders"
-    );
 
     const ordersResponsePromise = page.waitForResponse(
       (res) =>
