@@ -1,104 +1,116 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../../harness/seed.js";
-import { ensureAuthenticated } from "../../../../harness/auth.js";
+import { ensureAuthenticated } from "../../harness/auth.js";
 
-async function assignManualBodega(page) {
-  const bodegaLabel = page.locator("main").getByText("Bodega").first();
-  const bodegaWrapper = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
+export async function selectCustomCheckout(page, bodegaName, cajaName) {
+  const bodegaLabel = page.locator("main").getByText(/Bodega/i).first();
+  const bodegaInput = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
   
-  await expect(async () => {
-    const dropdownIcon = bodegaWrapper.locator('.v-icon').last();
-    await dropdownIcon.click({ force: true });
-    
-    const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
-    await expect(listbox).toBeVisible({ timeout: 2000 });
-    
-    const targetOption = listbox.getByRole("option", { name: new RegExp(SEED.pos.warehouse, "i") }).first();
-    if (await targetOption.isVisible()) {
-      await targetOption.click();
-    } else {
-      await listbox.getByRole("option").first().click();
-    }
-    
-    await expect(listbox).not.toBeVisible({ timeout: 2000 });
-  }).toPass({ timeout: 15000 });
+  await bodegaInput.locator('.v-icon').last().click();
+  
+  const listboxBodega = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
+  await expect(listboxBodega).toBeVisible({ timeout: 5000 });
+  await listboxBodega.getByRole("option", { name: new RegExp(bodegaName, "i") }).first().click();
+  await expect(listboxBodega).not.toBeVisible({ timeout: 5000 });
+
+  await page.waitForTimeout(1500);
+
+  const cajaLabel = page.locator("main").getByText(/Punto de Venta/i).first();
+  const cajaInput = cajaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
+  
+  await cajaInput.locator('.v-icon').last().click();
+  
+  const listboxCaja = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
+  await expect(listboxCaja).toBeVisible({ timeout: 5000 });
+  await listboxCaja.getByRole("option", { name: new RegExp(cajaName, "i") }).first().click();
+  await expect(listboxCaja).not.toBeVisible({ timeout: 5000 });
+
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(300);
 }
 
-async function assignManualCaja(page) {
-  const cajaLabel = page.locator("main").getByText("Punto de Venta").first();
-  const cajaWrapper = cajaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
+export async function submitValidatedAdminTransaction(page, endpointPattern) {
+  const saveBtn = page.getByRole("button", { name: "Guardar", exact: true }).first();
+  await expect(saveBtn).toBeEnabled({ timeout: 10000 });
+
+  const [response] = await Promise.all([
+    page.waitForResponse(res => res.url().includes(endpointPattern) && res.request().method() === "POST"),
+    saveBtn.click({ force: true })
+  ]);
+
+  const payload = response.request().postDataJSON();
+
+  expect(payload.subsidiary, 'The sale payload must contain the subsidiary object').toBeDefined();
+  expect(payload.checkout, 'The sale payload must contain the checkout object').toBeDefined();
   
-  await expect(async () => {
-    const dropdownIcon = cajaWrapper.locator('.v-icon').last();
-    await dropdownIcon.click({ force: true });
-    
-    const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
-    await expect(listbox).toBeVisible({ timeout: 2000 });
-    
-    await listbox.getByRole("option").first().click();
-    await expect(listbox).not.toBeVisible({ timeout: 2000 });
-  }).toPass({ timeout: 15000 });
-}
-
-export async function selectCheckout(page) {
-  await page.waitForURL(/\/admin\/ventas\/add/);
-  await page.waitForTimeout(1000);
-
-  const bodegaLabel = page.locator("main").getByText("Bodega").first();
-  if (await bodegaLabel.isVisible()) {
-    const bodegaWrapper = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
-    const text = await bodegaWrapper.innerText();
-    const cleanText = text.replace(/Bodega|\*/ig, "").trim();
-    
-    if (cleanText.length === 0) {
-      await assignManualBodega(page);
-    }
+  if (payload.checkout.subsidiary_id) {
+    expect(
+      payload.subsidiary.id, 
+      `SEQUENTIAL ALERT: Attempted to bill with subsidiary ${payload.subsidiary.id} but the checkout belongs to ${payload.checkout.subsidiary_id}`
+    ).toBe(payload.checkout.subsidiary_id);
   }
 
-  const cajaLabel = page.locator("main").getByText("Punto de Venta").first();
-  await expect(cajaLabel).toBeVisible({ timeout: 10000 });
-  
-  const cajaWrapper = cajaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
-  const cajaText = await cajaWrapper.innerText();
-  const cleanCajaText = cajaText.replace(/Punto de Venta|Caja|\*/ig, "").trim();
-  
-  if (cleanCajaText.length === 0) {
-    await assignManualCaja(page);
-  }
-
-  await page.locator("main").click({ position: { x: 10, y: 10 }, force: true });
-  await page.waitForTimeout(200);
+  await expect(
+    page.locator(".v-snackbar").filter({ hasText: /guardada|correctamente/i }).first()
+  ).toBeVisible({ timeout: 15000 });
 }
 
-export async function selectDocumentType(page, documentType) {
+export async function switchSubsidiaryFromProfile(page, targetSubsidiary) {
+  const shortName = targetSubsidiary.split("-").pop().trim();
+
+  const headerText = await page.locator("header").first().innerText();
+  if (headerText.includes(shortName)) {
+    return; 
+  }
+
+  const profileBtn = page.locator("header").first().locator("button").filter({ hasText: /Wanqara/i }).first();
+  await profileBtn.click();
+
+  const profileModal = page.locator(".v-overlay__content").filter({ hasText: /Mi Perfil/i }).first();
+  await expect(profileModal).toBeVisible({ timeout: 5000 });
+
+  const branchSelect = profileModal.locator(".v-select").first();
+  await branchSelect.click();
+
+  const listbox = page.getByRole("listbox");
+  await expect(listbox).toBeVisible({ timeout: 5000 });
+  await listbox.getByRole("option", { name: new RegExp(targetSubsidiary, "i") }).first().click();
+
+  await page.keyboard.press("Escape");
+  await expect(profileModal).not.toBeVisible({ timeout: 5000 }).catch(() => {});
+
+  await page.waitForLoadState("networkidle");
+  await expect(
+    page.locator("header").first().locator("button").filter({ hasText: new RegExp(shortName, "i") }).first()
+  ).toBeVisible({ timeout: 15000 });
+}
+
+export async function selectCustomDocumentType(page, documentType) {
   if (!documentType) return;
 
-  const docLabel = page.locator("main").getByText("Tipo de Documento").first();
-  await expect(docLabel).toBeVisible({ timeout: 10000 });
-
-  const docInputWrapper = docLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
-
-  const normalize = (s) => s.replace(/[""'']/g, '').replace(/\s+/g, ' ').trim();
-
+  const normalize = (s) => s.replace(/["']/g, '').replace(/\s+/g, ' ').trim();
   const FACTURA_CODES = ["01"];
 
-  const currentText = normalize(await docInputWrapper.innerText());
+  const docLabel = page.locator("main").getByText("Tipo de Documento").first();
+  const docCombo = docLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
+  
+  await expect(docCombo).toBeVisible({ timeout: 10000 });
+
+  const currentText = normalize(await docCombo.innerText());
   const normalizedTarget = normalize(documentType);
 
   const alreadySelected =
     currentText.includes(normalizedTarget) ||
-    (documentType === SEED.documentTypes.facturaElectronica &&
-      FACTURA_CODES.some((code) => currentText.includes(code)));
+    (documentType === "Factura electrónica" && FACTURA_CODES.some((code) => currentText.includes(code)));
 
-  if (alreadySelected) return;
+  if (alreadySelected) {
+    return; 
+  }
 
-  const dropdownIcon = docInputWrapper.locator('.v-icon').last();
-  await dropdownIcon.click({ force: true });
-
+  await docCombo.click();
   const activeListbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
   await expect(activeListbox).toBeVisible({ timeout: 5000 });
 
-  const option = activeListbox.getByRole("option", { name: new RegExp(normalize(documentType), "i") }).first();
+  const option = activeListbox.getByRole("option", { name: new RegExp(normalizedTarget, "i") }).first();
   await expect(option).toBeVisible({ timeout: 5000 });
   await option.click();
 
@@ -198,7 +210,7 @@ export async function searchAndSelectProduct(page, { name, searchTerm }) {
   await productItem.click({ force: true });
 }
 
-export async function applyGeneralDiscount(page, rate = SEED.discount.rate) {
+export async function applyGeneralDiscount(page, rate) {
   const discountBtn = page.getByRole("button", { name: /Descuento General/i }).first();
   const dialog = page.locator(".v-overlay__content").filter({ hasText: /Descuento/i }).first();
 
@@ -213,7 +225,7 @@ export async function applyGeneralDiscount(page, rate = SEED.discount.rate) {
   await expect(dialog).not.toBeVisible({ timeout: 5000 });
 }
 
-export async function applyManualSurcharge(page, rate = SEED.surcharge.rate) {
+export async function applyManualSurcharge(page, rate) {
   const optionsBtn = page.getByRole("button", { name: /Más opciones de porcentaje/i }).first();
   await optionsBtn.click();
 
@@ -228,7 +240,7 @@ export async function applyManualSurcharge(page, rate = SEED.surcharge.rate) {
   const assignBtn = page.getByRole("button", { name: /Asignar recargo/i });
   await expect(assignBtn).toBeVisible({ timeout: 5000 });
 
-  await Promise.all([
+  const [response] = await Promise.all([
     page.waitForResponse(
       (res) => res.url().includes("/api/v1/pos") && res.request().method() === "POST",
       { timeout: 10000 }
@@ -239,10 +251,47 @@ export async function applyManualSurcharge(page, rate = SEED.surcharge.rate) {
   await expect(input).not.toBeVisible({ timeout: 5000 });
 }
 
-export async function selectPaymentMethod(page, methodName = SEED.paymentMethods.efectivo.label) {
+export async function selectPaymentMethod(page, methodName) {
   const methodItem = page.getByText(methodName, { exact: true }).first();
   await methodItem.scrollIntoViewIfNeeded();
   await methodItem.click({ force: true });
+}
+
+export async function selectCheckout(page) {
+  const bodegaLabel = page.locator("main").getByText("Bodega").first();
+  if (await bodegaLabel.isVisible()) {
+    const bodegaWrapper = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
+    const text = await bodegaWrapper.innerText();
+    const cleanText = text.replace(/Bodega|\*/ig, "").trim();
+    
+    if (cleanText.length === 0) {
+      const dropdownIcon = bodegaWrapper.locator('.v-icon').last();
+      await dropdownIcon.click({ force: true });
+      const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
+      await expect(listbox).toBeVisible({ timeout: 2000 });
+      await listbox.getByRole("option").first().click();
+      await expect(listbox).not.toBeVisible({ timeout: 2000 });
+    }
+  }
+
+  const cajaLabel = page.locator("main").getByText("Punto de Venta").first();
+  await expect(cajaLabel).toBeVisible({ timeout: 10000 });
+  
+  const cajaWrapper = cajaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
+  const cajaText = await cajaWrapper.innerText();
+  const cleanCajaText = cajaText.replace(/Punto de Venta|Caja|\*/ig, "").trim();
+  
+  if (cleanCajaText.length === 0) {
+    const dropdownIcon = cajaWrapper.locator('.v-icon').last();
+    await dropdownIcon.click({ force: true });
+    const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
+    await expect(listbox).toBeVisible({ timeout: 2000 });
+    await listbox.getByRole("option").first().click();
+    await expect(listbox).not.toBeVisible({ timeout: 2000 });
+  }
+
+  await page.locator("main").click({ position: { x: 10, y: 10 }, force: true });
+  await page.waitForTimeout(200);
 }
 
 export async function submitAdminSale(page) {
@@ -268,11 +317,11 @@ export async function runAdminSaleFlow(page, {
   tenantBaseUrl,
   authType,
   documentType,
-  clientCedula = SEED.clients.consumidorFinal.cedula,
+  clientCedula,
   productName,
   searchTerm,
   beforeFinish,
-  paymentMethod = SEED.paymentMethods.efectivo.label,
+  paymentMethod,
   skipNavigation = false,
 }) {
   if (!skipNavigation) {
@@ -281,8 +330,11 @@ export async function runAdminSaleFlow(page, {
   }
 
   await selectCheckout(page);
-  await selectDocumentType(page, documentType);
-  await selectClientByCedula(page, clientCedula);
+  await selectCustomDocumentType(page, documentType);
+  
+  if (clientCedula) {
+    await selectClientByCedula(page, clientCedula);
+  }
 
   if (productName) {
     await searchAndSelectProduct(page, { name: productName, searchTerm });
@@ -292,6 +344,9 @@ export async function runAdminSaleFlow(page, {
     await beforeFinish(page);
   }
 
-  await selectPaymentMethod(page, paymentMethod);
+  if (paymentMethod) {
+    await selectPaymentMethod(page, paymentMethod);
+  }
+  
   await submitAdminSale(page);
 }

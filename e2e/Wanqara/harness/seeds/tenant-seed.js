@@ -17,5 +17,12 @@ export const tenantSeed = {
       { authType: 'dispatch', name: 'Bodega Test Dis', code: '1002', address: 'Automated Test Address Dis', description: 'Automated Test Desc Dis' },
       { authType: 'restaurant', name: 'Bodega Test Res', code: '1003', address: 'Automated Test Address Res', description: 'Automated Test Desc Res' }
     ]
+  },
+  dispatchTypes: {
+    crud: {
+      name: "Tipo Despacho Test",
+      type: "Local",
+      description: "Test automatizado de tipo de despacho"
+    }
   }
 };

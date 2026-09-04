@@ -28,7 +28,7 @@ runs:
   using: composite
   steps:
     - name: Send Telegram notification
-      shell: bash
+      shell: '"C:\Program Files\Git\bin\bash.exe" --noprofile --norc -e -o pipefail {0}'
       env:
         TELEGRAM_BOT_TOKEN: ${{ inputs.bot_token }}
         TELEGRAM_CHAT_ID: ${{ inputs.chat_id }}

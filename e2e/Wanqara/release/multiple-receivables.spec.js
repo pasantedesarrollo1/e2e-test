@@ -5,6 +5,7 @@ import { getElectronicInvoicingAuthType } from "../harness/seed.js";
 import {
   selectClientAndAccounts,
   fillPaymentDetailsAndSubmit,
+  searchReceivableAccount,
   validateInitialDeletionError,
   navigateToSettlementDetails,
   generateAndViewPDF,
@@ -15,7 +16,6 @@ const tenantBaseUrl = getTenantBaseUrl();
 const authType001 = getElectronicInvoicingAuthType(); 
 
 test.describe("Admin Payments — Multiple Receivables @release", () => {
-  test.skip(true, "Skipped in develop: Feature WS-840 belongs to an unmerged branch.");
   requirePosCredentials(test);
   
   test.use({ storageState: getSessionPath(authType001) });
@@ -34,6 +34,10 @@ test.describe("Admin Payments — Multiple Receivables @release", () => {
     await test.step("Create the payment with multiple accounts", async () => {
       await selectClientAndAccounts(page);
       await fillPaymentDetailsAndSubmit(page);
+    });
+
+    await test.step("Search for the payment record", async () => {
+      await searchReceivableAccount(page, "0000000001");
     });
 
     await test.step("Attempt to delete payment and verify error", async () => {
