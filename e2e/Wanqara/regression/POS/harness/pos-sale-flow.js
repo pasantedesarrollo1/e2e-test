@@ -4,6 +4,7 @@ import { withPath } from "../../../harness/urls.js";
 import { ensureAuthenticated } from "../../../harness/auth.js";
 import { completePayment } from "./pos-payment.js";
 import { searchAndSelectProduct } from "./pos-search.js";
+import { selectClientByCedula } from '../../../harness/client-helpers.js';
 
 export async function runPosSaleFlow(page, {
   tenantBaseUrl,
@@ -58,53 +59,7 @@ export async function captureSaleMutation(page) {
   );
 }
 
-export async function selectClientByCedula(page, cedula) {
-  const cedulaInput = page.getByPlaceholder("Ingresa Cédula o RUC").first();
-
-  await cedulaInput.clear();
-  await cedulaInput.fill(cedula);
-  await expect(cedulaInput).toHaveValue(cedula);
-  await cedulaInput.blur();
-  await page.waitForTimeout(100);
-  await cedulaInput.focus();
-  await cedulaInput.press("Enter");
-
-  const clientModal = page.locator(".v-overlay__content").filter({
-    hasText: /Cliente/i,
-  }).first();
-
-  try {
-    await expect(clientModal).toBeVisible({ timeout: 8000 });
-  } catch {}
-
-  if (await clientModal.isVisible()) {
-    const alertMessage = clientModal.getByText(/Seleccione un tipo de identificación para continuar/i);
-    const guardarButton = clientModal.getByRole("button", { name: /Guardar Cliente/i });
-    
-    const readyCondition = guardarButton.or(alertMessage);
-    await expect(readyCondition).toBeVisible({ timeout: 15000 }).catch(() => {});
-
-    if (await alertMessage.isVisible()) {
-      const typeSelect = clientModal.locator(".v-select").first();
-      await typeSelect.click({ force: true });
-      await page.getByRole("option", { name: /^CEDULA$/i }).click();
-
-      const innerIdInput = clientModal.locator("input").filter({ hasValue: cedula }).first();
-      await innerIdInput.focus();
-      await innerIdInput.press("Enter");
-      await page.waitForTimeout(1000); 
-    }
-
-    if (await guardarButton.isVisible()) {
-      await expect(guardarButton).toBeEnabled({ timeout: 10000 }).catch(() => {});
-      await guardarButton.click({ force: true });
-    }
-  }
-
-  await expect(
-    page.locator(".v-snackbar").filter({ hasText: /Cliente asignado correctamente/i })
-  ).toBeVisible({ timeout: 15000 });
-}
+export { selectClientByCedula } from '../../../harness/client-helpers.js';
 
 export async function openDrawer(page, triggerLocator, filterText) {
   await triggerLocator.click();

@@ -81,7 +81,7 @@ export default defineConfig({
     {
       name: 'Admin-Inventory',
       dependencies: ['setup'],
-      testMatch: /Wanqara\/regression\/(inventory|transactions|settings|people)\/.*\.spec\.js/,
+      testMatch: /Wanqara\/regression\/(inventory|transactions|settings|people|finance|main|special-modules)\/.*\.spec\.js/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,

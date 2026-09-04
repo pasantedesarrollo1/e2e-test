@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { withPath } from "../../harness/urls.js";
-import { SEED } from "../../harness/seed.js";
+import { withPath } from "../../../../harness/urls.js";
+import { SEED } from "../../../../harness/seed.js";
 
 export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwitch, expectMessage, confirmCancellation = true }) {
   const getSalesPromise = page.waitForResponse(res => 

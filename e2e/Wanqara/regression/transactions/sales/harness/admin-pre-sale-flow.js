@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { SEED } from "../../../../harness/seed.js";
 import { ensureAuthenticated } from "../../../../harness/auth.js";
+import { selectClientByCedula } from '../../../../harness/client-helpers.js';
 
 async function assignManualBodega(page) {
   const bodegaLabel = page.locator("main").getByText("Bodega").first();
@@ -25,12 +26,9 @@ async function assignManualBodega(page) {
 }
 
 async function assignManualCaja(page) {
-  const cajaLabel = page.locator("main").getByText("Punto de Venta").first();
-  const cajaWrapper = cajaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
-  
   await expect(async () => {
-    const dropdownIcon = cajaWrapper.locator('.v-icon').last();
-    await dropdownIcon.click({ force: true });
+    const cajaCombobox = page.getByRole("combobox", { name: /Caja/i }).first();
+    await cajaCombobox.click({ force: true });
     
     const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
     await expect(listbox).toBeVisible({ timeout: 2000 });
@@ -106,73 +104,7 @@ export async function selectDocumentType(page, documentType) {
   await page.keyboard.press("Escape");
 }
 
-export async function selectClientByCedula(page, cedula) {
-  const cedulaInput = page.getByPlaceholder(/Ingresa Cédula o RUC/i).first();
-
-  await cedulaInput.click();
-  await cedulaInput.clear();
-  
-  await cedulaInput.pressSequentially(cedula, { delay: 50 });
-  await page.waitForTimeout(300);
-  await cedulaInput.press("Enter");
-
-  const clientModal = page.locator(".v-overlay__content:not(.v-snackbar__wrapper)").filter({
-    hasText: /Cliente/i,
-  }).first();
-
-  try {
-    await expect(clientModal).toBeVisible({ timeout: 8000 });
-  } catch {}
-
-  if (await clientModal.isVisible()) {
-    const alertMessage = clientModal.getByText(/Seleccione un tipo de identificación para continuar/i);
-    const saveBtn = clientModal.getByRole("button", { name: /Guardar Cliente/i });
-    
-    const readyCondition = saveBtn.or(alertMessage);
-    await expect(readyCondition).toBeVisible({ timeout: 15000 }).catch(() => {});
-
-    if (await alertMessage.isVisible()) {
-      const typeSelect = clientModal.locator(".v-select").first();
-      await typeSelect.click({ force: true });
-      
-      const activeListbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
-      await expect(activeListbox).toBeVisible({ timeout: 5000 });
-      
-      await activeListbox.getByRole("option", { name: /^CEDULA$/i }).click({ force: true });
-      
-      if (await activeListbox.isVisible().catch(() => false)) {
-        await page.keyboard.press("Escape");
-      }
-      await expect(activeListbox).not.toBeVisible({ timeout: 5000 });
-
-      const innerIdInput = clientModal.locator("input").filter({ hasValue: cedula }).first();
-      await innerIdInput.focus();
-      
-      const searchIconBtn = clientModal.locator("button").filter({ has: page.locator(".mdi-magnify") }).first();
-      if (await searchIconBtn.isVisible()) {
-        await searchIconBtn.click({ force: true });
-      } else {
-        await innerIdInput.press("Enter");
-      }
-      
-      await page.waitForTimeout(1000); 
-    }
-
-    if (await saveBtn.isVisible()) {
-      await expect(saveBtn).toBeEnabled({ timeout: 10000 }).catch(() => {});
-      await saveBtn.click({ force: true });
-      await expect(clientModal).not.toBeVisible({ timeout: 5000 }).catch(() => {});
-    }
-  }
-
-  await expect(
-    page.locator(".v-snackbar").filter({ hasText: /Cliente asignado correctamente/i })
-  ).toBeVisible({ timeout: 15000 }).catch(() => {});
-
-  await expect(
-    page.locator("main").getByText(cedula, { exact: false }).first()
-  ).toBeVisible({ timeout: 15000 });
-}
+export { selectClientByCedula } from '../../../../harness/client-helpers.js';
 
 export async function searchAndSelectProduct(page, { name, searchTerm }) {
   const term = searchTerm || name;

@@ -1,20 +1,20 @@
 import { test, expect } from "@playwright/test";
-import { annotateTicket } from "../harness/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
-import { ensureAuthenticated, getSessionPath } from "../harness/auth.js";
-import { searchInList } from "../harness/crud-helpers.js";
+import { annotateTicket } from "../../../../harness/annotate.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../harness/auth.js";
+import { searchInList } from "../../../../harness/crud-helpers.js";
 
 const TICKET = {
   ws: 'WS-986',
   tes: 'TES-210',
   release: 'v7.9.1',
   summary: 'Support Tickets Search',
-  addedToRegression: null,
+  addedToRegression: 'true',
 };
 
 const tenantBaseUrl = getTenantBaseUrl();
 
-test.describe("WS-986: Support Tickets Search @release", () => {
+test.describe("Support Tickets — Search @regression", () => {
   annotateTicket(test, TICKET);
   requirePosCredentials(test);
 

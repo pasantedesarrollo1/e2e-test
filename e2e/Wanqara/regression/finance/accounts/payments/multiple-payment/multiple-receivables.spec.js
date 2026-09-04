@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
-import { annotateTicket } from "../harness/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../harness/auth.js";
-import { getElectronicInvoicingAuthType } from "../harness/seed.js";
+import { annotateTicket } from "../../../../../harness/annotate.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../../../harness/settings.js";
+import { getSessionPath, ensureAuthenticated } from "../../../../../harness/auth.js";
+import { getElectronicInvoicingAuthType } from "../../../../../harness/seed.js";
 import {
   selectClientAndAccounts,
   fillPaymentDetailsAndSubmit,

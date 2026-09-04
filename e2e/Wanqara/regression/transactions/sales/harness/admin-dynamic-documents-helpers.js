@@ -1,3 +1,6 @@
+// Contexto de origen: Ticket WS-981, TES-206 (ws-981-helpers.js)
+// Función: Validar las restricciones de tipos de documentos al cambiar dinámicamente de sucursal.
+
 import { expect } from "@playwright/test";
 
 export async function readSelectedDocumentType(page) {

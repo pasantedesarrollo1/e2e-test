@@ -13,9 +13,9 @@ export const tenantSeed = {
   },
   warehouses: {
     crud: [
-      { authType: 'retail', name: 'Bodega Test Ret', code: '1001', address: 'Automated Test Address Ret', description: 'Automated Test Desc Ret' },
-      { authType: 'dispatch', name: 'Bodega Test Dis', code: '1002', address: 'Automated Test Address Dis', description: 'Automated Test Desc Dis' },
-      { authType: 'restaurant', name: 'Bodega Test Res', code: '1003', address: 'Automated Test Address Res', description: 'Automated Test Desc Res' }
+      { authType: 'retail', name: 'Bodega Test Ret', code: '1111', address: 'Automated Test Address Ret', description: 'Automated Test Desc Ret' },
+      { authType: 'dispatch', name: 'Bodega Test Dis', code: '1112', address: 'Automated Test Address Dis', description: 'Automated Test Desc Dis' },
+      { authType: 'restaurant', name: 'Bodega Test Res', code: '1113', address: 'Automated Test Address Res', description: 'Automated Test Desc Res' }
     ]
   },
   dispatchTypes: {

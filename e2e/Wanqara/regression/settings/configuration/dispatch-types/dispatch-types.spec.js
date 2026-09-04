@@ -1,10 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { annotateTicket } from "../harness/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
-import { getSessionPath } from "../harness/auth.js";
-import { SEED } from "../harness/seed.js";
-import { withPath } from "../harness/urls.js";
-import { clickTableRowAction } from "../harness/crud-helpers.js";
+import { annotateTicket } from "../../../../harness/annotate.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
+import { getSessionPath } from "../../../../harness/auth.js";
+import { SEED } from "../../../../harness/seed.js";
+import { withPath } from "../../../../harness/urls.js";
+import { clickTableRowAction } from "../../../../harness/crud-helpers.js";
 
 const TICKET = {
   ws: 'WS-983',
@@ -14,7 +14,7 @@ const TICKET = {
   addedToRegression: null,
 };
 
-test.describe("Release — Dispatch Types @release", () => {
+test.describe("Settings — Dispatch Types @regression", () => {
   annotateTicket(test, TICKET);
   requirePosCredentials(test);
 

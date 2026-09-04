@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../harness/seed.js";
-import { clickTableRowAction } from "../../harness/crud-helpers.js";
+import { SEED } from "../../../../../../harness/seed.js";
+import { clickTableRowAction } from "../../../../../../harness/crud-helpers.js";
 
 export async function selectClientAndAccounts(page) {
   const buscarClienteBtn = page.getByRole("button", { name: /Buscar cliente/i });

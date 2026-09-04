@@ -19,13 +19,11 @@ regression/settings/
     │   └── subscriptions-overview.spec.js
     ├── my-tickets/
     │   └── support-tickets.spec.js
-    ├── surcharges/
+    ├── subsidiaries/
     │   └── subsidiaries-crud.spec.js
     └── warehouses/
         └── warehouses-crud.spec.js
 ```
-
-**Folder naming caveat:** `subsidiaries-crud.spec.js` lives under `surcharges/`. The folder name does not reflect the spec content, which exercises subsidiary CRUD, not surcharge configuration. Navigate by file name, not folder semantics.
 
 ---
 
@@ -230,7 +228,7 @@ checkFormFilledCorrectly(page):
 
 ### 3. `subsidiaries-crud.spec.js`
 
-**Location:** `settings/configuration/surcharges/` (mismatched folder name — see note in Folder Structure)
+**Location:** `settings/configuration/subsidiaries/`
 **authType:** `retail` (project-level storageState, no explicit `test.use`)
 **Test structure:** 3 tests generated via `for...of` loop over `SEED.subsidiaries.crud`, not serial. Each test is fully independent and follows the same three-step pattern.
 **`setTimeout`:** default (45 000 ms local / 120 000 ms CI)
@@ -503,7 +501,7 @@ Static fields applied to all entries: address `"123 Automated Test Address"`, ph
 |---|---|---|---|---|---|---|---|
 | 1 | `subscriptions-overview.spec.js` | `generals/` | retail | No | 2 | **Yes** | No |
 | 2 | `support-tickets.spec.js` | `my-tickets/` | retail | No | 1 | **Yes** | No |
-| 3 | `subsidiaries-crud.spec.js` | `surcharges/` | retail | No | 3 | **No** | Yes (POST + DELETE) |
+| 3 | `subsidiaries-crud.spec.js` | `subsidiaries/` | retail | No | 3 | **No** | Yes (POST + DELETE) |
 | 4 | `warehouses-crud.spec.js` | `warehouses/` | retail | No | 1 | **No** | Yes (POST + DELETE) |
 
 **`@regression` tag gap:** `subsidiaries-crud.spec.js` and `warehouses-crud.spec.js` have no tag in their `test.describe` blocks — just the plain title string. They are picked up by the `Admin-Inventory` project pattern and run normally with `npx playwright test --project=Admin-Inventory`. However, adding `--grep @regression` to the run command will exclude them. Do not add a grep filter when running the full Settings regression suite.
