@@ -191,8 +191,8 @@ export async function searchAndSelectProduct(page, { name, searchTerm }) {
   await page.waitForTimeout(300); 
 
   await searchInput.pressSequentially(term, { delay: 30 });
-  await searchInput.press("Enter");
-  
+  await page.waitForTimeout(1000);
+
   const productItem = page.getByText(name, { exact: false }).first();
   await expect(productItem).toBeVisible({ timeout: 20000 });
   await productItem.click({ force: true });

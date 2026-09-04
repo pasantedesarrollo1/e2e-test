@@ -67,6 +67,18 @@ export async function fillPaymentDetailsAndSubmit(page) {
   await expect(successMessage).toBeVisible();
 }
 
+export async function searchReceivableAccount(page, searchTerm) {
+  const searchInput = page.getByRole("textbox", { name: /Busca lo que necesites/i }).first();
+  await expect(searchInput).toBeVisible({ timeout: 10000 });
+  
+  await searchInput.click();
+  await searchInput.clear();
+  await page.waitForTimeout(300); 
+
+  await searchInput.pressSequentially(searchTerm, { delay: 30 });
+  await page.waitForTimeout(1500);
+}
+
 export async function validateInitialDeletionError(page) {
   const firstRow = page.locator(".v-data-table__tr").first();
   await expect(firstRow).toBeVisible({ timeout: 15_000 });
