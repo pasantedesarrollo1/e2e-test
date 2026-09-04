@@ -26,12 +26,9 @@ async function assignManualBodega(page) {
 }
 
 async function assignManualCaja(page) {
-  const cajaLabel = page.locator("main").getByText("Punto de Venta").first();
-  const cajaWrapper = cajaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
-  
   await expect(async () => {
-    const dropdownIcon = cajaWrapper.locator('.v-icon').last();
-    await dropdownIcon.click({ force: true });
+    const cajaCombobox = page.getByRole("combobox", { name: /Caja/i }).first();
+    await cajaCombobox.click({ force: true });
     
     const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
     await expect(listbox).toBeVisible({ timeout: 2000 });
