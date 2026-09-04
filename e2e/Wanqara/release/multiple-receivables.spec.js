@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { annotateTicket } from "../harness/annotate.js";
 import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
 import { getSessionPath, ensureAuthenticated } from "../harness/auth.js";
 import { getElectronicInvoicingAuthType } from "../harness/seed.js";
@@ -12,10 +13,19 @@ import {
   confirmFinalDeletion
 } from "./herness/multiple-receivables-flow.js";
 
+const TICKET = {
+  ws: 'WS-959, WS-974, WS-971, WS-953',
+  tes: 'TES-199',
+  release: 'v7.9.0',
+  summary: 'Admin Payments Multiple Receivables',
+  addedToRegression: null,
+};
+
 const tenantBaseUrl = getTenantBaseUrl();
 const authType001 = getElectronicInvoicingAuthType(); 
 
 test.describe("Admin Payments — Multiple Receivables @release", () => {
+  annotateTicket(test, TICKET);
   requirePosCredentials(test);
   
   test.use({ storageState: getSessionPath(authType001) });

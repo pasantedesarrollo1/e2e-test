@@ -1,4 +1,5 @@
 import { test } from "@playwright/test";
+import { annotateTicket } from "../harness/annotate.js";
 import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
 import { getSessionPath } from "../harness/auth.js";
 import { SEED } from "../harness/seed.js";
@@ -13,9 +14,18 @@ import {
   selectPaymentMethod 
 } from "./herness/ws-1004-admin-flow.js";
 
+const TICKET = {
+  ws: 'WS-1004',
+  tes: 'TES-213',
+  release: 'v7.9.1',
+  summary: 'Admin Cross Sales Anti-Cross Validation',
+  addedToRegression: null,
+};
+
 const tenantBaseUrl = getTenantBaseUrl();
 
 test.describe("ws-1004-admin-cross-sales: Anti-Cross Validation in Administrative Sales @release", () => {
+  annotateTicket(test, TICKET);
   requirePosCredentials(test);
   test.use({ storageState: getSessionPath("retail") });
 

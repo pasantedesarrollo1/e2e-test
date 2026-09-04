@@ -1,4 +1,5 @@
 import { test } from "@playwright/test";
+import { annotateTicket } from "../harness/annotate.js";
 import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
 import { getSessionPath, ensureAuthenticated } from "../harness/auth.js";
 import { SEED, getDynamicDocumentType } from "../harness/seed.js";
@@ -7,9 +8,18 @@ import { runAdminPreSaleFlow } from "../regression/transactions/sales/harness/ad
 import { runPosSaleFlow, selectClientByCedula } from "../regression/POS/harness/pos-sale-flow.js";
 import { cancelFirstSaleAndVerify } from "./herness/cancel-sale-flow.js";
 
+const TICKET = {
+  ws: 'WS-840',
+  tes: 'TES-198',
+  release: 'v7.9.1',
+  summary: 'Cancel Sales in Admin and POS',
+  addedToRegression: null,
+};
+
 const tenantBaseUrl = getTenantBaseUrl();
 
 test.describe.serial("Cancel Normal Sales (Admin) @release", () => {
+  annotateTicket(test, TICKET);
   requirePosCredentials(test);
 
   test("Restaurant (No Dispatch) - Creates a normal sale and cancels it, verifying that the inventory switch is displayed", async ({ browser }) => {
@@ -64,6 +74,7 @@ test.describe.serial("Cancel Normal Sales (Admin) @release", () => {
 });
 
 test.describe.serial("Cancel Pre-Sales (Admin) @release", () => {
+  annotateTicket(test, TICKET);
   requirePosCredentials(test);
 
   test("Restaurant (No Dispatch) - Creates a pre-sale and cancels it, verifying that the message is displayed without the switch", async ({ browser }) => {
@@ -118,6 +129,7 @@ test.describe.serial("Cancel Pre-Sales (Admin) @release", () => {
 });
 
 test.describe.serial("Cancel Sales (POS) @release", () => {
+  annotateTicket(test, TICKET);
   requirePosCredentials(test);
 
   test("Retail (100) - Creates a POS sale and cancels it, verifying that the inventory switch is displayed", async ({ browser }) => {

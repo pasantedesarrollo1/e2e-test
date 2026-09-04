@@ -1,13 +1,23 @@
 import { test } from "@playwright/test";
+import { annotateTicket } from "../harness/annotate.js";
 import { requirePosCredentials, requireChefCredentials, getTenantBaseUrl } from "../harness/settings.js";
 import { getSessionPath } from "../harness/auth.js";
 import { SEED } from "../harness/seed.js";
 import { runReleasePosSaleFlow, finalizeValidatedRestaurantSale } from "./herness/ws-1004-pos-flow.js";
 import { createChefOrder, navigateToRestaurantPOS, openAndSelectOrder, closeAllActiveOrders } from "../regression/POS/POS-R/harness/pos-orders-common.js";
 
+const TICKET = {
+  ws: 'WS-1004',
+  tes: 'TES-213',
+  release: 'v7.9.1',
+  summary: 'POS Sales with Sequential Validation',
+  addedToRegression: null,
+};
+
 const tenantBaseUrl = getTenantBaseUrl();
 
 test.describe("ws-1004-pos-sales: POS Sales with Sequential Validation @release", () => {
+  annotateTicket(test, TICKET);
   requirePosCredentials(test);
 
   test.describe("Commerce 100", () => {
@@ -30,6 +40,7 @@ test.describe("ws-1004-pos-sales: POS Sales with Sequential Validation @release"
 });
 
 test.describe.serial("ws-1004-pos-restaurant: POS Restaurant Sale with Electronic Invoice @release", () => {
+  annotateTicket(test, TICKET);
   requirePosCredentials(test);
   requireChefCredentials(test);
 

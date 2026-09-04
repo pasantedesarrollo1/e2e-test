@@ -1,9 +1,19 @@
 import { test, expect } from "@playwright/test";
+import { annotateTicket } from "../harness/annotate.js";
 import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
 import { getSessionPath } from "../harness/auth.js";
 import { withPath } from "../harness/urls.js";
 
+const TICKET = {
+  ws: 'WS-1000',
+  tes: 'TES-209',
+  release: 'v7.9.1',
+  summary: 'Orders Reconciliations Waiter Filter',
+  addedToRegression: null,
+};
+
 test.describe("Orders Reconciliations - Waiter Filter @release", () => {
+  annotateTicket(test, TICKET);
   requirePosCredentials(test);
 
   test.use({ storageState: getSessionPath("restaurant") });

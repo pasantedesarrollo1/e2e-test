@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { annotateTicket } from "../harness/annotate.js";
 import { requirePosCredentials, getTenantBaseUrl } from "../harness/settings.js";
 import { getSessionPath, ensureAuthenticated } from "../harness/auth.js";
 import { getElectronicInvoicingAuthType } from "../harness/seed.js";
@@ -10,9 +11,18 @@ import {
   switchAdminSubsidiary
 } from "./herness/ws-981-helpers.js";
 
+const TICKET = {
+  ws: 'WS-981',
+  tes: 'TES-206',
+  release: 'v7.9.1',
+  summary: 'Reactive Document Type by Subsidiary',
+  addedToRegression: null,
+};
+
 const tenantBaseUrl = getTenantBaseUrl();
 
 test.describe("WS-981: Reactive Document Type by Subsidiary @release", () => {
+  annotateTicket(test, TICKET);
   requirePosCredentials(test);
   
   test.use({ storageState: getSessionPath(getElectronicInvoicingAuthType()) });

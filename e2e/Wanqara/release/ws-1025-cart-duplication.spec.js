@@ -1,9 +1,19 @@
 import { test, expect } from "../regression/POS/harness/pos-fixtures.js";
+import { annotateTicket } from "../harness/annotate.js";
 import { requirePosCredentials } from "../harness/settings.js";
 import { SEED } from "../harness/seed.js";
 import { getSessionPath } from "../harness/auth.js";
 
+const TICKET = {
+  ws: 'WS-1025',
+  tes: 'TES-211',
+  release: 'v7.9.1',
+  summary: 'POS Cart Duplication',
+  addedToRegression: null,
+};
+
 test.describe("WS-1025: POS Cart Duplication @release", () => {
+  annotateTicket(test, TICKET);
   requirePosCredentials(test);
   test.use({ storageState: getSessionPath("retail") });
 
