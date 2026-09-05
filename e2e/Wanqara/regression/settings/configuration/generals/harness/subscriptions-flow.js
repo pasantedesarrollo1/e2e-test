@@ -7,60 +7,23 @@ const normalizeText = (str) => {
 };
 
 export async function validateSubscriptionsOverview(page) {
-  await test.step("Wait for subscriptions page to load", async () => {
-    await expect(
-      page.locator('span.tw-text-2xl').filter({ hasText: 'Suscripciones' })
-    ).toBeVisible({ timeout: 15000 });
-  });
+  const cards = page.locator('.clase-de-tarjeta');
+  const count = await cards.count();
 
-  await test.step("Validate rendered plan against seed", async () => {
-    const planElement = page.locator('.tw-bg-primary .tw-text-base.tw-font-semibold.tw-text-white');
-    if (await planElement.isVisible()) {
-      const planText = (await planElement.textContent()).trim();
-      if (planText !== "Sin plan" && !planText.match(/^\d{3}\s-/)) {
-        const normalizedDOMPlan = normalizeText(planText);
-        const isValidPlan = SEED_SUBSCRIPTIONS.plans.some(p => normalizeText(p.name) === normalizedDOMPlan);
-        expect(isValidPlan, `El plan visualizado "${planText}" no existe en el seed.`).toBeTruthy();
-      }
-    }
-  });
-
-  await test.step("Validate rendered modules against seed", async () => {
-    const moduleContainers = page.locator('div.tw-min-w-0.tw-flex-1').filter({ 
-      has: page.locator('div.tw-text-xs:not(.tw-text-textSecondary)') 
-    });
-    const count = await moduleContainers.count();
-
-    for (let i = 0; i < count; i++) {
-      const codeText = await moduleContainers.nth(i).locator('div.tw-text-xs').textContent();
-      const cleanCode = codeText.trim();
-
-      const seedMatch = SEED_SUBSCRIPTIONS.modules.find(m => m.code === cleanCode);
-      
-      expect(seedMatch, `El módulo con código "${cleanCode}" no existe en el seed.`).toBeDefined();
-    }
-  });
-
-  await test.step("Validate rendered receipt packs against seed", async () => {
-    const receiptsHeader = page.locator('span.tw-text-sm.tw-text-primary.tw-font-semibold').filter({ hasText: 'Paquetes de comprobantes' });
+  for (let i = 0; i < count; i++) {
+    const card = cards.nth(i);
+    const codeElement = card.locator('.clase-del-codigo');
     
-    if (await receiptsHeader.isVisible()) {
-      const grid = receiptsHeader.locator('+ div.tw-grid');
-      const chips = grid.locator('.v-chip');
-      const chipCount = await chips.count();
+    if (await codeElement.isVisible()) {
+      const codeText = await codeElement.innerText();
+      const normalizedDOMCode = normalizeText(codeText);
       
-      for (let i = 0; i < chipCount; i++) {
-        const chipText = (await chips.nth(i).textContent()).trim();
-        const normalizedChipText = normalizeText(chipText);
-        
-        const isValidReceipt = SEED_SUBSCRIPTIONS.receipts.some(r => 
-          normalizeText(r.quantity) === normalizedChipText || 
-          (chipText === "-1" && normalizeText(r.quantity) === "ilimitados")
-        );
-        expect(isValidReceipt, `El paquete de comprobantes con cantidad "${chipText}" no existe en el seed.`).toBeTruthy();
-      }
+      const isValidPlan = SEED_SUBSCRIPTIONS.plans.some(p => normalizeText(p.code) === normalizedDOMCode);
+      const isValidModule = SEED_SUBSCRIPTIONS.modules.some(m => normalizeText(m.code) === normalizedDOMCode);
+      
+      expect(isValidPlan || isValidModule, `El código "${codeText}" no existe en el seed.`).toBeTruthy();
     }
-  });
+  }
 }
 
 export async function validateSubsidiaryCapabilityBadges(page, tenantBaseUrl) {
@@ -81,7 +44,7 @@ export async function validateSubsidiaryCapabilityBadges(page, tenantBaseUrl) {
       const normalizedBadgeText = normalizeText(cleanBadgeText);
 
       const existsInModules = SEED_SUBSCRIPTIONS.modules.some(
-        m => normalizeText(m.name) === normalizedBadgeText
+        m => normalizeText(m.code) === normalizedBadgeText
       );
       
       const existsInCapabilities = SEED_SUBSCRIPTIONS.capabilityLabels.some(

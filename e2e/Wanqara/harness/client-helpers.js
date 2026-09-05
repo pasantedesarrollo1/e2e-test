@@ -100,7 +100,7 @@ export async function selectClientByCedula(page, cedula, options = {}) {
       await expect(saveBtn).toBeEnabled({ timeout: 10000 }).catch(() => {});
       await saveBtn.click({ force: true });
       if (expectModalClosed) {
-        await expect(clientModal).not.toBeVisible({ timeout: 5000 }).catch(() => {});
+        await expect(clientModal).not.toBeVisible({ timeout: 5000 });
       }
     }
   }

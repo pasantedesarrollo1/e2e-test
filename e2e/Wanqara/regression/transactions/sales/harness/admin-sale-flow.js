@@ -26,9 +26,12 @@ async function assignManualBodega(page) {
 }
 
 async function assignManualCaja(page) {
+  const cajaLabel = page.locator("main").getByText("Punto de Venta").first();
+  const cajaWrapper = cajaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
+  
   await expect(async () => {
-    const cajaCombobox = page.getByRole("combobox", { name: /Caja/i }).first();
-    await cajaCombobox.click({ force: true });
+    const dropdownIcon = cajaWrapper.locator('.v-icon').last();
+    await dropdownIcon.click({ force: true });
     
     const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
     await expect(listbox).toBeVisible({ timeout: 2000 });
@@ -42,6 +45,7 @@ export async function selectCheckout(page, urlPattern = /\/admin\/ventas\/add/) 
   await page.waitForURL(urlPattern);
   await page.waitForTimeout(1000);
 
+  // 1. Asignar Bodega solo si está vacía
   const bodegaLabel = page.locator("main").getByText("Bodega").first();
   if (await bodegaLabel.isVisible()) {
     const bodegaWrapper = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
@@ -53,6 +57,7 @@ export async function selectCheckout(page, urlPattern = /\/admin\/ventas\/add/) 
     }
   }
 
+  // 2. Asignar Caja solo si está vacía
   const cajaLabel = page.locator("main").getByText("Punto de Venta").first();
   await expect(cajaLabel).toBeVisible({ timeout: 10000 });
   
@@ -61,48 +66,17 @@ export async function selectCheckout(page, urlPattern = /\/admin\/ventas\/add/) 
   const cleanCajaText = cajaText.replace(/Punto de Venta|Caja|\*/ig, "").trim();
   
   if (cleanCajaText.length === 0) {
+    // FIX: Eliminada la llamada redundante a assignManualBodega(page)
     await assignManualCaja(page);
   }
 
-  await page.locator("main").click({ position: { x: 10, y: 10 }, force: true });
+  // 3. Limpiar estado visual de forma segura
+  await page.keyboard.press("Escape");
   await page.waitForTimeout(200);
 }
 
-export async function selectDocumentType(page, documentType) {
-  if (!documentType) return;
-
-  const docLabel = page.locator("main").getByText("Tipo de Documento").first();
-  await expect(docLabel).toBeVisible({ timeout: 10000 });
-
-  const docInputWrapper = docLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
-
-  const normalize = (s) => s.replace(/[""'']/g, '').replace(/\s+/g, ' ').trim();
-
-  const FACTURA_CODES = ["01"];
-
-  const currentText = normalize(await docInputWrapper.innerText());
-  const normalizedTarget = normalize(documentType);
-
-  const alreadySelected =
-    currentText.includes(normalizedTarget) ||
-    (documentType === SEED.documentTypes.facturaElectronica &&
-      FACTURA_CODES.some((code) => currentText.includes(code)));
-
-  if (alreadySelected) return;
-
-  const dropdownIcon = docInputWrapper.locator('.v-icon').last();
-  await dropdownIcon.click({ force: true });
-
-  const activeListbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
-  await expect(activeListbox).toBeVisible({ timeout: 5000 });
-
-  const option = activeListbox.getByRole("option", { name: new RegExp(normalize(documentType), "i") }).first();
-  await expect(option).toBeVisible({ timeout: 5000 });
-  await option.click();
-
-  await expect(activeListbox).not.toBeVisible({ timeout: 5000 });
-  await page.keyboard.press("Escape");
-}
+import { selectDocumentType } from './admin-document-helpers.js';
+export { selectDocumentType };
 
 export { selectClientByCedula } from '../../../../harness/client-helpers.js';
 

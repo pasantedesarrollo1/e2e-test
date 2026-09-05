@@ -7,41 +7,8 @@ import { selectCheckout as _selectCheckout } from './admin-sale-flow.js';
 
 export const selectCheckout = (page) => _selectCheckout(page, /\/admin\/pre-sale\/add/);
 
-export async function selectDocumentType(page, documentType) {
-  if (!documentType) return;
-
-  const docLabel = page.locator("main").getByText("Tipo de Documento").first();
-  await expect(docLabel).toBeVisible({ timeout: 10000 });
-
-  const docInputWrapper = docLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
-
-  const normalize = (s) => s.replace(/[""'']/g, '').replace(/\s+/g, ' ').trim();
-
-  const FACTURA_CODES = ["01"];
-
-  const currentText = normalize(await docInputWrapper.innerText());
-  const normalizedTarget = normalize(documentType);
-
-  const alreadySelected =
-    currentText.includes(normalizedTarget) ||
-    (documentType === SEED.documentTypes.facturaElectronica &&
-      FACTURA_CODES.some((code) => currentText.includes(code)));
-
-  if (alreadySelected) return;
-
-  const dropdownIcon = docInputWrapper.locator('.v-icon').last();
-  await dropdownIcon.click({ force: true });
-
-  const activeListbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
-  await expect(activeListbox).toBeVisible({ timeout: 5000 });
-
-  const option = activeListbox.getByRole("option", { name: new RegExp(normalize(documentType), "i") }).first();
-  await expect(option).toBeVisible({ timeout: 5000 });
-  await option.click();
-
-  await expect(activeListbox).not.toBeVisible({ timeout: 5000 });
-  await page.keyboard.press("Escape");
-}
+import { selectDocumentType } from './admin-document-helpers.js';
+export { selectDocumentType };
 
 export { selectClientByCedula } from '../../../../harness/client-helpers.js';
 

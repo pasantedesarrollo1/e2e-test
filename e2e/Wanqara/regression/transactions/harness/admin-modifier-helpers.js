@@ -41,4 +41,3 @@ export async function applyManualSurcharge(page, rate = SEED.surcharge.rate) {
 
   await expect(input).not.toBeVisible({ timeout: 5000 });
 }
-

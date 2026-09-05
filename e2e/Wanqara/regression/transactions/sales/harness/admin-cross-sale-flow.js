@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { SEED } from "../../../../harness/seed.js";
 import { ensureAuthenticated } from "../../../../harness/auth.js";
 import { selectClientByCedula } from '../../../../harness/client-helpers.js';
 
@@ -55,36 +56,6 @@ export async function submitValidatedAdminTransaction(page, endpointPattern) {
   ).toBeVisible({ timeout: 15000 });
 }
 
-export async function switchSubsidiaryFromProfile(page, targetSubsidiary) {
-  const shortName = targetSubsidiary.split("-").pop().trim();
-
-  const headerText = await page.locator("header").first().innerText();
-  if (headerText.includes(shortName)) {
-    return; 
-  }
-
-  const profileBtn = page.locator("header").first().locator("button").filter({ hasText: /Wanqara/i }).first();
-  await profileBtn.click();
-
-  const profileModal = page.locator(".v-overlay__content").filter({ hasText: /Mi Perfil/i }).first();
-  await expect(profileModal).toBeVisible({ timeout: 5000 });
-
-  const branchSelect = profileModal.locator(".v-select").first();
-  await branchSelect.click();
-
-  const listbox = page.getByRole("listbox");
-  await expect(listbox).toBeVisible({ timeout: 5000 });
-  await listbox.getByRole("option", { name: new RegExp(targetSubsidiary, "i") }).first().click();
-
-  await page.keyboard.press("Escape");
-  await expect(profileModal).not.toBeVisible({ timeout: 5000 }).catch(() => {});
-
-  await page.waitForLoadState("networkidle");
-  await expect(
-    page.locator("header").first().locator("button").filter({ hasText: new RegExp(shortName, "i") }).first()
-  ).toBeVisible({ timeout: 15000 });
-}
-
 export async function selectCustomDocumentType(page, documentType) {
   if (!documentType) return;
 
@@ -101,7 +72,7 @@ export async function selectCustomDocumentType(page, documentType) {
 
   const alreadySelected =
     currentText.includes(normalizedTarget) ||
-    (documentType === "Factura electrónica" && FACTURA_CODES.some((code) => currentText.includes(code)));
+    (documentType === SEED.documentTypes.facturaElectronica && FACTURA_CODES.some((code) => currentText.includes(code)));
 
   if (alreadySelected) {
     return; 
@@ -121,8 +92,8 @@ export async function selectCustomDocumentType(page, documentType) {
 
 export { selectClientByCedula } from '../../../../harness/client-helpers.js';
 
-import { searchAndSelectProduct, selectCheckout } from './admin-sale-flow.js';
-export { searchAndSelectProduct, selectCheckout };
+import { searchAndSelectProduct, selectCheckout, submitAdminSale } from './admin-sale-flow.js';
+export { searchAndSelectProduct, selectCheckout, submitAdminSale };
 
 export { applyGeneralDiscount, applyManualSurcharge } from '../../harness/admin-modifier-helpers.js';
 
@@ -130,25 +101,6 @@ export async function selectPaymentMethod(page, methodName) {
   const methodItem = page.getByText(methodName, { exact: true }).first();
   await methodItem.scrollIntoViewIfNeeded();
   await methodItem.click({ force: true });
-}
-
-export async function submitAdminSale(page) {
-  const saveBtn = page.getByRole("button", { name: "Guardar", exact: true }).first();
-
-  await expect(saveBtn).toBeVisible({ timeout: 10000 });
-  await expect(saveBtn).toBeEnabled({ timeout: 15000 });
-
-  await Promise.all([
-    page.waitForResponse(
-      (res) => res.url().includes("/api/v2/billing/sales") && res.request().method() === "POST",
-      { timeout: 30000 }
-    ),
-    saveBtn.click({ force: true }),
-  ]);
-
-  await expect(
-    page.locator(".v-snackbar").filter({ hasText: /Venta guardada/i }).first()
-  ).toBeVisible({ timeout: 15000 });
 }
 
 export async function runAdminSaleFlow(page, {

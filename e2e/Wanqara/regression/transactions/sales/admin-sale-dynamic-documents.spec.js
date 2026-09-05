@@ -9,9 +9,9 @@ import { getElectronicInvoicingAuthType } from "../../../harness/seed.js";
 import { selectCheckout as selectCheckoutSales } from "./harness/admin-sale-flow.js";
 import {
   readSelectedDocumentType,
-  getAvailableDocumentOptions,
-  switchAdminSubsidiary
+  getAvailableDocumentOptions
 } from "./harness/admin-dynamic-documents-helpers.js";
+import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
 
 const TICKET = {
   ws: 'WS-981',
