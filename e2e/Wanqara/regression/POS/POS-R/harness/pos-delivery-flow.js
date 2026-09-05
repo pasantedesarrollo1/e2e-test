@@ -1,5 +1,7 @@
 import { expect } from "@playwright/test";
 import { SEED } from "../../../../harness/seed.js";
+import { fillIdentityModal } from "../../../../harness/client-helpers.js";
+import { expectSnackbar } from "../../../../harness/ui-helpers.js";
 
 export const DELIVERY_SEED = {
   phone: "0999999922",
@@ -71,16 +73,10 @@ export async function addClientFromDeliveryForm(page, form, { cedula }) {
   const clientModal = page.locator(".v-overlay__content").filter({ hasText: /Guardar Cliente/i }).first();
   await expect(clientModal).toBeVisible();
 
-  const identityTypeField = clientModal.locator(".v-select").first();
-  await identityTypeField.click();
-  await page.getByRole("option", { name: /^CEDULA$/i }).click();
-
-  const identityInput = clientModal.getByRole("textbox", { name: /Cédula o RUC/i, exact: true });
-  await expect(identityInput).not.toHaveAttribute("readonly");
-  await identityInput.fill(cedula);
-
-  const searchBtn = clientModal.getByRole("button", { name: /Crear o consultar cliente por/i });
-  await searchBtn.click();
+  await fillIdentityModal(page, clientModal, {
+    identityType: "CEDULA",
+    identityNumber: cedula
+  });
 
   const saveBtn = clientModal.getByRole("button", { name: /Guardar Cliente/i });
   await Promise.all([
@@ -90,7 +86,7 @@ export async function addClientFromDeliveryForm(page, form, { cedula }) {
     saveBtn.click({ force: true }),
   ]);
 
-  await expect(page.locator(".v-snackbar").filter({ hasText: /Cliente creado correctamente/i })).toBeVisible();
+  await expectSnackbar(page, /Cliente creado correctamente/i);
 }
 
 export async function fillDeliveryAddress(page, form, { name, address, observation }) {
@@ -113,7 +109,7 @@ export async function saveDeliveryForm(page) {
     saveBtn.click({ force: true }),
   ]);
 
-  await expect(page.locator(".v-snackbar").filter({ hasText: /Creación exitosa/i })).toBeVisible();
+  await expectSnackbar(page, /Creación exitosa/i);
 
   const closeBtn = form.locator(".v-card-title .v-btn").first();
   await closeBtn.click();

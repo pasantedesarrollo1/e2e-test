@@ -459,14 +459,6 @@ assert tooltipContent not visible
 
 **What it tests:** Create–verify–delete lifecycle for a size record.
 
-**Status: SKIPPED — active `test.fixme`**
-
-This spec is permanently skipped due to a known bug tracked at Jira issue [WS-941](https://wanqara-team.atlassian.net/browse/WS-941).
-
-**Fixme message:** `"Bypass temporal (WS-941): Bug en validación, ahora cualquier nombre indica que ya está en uso y bloquea la creación."`
-
-**What the test would do (when re-enabled):**
-
 ```
 ensureCleanRecord(page, {
   listPath:  /admin/sizes/list
@@ -482,14 +474,12 @@ ensureCleanRecord(page, {
 })
 ```
 
-**Seed data that would be used:**
+**Seed data used:**
 
 | Constant | Value |
 |---|---|
 | `SEED.attributes.size.name` | `"Talla Test Automatizado"` |
 | `SEED.attributes.size.observation` | `"Observación de prueba automatizada"` |
-
-**Action required to re-enable:** Remove the `test.fixme(true, ...)` call once WS-941 is resolved. No other changes to the spec are needed.
 
 ---
 
@@ -543,8 +533,8 @@ All constants come from `e2e/Wanqara/harness/seed.js`.
 | `SEED.attributes.brand.observation` | `"test"` | `brands.spec.js` |
 | `SEED.attributes.color.name` | `"Color Test Automatizado"` | `colors.spec.js` |
 | `SEED.attributes.color.observation` | `"Observación de prueba automatizada"` | `colors.spec.js` |
-| `SEED.attributes.size.name` | `"Talla Test Automatizado"` | `sizes.spec.js` (skipped) |
-| `SEED.attributes.size.observation` | `"Observación de prueba automatizada"` | `sizes.spec.js` (skipped) |
+| `SEED.attributes.size.name` | `"Talla Test Automatizado"` | `sizes.spec.js` |
+| `SEED.attributes.size.observation` | `"Observación de prueba automatizada"` | `sizes.spec.js` |
 | `SEED.discount.crud.alwaysPercentage` | `{ name, description, discount: 10 }` | `discount.spec.js` |
 | `SEED.discount.crud.everyFixed` | `{ name, description, discount: 1, quantity: 10 }` | `discount.spec.js` |
 | `SEED.discount.crud.fromPercentage` | `{ name, description, discount: 5, quantity: 3 }` | `discount.spec.js` |
@@ -569,7 +559,7 @@ All constants come from `e2e/Wanqara/harness/seed.js`.
 | 2 | `colors.spec.js` | No | Yes | 1 | `POST /api/v1/general/colors` |
 | 3 | `discount.spec.js` | No | Yes | 3 | `POST /api/v1/inventory/discounts` (test 1 only) |
 | 4 | `recipe-decimals-validation.spec.js` | **Yes** | Yes | 2 | None (read-only) |
-| 5 | `sizes.spec.js` | No | **Skipped (WS-941)** | 1 | `POST /api/v1/general/sizes` (when re-enabled) |
+| 5 | `sizes.spec.js` | No | Yes | 1 | `POST /api/v1/general/sizes` |
 | 6 | `surcharges.spec.js` | No | Yes | 1 | `POST /api/v1/general/surcharges` |
 
 ---
@@ -583,4 +573,3 @@ All constants come from `e2e/Wanqara/harness/seed.js`.
 | `recipe-decimals-validation.spec.js` | Speed-dial hover-discovery finds no "Ver este Producto" button | Throws `"No se encontró el botón con el tooltip 'Ver este Producto'."` |
 | `discount.spec.js` | "Descuento Siempre Porcentaje" exists from a prior partial run | Pre-cleanup handles this; if the API delete returns non-200 the cleanup snackbar assertion may fail |
 | `brands.spec.js` / `colors.spec.js` / `surcharges.spec.js` | Record exists from prior run | `ensureCleanRecord` deletes it in step 1 before re-creating; idempotent by design |
-| `sizes.spec.js` | WS-941 regression is shipped | `test.fixme` prevents execution; test is reported as skipped, not failed |

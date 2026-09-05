@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { SEED } from "../../../harness/seed.js";
+import { expectSnackbar } from "../../../harness/ui-helpers.js";
 
 async function ensureActionButton(page, locator, shouldBeActive) {
   await expect(locator).toHaveClass(/summary-action-btn--(active|inactive)/);
@@ -42,7 +43,5 @@ export async function completePayment(page, {
     finalizarVentaButton.click({ force: true })
   ]);
 
-  await expect(
-    page.locator(".v-snackbar").filter({ hasText: /Venta Realizada/i }),
-  ).toBeVisible();
+  await expectSnackbar(page, /Venta Realizada/i);
 }

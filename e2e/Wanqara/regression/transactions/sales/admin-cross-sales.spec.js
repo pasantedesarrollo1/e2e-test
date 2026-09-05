@@ -7,12 +7,12 @@ import { RELEASE_SEED } from "../../../harness/seeds/cross-sales-seed.js";
 import { 
   selectCustomCheckout, 
   submitValidatedAdminTransaction, 
-  switchSubsidiaryFromProfile,
   selectCustomDocumentType,
   selectClientByCedula, 
   searchAndSelectProduct, 
   selectPaymentMethod 
 } from "./harness/admin-cross-sale-flow.js";
+import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
 
 const TICKET = {
   ws: 'WS-1004',
@@ -37,7 +37,7 @@ test.describe("Admin Sales — Anti-Cross Validation @regression", () => {
 
     for (const sucursal of RELEASE_SEED.sucursales) {
       await test.step(`Switching UI context to branch: ${sucursal.name}`, async () => {
-        await switchSubsidiaryFromProfile(page, sucursal.name);
+        await switchAdminSubsidiary(page, sucursal.name);
       });
 
       for (const combo of sucursal.combinations) {
@@ -65,7 +65,7 @@ test.describe("Admin Sales — Anti-Cross Validation @regression", () => {
 
     for (const sucursal of RELEASE_SEED.sucursales) {
       await test.step(`Switching UI context to branch: ${sucursal.name}`, async () => {
-        await switchSubsidiaryFromProfile(page, sucursal.name);
+        await switchAdminSubsidiary(page, sucursal.name);
       });
 
       for (const combo of sucursal.combinations) {

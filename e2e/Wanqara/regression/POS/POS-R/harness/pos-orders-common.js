@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { expectSnackbar } from "../../../../harness/ui-helpers.js";
 import { processOrderClosure } from "./pos-close-order.js";
 import { ensureAuthenticated, loginAndSelectSubsidiary } from "../../../../harness/auth.js";
 import { ensureChefAuthenticated } from "../../../../harness/chef-auth.js";
@@ -114,12 +115,7 @@ export async function addProductToExistingOrder(page, productName) {
     page.getByRole("button", { name: /Confirmar/i }).click(),
   ]);
 
-  await expect(
-    page
-      .locator(".v-snackbar")
-      .filter({ hasText: /Orden actualizada con éxito/i })
-      .first(),
-  ).toBeVisible();
+  await expectSnackbar(page, /Orden actualizada con éxito/i);
 }
 
 export async function collectOrder(page) {
@@ -200,4 +196,12 @@ export async function closeAllActiveOrders(page, tenantBaseUrl) {
 
     await page.goto(`${tenantBaseUrl}/pos/restaurant-home`);
   }
+}
+
+export async function withActiveRestaurantOrder(page, tenantBaseUrl, actionCallback, orderOptions = {}) {
+  await closeAllActiveOrders(page, tenantBaseUrl);
+  const activeTableName = await createChefOrder(page, orderOptions);
+  await navigateToRestaurantPOS(page, tenantBaseUrl);
+  await openAndSelectOrder(page, activeTableName);
+  await actionCallback(page, activeTableName);
 }

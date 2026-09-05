@@ -3,7 +3,8 @@ import { requirePosCredentials, getTenantBaseUrl } from "../../harness/settings.
 import { getSessionPath, ensureAuthenticated } from "../../harness/auth.js";
 import { SEED } from "../../harness/seed.js";
 import { withPath } from "../../harness/urls.js";
-import { searchInList } from "../../harness/crud-helpers.js";
+import { searchInList, clickTableRowAction } from "../../harness/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../harness/action-tooltips.js";
 import { fillPersonForm, submitPersonForm } from "./harness/people-flow.js";
 
 const tenantBaseUrl = getTenantBaseUrl();
@@ -45,15 +46,8 @@ test.describe("People Management CRUD @regression", () => {
 
       await test.step("Deactivate the user", async () => {
         const row = page.locator(".v-data-table__tr").filter({ hasText: userData.identity }).first();
-        const actionsCell = row.locator("td").last();
         
-        const actionsMenuBtn = actionsCell.locator("button").last();
-        await actionsMenuBtn.click();
-        
-        await page.waitForTimeout(500);
-
-        const deactivateBtn = actionsCell.locator("button").nth(1);
-        await deactivateBtn.click();
+        await clickTableRowAction(page, row, ACTION_TOOLTIPS.people.delete);
 
         const confirmBtn = page.getByRole("button", { name: "Confirmar", exact: true });
         

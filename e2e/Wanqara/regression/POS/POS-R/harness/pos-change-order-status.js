@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { expectSnackbar } from "../../../../harness/ui-helpers.js";
 
 export async function selectOrderToChangeStatus(page) {
   const orderCard = page.locator(".tw-cursor-pointer.tw-group").first();
@@ -25,6 +26,5 @@ export async function processOrderStatusChange(page) {
   await confirmBtn.click();
   await responsePromise;
 
-  const successMessage = page.locator(".v-snackbar").filter({ hasText: /Estado de la orden actualizado con éxito/i }).first();
-  await expect(successMessage).toBeVisible();
+  await expectSnackbar(page, /Estado de la orden actualizado con éxito/i);
 }

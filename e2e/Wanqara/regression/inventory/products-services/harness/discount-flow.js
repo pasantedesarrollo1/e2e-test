@@ -5,6 +5,7 @@ import {
   saveFormAndVerify,
   verifyRecordInList,
 } from "../../../../harness/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../../../harness/action-tooltips.js";
 
 export async function fillDiscountForm(page, {
   tenantBaseUrl,
@@ -112,5 +113,6 @@ export async function deleteDiscountIfExists(page, { tenantBaseUrl, name }) {
     searchName: name,
     endpointPattern: "/api/v1/inventory/discounts/",
     confirmButtonRegex: /^Confirmar$/i,
+    deleteTooltip: ACTION_TOOLTIPS.discounts.delete,
   });
 }

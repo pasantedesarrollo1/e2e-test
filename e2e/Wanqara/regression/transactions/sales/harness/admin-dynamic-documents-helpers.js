@@ -43,30 +43,3 @@ export async function getAvailableDocumentOptions(page) {
   
   return options.map(opt => opt.replace(/[""']/g, "").trim());
 }
-
-export async function switchAdminSubsidiary(page, targetSubsidiaryMatch) {
-  const profileMenuBtn = page.locator('header button').filter({ hasText: /QA developer|Wanqara/i }).first();
-  await profileMenuBtn.click();
-  
-  const profileMenu = page.locator(".v-overlay-container .v-overlay--active").filter({ hasText: /Cerrar Sesión/i }).first();
-  await expect(profileMenu).toBeVisible({ timeout: 5000 });
-  
-  const branchComboboxField = profileMenu.locator('.v-select .v-field').first();
-  
-  await expect(async () => {
-    await branchComboboxField.click();
-    const activeListbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").last();
-    await expect(activeListbox).toBeVisible({ timeout: 2000 });
-    const targetOption = activeListbox.getByRole("option", { name: new RegExp(targetSubsidiaryMatch, "i") }).first();
-    await targetOption.click();
-    
-    await expect(activeListbox).not.toBeVisible({ timeout: 2000 });
-  }).toPass({ timeout: 15000 });
-  
-  if (await profileMenu.isVisible()) {
-    await page.keyboard.press("Escape");
-    await expect(profileMenu).not.toBeVisible({ timeout: 5000 }).catch(() => {});
-  }
-  
-  await page.waitForTimeout(2000); 
-}
