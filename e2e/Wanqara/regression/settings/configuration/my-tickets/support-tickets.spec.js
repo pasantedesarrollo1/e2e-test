@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
 import { ensureAuthenticated } from "../../../../harness/auth.js";
+import { selectDropdownOption } from "../../../../harness/ui-helpers.js";
 
 async function navigateToCreateTicket(page, tenantBaseUrl) {
   await ensureAuthenticated(page, {
@@ -27,19 +28,9 @@ async function clickSiguiente(page) {
 }
 
 async function selectFirstService(page) {
-  const serviceSelect = page
-    .locator(".v-field")
-    .filter({ has: page.locator("input[placeholder='Selecciona un servicio']") })
-    .first();
+  const serviceSelect = page.locator(".v-field").filter({ has: page.locator("input[placeholder='Selecciona un servicio']") }).first();
   await expect(serviceSelect).toBeVisible({ timeout: 10_000 });
-  await serviceSelect.click();
-
-  const firstOption = page
-    .locator(".v-overlay-container .v-overlay--active .v-list-item")
-    .first();
-  await expect(firstOption).toBeVisible({ timeout: 5_000 });
-  await firstOption.click();
-  await expect(firstOption).not.toBeVisible();
+  await selectDropdownOption(page, { triggerLocator: serviceSelect });
 }
 
 async function selectFirstDateAndSlot(page) {

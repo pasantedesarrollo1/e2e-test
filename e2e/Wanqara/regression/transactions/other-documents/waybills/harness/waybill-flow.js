@@ -1,6 +1,9 @@
 import { expect } from "@playwright/test";
 import { SEED, getElectronicInvoicingAuthType } from "../../../../../harness/seed.js";
 import { ensureAuthenticated } from "../../../../../harness/auth.js";
+import { searchInList } from "../../../../../harness/crud-helpers.js";
+import { selectDropdownOption, expectSnackbar } from "../../../../../harness/ui-helpers.js";
+import { fillIdentityModal } from "../../../../../harness/client-helpers.js";
 
 export const CARRIER_CASES = [
   { label: "por cédula",                 carrier: "cedula"   },
@@ -85,39 +88,17 @@ export async function fillWaybillDates(page, { startDate, finishDate }) {
 }
 
 export async function selectWarehouse(page, warehouseName) {
-  const warehouseAutocomplete = page.getByRole("combobox", { name: "Seleccione una bodega" });
-  await warehouseAutocomplete.scrollIntoViewIfNeeded();
-  await warehouseAutocomplete.click({ delay: 100 });
-
-  const option = page.locator(".v-list-item").filter({ hasText: warehouseName }).first();
-  
-  try {
-    await option.waitFor({ state: "visible", timeout: 3000 });
-  } catch {
-    await warehouseAutocomplete.click({ force: true, delay: 100 });
-    await option.waitFor({ state: "visible", timeout: 5000 });
-  }
-  
-  await option.click();
-  await expect(option).not.toBeVisible();
+  await selectDropdownOption(page, {
+    triggerLocator: page.getByRole("combobox", { name: "Seleccione una bodega" }),
+    optionText: warehouseName
+  });
 }
 
 export async function selectCheckout(page, checkoutName) {
-  const checkoutAutocomplete = page.getByRole("combobox", { name: "Seleccione un Punto de Venta" });
-  await checkoutAutocomplete.scrollIntoViewIfNeeded();
-  await checkoutAutocomplete.click({ delay: 100 });
-
-  const option = page.locator(".v-list-item").filter({ hasText: checkoutName }).first();
-  
-  try {
-    await option.waitFor({ state: "visible", timeout: 3000 });
-  } catch {
-    await checkoutAutocomplete.click({ force: true, delay: 100 });
-    await option.waitFor({ state: "visible", timeout: 5000 });
-  }
-  
-  await option.click();
-  await expect(option).not.toBeVisible();
+  await selectDropdownOption(page, {
+    triggerLocator: page.getByRole("combobox", { name: "Seleccione un Punto de Venta" }),
+    optionText: checkoutName
+  });
 }
 
 export async function fillVehiclePlate(page, plate) {
@@ -180,20 +161,7 @@ export async function fillAddressDetails(page, { address, reason, route, destina
 
   if (destinationSubsidiary) {
     const subsidiaryAutocomplete = page.getByRole("combobox", { name: "Seleccione Sucursal Destino" });
-    await subsidiaryAutocomplete.scrollIntoViewIfNeeded();
-    await subsidiaryAutocomplete.click({ delay: 100 });
-
-    const firstOption = page.locator(".v-overlay-container .v-overlay--active .v-list-item").first();
-    
-    try {
-      await firstOption.waitFor({ state: "visible", timeout: 3000 });
-    } catch {
-      await subsidiaryAutocomplete.click({ force: true, delay: 100 });
-      await firstOption.waitFor({ state: "visible", timeout: 10000 });
-    }
-    
-    await firstOption.click();
-    await expect(firstOption).not.toBeVisible();
+    await selectDropdownOption(page, { triggerLocator: subsidiaryAutocomplete });
   }
 }
 
@@ -213,7 +181,7 @@ export async function fillShipmentAmount(page, amount) {
 
 export async function submitWaybillAndVerify(page, { tenantBaseUrl }) {
   const saveBtn = page.getByRole("button", { name: /Guardar/i }).filter({ hasText: /Guardar/i }).first();
-    await Promise.all([
+  const [response] = await Promise.all([
     page.waitForResponse(res => 
       res.url().includes('/api/v2/billing/waybills') && 
       res.request().method() === 'POST' && 
@@ -222,9 +190,20 @@ export async function submitWaybillAndVerify(page, { tenantBaseUrl }) {
     saveBtn.click({ force: true })
   ]);
 
-  await expect(page.locator(".v-snackbar").filter({ hasText: /Proceso realizado correctamente/i })).toBeVisible();
+  await expectSnackbar(page, /Proceso realizado correctamente/i);
   
   await expect(page).toHaveURL(/\/admin\/waybills\/list/);
+
+  const responseData = await response.json();
+  const fullWaybillNumber = responseData.data?.sequence || responseData.data?.number || responseData.data?.documentNumber;
+
+  if (fullWaybillNumber) {
+    const sequentialNumber = fullWaybillNumber.split('-').pop();
+
+    await searchInList(page, sequentialNumber);
+    const row = page.locator(".v-data-table__tr").filter({ hasText: sequentialNumber }).first();
+    await expect(row).toBeVisible();
+  }
 }
 
 export async function openCarrierSelectorAndSelect(page, searchTerm) {
@@ -256,31 +235,11 @@ export async function addCarrierViaEmployeeForm(page, {
 
   const dialog = page.locator(".v-dialog").filter({ hasText: /Agregar Empleado/i }).first();
 
-  const identityTypeSelect = dialog.locator(".v-select").first();
-  await identityTypeSelect.scrollIntoViewIfNeeded();
-  await identityTypeSelect.click({ delay: 100 });
-
-  const identityTypeOption = page.locator(".v-list-item").filter({ hasText: new RegExp(`^\\s*${identityType}\\s*$`) }).first();
-  
-  try {
-    await identityTypeOption.waitFor({ state: "visible", timeout: 3000 });
-  } catch {
-    await identityTypeSelect.click({ force: true, delay: 100 });
-    await identityTypeOption.waitFor({ state: "visible", timeout: 5000 });
-  }
-  
-  await identityTypeOption.click();
-  await expect(identityTypeOption).not.toBeVisible();
-
-  const identityInput = dialog.locator("#employee-identity-input");
-  await expect(identityInput).not.toHaveAttribute("readonly");
-  await identityInput.fill(identity);
-
-  const magnifyBtn = dialog.locator(".v-input__append button").first();
-  await magnifyBtn.click();
-
-  const nameInput = dialog.locator(".v-card-text input").filter({ hasValue: expectedName }).first();
-  await expect(nameInput).toBeVisible({ timeout: 20_000 });
+  await fillIdentityModal(page, dialog, {
+    identityType,
+    identityNumber: identity,
+    expectedName
+  });
 
   const saveBtn = dialog.getByRole("button", { name: /Guardar Empleado/i });
   await saveBtn.click();
@@ -325,20 +284,10 @@ export async function fillExternalWaybillForm(page, {
 
 export async function selectFirstAvailableShipmentProductFromSale(page) {
   const productField = page.locator('.v-autocomplete').last().locator('.v-field').first();
-  await productField.scrollIntoViewIfNeeded();
-  await productField.click({ delay: 100 });
 
-  const option = page.locator(".v-overlay-container .v-overlay--active .v-list-item").first();
-  
   try {
-    await option.waitFor({ state: "visible", timeout: 3000 });
-  } catch {
-    await productField.click({ force: true, delay: 100 });
-    await option.waitFor({ state: "visible", timeout: 5000 }).catch(() => {
-      throw new Error("The dropdown opened, but it is empty. The selected sale has no remaining quantity available for shipment.");
-    });
+    await selectDropdownOption(page, { triggerLocator: productField });
+  } catch (error) {
+    throw new Error("The dropdown opened, but it is empty. The selected sale has no remaining quantity available for shipment.");
   }
-  
-  await option.click();
-  await expect(option).not.toBeVisible();
 }

@@ -39,5 +39,7 @@ export const ACTION_TOOLTIPS = {
     view:   "Ver esta Persona",
     delete: "Eliminar esta Persona",
   },
+  waybills: {
+    view: "Ver esta Guia",
+  },
 };
-

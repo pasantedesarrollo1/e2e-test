@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-
+import { selectDropdownOption } from "../../../harness/ui-helpers.js";
 export async function fillPersonForm(page, data) {
   await page.getByPlaceholder("Nombre completo").fill(data.name);
 
@@ -16,18 +16,10 @@ export async function fillPersonForm(page, data) {
     await roleCard.click();
   }
 
-  const provinceInput = page.getByPlaceholder("Provincia");
-  await provinceInput.click();
-  const firstProvinceOption = page.locator(".v-overlay-container .v-overlay--active .v-list-item").first();
-  await expect(firstProvinceOption).toBeVisible({ timeout: 5000 });
-  await firstProvinceOption.click();
-
+  await selectDropdownOption(page, { triggerLocator: page.getByPlaceholder("Provincia") });
   const cityInput = page.getByPlaceholder(/Ciudad/i).first();
   await expect(cityInput).toBeEnabled({ timeout: 5000 });
-  await cityInput.click();
-  const firstCityOption = page.locator(".v-overlay-container .v-overlay--active .v-list-item").first();
-  await expect(firstCityOption).toBeVisible({ timeout: 5000 });
-  await firstCityOption.click();
+  await selectDropdownOption(page, { triggerLocator: cityInput });
 }
 
 export async function submitPersonForm(page) {

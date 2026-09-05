@@ -1,7 +1,8 @@
 import { expect } from "@playwright/test";
+import { expectSnackbar } from "./ui-helpers.js";
 
 export async function searchInList(page, searchName) {
-  const searchField = page.getByRole("textbox", { name: /Busca lo que necesites|Buscar por Nombre/i }).first();
+  const searchField = page.getByRole("textbox", { name: /Busca lo que necesites|Buscar por Nombre|Buscar/i }).first();
   await expect(searchField).toBeVisible();
   await searchField.fill(searchName);
 }
@@ -27,11 +28,11 @@ export async function deleteRecordFromList(page, { searchName, endpointPattern, 
     page.waitForResponse(
       (res) => res.url().includes(endpointPattern) && res.request().method() === "DELETE" && res.status() === 200
     ),
-    confirmButton.click({ force: true }),
+    confirmButton.click({ force: true })
   ]);
 
   if (successMessage) {
-    await expect(page.locator(".v-snackbar").filter({ hasText: successMessage }).first()).toBeVisible();
+    await expectSnackbar(page, successMessage);
   }
 }
 
@@ -49,9 +50,9 @@ export async function saveFormAndVerify(page, { endpointPattern, successMessage 
   ]);
 
   if (successMessage) {
-    await expect(page.locator(".v-snackbar").filter({ hasText: successMessage }).first()).toBeVisible();
+    await expectSnackbar(page, successMessage);
   } else {
-    await expect(page.locator(".v-snackbar").first()).toBeVisible();
+    await expectSnackbar(page);
   }
 }
 
@@ -65,13 +66,18 @@ export async function clickTableRowAction(page, rowLocator, tooltipText) {
   const actionsCell = rowLocator.locator("td").last();
 
   const isSpeedDial = await actionsCell.locator(".speed-dial-container").count() > 0;
-  if (isSpeedDial) {
-    const speedDialTrigger = actionsCell.locator("button.v-btn").last();
-    await speedDialTrigger.click({ force: true });
-    await page.waitForTimeout(300);
+  const cellButtons = await actionsCell.locator("button.v-btn").all();
+  
+  if (isSpeedDial || cellButtons.length === 1) {
+    const trigger = actionsCell.locator("button.v-btn").last();
+    await trigger.click({ force: true });
+    await page.waitForTimeout(400);
   }
 
-  const buttons = await actionsCell.locator("button.v-btn").all();
+  const rowButtons = await rowLocator.locator("button.v-btn").all();
+  const overlayButtons = await page.locator(".v-overlay-container .v-overlay--active button.v-btn").all();
+  
+  const buttons = [...rowButtons, ...overlayButtons];
   const foundTooltips = [];
 
   for (const btn of buttons) {
@@ -85,14 +91,16 @@ export async function clickTableRowAction(page, rowLocator, tooltipText) {
       .first();
 
     try {
-      await tooltip.waitFor({ state: "visible", timeout: 800 });
+      await tooltip.waitFor({ state: "visible", timeout: 600 });
       await btn.click({ force: true });
-      return;
+      return; 
     } catch {
       const anyTooltip = page.locator(".v-overlay__content").first();
       try {
-        const text = await anyTooltip.innerText({ timeout: 400 });
-        if (text.trim()) foundTooltips.push(text.trim());
+        const text = await anyTooltip.innerText({ timeout: 200 });
+        if (text.trim() && !foundTooltips.includes(text.trim())) {
+            foundTooltips.push(text.trim());
+        }
       } catch {
       }
       continue;

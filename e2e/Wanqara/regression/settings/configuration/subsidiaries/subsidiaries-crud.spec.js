@@ -4,6 +4,7 @@ import { withPath } from '../../../../harness/urls.js';
 import { deleteRecordFromList } from '../../../../harness/crud-helpers.js';
 import { SEED } from '../../../../harness/seed.js';
 import { ACTION_TOOLTIPS } from '../../../../harness/action-tooltips.js';
+import { selectDropdownOption } from "../../../../harness/ui-helpers.js";
 
 test.describe('Subsidiary Management CRUD', () => {
   requirePosCredentials(test);
@@ -35,13 +36,10 @@ test.describe('Subsidiary Management CRUD', () => {
         await page.getByPlaceholder('Código de la Sucursal').fill(code);
         await page.getByPlaceholder('Dirección de la Sucursal').fill('123 Automated Test Address');
 
-        await page.getByPlaceholder('Provincia').click();
-        await page.getByRole('option').first().click();
-
+        await selectDropdownOption(page, { triggerLocator: page.getByPlaceholder('Provincia') });
         const cityInput = page.getByPlaceholder('Ciudad');
         await expect(cityInput).toBeEnabled();
-        await cityInput.click();
-        await page.getByRole('option').first().click();
+        await selectDropdownOption(page, { triggerLocator: cityInput });
 
         await page.getByPlaceholder('Teléfono').fill('0999999999');
         await page.getByPlaceholder('Correo').fill('test_sucursal@wanqara.com');
