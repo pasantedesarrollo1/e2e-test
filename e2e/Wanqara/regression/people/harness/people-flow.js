@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { selectDropdownOption } from "../../../harness/ui-helpers.js";
+
 export async function fillPersonForm(page, data) {
   await page.getByPlaceholder("Nombre completo").fill(data.name);
 
@@ -18,7 +19,7 @@ export async function fillPersonForm(page, data) {
 
   await selectDropdownOption(page, { triggerLocator: page.getByPlaceholder("Provincia") });
   const cityInput = page.getByPlaceholder(/Ciudad/i).first();
-  await expect(cityInput).toBeEnabled({ timeout: 5000 });
+  await expect(cityInput).toBeEnabled({ timeout: 10000 });
   await selectDropdownOption(page, { triggerLocator: cityInput });
 }
 

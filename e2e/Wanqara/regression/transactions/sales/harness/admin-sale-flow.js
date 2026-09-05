@@ -7,9 +7,11 @@ async function assignManualBodega(page) {
   const bodegaLabel = page.locator("main").getByText("Bodega").first();
   const bodegaWrapper = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
   
+  await expect(bodegaWrapper).not.toHaveClass(/v-input--disabled/, { timeout: 10000 });
+  
   await expect(async () => {
-    const dropdownIcon = bodegaWrapper.locator('.v-icon').last();
-    await dropdownIcon.click({ force: true });
+    const dropdownTrigger = bodegaWrapper.locator('.v-field').first();
+    await dropdownTrigger.click({ force: true, delay: 100 });
     
     const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
     await expect(listbox).toBeVisible({ timeout: 2000 });
@@ -29,9 +31,11 @@ async function assignManualCaja(page) {
   const cajaLabel = page.locator("main").getByText("Punto de Venta").first();
   const cajaWrapper = cajaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
   
+  await expect(cajaWrapper).not.toHaveClass(/v-input--disabled/, { timeout: 10000 });
+  
   await expect(async () => {
-    const dropdownIcon = cajaWrapper.locator('.v-icon').last();
-    await dropdownIcon.click({ force: true });
+    const dropdownTrigger = cajaWrapper.locator('.v-field').first();
+    await dropdownTrigger.click({ force: true, delay: 100 });
     
     const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
     await expect(listbox).toBeVisible({ timeout: 2000 });
@@ -45,7 +49,6 @@ export async function selectCheckout(page, urlPattern = /\/admin\/ventas\/add/) 
   await page.waitForURL(urlPattern);
   await page.waitForTimeout(1000);
 
-  // 1. Asignar Bodega solo si está vacía
   const bodegaLabel = page.locator("main").getByText("Bodega").first();
   if (await bodegaLabel.isVisible()) {
     const bodegaWrapper = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
@@ -57,7 +60,6 @@ export async function selectCheckout(page, urlPattern = /\/admin\/ventas\/add/) 
     }
   }
 
-  // 2. Asignar Caja solo si está vacía
   const cajaLabel = page.locator("main").getByText("Punto de Venta").first();
   await expect(cajaLabel).toBeVisible({ timeout: 10000 });
   
@@ -66,11 +68,9 @@ export async function selectCheckout(page, urlPattern = /\/admin\/ventas\/add/) 
   const cleanCajaText = cajaText.replace(/Punto de Venta|Caja|\*/ig, "").trim();
   
   if (cleanCajaText.length === 0) {
-    // FIX: Eliminada la llamada redundante a assignManualBodega(page)
     await assignManualCaja(page);
   }
 
-  // 3. Limpiar estado visual de forma segura
   await page.keyboard.press("Escape");
   await page.waitForTimeout(200);
 }

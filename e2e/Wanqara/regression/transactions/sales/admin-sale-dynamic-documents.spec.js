@@ -1,12 +1,8 @@
-// Contexto de origen: Ticket WS-981, TES-206 (ws-981-document-type.spec.js)
-// Valida las restricciones dinámicas del tipo de documento al cambiar de sucursal en el flujo de Ventas Administrativas.
-
 import { test, expect } from "@playwright/test";
 import { annotateTicket } from "../../../harness/annotate.js";
 import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
 import { getSessionPath, ensureAuthenticated } from "../../../harness/auth.js";
 import { getElectronicInvoicingAuthType } from "../../../harness/seed.js";
-import { selectCheckout as selectCheckoutSales } from "./harness/admin-sale-flow.js";
 import {
   readSelectedDocumentType,
   getAvailableDocumentOptions
@@ -23,6 +19,15 @@ const TICKET = {
 
 const tenantBaseUrl = getTenantBaseUrl();
 
+async function ensureUIReady(page) {
+  const profileOverlay = page.locator(".v-overlay--active").filter({ hasText: /Cerrar Sesión/i });
+  if (await profileOverlay.isVisible().catch(() => false)) {
+    await page.keyboard.press('Escape');
+  }
+  
+  await page.waitForTimeout(1500);
+}
+
 test.describe("Admin Sales — Dynamic Document Types (WS-981) @regression", () => {
   annotateTicket(test, TICKET);
   requirePosCredentials(test);
@@ -34,31 +39,38 @@ test.describe("Admin Sales — Dynamic Document Types (WS-981) @regression", () 
     
     await test.step("Access the sales module with an electronic invoicing-enabled subsidiary (001)", async () => {
       await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/admin/ventas/add", authType: getElectronicInvoicingAuthType() });
-      await selectCheckoutSales(page);
+      await ensureUIReady(page);
+      
+      // Valida explícitamente el valor seleccionado por defecto
+      const selected = await readSelectedDocumentType(page);
+      expect(selected).toMatch(/Factura electrónica/i);
       
       const options = await getAvailableDocumentOptions(page);
-      const hasElectronic = options.some(o => o.includes("Factura") || o.includes("01"));
+      const hasElectronic = options.some(o => o.includes("Factura"));
       expect(hasElectronic).toBeTruthy();
     });
 
     await test.step("Switch dynamically to a subsidiary without electronic invoicing (100)", async () => {
       await switchAdminSubsidiary(page, "100");
-      await selectCheckoutSales(page);
+      await ensureUIReady(page);
       
       const selected = await readSelectedDocumentType(page);
       expect(selected).toMatch(/Recibos/i);
       
       const options = await getAvailableDocumentOptions(page);
-      const hasElectronic = options.some(o => o.includes("Factura") || o.includes("01"));
+      const hasElectronic = options.some(o => o.includes("Factura"));
       expect(hasElectronic).toBeFalsy();
     });
 
     await test.step("Switch back to the electronic invoicing-enabled subsidiary (001)", async () => {
       await switchAdminSubsidiary(page, "001");
-      await selectCheckoutSales(page);
+      await ensureUIReady(page);
       
+      const selected = await readSelectedDocumentType(page);
+      expect(selected).toMatch(/Factura electrónica/i);
+
       const options = await getAvailableDocumentOptions(page);
-      const hasElectronic = options.some(o => o.includes("Factura") || o.includes("01"));
+      const hasElectronic = options.some(o => o.includes("Factura"));
       expect(hasElectronic).toBeTruthy();
     });
   });

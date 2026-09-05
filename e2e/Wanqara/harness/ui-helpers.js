@@ -12,8 +12,8 @@ export async function selectDropdownOption(page, {
   const activeOverlay = page.locator(".v-overlay-container .v-overlay--active").last();
   
   const option = optionText
-    ? activeOverlay.locator(".v-list-item").filter({ hasText: new RegExp(optionText, "i") }).first()
-    : activeOverlay.locator(".v-list-item").first();
+    ? activeOverlay.locator('[role="option"]').filter({ hasText: new RegExp(optionText, "i") }).first()
+    : activeOverlay.locator('[role="option"]').first();
 
   try {
     await option.waitFor({ state: "visible", timeout });
@@ -23,7 +23,6 @@ export async function selectDropdownOption(page, {
   }
 
   await page.waitForTimeout(300);
-  
   await option.click();
   
   await expect(option).not.toBeVisible({ timeout: 5000 });

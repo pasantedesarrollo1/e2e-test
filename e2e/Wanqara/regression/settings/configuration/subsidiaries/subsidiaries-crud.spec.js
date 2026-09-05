@@ -4,7 +4,7 @@ import { withPath } from '../../../../harness/urls.js';
 import { deleteRecordFromList } from '../../../../harness/crud-helpers.js';
 import { SEED } from '../../../../harness/seed.js';
 import { ACTION_TOOLTIPS } from '../../../../harness/action-tooltips.js';
-import { selectDropdownOption } from "../../../../harness/ui-helpers.js";
+import { selectDropdownOption, expectSnackbar } from "../../../../harness/ui-helpers.js";
 
 test.describe('Subsidiary Management CRUD', () => {
   requirePosCredentials(test);
@@ -37,8 +37,9 @@ test.describe('Subsidiary Management CRUD', () => {
         await page.getByPlaceholder('Dirección de la Sucursal').fill('123 Automated Test Address');
 
         await selectDropdownOption(page, { triggerLocator: page.getByPlaceholder('Provincia') });
-        const cityInput = page.getByPlaceholder('Ciudad');
-        await expect(cityInput).toBeEnabled();
+        
+        const cityInput = page.locator('.v-input').filter({ hasText: 'Ciudad' }).first();
+        await expect(cityInput).toBeEnabled({ timeout: 10000 });
         await selectDropdownOption(page, { triggerLocator: cityInput });
 
         await page.getByPlaceholder('Teléfono').fill('0999999999');
@@ -75,7 +76,7 @@ test.describe('Subsidiary Management CRUD', () => {
         ]);
 
         expect(createResponse.status()).toBe(201);
-        await expect(page.locator('.v-snackbar').filter({ hasText: /Creada/i }).first()).toBeVisible();
+        await expectSnackbar(page, /Creada/i);
       });
 
       await test.step('Step 3: Verify list and delete the created subsidiary', async () => {

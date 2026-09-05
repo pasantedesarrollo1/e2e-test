@@ -43,8 +43,8 @@ export async function validateSubsidiaryCapabilityBadges(page, tenantBaseUrl) {
       const cleanBadgeText = badgeText.trim();
       const normalizedBadgeText = normalizeText(cleanBadgeText);
 
-      const existsInModules = SEED_SUBSCRIPTIONS.modules.some(
-        m => normalizeText(m.code) === normalizedBadgeText
+      const existsInModules = SEED_SUBSCRIPTIONS.moduleLabels.some(
+        label => normalizeText(label) === normalizedBadgeText
       );
       
       const existsInCapabilities = SEED_SUBSCRIPTIONS.capabilityLabels.some(

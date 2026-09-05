@@ -12,15 +12,7 @@ test.describe("Inventory — Sizes @regression", () => {
     const tenantBaseUrl = getTenantBaseUrl();
     const { name, observation } = SEED.attributes.size;
 
-    test.info().annotations.push({
-      type: "issue",
-      description: "https://wanqara-team.atlassian.net/browse/WS-941",
-    });
 
-    test.fixme(
-      true,
-      "Bypass temporal (WS-941): Bug en validación, ahora cualquier nombre indica que ya está en uso y bloquea la creación."
-    );
 
     await ensureCleanRecord(page, {
       listPath: withPath(tenantBaseUrl, "/admin/sizes/list"),

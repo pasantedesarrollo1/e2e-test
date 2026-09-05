@@ -39,7 +39,7 @@ export const SEED_SUBSCRIPTIONS = {
     { code: "P001" },
     { code: "P002" },
     { code: "O001" },
-    { code: "I001" },
+    { code: "I001" }
   ],
   capabilityLabels: [
     "Maneja Restaurantes",
@@ -49,5 +49,10 @@ export const SEED_SUBSCRIPTIONS = {
     "Maneja Listado de Precios",
     "Maneja Cotizaciones",
     "Multibodegas"
+  ],
+  moduleLabels: [
+    "Suscripción Restaurantes",
+    "Balanzas digitales",
+    "Módulo para multinegocio"
   ]
 };
