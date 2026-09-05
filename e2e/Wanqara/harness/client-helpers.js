@@ -119,3 +119,38 @@ export async function selectClientByCedula(page, cedula, options = {}) {
   }
 }
 
+/**
+ * Selects a client by opening a search modal/panel, typing a search term, and clicking the matching table row.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} searchTerm
+ * @param {Object} options
+ * @param {import('@playwright/test').Locator} options.triggerLocator - Locator for the button that opens the search modal.
+ * @param {import('@playwright/test').Locator} [options.modalLocator] - Optional locator for the modal itself to scope the search.
+ * @param {boolean} [options.expectModalClosed=false] - If true, asserts the modal closes after clicking the row.
+ */
+export async function selectClientFromSearchModal(page, searchTerm, options) {
+  const { triggerLocator, modalLocator, expectModalClosed = false } = options;
+
+  await expect(triggerLocator).toBeVisible();
+  await triggerLocator.click();
+
+  const container = modalLocator || page;
+
+  if (modalLocator) {
+    await expect(modalLocator).toBeVisible();
+  }
+
+  const searchInput = container.getByRole("textbox", { name: /Busca lo que necesites/i }).first();
+  await expect(searchInput).toBeVisible();
+  await searchInput.fill(searchTerm);
+  await page.waitForTimeout(500);
+
+  const row = container.locator(".v-data-table__tr").filter({ hasText: searchTerm }).first();
+  await expect(row).toBeVisible({ timeout: 10_000 });
+  await row.click();
+
+  if (expectModalClosed && modalLocator) {
+    await expect(modalLocator).not.toBeVisible();
+  }
+}
+

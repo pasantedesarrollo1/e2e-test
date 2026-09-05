@@ -3,6 +3,7 @@ import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settin
 import { SEED } from "../../../harness/seed.js";
 import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
 import { getSessionPath } from "../../../harness/auth.js";
+import { selectClientFromSearchModal } from "../../../harness/client-helpers.js";
 
 async function confirmClientModal(page) {
   const clientModal = page
@@ -46,27 +47,18 @@ for (const env of environments) {
         const personasButton = page
           .locator(".v-btn--icon.bg-primary.v-btn--density-default")
           .first();
-        await expect(personasButton).toBeEnabled();
-        await personasButton.click();
 
         const personModal = page
           .locator(".v-overlay__content")
           .filter({ hasText: /Personas/i })
           .first();
-        await expect(personModal).toBeVisible();
 
-        const searchField = personModal.getByRole("textbox", {
-          name: /Busca lo que necesites/i,
+        await selectClientFromSearchModal(page, SEED.clients.test.cedula, {
+          triggerLocator: personasButton,
+          modalLocator: personModal,
+          expectModalClosed: true,
         });
-        await searchField.fill(SEED.clients.test.cedula);
 
-        const targetRow = personModal
-          .getByRole("table")
-          .getByText(SEED.clients.test.cedula);
-        await expect(targetRow).toBeVisible();
-        await targetRow.click();
-
-        await expect(personModal).not.toBeVisible();
         await expect(page.getByText(SEED.clients.test.name)).toBeVisible();
       });
 

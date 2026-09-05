@@ -1,20 +1,12 @@
 import { expect } from "@playwright/test";
 import { SEED } from "../../../../../../harness/seed.js";
 import { clickTableRowAction } from "../../../../../../harness/crud-helpers.js";
+import { selectClientFromSearchModal } from "../../../../../../harness/client-helpers.js";
 
 export async function selectClientAndAccounts(page) {
-  const buscarClienteBtn = page.getByRole("button", { name: /Buscar cliente/i });
-  await expect(buscarClienteBtn).toBeVisible();
-  await buscarClienteBtn.click();
-
-  const searchInput = page.getByRole("textbox", { name: /Busca lo que necesites/i });
-  await expect(searchInput).toBeVisible();
-  await searchInput.fill(SEED.clients.test.cedula);
-  await page.waitForTimeout(500);
-
-  const clienteRow = page.locator(".v-data-table__tr").filter({ hasText: SEED.clients.test.cedula }).first();
-  await expect(clienteRow).toBeVisible({ timeout: 10_000 });
-  await clienteRow.click();
+  await selectClientFromSearchModal(page, SEED.clients.test.cedula, {
+    triggerLocator: page.getByRole("button", { name: /Buscar cliente/i }),
+  });
 
   const agregarCuentasBtn = page.getByRole("button", { name: /Agregar cuentas/i });
   await expect(agregarCuentasBtn).toBeEnabled();
