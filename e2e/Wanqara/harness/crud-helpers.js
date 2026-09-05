@@ -6,7 +6,7 @@ export async function searchInList(page, searchName) {
   await searchField.fill(searchName);
 }
 
-export async function deleteRecordFromList(page, { searchName, endpointPattern, confirmButtonRegex = /^Aceptar$|^Confirmar$/i, successMessage }) {
+export async function deleteRecordFromList(page, { searchName, endpointPattern, confirmButtonRegex = /^Aceptar$|^Confirmar$/i, successMessage, deleteTooltip = "Eliminar" }) {
   await searchInList(page, searchName);
 
   const noData = page.getByText("No hay datos disponibles");
@@ -18,18 +18,7 @@ export async function deleteRecordFromList(page, { searchName, endpointPattern, 
     return;
   }
 
-  const speedDialContainer = matchingRow.locator(".speed-dial-container");
-  if (await speedDialContainer.isVisible()) {
-    await speedDialContainer.getByRole("button").last().click();
-  }
-
-  const deleteButton = matchingRow.getByRole("button", { name: /Eliminar/i })
-    .or(matchingRow.getByRole("button", { description: /Eliminar/i }))
-    .or(matchingRow.locator("button").filter({ has: page.locator(".iconify--fluent") }).last())
-    .or(matchingRow.locator("button").nth(1));
-
-  await expect(deleteButton.first()).toBeVisible();
-  await deleteButton.first().click();
+  await clickTableRowAction(page, matchingRow, deleteTooltip);
 
   const confirmButton = page.getByRole("button", { name: confirmButtonRegex });
   await expect(confirmButton).toBeVisible();
@@ -38,7 +27,7 @@ export async function deleteRecordFromList(page, { searchName, endpointPattern, 
     page.waitForResponse(
       (res) => res.url().includes(endpointPattern) && res.request().method() === "DELETE" && res.status() === 200
     ),
-    confirmButton.click(),
+    confirmButton.click({ force: true }),
   ]);
 
   if (successMessage) {
@@ -73,27 +62,46 @@ export async function verifyRecordInList(page, { searchName }) {
 }
 
 export async function clickTableRowAction(page, rowLocator, tooltipText) {
-  const buttons = await rowLocator.locator("button.v-btn").all();
+  const actionsCell = rowLocator.locator("td").last();
+
+  const isSpeedDial = await actionsCell.locator(".speed-dial-container").count() > 0;
+  if (isSpeedDial) {
+    const speedDialTrigger = actionsCell.locator("button.v-btn").last();
+    await speedDialTrigger.click({ force: true });
+    await page.waitForTimeout(300);
+  }
+
+  const buttons = await actionsCell.locator("button.v-btn").all();
+  const foundTooltips = [];
 
   for (const btn of buttons) {
-    await btn.hover();
+    if (await btn.isDisabled()) continue;
+
+    await btn.hover({ force: true });
 
     const tooltip = page
-      .locator(".v-tooltip .v-overlay__content")
+      .locator(".v-overlay__content")
       .filter({ hasText: tooltipText })
       .first();
 
     try {
       await tooltip.waitFor({ state: "visible", timeout: 800 });
-      await btn.click();
+      await btn.click({ force: true });
       return;
     } catch {
+      const anyTooltip = page.locator(".v-overlay__content").first();
+      try {
+        const text = await anyTooltip.innerText({ timeout: 400 });
+        if (text.trim()) foundTooltips.push(text.trim());
+      } catch {
+      }
       continue;
     }
   }
 
   throw new Error(
-    `No table action button with tooltip "${tooltipText}" found in the row.`,
+    `No action button with tooltip "${tooltipText}" found in the row. ` +
+    `Tooltips found: ${foundTooltips.length ? foundTooltips.join(", ") : "none"}.`
   );
 }
 
@@ -106,6 +114,7 @@ export async function ensureCleanRecord(page, {
   successMessage,
   confirmButtonRegex,
   deleteSuccessMessage,
+  deleteTooltip,
 }) {
   await page.goto(listPath);
   await deleteRecordFromList(page, {
@@ -113,6 +122,7 @@ export async function ensureCleanRecord(page, {
     endpointPattern,
     confirmButtonRegex,
     successMessage: deleteSuccessMessage,
+    deleteTooltip,
   });
 
   await page.goto(addPath);

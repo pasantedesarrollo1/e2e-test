@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { withPath } from "../../../../harness/urls.js";
 import { SEED } from "../../../../harness/seed.js";
+import { clickTableRowAction } from "../../../../harness/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../../../harness/action-tooltips.js";
 
 export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwitch, expectMessage, confirmCancellation = true }) {
   const getSalesPromise = page.waitForResponse(res => 
@@ -26,33 +28,7 @@ export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwit
 
   await test.step("Locate the latest sale and click Cancel", async () => {
     await expect(firstRow).toBeVisible({ timeout: 15000 });
-    const actionsCell = firstRow.locator('td').last();
-    const threeDotsBtn = actionsCell.locator('button.v-btn').last();
-    await expect(threeDotsBtn).toBeVisible();
-    await threeDotsBtn.click();
-    await page.waitForTimeout(500);
-
-    const buttons = await actionsCell.locator("button.v-btn").all();
-    let clicked = false;
-    
-    for (const btn of buttons) {
-      if (await btn.isDisabled()) {
-        continue;
-      }
-      await btn.hover();
-      const tooltip = page.locator(".v-overlay__content").filter({ hasText: "Anular esta Venta" }).first();
-      try {
-        await tooltip.waitFor({ state: "visible", timeout: 800 });
-        await btn.click();
-        clicked = true;
-        break;
-      } catch {
-        continue;
-      }
-    }
-    if (!clicked) {
-      throw new Error("Could not find the 'Anular esta Venta' button in the row.");
-    }
+    await clickTableRowAction(page, firstRow, ACTION_TOOLTIPS.sales.cancel);
   });
 
   const modal = page.locator('.v-overlay__content').filter({ hasText: /Información de Anulación/i }).first();

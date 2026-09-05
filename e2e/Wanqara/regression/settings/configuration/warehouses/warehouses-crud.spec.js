@@ -3,6 +3,7 @@ import { requirePosCredentials, getTenantBaseUrl } from '../../../../harness/set
 import { withPath } from '../../../../harness/urls.js';
 import { deleteRecordFromList } from '../../../../harness/crud-helpers.js';
 import { SEED } from '../../../../harness/seed.js';
+import { ACTION_TOOLTIPS } from '../../../../harness/action-tooltips.js';
 
 test.describe('Warehouse Management CRUD', () => {
   requirePosCredentials(test);
@@ -20,7 +21,8 @@ test.describe('Warehouse Management CRUD', () => {
         searchName: name,
         endpointPattern: '/api/v1/general/warehouses',
         confirmButtonRegex: /^Eliminar$/i,
-        successMessage: 'Bodega eliminada correctamente'
+        successMessage: 'Bodega eliminada correctamente',
+        deleteTooltip: ACTION_TOOLTIPS.warehouses.delete
       });
     });
 
@@ -52,7 +54,8 @@ test.describe('Warehouse Management CRUD', () => {
         searchName: name,
         endpointPattern: '/api/v1/general/warehouses',
         confirmButtonRegex: /^Eliminar$/i,
-        successMessage: 'Bodega eliminada correctamente'
+        successMessage: 'Bodega eliminada correctamente',
+        deleteTooltip: ACTION_TOOLTIPS.warehouses.delete
       });
     });
 

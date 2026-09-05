@@ -1,5 +1,7 @@
 import { expect } from "@playwright/test";
 import { withPath } from "../../../../harness/urls.js";
+import { clickTableRowAction } from "../../../../harness/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../../../harness/action-tooltips.js";
 
 export async function navigateToProductAndVerifyRecipeDecimals(page, {
   tenantBaseUrl,
@@ -19,37 +21,7 @@ export async function navigateToProductAndVerifyRecipeDecimals(page, {
   const row = page.locator(".v-data-table__tr").filter({ has: page.getByText(productName, { exact: true }) }).first();
   await expect(row).toBeVisible({ timeout: 15000 });
 
-  const actionsCell = row.locator("td").last();
-  const speedDialBtn = actionsCell.locator("button, .tw-relative").last();
-  await speedDialBtn.click();
-  
-  await page.waitForTimeout(500);
-
-  const buttons = await actionsCell.locator("button.v-btn").all();
-  let clicked = false;
-  
-  for (const btn of buttons) {
-    if (await btn.isDisabled()) {
-      continue;
-    }
-
-    await btn.hover();
-    
-    const tooltip = page.locator(".v-overlay__content").filter({ hasText: "Ver este Producto" }).first();
-    
-    try {
-      await tooltip.waitFor({ state: "visible", timeout: 800 });
-      await btn.click();
-      clicked = true;
-      break;
-    } catch {
-      continue;
-    }
-  }
-
-  if (!clicked) {
-    throw new Error("No se encontró el botón con el tooltip 'Ver este Producto'.");
-  }
+  await clickTableRowAction(page, row, ACTION_TOOLTIPS.products.view);
 
   const ingredientContainer = page
     .locator(".tw-w-32.tw-flex.tw-flex-col")

@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { SEED } from "../../../../../../harness/seed.js";
 import { clickTableRowAction } from "../../../../../../harness/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../../../../../harness/action-tooltips.js";
 import { selectClientFromSearchModal } from "../../../../../../harness/client-helpers.js";
 
 export async function selectClientAndAccounts(page) {
@@ -75,12 +76,7 @@ export async function validateInitialDeletionError(page) {
   const firstRow = page.locator(".v-data-table__tr").first();
   await expect(firstRow).toBeVisible({ timeout: 15_000 });
 
-  const actionsCell = firstRow.locator("td").last();
-  const threeDotsBtn = actionsCell.locator("button").last();
-  await threeDotsBtn.click();
-  await page.waitForTimeout(500);
-
-  await clickTableRowAction(page, actionsCell, "Ver esta cuenta");
+  await clickTableRowAction(page, firstRow, ACTION_TOOLTIPS.receivableAccounts.view);
   await expect(page.getByText(/Abonos de la cuenta/i).first()).toBeVisible({ timeout: 15_000 });
 
   const deletePaymentBtn = page.locator("tbody tr").last().locator("button.text-red, button.tw-text-red-500").last();

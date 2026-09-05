@@ -3,6 +3,7 @@ import { requirePosCredentials, getTenantBaseUrl } from '../../../../harness/set
 import { withPath } from '../../../../harness/urls.js';
 import { deleteRecordFromList } from '../../../../harness/crud-helpers.js';
 import { SEED } from '../../../../harness/seed.js';
+import { ACTION_TOOLTIPS } from '../../../../harness/action-tooltips.js';
 
 test.describe('Subsidiary Management CRUD', () => {
   requirePosCredentials(test);
@@ -20,7 +21,8 @@ test.describe('Subsidiary Management CRUD', () => {
           searchName: name,
           endpointPattern: '/api/v1/general/subsidiaries/',
           confirmButtonRegex: /^Eliminar Sucursal$/i,
-          successMessage: 'eliminada'
+          successMessage: 'eliminada',
+          deleteTooltip: ACTION_TOOLTIPS.subsidiaries.delete
         });
       });
 
@@ -85,7 +87,8 @@ test.describe('Subsidiary Management CRUD', () => {
           searchName: name,
           endpointPattern: '/api/v1/general/subsidiaries/',
           confirmButtonRegex: /^Eliminar Sucursal$/i,
-          successMessage: 'eliminada'
+          successMessage: 'eliminada',
+          deleteTooltip: ACTION_TOOLTIPS.subsidiaries.delete
         });
       });
 

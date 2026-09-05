@@ -3,6 +3,7 @@ import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settin
 import { ensureCleanRecord } from "../../../harness/crud-helpers.js";
 import { withPath } from "../../../harness/urls.js";
 import { SEED } from "../../../harness/seed.js";
+import { ACTION_TOOLTIPS } from "../../../harness/action-tooltips.js";
 
 test.describe("Inventory — Sizes @regression", () => {
   requirePosCredentials(test);
@@ -33,6 +34,7 @@ test.describe("Inventory — Sizes @regression", () => {
       successMessage: "Talla Creada",
       deleteSuccessMessage: "Talla Eliminada",
       confirmButtonRegex: /^Aceptar$/i,
+      deleteTooltip: ACTION_TOOLTIPS.sizes.delete,
     });
   });
 });

@@ -3,6 +3,7 @@ import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settin
 import { ensureCleanRecord } from "../../../harness/crud-helpers.js";
 import { withPath } from "../../../harness/urls.js";
 import { SEED } from "../../../harness/seed.js";
+import { ACTION_TOOLTIPS } from "../../../harness/action-tooltips.js";
 
 test.describe("Inventory — Surcharges @regression", () => {
   requirePosCredentials(test);
@@ -23,6 +24,7 @@ test.describe("Inventory — Surcharges @regression", () => {
       },
       endpointPattern: "/api/v1/general/surcharges",
       confirmButtonRegex: /^Confirmar$/i,
+      deleteTooltip: ACTION_TOOLTIPS.surcharges.delete,
     });
   });
 });

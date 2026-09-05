@@ -5,6 +5,7 @@ import { getSessionPath } from "../../../../harness/auth.js";
 import { SEED } from "../../../../harness/seed.js";
 import { withPath } from "../../../../harness/urls.js";
 import { clickTableRowAction } from "../../../../harness/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../../../harness/action-tooltips.js";
 
 const TICKET = {
   ws: 'WS-983',
@@ -55,10 +56,7 @@ test.describe("Settings — Dispatch Types @regression", () => {
       const row = page.locator(".v-data-table__tr").filter({ hasText: SEED.dispatchTypes.crud.name }).first();
       await expect(row).toBeVisible();
       
-      await row.locator("td").last().locator("button").last().click();
-      await page.waitForTimeout(300);
-      
-      await clickTableRowAction(page, row, "Detalles");
+      await clickTableRowAction(page, row, ACTION_TOOLTIPS.dispatchTypes.view);
       
       await page.getByRole("button", { name: /^Editar$/i }).click();
 
@@ -81,10 +79,7 @@ test.describe("Settings — Dispatch Types @regression", () => {
       const row = page.locator(".v-data-table__tr").filter({ hasText: SEED.dispatchTypes.crud.name }).first();
       await expect(row).toBeVisible();
 
-      await row.locator("td").last().locator("button").last().click();
-      await page.waitForTimeout(300);
-
-      await clickTableRowAction(page, row, "Detalles");
+      await clickTableRowAction(page, row, ACTION_TOOLTIPS.dispatchTypes.view);
 
       await page.getByRole("button", { name: /^Editar$/i }).click();
 
