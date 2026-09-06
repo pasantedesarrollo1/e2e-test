@@ -33,7 +33,7 @@ jobs:
       - name: Checkout Frontend App
         uses: actions/checkout@v4
         with:
-          repository: pasantedesarrollo1/wanqara-10-front
+          repository: Todoneg/wanqara-10-front
           ref: develop
           token: ${{ secrets.FRONTEND_REPO_PAT }}
           path: frontend-app
