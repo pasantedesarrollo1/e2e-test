@@ -32,7 +32,7 @@ export default defineConfig({
 
   maxFailures: process.env.CI ? 10 : 0,
   timeout: process.env.CI ? 120 * 1000 : 45 * 1000,
-  expect: { timeout: process.env.CI ? 30 * 1000 : 10 * 1000 },
+  expect: { timeout: process.env.CI ? 15 * 1000 : 10 * 1000 },
 
   reporter: process.env.CI ? [['list'], ['github'], ['html']] : 'html',
 
@@ -58,10 +58,12 @@ export default defineConfig({
       testMatch: /Wanqara\/.*\.setup\.js/,
       use: { baseURL }
     },
+    
     {
       name: 'POS-Retail',
       dependencies: ['setup'],
       testMatch: /Wanqara\/regression\/POS\/(POS-C|common)\/.*\.spec\.js/,
+      grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
@@ -72,6 +74,7 @@ export default defineConfig({
       name: 'POS-Restaurant',
       dependencies: ['setup'],
       testMatch: /Wanqara\/regression\/POS\/POS-R\/.*\.spec\.js/,
+      grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
@@ -82,12 +85,14 @@ export default defineConfig({
       name: 'Admin-Inventory',
       dependencies: ['setup'],
       testMatch: /Wanqara\/regression\/(inventory|transactions|settings|people|finance|main|special-modules)\/.*\.spec\.js/,
+      grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
         storageState: path.join(AUTH_DIR, 'retail-session.json'),
       },
     },
+
     {
       name: 'Smoke',
       dependencies: ['setup'],
@@ -101,7 +106,8 @@ export default defineConfig({
     {
       name: 'Release',
       dependencies: ['setup'],
-      testMatch: /Wanqara\/release\/.*\.spec\.js/,
+      testMatch: /Wanqara\/regression\/.*\.spec\.js/, 
+      grep: /@release/,                               
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
