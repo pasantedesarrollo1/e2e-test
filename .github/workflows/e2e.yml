@@ -1,7 +1,7 @@
 name: Sync Develop E2E (Smoke & Release)
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
 
 env:
   FRONTEND_PORT: 5175
@@ -41,7 +41,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 24
 
       - name: Build Frontend
         working-directory: ./frontend-app
