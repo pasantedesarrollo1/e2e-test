@@ -24,7 +24,7 @@ const TICKET = {
 const tenantBaseUrl = getTenantBaseUrl();
 const authType001 = getElectronicInvoicingAuthType(); 
 
-test.describe("Admin Payments — Multiple Receivables @release", () => {
+test.describe("Admin Payments — Multiple Receivables @regression", () => {
   annotateTicket(test, TICKET);
   requirePosCredentials(test);
   
