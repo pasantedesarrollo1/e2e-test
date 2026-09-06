@@ -5,7 +5,7 @@ on:
 
 env:
   FRONTEND_PORT: 5175
-  PLAYWRIGHT_BASE_URL: http://localhost:5175
+  PLAYWRIGHT_BASE_URL: http://${{ secrets.PLAYWRIGHT_TENANT_RUC }}.localhost:5175
   PLAYWRIGHT_CHEF_URL: ${{ secrets.PLAYWRIGHT_CHEF_URL }}
   PLAYWRIGHT_CHEF_RUC: ${{ secrets.PLAYWRIGHT_CHEF_RUC }}
   PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
@@ -64,7 +64,7 @@ jobs:
         id: run_smoke
         run: |
           set +e
-          npx playwright test --project=Smoke 2>&1 | tee test-output-smoke.log
+          npx playwright test --project=Smoke --workers=1 2>&1 | tee test-output-smoke.log
           exit "${PIPESTATUS[0]}"
 
       - name: Notify Telegram (Smoke)
@@ -91,7 +91,7 @@ jobs:
         if: steps.run_smoke.outcome == 'success'
         run: |
           set +e
-          npx playwright test --project=Release 2>&1 | tee test-output-release.log
+          npx playwright test --project=Release --workers=1 2>&1 | tee test-output-release.log
           exit "${PIPESTATUS[0]}"
 
       - name: Notify Telegram (Release)
