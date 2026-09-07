@@ -65,7 +65,9 @@ for (const env of environments) {
 
     runTest("records both a cash income and a cash expense from the More Options menu", async (page) => {
       test.setTimeout(180_000);
-
+      
+      await page.waitForTimeout(2000);
+      
       const drawerFilter = /Opciones/i;
       const triggerLocator = page.getByRole("button", { name: /Más Opciones/i }).first();
       
