@@ -19,7 +19,7 @@ export async function completePayment(page, {
   printTicket = false,
   openDrawer = false,
 } = {}) {
-  const printTicketCard = page.locator(".summary-action-btn").filter({ hasText: /Imprimir Ticket/i }).first();
+  const printTicketCard = page.locator(".summary-action-btn").filter({ hasText: /Imprimir Ticket|Ver PDF|Imprimir/i }).first();
   const openDrawerCard  = page.locator(".summary-action-btn").filter({ hasText: /Abrir Gaveta/i }).first();
 
   await ensureActionButton(page, printTicketCard, printTicket);

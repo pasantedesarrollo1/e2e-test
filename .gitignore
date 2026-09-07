@@ -1,7 +1,22 @@
+# Dependencias
 node_modules/
+
+# Reportes y resultados de Playwright
 playwright-report/
 test-results/
+
+# Estados de autenticación de las aplicaciones
 e2e/Wanqara/.auth/
 e2e/WanqaraChef/.auth/
+
+# Variables de entorno y scripts locales
 .env
 export-context.js
+export-seeds.js
+
+# Archivos de configuración de skills de IA
+.agents/
+
+.mcp.json
+
+PLANTILLA-AGY.md
