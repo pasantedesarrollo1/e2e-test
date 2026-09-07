@@ -3,6 +3,7 @@ import { annotateTicket } from "../../../../../harness/annotate.js";
 import { requirePosCredentials, getTenantBaseUrl } from "../../../../../harness/settings.js";
 import { getSessionPath, ensureAuthenticated } from "../../../../../harness/auth.js";
 import { getElectronicInvoicingAuthType } from "../../../../../harness/seed.js";
+import { clickTableRowAction } from "../../../../../harness/crud-helpers.js";
 import {
   selectClientAndAccounts,
   fillPaymentDetailsAndSubmit,
@@ -10,14 +11,15 @@ import {
   validateInitialDeletionError,
   navigateToSettlementDetails,
   generateAndViewPDF,
-  confirmFinalDeletion
+  confirmFinalDeletion,
+  printPaymentTicket
 } from "./herness/multiple-receivables-flow.js";
 
 const TICKET = {
   ws: 'WS-959, WS-974, WS-971, WS-953',
-  tes: 'TES-199',
+  tes: 'TES-199, TES-215',
   release: 'v7.9.0',
-  summary: 'Admin Payments Multiple Receivables',
+  summary: 'Admin Payments Multiple Receivables & Printing',
   addedToRegression: null,
 };
 
@@ -48,6 +50,18 @@ test.describe("Admin Payments — Multiple Receivables @regression", () => {
 
     await test.step("Search for the payment record", async () => {
       await searchReceivableAccount(page, "0000000001");
+    });
+
+    await test.step("Open account details", async () => {
+      const firstRow = page.locator(".v-data-table__tr").first();
+      await expect(firstRow).toBeVisible({ timeout: 15_000 });
+      await clickTableRowAction(page, firstRow, "Ver esta cuenta");
+      await expect(page.getByText(/Abonos de la cuenta/i).first()).toBeVisible({ timeout: 15_000 });
+    });
+
+    // TES-215: Verify multiple payment print payload amounts match
+    await test.step("Print payment ticket and verify amounts (TES-215)", async () => {
+      await printPaymentTicket(page);
     });
 
     await test.step("Attempt to delete payment and verify error", async () => {
