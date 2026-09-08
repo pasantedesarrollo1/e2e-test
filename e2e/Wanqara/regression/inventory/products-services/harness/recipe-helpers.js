@@ -16,7 +16,6 @@ export async function navigateToProductAndVerifyRecipeDecimals(page, {
   const searchInput = page.getByRole("textbox", { name: /Busca lo que necesites/i }).first();
   await expect(searchInput).toBeVisible({ timeout: 15000 });
   await searchInput.fill(productName);
-  await page.waitForTimeout(1000);
 
   const row = page.locator(".v-data-table__tr").filter({ has: page.getByText(productName, { exact: true }) }).first();
   await expect(row).toBeVisible({ timeout: 15000 });

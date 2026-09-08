@@ -5,6 +5,7 @@ import { ensureAuthenticated } from "../../../harness/auth.js";
 import { completePayment } from "./pos-payment.js";
 import { searchAndSelectProduct } from "./pos-search.js";
 import { selectClientByCedula } from '../../../harness/client-helpers.js';
+import { ensureCashRegisterOpen } from "./cash-register-helpers.js";
 
 export async function runPosSaleFlow(page, {
   tenantBaseUrl,
@@ -17,10 +18,12 @@ export async function runPosSaleFlow(page, {
   paymentMethod = SEED.paymentMethods.efectivo,
   printTicket = false,
   openDrawer = false,
+  subsidiaryName = SEED.subsidiaries['retail'].name,
 }) {
   if (!skipNavigation) {
     await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/pos/home" });
-    await page.waitForURL(/\/pos\/home/);
+    await ensureCashRegisterOpen(page, tenantBaseUrl, "10", subsidiaryName);
+    await page.waitForURL(/\/pos\/(home|restaurant-home)/);
   }
 
   if (documentType) {

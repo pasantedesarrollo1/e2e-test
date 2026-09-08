@@ -16,10 +16,10 @@ test.describe("POS Retail — Cash Register Lifecycle @regression", () => {
     const tenantBaseUrl = getTenantBaseUrl();
     const subsidiaryName = SEED.subsidiaries['retail'].name;
 
-    await test.step("Navegar a apertura de caja", async () => {
+    await test.step("Navegar al home del POS", async () => {
        await ensureAuthenticated(page, {
          tenantBaseUrl,
-         targetPath: '/pos/open-cash-register',
+         targetPath: '/pos/home',
          authType: 'retail'
        });
     });
@@ -35,12 +35,18 @@ test.describe("POS Retail — Cash Register Lifecycle @regression", () => {
       if (currentUrl.match(/\/pos\/home/)) {
         await test.step("Caja detectada como ABIERTA: Cerrando caja antes de reabrir", async () => {
           await closeCashRegister(page, tenantBaseUrl);
-          await page.goto(withPath(tenantBaseUrl, '/pos/open-cash-register'));
+          await page.goto(withPath(tenantBaseUrl, '/pos/home'));
           await page.waitForURL(/\/pos\/open-cash-register/);
         });
       } else if (currentUrl.match(/\/pos\/open-cash-register/)) {
         await test.step("Caja detectada como CERRADA: Procediendo a apertura", async () => {
         });
+      }
+
+      // Manejar el modal opcional de cierre anterior antes de abrir la caja
+      const cancelModalBtn = page.getByRole('button', { name: 'Cancelar', exact: true });
+      if (await cancelModalBtn.isVisible({ timeout: 4000 })) {
+        await cancelModalBtn.click();
       }
     });
 
@@ -57,9 +63,10 @@ test.describe("POS Retail — Cash Register Lifecycle @regression", () => {
       await expect(page.getByText('Puntos de Emisión disponibles')).toBeVisible();
       await expect(page.getByText('Seleccione el punto de Emisión')).toBeVisible();
 
-      const firstCheckout = page.locator('.v-card.hover\\:tw-bg-gray-200').first();
-      await expect(firstCheckout).toBeVisible();
-      await firstCheckout.click();
+      // Seleccionar la primera caja disponible
+      const specificCheckout = page.locator('.v-card.hover\\:tw-bg-gray-200').first();
+      await expect(specificCheckout).toBeVisible();
+      await specificCheckout.click();
 
       const montoInput = page.locator('input[type="number"]').first();
       await montoInput.fill("10");

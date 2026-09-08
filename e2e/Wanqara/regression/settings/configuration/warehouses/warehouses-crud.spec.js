@@ -5,7 +5,7 @@ import { deleteRecordFromList } from '../../../../harness/crud-helpers.js';
 import { SEED } from '../../../../harness/seed.js';
 import { ACTION_TOOLTIPS } from '../../../../harness/action-tooltips.js';
 
-test.describe('Warehouse Management CRUD', () => {
+test.describe('Warehouse Management CRUD @regression', () => {
   requirePosCredentials(test);
 
   const { name, code, address, description } = SEED.warehouses.crud[0];

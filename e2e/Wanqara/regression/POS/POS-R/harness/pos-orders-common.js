@@ -153,9 +153,9 @@ export async function openAndSelectOrder(page, tableName) {
 }
 
 export async function navigateToChangeOrderStatusFromOptions(page) {
-  await page.waitForTimeout(1500);
-
   const triggerLocator = page.getByRole("button", { name: /Más Opciones/i }).first();
+  await expect(triggerLocator).toBeVisible({ timeout: 15000 });
+  
   const drawerFilter = /Opciones/i;
 
   const drawer = await openDrawer(page, triggerLocator, drawerFilter);
@@ -166,7 +166,7 @@ export async function navigateToChangeOrderStatusFromOptions(page) {
   for (let i = 0; i < 5; i++) {
     if (await changeStatusOption.isVisible()) break;
     await page.mouse.wheel(0, 600); 
-    await page.waitForTimeout(300); 
+    try { await changeStatusOption.waitFor({ state: "visible", timeout: 500 }); break; } catch {}
   }
 
   await expect(changeStatusOption).toBeVisible();

@@ -3,6 +3,22 @@
 
 import { expect } from "@playwright/test";
 
+export async function waitForFormDefaults(page) {
+  const sucursalWrapper = page.locator("main").getByText(/^Sucursal/).first().locator('xpath=following::div[contains(@class, "v-input")][1]');
+  await expect(sucursalWrapper).not.toContainText(/Sin sucursal/i, { timeout: 15_000 });
+
+  const bodegaWrapper = page.locator("main").getByText(/^Bodega/).first().locator('xpath=following::div[contains(@class, "v-input")][1]');
+  await expect(bodegaWrapper).not.toHaveClass(/v-input--disabled/, { timeout: 15_000 });
+
+  const docTypeWrapper = page.locator("main").getByText(/^Tipo de Documento/).first().locator('xpath=following::div[contains(@class, "v-input")][1]');
+  await expect(docTypeWrapper).not.toHaveClass(/v-input--disabled/, { timeout: 15_000 });
+}
+
+export async function getDocumentTypeLocator(page) {
+  const docLabel = page.locator("main").getByText(/^Tipo de Documento/).first();
+  return docLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
+}
+
 export async function readSelectedDocumentType(page) {
   const docLabel = page.locator("main").getByText("Tipo de Documento").first();
   await expect(docLabel).toBeVisible({ timeout: 10000 });

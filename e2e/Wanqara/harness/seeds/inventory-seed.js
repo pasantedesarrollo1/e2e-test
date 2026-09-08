@@ -30,5 +30,8 @@ export const inventorySeed = {
     brand: { name: "Marca Test Automatizado", order: "1", observation: "test" },
     color: { name: "Color Test Automatizado", observation: "Observación de prueba automatizada" },
     size:  { name: "Talla Test Automatizado", observation: "Observación de prueba automatizada" }
+  },
+  searchTerms: {
+    alitas: "alitas"
   }
 };

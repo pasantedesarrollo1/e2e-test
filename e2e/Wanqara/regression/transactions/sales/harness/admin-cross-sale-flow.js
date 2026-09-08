@@ -14,8 +14,6 @@ export async function selectCustomCheckout(page, bodegaName, cajaName) {
   await listboxBodega.getByRole("option", { name: new RegExp(bodegaName, "i") }).first().click();
   await expect(listboxBodega).not.toBeVisible({ timeout: 5000 });
 
-  await page.waitForTimeout(1500);
-
   const cajaLabel = page.locator("main").getByText(/Punto de Venta/i).first();
   const cajaInput = cajaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
   
@@ -27,7 +25,7 @@ export async function selectCustomCheckout(page, bodegaName, cajaName) {
   await expect(listboxCaja).not.toBeVisible({ timeout: 5000 });
 
   await page.keyboard.press("Escape");
-  await page.waitForTimeout(300);
+  await expect(page.locator(".v-overlay-container .v-overlay--active")).not.toBeVisible({ timeout: 2000 }).catch(() => {});
 }
 
 export async function submitValidatedAdminTransaction(page, endpointPattern) {

@@ -22,7 +22,6 @@ export async function selectDropdownOption(page, {
     await option.waitFor({ state: "visible", timeout: retryTimeout });
   }
 
-  await page.waitForTimeout(300);
   await option.click();
   
   await expect(option).not.toBeVisible({ timeout: 5000 });

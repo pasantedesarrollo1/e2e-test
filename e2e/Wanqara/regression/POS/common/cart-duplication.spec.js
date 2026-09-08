@@ -72,9 +72,9 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
 
     await searchInput.click();
     await searchInput.fill(productCode);
-    if (!fast) await page.waitForTimeout(300);
+
     await searchInput.press("Enter");
-    if (!fast) await page.waitForTimeout(500);
+
   };
 
   const clickCard = async (page, { fast = false } = {}) => {
@@ -88,12 +88,12 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
 
     await searchInput.click();
     await searchInput.fill(productName);
-    if (!fast) await page.waitForTimeout(300);
+
     await searchInput.press("Enter");
 
     const card = page.locator(".v-card").filter({ hasText: productName }).first();
     await card.click();
-    if (!fast) await page.waitForTimeout(500);
+
   };
 
   const clickCartPlus = async (page) => {
@@ -106,7 +106,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
       .first();
 
     await plusBtn.click();
-    await page.waitForTimeout(500);
+
   };
 
   const clickCartMinus = async (page) => {
@@ -123,7 +123,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
       .first();
 
     await minusBtn.click();
-    await page.waitForTimeout(500);
+
   };
 
   const setCartManualAmount = async (page, amount) => {
@@ -133,7 +133,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
     await input.click();
     await input.fill(String(amount));
     await input.press("Tab");
-    await page.waitForTimeout(500);
+
   };
 
   const clickCardBadgePlus = async (page, { fast = false } = {}) => {
@@ -147,7 +147,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
 
     await searchInput.click();
     await searchInput.fill(productName);
-    if (!fast) await page.waitForTimeout(300);
+
     await searchInput.press("Enter");
 
     const cardWrapper = page
@@ -172,7 +172,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
     }
 
     await badgeContainer.locator("button").last().click();
-    if (!fast) await page.waitForTimeout(500);
+
   };
 
   test("Flow 1: Scanner and interface iteration", async ({ posPage: page }) => {

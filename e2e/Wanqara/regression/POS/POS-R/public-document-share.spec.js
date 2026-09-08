@@ -4,6 +4,7 @@ import { getSessionPath, ensureAuthenticated } from "../../../harness/auth.js";
 import { expectSnackbar } from "../../../harness/ui-helpers.js";
 import { selectClientByCedula } from "../harness/pos-sale-flow.js";
 import { searchAndSelectProduct } from "../harness/pos-search.js";
+import { completePayment } from "../harness/pos-payment.js";
 import { SEED } from "../../../harness/seed.js";
 
 const TICKET = {
@@ -46,33 +47,12 @@ test.describe(`POS Retail — Public Document Share @release`, () => {
       await page.getByRole('button', { name: /Terminar Venta/i }).click();
       await page.waitForURL(/\/pos\/(restaurant-)?payments/);
 
-      const efectivoOption = page.getByText('EFECTIVO', { exact: true }).first();
-      await efectivoOption.click();
-
-      // Ensure 'Abrir Gaveta' is inactive
-      const drawerBtn = page.locator('.summary-action-btn').filter({ hasText: /Abrir Gaveta/i }).first();
-      if (await drawerBtn.evaluate(el => el.classList.contains("summary-action-btn--active"))) {
-        await drawerBtn.click();
-      }
-      
-      // Ensure 'Ver PDF' is ACTIVE so PdfViewerCore opens
-      const verPdfBtn = page.locator('.summary-action-btn').filter({ hasText: /Ver PDF/i }).first();
-      if (!(await verPdfBtn.evaluate(el => el.classList.contains("summary-action-btn--active")))) {
-        await verPdfBtn.click();
-      }
-
-      const finishBtn = page.getByRole('button', { name: /Finalizar Venta/i });
-      
-      await Promise.all([
-        page.waitForResponse(res => 
-          res.url().includes('/api/v2/pos/sales') && 
-          res.request().method() === 'POST' && 
-          res.status() === 200
-        ),
-        finishBtn.click({ force: true })
-      ]);
-      
-      await expectSnackbar(page, /Venta Realizada/i);
+      await completePayment(page, { 
+        paymentMethod: SEED.paymentMethods.efectivo, 
+        printTicket: false,
+        viewPdf: true,
+        openDrawer: false 
+      });
     });
 
     await test.step("Generate public link via Copiar enlace", async () => {

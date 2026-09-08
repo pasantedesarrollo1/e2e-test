@@ -65,7 +65,6 @@ async function selectFirstDateAndSlot(page) {
     const nextMonthBtn = dialog.locator("button").filter({ has: page.locator(".mdi-chevron-right") }).first();
     if (await nextMonthBtn.isVisible()) {
       await nextMonthBtn.click();
-      await page.waitForTimeout(500);
     }
   }
 

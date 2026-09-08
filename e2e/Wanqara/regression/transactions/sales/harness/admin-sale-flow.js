@@ -47,9 +47,11 @@ async function assignManualCaja(page) {
 
 export async function selectCheckout(page, urlPattern = /\/admin\/ventas\/add/) {
   await page.waitForURL(urlPattern);
-  await page.waitForTimeout(1000);
 
   const bodegaLabel = page.locator("main").getByText("Bodega").first();
+  // Wait up to 2s for bodegaLabel to appear to prevent race condition during render
+  await bodegaLabel.waitFor({ state: "visible", timeout: 2000 }).catch(() => {});
+  
   if (await bodegaLabel.isVisible()) {
     const bodegaWrapper = bodegaLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
     const text = await bodegaWrapper.innerText();
@@ -72,7 +74,7 @@ export async function selectCheckout(page, urlPattern = /\/admin\/ventas\/add/) 
   }
 
   await page.keyboard.press("Escape");
-  await page.waitForTimeout(200);
+  await expect(page.locator(".v-overlay-container .v-overlay--active")).not.toBeVisible({ timeout: 2000 }).catch(() => {});
 }
 
 import { selectDocumentType } from './admin-document-helpers.js';
@@ -94,10 +96,11 @@ export async function searchAndSelectProduct(page, { name, searchTerm }) {
   
   await searchInput.click();
   await searchInput.clear();
-  await page.waitForTimeout(300); 
 
-  await searchInput.pressSequentially(term, { delay: 30 });
-  await page.waitForTimeout(1000);
+  await Promise.all([
+    page.waitForResponse(res => res.url().includes('products') && res.request().method() === 'GET').catch(() => {}),
+    searchInput.pressSequentially(term, { delay: 30 })
+  ]);
 
   const productItem = page.getByText(name, { exact: false }).first();
   await expect(productItem).toBeVisible({ timeout: 20000 });

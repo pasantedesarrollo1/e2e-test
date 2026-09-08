@@ -1,31 +1,38 @@
 import { expect } from "@playwright/test";
 import { openDrawer } from "./pos-sale-flow.js";
 import { withPath } from "../../../harness/urls.js";
+import { SEED } from "../../../harness/seed.js";
 
-/**
- * Ensures the cash register is open.
- * If it is open, it closes it and then opens it.
- */
 export async function ensureCashRegisterOpen(page, tenantBaseUrl, amount = "10", subsidiaryName) {
   if (!tenantBaseUrl) throw new Error("tenantBaseUrl is required");
   if (!subsidiaryName) throw new Error("subsidiaryName is required");
 
-  await page.goto(withPath(tenantBaseUrl, '/pos/open-cash-register'));
+  const isRetail = subsidiaryName === SEED.subsidiaries['retail'].name;
+  const homePath = isRetail ? '/pos/home' : '/pos/restaurant-home';
 
-  try {
-    await page.waitForURL(/\/pos\/(home|restaurant-home|open-cash-register)/, { timeout: 10000 });
-  } catch (e) {
-    // ignore timeout
+  await page.goto(withPath(tenantBaseUrl, homePath));
+
+  const posHomeIndicator = page.getByText(/Cliente:/i).first();
+  const openRegisterIndicator = page.getByRole("button", { name: /Abrir Caja/i }).first();
+  const selectSubsidiaryIndicator = page.getByText(/Seleccione una sucursal para abrir la caja/i).first();
+  const alreadyOpenSnackbar = page.locator('.v-snackbar').filter({ hasText: /Ya hay una caja abierta para esta sucursal/i }).first();
+
+  await expect(posHomeIndicator.or(openRegisterIndicator).or(selectSubsidiaryIndicator).or(alreadyOpenSnackbar)).toBeVisible({ timeout: 20_000 });
+
+  if (await alreadyOpenSnackbar.isVisible()) {
+    await expect(posHomeIndicator).toBeVisible({ timeout: 15_000 });
+    return;
   }
 
-  if (page.url().match(/\/pos\/(home|restaurant-home)/)) {
-    // Already open, we must close it first
-    await closeCashRegister(page, tenantBaseUrl);
-    await page.goto(withPath(tenantBaseUrl, '/pos/open-cash-register'));
-    await page.waitForURL(/\/pos\/open-cash-register/);
+  if (await posHomeIndicator.isVisible()) {
+    return;
   }
 
-  // Handle subsidiary selection if present
+  const cancelModalBtn = page.getByRole('button', { name: 'Cancelar', exact: true });
+  if (await cancelModalBtn.isVisible({ timeout: 4000 })) {
+    await cancelModalBtn.click();
+  }
+
   const subsidiaryCards = page.locator('.v-card').filter({ hasText: subsidiaryName });
   if (await subsidiaryCards.first().isVisible({ timeout: 3000 })) {
     await subsidiaryCards.first().click();
@@ -36,13 +43,11 @@ export async function ensureCashRegisterOpen(page, tenantBaseUrl, amount = "10",
   }
 
   await expect(page.getByText('Puntos de Emisión disponibles')).toBeVisible();
-
   await expect(page.getByText('Seleccione el punto de Emisión')).toBeVisible();
 
-  // "la caja se mantiene en la que este disponible"
-  const firstCheckout = page.locator('.v-card.hover\\:tw-bg-gray-200').first();
-  await expect(firstCheckout).toBeVisible();
-  await firstCheckout.click();
+  const checkoutToSelect = page.locator('.v-card.hover\\:tw-bg-gray-200').first();
+  await expect(checkoutToSelect).toBeVisible();
+  await checkoutToSelect.click();
 
   const montoInput = page.locator('input[type="number"]').first();
   await montoInput.fill(amount);
@@ -53,12 +58,9 @@ export async function ensureCashRegisterOpen(page, tenantBaseUrl, amount = "10",
     abrirCajaBtn.click()
   ]);
 
-  await page.waitForURL(/\/pos\/(home|restaurant-home)/);
+  await expect(posHomeIndicator).toBeVisible({ timeout: 15_000 });
 }
 
-/**
- * Closes the cash register from the home POS screen.
- */
 export async function closeCashRegister(page, tenantBaseUrl, options = {}) {
   if (!tenantBaseUrl) throw new Error("tenantBaseUrl is required");
 
@@ -70,12 +72,8 @@ export async function closeCashRegister(page, tenantBaseUrl, options = {}) {
   const closeOption = drawer.getByRole("button", { name: /Cierre de Caja/i }).first();
   await closeOption.click({ force: true });
   
-  await page.waitForURL(/\/pos\/close-cash-register/);
-  
-  await expect(
-    page.getByText('Composición del Efectivo'),
-    'La caja no renderizó correctamente. Posible error: "No query results for model [Modules\\General\\Models\\CashRegister] undefined"'
-  ).toBeVisible({ timeout: 10000 });
+  const formIndicator = page.getByText('Composición del Efectivo').first();
+  await expect(formIndicator).toBeVisible({ timeout: 15000 });
   
   if (beforeConfirm) {
     await beforeConfirm();
@@ -83,6 +81,7 @@ export async function closeCashRegister(page, tenantBaseUrl, options = {}) {
   
   const acceptBtn = page.getByRole("button", { name: /Cerrar Caja/i }).first();
   await acceptBtn.click();
+  
   const confirmBtn = page.locator('.v-overlay-container').getByRole("button", { name: /Aceptar/i }).last();
   await expect(confirmBtn).toBeVisible();
   

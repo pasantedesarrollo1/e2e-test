@@ -44,14 +44,13 @@ export async function selectClientByCedula(page, cedula, options = {}) {
     await cedulaInput.click();
     await cedulaInput.clear();
     await cedulaInput.pressSequentially(cedula, { delay: 50 });
-    await page.waitForTimeout(300);
+    await expect(cedulaInput).toHaveValue(cedula);
     await cedulaInput.press("Enter");
   } else {
     await cedulaInput.clear();
     await cedulaInput.fill(cedula);
     await expect(cedulaInput).toHaveValue(cedula);
     await cedulaInput.blur();
-    await page.waitForTimeout(100);
     await cedulaInput.focus();
     await cedulaInput.press("Enter");
   }
@@ -76,7 +75,6 @@ export async function selectClientByCedula(page, cedula, options = {}) {
         identityType: "CEDULA",
         identityNumber: cedula
       });
-      await page.waitForTimeout(1000); 
     }
 
     if (await saveBtn.isVisible()) {
@@ -117,7 +115,6 @@ export async function selectClientFromSearchModal(page, searchTerm, options) {
   const searchInput = container.getByRole("textbox", { name: /Busca lo que necesites/i }).first();
   await expect(searchInput).toBeVisible();
   await searchInput.fill(searchTerm);
-  await page.waitForTimeout(500);
 
   const row = container.locator(".v-data-table__tr").filter({ hasText: searchTerm }).first();
   await expect(row).toBeVisible({ timeout: 10_000 });

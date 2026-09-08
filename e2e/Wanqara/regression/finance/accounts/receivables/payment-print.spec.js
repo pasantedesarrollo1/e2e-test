@@ -2,8 +2,8 @@ import { test, expect } from "@playwright/test";
 import { annotateTicket } from "../../../../harness/annotate.js";
 import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
 import { getSessionPath, ensureAuthenticated } from "../../../../harness/auth.js";
-import { getElectronicInvoicingAuthType } from "../../../../harness/seed.js";
-import { searchReceivableAccount } from "../payments/multiple-payment/herness/multiple-receivables-flow.js";
+import { SEED, getElectronicInvoicingAuthType } from "../../../../harness/seed.js";
+import { searchReceivableAccount, fillSingleReceivablePayment } from "../payments/multiple-payment/herness/multiple-receivables-flow.js";
 import { clickTableRowAction } from "../../../../harness/crud-helpers.js";
 
 const TICKET = {
@@ -23,8 +23,10 @@ test.describe("Admin Payments — Receivables Print Locale Bug @release", () => 
   
   test.use({ storageState: getSessionPath(authType001) });
 
-  test("Should properly send 0.01 amount to printer without locale issues", async ({ page }) => {
+  test("Should properly send SEED amount to printer without locale issues", async ({ page }) => {
     test.setTimeout(60_000); 
+    const testAmount = SEED.receivables.paymentAmount;
+    const testDescription = SEED.receivables.paymentDescription;
 
     await test.step("Navigate to receivables list route", async () => {
       await ensureAuthenticated(page, { 
@@ -35,37 +37,21 @@ test.describe("Admin Payments — Receivables Print Locale Bug @release", () => 
     });
 
     await test.step("Search for the customer", async () => {
-      await searchReceivableAccount(page, "0000000001");
+      await searchReceivableAccount(page, SEED.clients.test.cedula);
     });
     
     await test.step("Click 'Agregar Abono' action", async () => {
       const firstRow = page.locator(".v-data-table__tr").first();
       await expect(firstRow).toBeVisible({ timeout: 15_000 });
-      // The tooltip is 'Agregar Abono' based on the ticket description
       await clickTableRowAction(page, firstRow, "Agregar Abono");
     });
 
     await test.step("Fill payment details and intercept requests", async () => {
-      // "llenar la descripcion: Agrega una Descripción al Abono"
-      const descriptionInput = page.getByPlaceholder("Agrega una Descripción al Abono");
-      await expect(descriptionInput).toBeVisible();
-      await descriptionInput.fill("Prueba monto 0.01");
-
-      // Select EFECTIVO payment method
-      const efectivoOption = page.getByText(/^EFECTIVO$/i).first();
-      await expect(efectivoOption).toBeVisible();
-      await efectivoOption.click();
-
-      // "en el resumen de pago en el metodo de pago que seleccione poner 0,01 ; debe ir con la "coma""
-      // Based on Vue: <v-text-field placeholder="Cantidad" ... />
-      const amountInput = page.getByPlaceholder("Cantidad");
-      await expect(amountInput).toBeVisible();
-      await amountInput.click();
-      await amountInput.fill("0.01");
-      await amountInput.press("Tab");
-
-      const pagarBtn = page.getByRole("button", { name: /^Pagar$/i, exact: true });
-      await expect(pagarBtn).toBeEnabled();
+      const pagarBtn = await fillSingleReceivablePayment(page, {
+        amount: testAmount,
+        description: testDescription,
+        paymentMethodRegex: new RegExp(`^${SEED.paymentMethods.efectivo.label}$`, "i")
+      });
 
       // Intercept the two POST requests
       const payPromise = page.waitForResponse(res => 
@@ -84,10 +70,8 @@ test.describe("Admin Payments — Receivables Print Locale Bug @release", () => 
       const printerRequest = await printerPromise;
 
       const postData = printerRequest.postDataJSON();
-      // The user wants to check that the amount sent to the printer is 0.01
-      // "comprobar en object.md que los amount sean 3.33 en este ejemplo pero es dinamico, hay que comprobar que en todos sea el mismo valor... que valida hasta antes de llegar a los 0"
-      expect(postData.data.amount).toBe(0.01);
-      // Wait, in the example the amount is a number 3.33 in the JSON `{"data":{"id":"...","amount":3.33,...`
+      // The user wants to check that the amount sent to the printer is correct
+      expect(postData.data.amount).toBe(parseFloat(testAmount));
     });
   });
 });

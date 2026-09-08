@@ -9,7 +9,6 @@ const grantSetupHeadroom = (testInfo, ms) => testInfo.setTimeout(testInfo.timeou
 export const test = base.extend({
   posPage: async ({ page }, use, testInfo) => {
     grantSetupHeadroom(testInfo, 30_000);
-
     const tenantBaseUrl = getTenantBaseUrl();
     
     await ensureAuthenticated(page, { 
@@ -18,16 +17,10 @@ export const test = base.extend({
       authType: "retail" 
     });
     
-    await page.waitForURL(/\/pos\/(home|open-cash-register)/);
-    
-    if (page.url().includes('open-cash-register')) {
-      await ensureCashRegisterOpen(page, tenantBaseUrl, "10", SEED.subsidiaries.retail.name);
-    }
-
-    await page.waitForURL(/\/pos\/home/);
+    await ensureCashRegisterOpen(page, tenantBaseUrl, "10", SEED.subsidiaries.retail.name);
     
     await withSessionWatchdog(page, () =>
-      expect(page.getByText(/Cliente:/i)).toBeVisible(),
+      expect(page.getByText(/Cliente:/i).first()).toBeVisible({ timeout: 15_000 }),
       "retail"
     );
     
@@ -36,7 +29,6 @@ export const test = base.extend({
 
   posRestaurantPage: async ({ page }, use, testInfo) => {
     grantSetupHeadroom(testInfo, 90_000);
-
     const tenantBaseUrl = getTenantBaseUrl();
     
     await ensureAuthenticated(page, { 
@@ -45,17 +37,10 @@ export const test = base.extend({
       authType: "restaurant" 
     });
     
-    await page.waitForURL(/\/pos/);
-    await page.waitForURL(/\/pos\/(restaurant-home|open-cash-register)/);
-    
-    if (page.url().includes('open-cash-register')) {
-      await ensureCashRegisterOpen(page, tenantBaseUrl, "10", SEED.subsidiaries.restaurant.name);
-    }
-
-    await page.waitForURL(/\/pos\/restaurant-home/);
+    await ensureCashRegisterOpen(page, tenantBaseUrl, "10", SEED.subsidiaries.restaurant.name);
     
     await withSessionWatchdog(page, () =>
-      expect(page.getByText(/Cliente:/i)).toBeVisible({ timeout: 60_000 }),
+      expect(page.getByText(/Cliente:/i).first()).toBeVisible({ timeout: 60_000 }),
       "restaurant"
     );
     

@@ -2,6 +2,7 @@ import { test, expect } from "../harness/pos-fixtures.js";
 import { annotateTicket } from "../../../harness/annotate.js";
 import { requirePosCredentials } from "../../../harness/settings.js";
 import { getSessionPath } from "../../../harness/auth.js";
+import { SEED } from "../../../harness/seed.js";
 
 const STRESS_TICKET = {
   ws: 'WS-1025',
@@ -19,7 +20,7 @@ test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regr
   test('should not duplicate cart rows or corrupt store state under rapid random clicks', async ({ posPage: page }) => {
     test.setTimeout(120000); 
 
-    const searchKeyword = "alitas";
+    const searchKeyword = SEED.searchTerms.alitas;
     
     const apiPromise = page.waitForResponse(response => 
       response.url().includes('/api/v1/inventory/products-list') && response.status() === 200

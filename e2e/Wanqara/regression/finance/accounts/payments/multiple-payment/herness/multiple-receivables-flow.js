@@ -60,16 +60,41 @@ export async function fillPaymentDetailsAndSubmit(page) {
   await expect(successMessage).toBeVisible();
 }
 
+export async function fillSingleReceivablePayment(page, { amount, description, paymentMethodRegex }) {
+  const descriptionInput = page.getByPlaceholder("Agrega una Descripción al Abono");
+  await expect(descriptionInput).toBeVisible();
+  await descriptionInput.fill(description);
+
+  const methodOption = page.getByText(paymentMethodRegex).first();
+  await expect(methodOption).toBeVisible();
+  await methodOption.click();
+
+  const amountInput = page.getByPlaceholder("Cantidad");
+  await expect(amountInput).toBeVisible();
+  await amountInput.click();
+  await amountInput.fill(amount);
+  await amountInput.press("Tab");
+
+  const pagarBtn = page.getByRole("button", { name: /^Pagar$/i, exact: true });
+  await expect(pagarBtn).toBeEnabled();
+  return pagarBtn;
+}
+
 export async function searchReceivableAccount(page, searchTerm) {
   const searchInput = page.getByRole("textbox", { name: /Busca lo que necesites/i }).first();
   await expect(searchInput).toBeVisible({ timeout: 10000 });
   
   await searchInput.click();
   await searchInput.clear();
-  await page.waitForTimeout(300); 
 
-  await searchInput.pressSequentially(searchTerm, { delay: 30 });
-  await page.waitForTimeout(1500);
+  await Promise.all([
+    page.waitForResponse(res => 
+      (res.url().includes('account') || res.url().includes('receivable')) && 
+      res.request().method() === 'GET' && 
+      res.url().includes(encodeURIComponent(searchTerm))
+    ),
+    searchInput.fill(searchTerm)
+  ]);
 }
 
 export async function validateInitialDeletionError(page) {

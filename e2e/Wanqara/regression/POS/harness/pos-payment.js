@@ -17,13 +17,18 @@ async function ensureActionButton(page, locator, shouldBeActive) {
 export async function completePayment(page, {
   paymentMethod = SEED.paymentMethods.efectivo,
   printTicket = false,
+  viewPdf = false,
   openDrawer = false,
 } = {}) {
-  const printTicketCard = page.locator(".summary-action-btn").filter({ hasText: /Imprimir Ticket|Ver PDF|Imprimir/i }).first();
+  await expect(page.locator(".summary-action-btn").first()).toBeVisible({ timeout: 10000 });
+
+  const printTicketCard = page.locator(".summary-action-btn").filter({ hasText: /Imprimir/i }).first();
+  const viewPdfCard = page.locator(".summary-action-btn").filter({ hasText: /Ver PDF/i }).first();
   const openDrawerCard  = page.locator(".summary-action-btn").filter({ hasText: /Abrir Gaveta/i }).first();
 
-  await ensureActionButton(page, printTicketCard, printTicket);
-  await ensureActionButton(page, openDrawerCard, openDrawer);
+  if (await printTicketCard.isVisible()) await ensureActionButton(page, printTicketCard, printTicket);
+  if (await viewPdfCard.isVisible()) await ensureActionButton(page, viewPdfCard, viewPdf);
+  if (await openDrawerCard.isVisible()) await ensureActionButton(page, openDrawerCard, openDrawer);
 
   const methodOption = page.getByText(paymentMethod.label, { exact: true }).first();
   await methodOption.click();

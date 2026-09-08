@@ -1,7 +1,7 @@
 export const usersSeed = {
   crud: {
     name: "test nuevo usuario",
-    identity: "1283728925",
+    identity: "1283728929",
     identityType: "CEDULA",
     roleCases: [
       { label: "Cliente", roles: [/^Cliente$/i] },

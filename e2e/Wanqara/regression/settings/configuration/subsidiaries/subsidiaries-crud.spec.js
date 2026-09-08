@@ -6,7 +6,7 @@ import { SEED } from '../../../../harness/seed.js';
 import { ACTION_TOOLTIPS } from '../../../../harness/action-tooltips.js';
 import { selectDropdownOption, expectSnackbar } from "../../../../harness/ui-helpers.js";
 
-test.describe('Subsidiary Management CRUD', () => {
+test.describe('Subsidiary Management CRUD @regression', () => {
   requirePosCredentials(test);
 
   for (const { type, name, code, isRestaurant, hasDispatch } of SEED.subsidiaries.crud) {

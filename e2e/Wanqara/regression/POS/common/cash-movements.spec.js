@@ -1,8 +1,9 @@
 import { test, expect } from "../harness/pos-fixtures.js";
-import { requirePosCredentials } from "../../../harness/settings.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
 import { SEED } from "../../../harness/seed.js";
-import { openDrawer, closeDrawer } from "../harness/pos-sale-flow.js";
+import { openDrawer, closeDrawer, runPosSaleFlow } from "../harness/pos-sale-flow.js";
 import { getSessionPath } from "../../../harness/auth.js";
+import { withPath } from "../../../harness/urls.js";
 
 async function clickCashMovementOption(page, drawer) {
   const option = drawer.getByRole("button", { name: /Registro de Ingresos\/Egresos/i }).first();
@@ -65,23 +66,35 @@ for (const env of environments) {
 
     runTest("records both a cash income and a cash expense from the More Options menu", async (page) => {
       test.setTimeout(180_000);
-      
-      await page.waitForTimeout(2000);
-      
-      const drawerFilter = /Opciones/i;
-      const triggerLocator = page.getByRole("button", { name: /Más Opciones/i }).first();
-      
-      await test.step("Scenario 1: Record a cash income", async () => {
-        const drawer = await openDrawer(page, triggerLocator, drawerFilter);
-        await clickCashMovementOption(page, drawer);
-        await fillAndSubmitCashForm(page, "in");
-      });
+      await test.step("Venta previa y registro secuencial de ingreso y egreso", async () => {
+        await test.step("Realizar venta simple de alitas", async () => {
+          await runPosSaleFlow(page, {
+            tenantBaseUrl: getTenantBaseUrl(),
+            skipNavigation: true,
+            productName: SEED.products.estandar.name,
+            searchTerm: null,
+          });
+          const basePath = env.name === 'Restaurant' ? '/pos/restaurant-home' : '/pos/home';
+          await page.goto(withPath(getTenantBaseUrl(), basePath));
+          await page.waitForURL(new RegExp(basePath));
+        });
 
-      await test.step("Scenario 2: Record a cash expense", async () => {
-        await closeDrawer(page, drawerFilter);
-        const drawer = await openDrawer(page, triggerLocator, drawerFilter);
-        await clickCashMovementOption(page, drawer);
-        await fillAndSubmitCashForm(page, "out");
+        const drawerFilter = /Opciones/i;
+        const triggerLocator = page.getByRole("button", { name: /Más Opciones/i }).first();
+        
+        await test.step("Registrar ingreso", async () => {
+          const drawer = await openDrawer(page, triggerLocator, drawerFilter);
+          await clickCashMovementOption(page, drawer);
+          await fillAndSubmitCashForm(page, "in");
+          await closeDrawer(page, drawerFilter);
+        });
+
+        await test.step("Registrar egreso", async () => {
+          const drawer = await openDrawer(page, triggerLocator, drawerFilter);
+          await clickCashMovementOption(page, drawer);
+          await fillAndSubmitCashForm(page, "out");
+          await closeDrawer(page, drawerFilter);
+        });
       });
     });
   });

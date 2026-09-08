@@ -5,7 +5,9 @@ import { getSessionPath, ensureAuthenticated } from "../../../harness/auth.js";
 import { getElectronicInvoicingAuthType } from "../../../harness/seed.js";
 import {
   readSelectedDocumentType,
-  getAvailableDocumentOptions
+  getAvailableDocumentOptions,
+  waitForFormDefaults,
+  getDocumentTypeLocator
 } from "./harness/admin-dynamic-documents-helpers.js";
 import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
 
@@ -24,8 +26,6 @@ async function ensureUIReady(page) {
   if (await profileOverlay.isVisible().catch(() => false)) {
     await page.keyboard.press('Escape');
   }
-  
-  await page.waitForTimeout(1500);
 }
 
 test.describe("Admin Sales — Dynamic Document Types (WS-981) @regression", () => {
@@ -41,9 +41,10 @@ test.describe("Admin Sales — Dynamic Document Types (WS-981) @regression", () 
       await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/admin/ventas/add", authType: getElectronicInvoicingAuthType() });
       await ensureUIReady(page);
       
-      // Valida explícitamente el valor seleccionado por defecto
-      const selected = await readSelectedDocumentType(page);
-      expect(selected).toMatch(/Factura electrónica/i);
+      await waitForFormDefaults(page);
+      
+      const docInput = await getDocumentTypeLocator(page);
+      await expect(docInput).toContainText(/Factura electrónica/i);
       
       const options = await getAvailableDocumentOptions(page);
       const hasElectronic = options.some(o => o.includes("Factura"));
@@ -54,8 +55,10 @@ test.describe("Admin Sales — Dynamic Document Types (WS-981) @regression", () 
       await switchAdminSubsidiary(page, "100");
       await ensureUIReady(page);
       
-      const selected = await readSelectedDocumentType(page);
-      expect(selected).toMatch(/Recibos/i);
+      await waitForFormDefaults(page);
+      
+      const docInput = await getDocumentTypeLocator(page);
+      await expect(docInput).toContainText(/Recibos/i);
       
       const options = await getAvailableDocumentOptions(page);
       const hasElectronic = options.some(o => o.includes("Factura"));
@@ -66,8 +69,10 @@ test.describe("Admin Sales — Dynamic Document Types (WS-981) @regression", () 
       await switchAdminSubsidiary(page, "001");
       await ensureUIReady(page);
       
-      const selected = await readSelectedDocumentType(page);
-      expect(selected).toMatch(/Factura electrónica/i);
+      await waitForFormDefaults(page);
+      
+      const docInput = await getDocumentTypeLocator(page);
+      await expect(docInput).toContainText(/Factura electrónica/i);
 
       const options = await getAvailableDocumentOptions(page);
       const hasElectronic = options.some(o => o.includes("Factura"));

@@ -71,7 +71,7 @@ export async function clickTableRowAction(page, rowLocator, tooltipText) {
   if (isSpeedDial || cellButtons.length === 1) {
     const trigger = actionsCell.locator("button.v-btn").last();
     await trigger.click({ force: true });
-    await page.waitForTimeout(400);
+    await expect(page.locator(".v-overlay-container .v-overlay--active").first()).toBeVisible({ timeout: 5000 }).catch(() => {});
   }
 
   const rowButtons = await rowLocator.locator("button.v-btn").all();
