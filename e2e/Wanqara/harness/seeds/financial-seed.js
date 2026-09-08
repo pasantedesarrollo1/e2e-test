@@ -171,4 +171,37 @@ export const financialSeed = {
       },
     },
   },
+  restaurantTips: {
+    tipToType: "3.3337373372323",
+    case1: {
+      ui: { subtotal: "$36.47", impuestos: "$5.47", total: "$41.94", propina: "$3.33" },
+      detail: { price: "2.1221217218712", discount: "0", taxedDiscount: "0", total: "2.1221217218712", taxedTotal: "2.44043998015188", taxedPrice: "2.44" },
+      summary: { discount: "0", subtotal: "36.4724643877764", total: "41.94" },
+      root: { additional_tip: "3.33" }
+    },
+    case2: {
+      ui: { descuentos: "$1.15", subtotal: "$33.21", impuestos: "$4.98", total: "$38.19", propina: "$3.33" },
+      detail: { price: "3.3773263982716", discount: "0.112591191139383", taxedDiscount: "0.12947986981029", total: "3.264735207132217", taxedTotal: "3.754445488202047", taxedPrice: "3.88" },
+      summary: { discount: "1.145150198920518", subtotal: "33.205192466984682", total: "38.19" },
+      root: { additional_tip: "3.33" }
+    },
+    case3: {
+      ui: { subtotal: "$11.15", impuestos: "$1.67", total: "$12.82", propina: "$3.33" },
+      detail: { price: "3.3773263982716", discount: "0", taxedDiscount: "0", total: "3.3773263982716", taxedTotal: "3.88392535801234", taxedPrice: "3.88" },
+      summary: { discount: "0", subtotal: "11.1506616619979", total: "12.82" },
+      root: { additional_tip: "3.33" }
+    },
+    case4: {
+      ui: { subtotal: "$3.38", impuestos: "$0.51", total: "$3.88", propina: "$3.33" },
+      detail: { price: "3.3773263982716", discount: "0", taxedDiscount: "0", total: "3.3773263982716", taxedTotal: "3.88392535801234", taxedPrice: "3.88" },
+      summary: { discount: "0", subtotal: "3.3773263982716", total: "3.88" },
+      root: { additional_tip: "3.33" }
+    },
+    case5: {
+      ui: { subtotal: "$35.50", impuestos: "$5.32", total: "$40.82", propina: "$3.33" },
+      detail: { price: "3.489917589410983", discount: "0", taxedDiscount: "0", total: "3.489917589410983", taxedTotal: "4.013405227822633", taxedPrice: "4.01" },
+      summary: { discount: "0", subtotal: "35.495492864825718", total: "40.82" },
+      root: { additional_tip: "3.33" }
+    }
+  }
 };

@@ -24,7 +24,6 @@
 ## 4. Final Code Snippet (TES-215 Helper Extension)
 ```javascript
 export async function printPaymentTicket(page) {
-  // Asume que la vista de detalles ya fue abierta y el registro de abono está visible.
   const printBtn = page.locator("tbody tr").last().locator("button").nth(1);
 
   const printerPromise = page.waitForRequest(req => 

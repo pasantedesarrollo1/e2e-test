@@ -169,9 +169,6 @@ export async function confirmFinalDeletion(page) {
 }
 
 export async function printPaymentTicket(page) {
-  // We assume we are already in the account details view.
-  // Right next to the delete button, there is a print button.
-  // According to codegen, it's the 2nd button in the flex container (or 3rd from right to left taking into account the delete button).
   const printBtn = page.locator("tbody tr").last().locator("button").nth(1);
 
   const printerPromise = page.waitForRequest(req => 
@@ -207,7 +204,6 @@ export async function printPaymentTicket(page) {
          expect.soft(val).toBe(targetAmount);
       } else {
          // Only assert on amounts that are related to the payment.
-         // We will skip others for now and check the logs.
       }
     }
   }

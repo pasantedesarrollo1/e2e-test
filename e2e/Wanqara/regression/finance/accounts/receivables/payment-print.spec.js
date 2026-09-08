@@ -53,7 +53,6 @@ test.describe("Admin Payments — Receivables Print Locale Bug @release", () => 
         paymentMethodRegex: new RegExp(`^${SEED.paymentMethods.efectivo.label}$`, "i")
       });
 
-      // Intercept the two POST requests
       const payPromise = page.waitForResponse(res => 
         res.url().includes('/api/v1/accounting/payments/pay-receivable-account/') && 
         res.status() === 200
@@ -70,7 +69,6 @@ test.describe("Admin Payments — Receivables Print Locale Bug @release", () => 
       const printerRequest = await printerPromise;
 
       const postData = printerRequest.postDataJSON();
-      // The user wants to check that the amount sent to the printer is correct
       expect(postData.data.amount).toBe(parseFloat(testAmount));
     });
   });

@@ -81,7 +81,7 @@ test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regr
 
       const productTitle = await targetCard.locator('.tw-font-semibold').first().innerText();
       
-      const randomClicks = Math.floor(Math.random() * 5) + 3; // 3 to 7 clicks
+      const randomClicks = Math.floor(Math.random() * 5) + 3; 
       clickTrackers[productTitle] += randomClicks;
 
       for (let click = 0; click < randomClicks; click++) {
@@ -111,7 +111,7 @@ test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regr
         const titleA = await cardA.locator('.tw-font-semibold').first().innerText();
         const titleB = await cardB.locator('.tw-font-semibold').first().innerText();
 
-        const pingPongClicks = Math.floor(Math.random() * 3) + 3; // 3 to 5 alternating clicks
+        const pingPongClicks = Math.floor(Math.random() * 3) + 3; 
         clickTrackers[titleA] += pingPongClicks;
         clickTrackers[titleB] += pingPongClicks;
 

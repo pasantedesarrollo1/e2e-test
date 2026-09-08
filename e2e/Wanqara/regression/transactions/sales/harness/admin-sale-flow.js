@@ -49,7 +49,6 @@ export async function selectCheckout(page, urlPattern = /\/admin\/ventas\/add/) 
   await page.waitForURL(urlPattern);
 
   const bodegaLabel = page.locator("main").getByText("Bodega").first();
-  // Wait up to 2s for bodegaLabel to appear to prevent race condition during render
   await bodegaLabel.waitFor({ state: "visible", timeout: 2000 }).catch(() => {});
   
   if (await bodegaLabel.isVisible()) {

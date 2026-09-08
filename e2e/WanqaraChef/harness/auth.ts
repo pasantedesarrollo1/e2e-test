@@ -110,7 +110,6 @@ async function openRucForm(page: Page) {
   const rucInput = visibleTestId(page, 'ruc-input');
   const clientCta = visibleTestId(page, 'auth-client-cta');
 
-  // Welcome CTA animates in (~600ms); wait for either surface before acting.
   await expect(rucInput.or(clientCta)).toBeVisible({ timeout: 20_000 });
 
   if (await rucInput.isVisible().catch(() => false)) {

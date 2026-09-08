@@ -43,7 +43,6 @@ test.describe("POS Retail — Cash Register Lifecycle @regression", () => {
         });
       }
 
-      // Manejar el modal opcional de cierre anterior antes de abrir la caja
       const cancelModalBtn = page.getByRole('button', { name: 'Cancelar', exact: true });
       if (await cancelModalBtn.isVisible({ timeout: 4000 })) {
         await cancelModalBtn.click();
@@ -63,7 +62,6 @@ test.describe("POS Retail — Cash Register Lifecycle @regression", () => {
       await expect(page.getByText('Puntos de Emisión disponibles')).toBeVisible();
       await expect(page.getByText('Seleccione el punto de Emisión')).toBeVisible();
 
-      // Seleccionar la primera caja disponible
       const specificCheckout = page.locator('.v-card.hover\\:tw-bg-gray-200').first();
       await expect(specificCheckout).toBeVisible();
       await specificCheckout.click();

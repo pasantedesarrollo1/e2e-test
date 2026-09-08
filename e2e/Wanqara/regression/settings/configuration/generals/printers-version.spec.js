@@ -30,10 +30,8 @@ test.describe.serial('Printers Configuration Settings @release', () => {
   });
 
   test('Verify Suggested Printer Version Exists on GitHub Releases', async ({ page }) => {
-    // Wait for the printers config tab/page to be visible
     await page.waitForLoadState('networkidle');
 
-    // Extract dynamic version from the summary text (e.g. "Windows · v3.2.0.0 · 64 bits · 42,9 MB")
     const summaryLocator = page.locator('span.text-medium-emphasis', { hasText: 'Windows · v' }).first();
     await expect(summaryLocator).toBeVisible();
     const summaryText = await summaryLocator.textContent();
@@ -41,13 +39,10 @@ test.describe.serial('Printers Configuration Settings @release', () => {
     expect(versionMatch).not.toBeNull();
     const dynamicVersion = versionMatch[0];
 
-    // Navigate to GitHub releases page to verify version
     await page.goto('https://github.com/KevinWanqara/Wanqara-device-admin/releases');
 
-    // Wait for the release list to load and verify the extracted version exists
     await page.getByRole('heading', { name: 'Release list' }).waitFor({ state: 'visible', timeout: 15000 });
     
-    // Check if the specific tag link exists
     const releaseLink = page.locator('a').filter({ hasText: new RegExp(`^${dynamicVersion.replace(/\\./g, '\\\\.')}$`) }).first();
     await expect(releaseLink).toBeVisible();
   });

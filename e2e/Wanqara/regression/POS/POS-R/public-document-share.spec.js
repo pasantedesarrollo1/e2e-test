@@ -74,14 +74,11 @@ test.describe(`POS Retail — Public Document Share @release`, () => {
       
       expect(publicToken).toBeDefined();
       
-      // Verify clipboard content
       const handle = await page.evaluateHandle(() => navigator.clipboard.readText());
       const clipboardText = await handle.jsonValue();
       
-      // The frontend builds a public frontend URL instead of using the raw API url
       expect(clipboardText).toContain(publicToken);
       
-      // Update shareUrl to the actual clipboard text so we can navigate to it
       shareUrl = clipboardText;
     });
 
@@ -89,7 +86,6 @@ test.describe(`POS Retail — Public Document Share @release`, () => {
       const context = page.context();
       const mobilePage = await context.newPage();
       
-      // Replace valid token with invalid one in the shareUrl
       const invalidToken = 'INVALID_TOKEN_12345';
       const invalidUrl = shareUrl.replace(publicToken, invalidToken);
 
@@ -101,7 +97,6 @@ test.describe(`POS Retail — Public Document Share @release`, () => {
       await mobilePage.goto(invalidUrl);
       await publicApiPromise;
 
-      // Verify Error State is rendered
       const errorIcon = mobilePage.locator('.mdi-alert-circle').first();
       await expect(errorIcon).toBeVisible({ timeout: 10000 });
 

@@ -6,9 +6,9 @@ import {
 } from "../../../harness/settings.js";
 import { getSessionPath } from "../../../harness/auth.js";
 import { SEED } from "../../../harness/seed.js";
-import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
+import { runPosSaleFlow, captureSaleMutation } from "../harness/pos-sale-flow.js";
 import { searchAndSelectProduct } from "../harness/pos-search.js";
-import { applyGeneralDiscount } from "../harness/pos-financial-assertions.js";
+import { applyGeneralDiscount, applyManualSurcharge, assertSalePanelUI, assertSummaryPrecision } from "../harness/pos-financial-assertions.js";
 import { assignTipToSale } from "./harness/pos-tip-helpers.js";
 import {
   withActiveRestaurantOrder,
@@ -22,6 +22,7 @@ import {
   confirmOrderSeparation,
 } from "./harness/pos-separate-order.js";
 
+
 test.describe("POS Restaurant — Sale with Tips Combinations @regression", () => {
   requirePosCredentials(test);
   requireChefCredentials(test);
@@ -31,6 +32,9 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
   test("Case 1: Direct Sale with Mix (Standard + Combo + Service) and Tip", async ({ page }) => {
     test.setTimeout(150_000);
     const tenantBaseUrl = getTenantBaseUrl();
+    const precision = SEED.restaurantTips.case1;
+    
+    const requestPromise = captureSaleMutation(page);
 
     await runPosSaleFlow(page, {
       tenantBaseUrl,
@@ -42,14 +46,25 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
           await searchAndSelectProduct(page, { name: SEED.products.servicio.name });
         });
 
-        await assignTipToSale(page, "5.00");
+        await assignTipToSale(page, SEED.restaurantTips.tipToType);
       },
+      beforeFinish: async (page) => {
+        await assertSalePanelUI(page, precision.ui);
+      }
     });
+
+    const request = await requestPromise;
+    const body = request.postDataJSON();
+    assertSummaryPrecision(body, precision.summary);
+    expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
   });
 
   test("Case 2: Direct Sale with General Discount and Tip", async ({ page }) => {
     test.setTimeout(120_000);
     const tenantBaseUrl = getTenantBaseUrl();
+    const precision = SEED.restaurantTips.case2;
+    
+    const requestPromise = captureSaleMutation(page);
 
     await runPosSaleFlow(page, {
       tenantBaseUrl,
@@ -58,17 +73,26 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
       afterProductSelect: async (page) => {
         await test.step("Add another product and apply discount", async () => {
           await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
-          await applyGeneralDiscount(page, 10);
+          await applyGeneralDiscount(page, "3.3337373372323"); 
         });
 
-        await assignTipToSale(page, "3.50");
+        await assignTipToSale(page, SEED.restaurantTips.tipToType);
       },
+      beforeFinish: async (page) => {
+        await assertSalePanelUI(page, precision.ui);
+      }
     });
+
+    const request = await requestPromise;
+    const body = request.postDataJSON();
+    assertSummaryPrecision(body, precision.summary);
+    expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
   });
 
   test("Case 3: Full Table Payment with Composite Inventory and Tip", async ({ page }) => {
     test.setTimeout(180_000);
     const tenantBaseUrl = getTenantBaseUrl();
+    const precision = SEED.restaurantTips.case3;
 
     await withActiveRestaurantOrder(page, tenantBaseUrl, async (page, activeTableName) => {
       await test.step("Add recipe products (Elaborated and PreElaborated)", async () => {
@@ -87,10 +111,16 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
         await expect(page.getByText(SEED.products.elaborado.name).first()).toBeVisible();
       });
 
-      await assignTipToSale(page, "4.00");
+      await assignTipToSale(page, SEED.restaurantTips.tipToType);
 
-      await test.step("Finalize sale with payment definitively", async () => {
+      await test.step("Assert UI, finalize sale, and check summary precision", async () => {
+        await assertSalePanelUI(page, precision.ui);
+        const requestPromise = captureSaleMutation(page);
         await finalizeSaleWithPayment(page);
+        const request = await requestPromise;
+        const body = request.postDataJSON();
+        assertSummaryPrecision(body, precision.summary);
+        expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
       });
     }, { quantity: 1 });
   });
@@ -98,6 +128,7 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
   test("Case 4: Separate Check Payment with Tip", async ({ page }) => {
     test.setTimeout(180_000);
     const tenantBaseUrl = getTenantBaseUrl();
+    const precision = SEED.restaurantTips.case4;
 
     await withActiveRestaurantOrder(page, tenantBaseUrl, async (page, activeTableName) => {
       await test.step("Navigate to separate order screen", async () => {
@@ -113,12 +144,48 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
         await expect(page.getByText(/Cliente:/i)).toBeVisible();
       });
 
-      await assignTipToSale(page, "2.00");
+      await assignTipToSale(page, SEED.restaurantTips.tipToType);
 
       await test.step("Assign customer, finish sale and complete payment of separate ticket", async () => {
+        await assertSalePanelUI(page, precision.ui);
+        const requestPromise = captureSaleMutation(page);
         await finalizeSaleWithPayment(page);
+        const request = await requestPromise;
+        const body = request.postDataJSON();
+        assertSummaryPrecision(body, precision.summary);
+        expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
       });
     }, { quantity: 2 });
+  });
+
+  test("Case 5: Direct Sale with Surcharge and Tip", async ({ page }) => {
+    test.setTimeout(120_000);
+    const tenantBaseUrl = getTenantBaseUrl();
+    const precision = SEED.restaurantTips.case5;
+
+    const requestPromise = captureSaleMutation(page);
+
+    await runPosSaleFlow(page, {
+      tenantBaseUrl,
+      subsidiaryName: SEED.subsidiaries.restaurant.name,
+      productName: SEED.products.combo.name,
+      afterProductSelect: async (page) => {
+        await test.step("Add another product and apply surcharge", async () => {
+          await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
+          await applyManualSurcharge(page, "3.3337373372323"); 
+        });
+
+        await assignTipToSale(page, SEED.restaurantTips.tipToType);
+      },
+      beforeFinish: async (page) => {
+        await assertSalePanelUI(page, precision.ui);
+      }
+    });
+
+    const request = await requestPromise;
+    const body = request.postDataJSON();
+    assertSummaryPrecision(body, precision.summary);
+    expect(body.additional_tip).toBe(precision.root.additional_tip);
   });
 
 });
