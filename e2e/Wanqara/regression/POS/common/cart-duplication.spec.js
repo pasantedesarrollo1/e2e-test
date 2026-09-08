@@ -13,6 +13,7 @@ const TICKET = {
 };
 
 test.describe("POS Retail — Cart Duplication @regression", () => {
+  test.describe.configure({ mode: 'default' });
   annotateTicket(test, TICKET);
   requirePosCredentials(test);
   test.use({ storageState: getSessionPath("retail") });

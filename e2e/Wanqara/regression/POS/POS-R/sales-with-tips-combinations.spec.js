@@ -6,9 +6,10 @@ import {
 } from "../../../harness/settings.js";
 import { getSessionPath } from "../../../harness/auth.js";
 import { SEED } from "../../../harness/seed.js";
-import { runPosSaleFlow, captureSaleMutation } from "../harness/pos-sale-flow.js";
+import { runPosSaleFlow, captureSaleMutation, selectClientByCedula } from "../harness/pos-sale-flow.js";
 import { searchAndSelectProduct } from "../harness/pos-search.js";
-import { applyGeneralDiscount, applyManualSurcharge, assertSalePanelUI, assertSummaryPrecision } from "../harness/pos-financial-assertions.js";
+import { completePayment } from "../harness/pos-payment.js";
+import { applyGeneralDiscount, applyManualSurcharge, assertSalePanelUI, assertSummaryPrecision, assertPaymentModalUI, assertPaymentPayloadPrecision } from "../harness/pos-financial-assertions.js";
 import { assignTipToSale } from "./harness/pos-tip-helpers.js";
 import {
   withActiveRestaurantOrder,
@@ -50,6 +51,9 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
       },
       beforeFinish: async (page) => {
         await assertSalePanelUI(page, precision.ui);
+      },
+      afterPaymentModalOpen: async (page) => {
+        await assertPaymentModalUI(page, precision.ui);
       }
     });
 
@@ -57,6 +61,7 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
     const body = request.postDataJSON();
     assertSummaryPrecision(body, precision.summary);
     expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+    assertPaymentPayloadPrecision(body, precision);
   });
 
   test("Case 2: Direct Sale with General Discount and Tip", async ({ page }) => {
@@ -80,6 +85,9 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
       },
       beforeFinish: async (page) => {
         await assertSalePanelUI(page, precision.ui);
+      },
+      afterPaymentModalOpen: async (page) => {
+        await assertPaymentModalUI(page, precision.ui);
       }
     });
 
@@ -87,6 +95,7 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
     const body = request.postDataJSON();
     assertSummaryPrecision(body, precision.summary);
     expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+    assertPaymentPayloadPrecision(body, precision);
   });
 
   test("Case 3: Full Table Payment with Composite Inventory and Tip", async ({ page }) => {
@@ -116,11 +125,21 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
       await test.step("Assert UI, finalize sale, and check summary precision", async () => {
         await assertSalePanelUI(page, precision.ui);
         const requestPromise = captureSaleMutation(page);
-        await finalizeSaleWithPayment(page);
+        
+        await selectClientByCedula(page, SEED.clients.consumidorFinal.cedula);
+        const finishSaleButton = page.getByRole("button", { name: /Terminar Venta/i });
+        await finishSaleButton.click();
+        await page.waitForURL(/\/pos\/restaurant-payments/);
+        
+        await assertPaymentModalUI(page, precision.ui);
+        
+        await completePayment(page);
+        
         const request = await requestPromise;
         const body = request.postDataJSON();
         assertSummaryPrecision(body, precision.summary);
         expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+        assertPaymentPayloadPrecision(body, precision);
       });
     }, { quantity: 1 });
   });
@@ -149,11 +168,21 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
       await test.step("Assign customer, finish sale and complete payment of separate ticket", async () => {
         await assertSalePanelUI(page, precision.ui);
         const requestPromise = captureSaleMutation(page);
-        await finalizeSaleWithPayment(page);
+        
+        await selectClientByCedula(page, SEED.clients.consumidorFinal.cedula);
+        const finishSaleButton = page.getByRole("button", { name: /Terminar Venta/i });
+        await finishSaleButton.click();
+        await page.waitForURL(/\/pos\/restaurant-payments/);
+        
+        await assertPaymentModalUI(page, precision.ui);
+        
+        await completePayment(page);
+        
         const request = await requestPromise;
         const body = request.postDataJSON();
         assertSummaryPrecision(body, precision.summary);
         expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+        assertPaymentPayloadPrecision(body, precision);
       });
     }, { quantity: 2 });
   });
@@ -179,13 +208,17 @@ test.describe("POS Restaurant — Sale with Tips Combinations @regression", () =
       },
       beforeFinish: async (page) => {
         await assertSalePanelUI(page, precision.ui);
+      },
+      afterPaymentModalOpen: async (page) => {
+        await assertPaymentModalUI(page, precision.ui);
       }
     });
 
     const request = await requestPromise;
     const body = request.postDataJSON();
     assertSummaryPrecision(body, precision.summary);
-    expect(body.additional_tip).toBe(precision.root.additional_tip);
+    expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+    assertPaymentPayloadPrecision(body, precision);
   });
 
 });

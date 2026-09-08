@@ -15,6 +15,7 @@ export async function runPosSaleFlow(page, {
   skipNavigation,
   afterProductSelect,
   beforeFinish,
+  afterPaymentModalOpen,
   paymentMethod = SEED.paymentMethods.efectivo,
   printTicket = false,
   openDrawer = false,
@@ -49,6 +50,8 @@ export async function runPosSaleFlow(page, {
   await finishSaleButton.click({ force: true });
 
   await page.waitForURL(/\/pos\/(restaurant-)?payments/);
+
+  if (afterPaymentModalOpen) await afterPaymentModalOpen(page);
 
   await completePayment(page, { paymentMethod, printTicket, openDrawer });
 }

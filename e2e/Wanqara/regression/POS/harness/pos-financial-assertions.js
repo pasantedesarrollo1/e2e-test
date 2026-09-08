@@ -16,6 +16,8 @@ export async function finalizeSaleAndAssert(page, { precision, multiProduct = fa
   await finishBtn.click();
 
   await page.waitForURL(/\/pos\/(restaurant-)?payments/);
+  
+  await assertPaymentModalUI(page, precision.ui);
 
   const requestPromise = captureSaleMutation(page);
 
@@ -30,6 +32,7 @@ export async function finalizeSaleAndAssert(page, { precision, multiProduct = fa
     assertDetailPrecision(body, precision.detail);
   }
   assertSummaryPrecision(body, precision.summary);
+  assertPaymentPayloadPrecision(body, precision);
 }
 
 export async function runFinancialPrecisionFlow(page, {
@@ -147,14 +150,34 @@ export async function assertSalePanelUI(page, ui) {
     return new RegExp(`\\$\\s*${int}${decPattern}\\b`);
   };
 
+  const assertRowValue = async (labelRegex, currencyString, isRed = false) => {
+    await expect(panel.locator("span, p, div").filter({ hasText: labelRegex }).last()).toBeVisible();
+    
+    const valueLocator = panel.locator("span").filter({ hasText: matchCurrency(currencyString) }).last();
+    
+    await expect(valueLocator).toBeVisible();
+    if (isRed) {
+      await expect(valueLocator).toHaveClass(/tw-text-red/);
+    }
+  };
+
   if (ui.descuentos) {
-    await expect(panel.locator("span").filter({ hasText: /Descuentos/i }).first()).toBeVisible();
-    await expect(panel.locator("span.tw-text-red").filter({ hasText: matchCurrency(ui.descuentos) })).toBeVisible();
+    await assertRowValue(/Descuentos/i, ui.descuentos, true);
   }
 
-  await expect(panel.locator("span").filter({ hasText: matchCurrency(ui.subtotal) }).first()).toBeVisible();
-  await expect(panel.locator("span").filter({ hasText: matchCurrency(ui.impuestos) }).first()).toBeVisible();
-  await expect(panel.locator("span.tw-text-3xl").filter({ hasText: matchCurrency(ui.total) }).first()).toBeVisible();
+  await assertRowValue(/Subtotal sin Impuestos/i, ui.subtotal);
+  await assertRowValue(/Impuestos/i, ui.impuestos);
+  await assertRowValue(/Precio Total/i, ui.total);
+
+  if (ui.propina) {
+    await assertRowValue(/Propina Adicional/i, ui.propina);
+
+    const totalNum = parseFloat(ui.total.replace(/[^0-9.-]+/g, ""));
+    const propinaNum = parseFloat(ui.propina.replace(/[^0-9.-]+/g, ""));
+    const grandTotal = (totalNum + propinaNum).toFixed(2);
+
+    await assertRowValue(/^Total$/i, grandTotal);
+  }
 }
 
 export function assertDetailPrecision(body, expected) {
@@ -178,5 +201,61 @@ export function assertSummaryPrecision(body, expected) {
   const summary = body.summary;
   for (const [key, value] of Object.entries(expected)) {
     expect(summary[key], `summary.${key}`).toBe(value);
+  }
+}
+
+export async function assertPaymentModalUI(page, ui) {
+  const modal = page.locator(".v-card").filter({ hasText: /Venta Total/i }).first();
+
+  const matchCurrency = (val) => {
+    const num = parseFloat(val.replace(/[^0-9.-]+/g, ""));
+    const [int, dec] = num.toString().split('.');
+    const decPattern = dec ? `\\.${dec}0*` : `(\\.0+)?`;
+    // Supports "$ 1.23", "$1.23", "1.23 $", "1.23$"
+    return new RegExp(`(\\$?\\s*${int}${decPattern}\\s*\\$?)\\b`);
+  };
+
+  await expect(modal.locator("span.tw-text-primary").filter({ hasText: /Venta Total/i }).first()).toBeVisible();
+  
+  const expectedTotal = matchCurrency(ui.total);
+  await expect(modal.locator("span.tw-text-primary").filter({ hasText: expectedTotal }).first()).toBeVisible();
+
+  if (ui.propina) {
+    await expect(modal.locator("span").filter({ hasText: /Propina Adicional/i }).first()).toBeVisible();
+    await expect(modal.locator("span").filter({ hasText: matchCurrency(ui.propina) }).first()).toBeVisible();
+
+    const totalNum = parseFloat(ui.total.replace(/[^0-9.-]+/g, ""));
+    const propinaNum = parseFloat(ui.propina.replace(/[^0-9.-]+/g, ""));
+    const grandTotal = (totalNum + propinaNum).toFixed(2);
+    
+    const totalLabel = modal.locator("span.tw-text-primary").filter({ hasText: /^Total$/ }).first();
+    await expect(totalLabel).toBeVisible();
+    await expect(modal.locator("span.tw-text-primary").filter({ hasText: matchCurrency(grandTotal) }).first()).toBeVisible();
+  }
+}
+
+export function assertPaymentPayloadPrecision(body, precision) {
+  const totalNum = parseFloat(precision.ui.total.replace(/[^0-9.-]+/g, ""));
+  let expectedReceivedPayment = totalNum;
+
+  if (precision.ui.propina) {
+    const propinaNum = parseFloat(precision.ui.propina.replace(/[^0-9.-]+/g, ""));
+    expectedReceivedPayment += propinaNum;
+  }
+
+  const expectedBasePaymentStr = totalNum.toFixed(2);
+  const expectedReceivedPaymentStr = expectedReceivedPayment.toFixed(2);
+
+  expect(
+    Number(body.received_payment).toFixed(2), 
+    "body.received_payment debe coincidir con el total con propina a 2 decimales"
+  ).toBe(expectedReceivedPaymentStr);
+
+  if (body.payments && body.payments.length > 0) {
+    const totalPayments = body.payments.reduce((acc, curr) => acc + Number(curr.amount), 0);
+    expect(
+      totalPayments.toFixed(2), 
+      "La suma de body.payments[].amount debe coincidir SÓLO con la Venta Total (sin propina) a 2 decimales"
+    ).toBe(expectedBasePaymentStr);
   }
 }

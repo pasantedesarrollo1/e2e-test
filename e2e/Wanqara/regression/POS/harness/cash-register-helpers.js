@@ -17,7 +17,13 @@ export async function ensureCashRegisterOpen(page, tenantBaseUrl, amount = "10",
   const selectSubsidiaryIndicator = page.getByText(/Seleccione una sucursal para abrir la caja/i).first();
   const alreadyOpenSnackbar = page.locator('.v-snackbar').filter({ hasText: /Ya hay una caja abierta para esta sucursal/i }).first();
 
-  await expect(posHomeIndicator.or(openRegisterIndicator).or(selectSubsidiaryIndicator).or(alreadyOpenSnackbar)).toBeVisible({ timeout: 20_000 });
+  await expect(
+    posHomeIndicator
+      .or(openRegisterIndicator)
+      .or(selectSubsidiaryIndicator)
+      .or(alreadyOpenSnackbar)
+      .first()
+  ).toBeVisible({ timeout: 20_000 });
 
   if (await alreadyOpenSnackbar.isVisible()) {
     await expect(posHomeIndicator).toBeVisible({ timeout: 15_000 });
