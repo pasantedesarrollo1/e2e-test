@@ -12,5 +12,6 @@ test.describe("Smoke — Admin Restaurantes", { tag: "@smoke" }, () => {
     { path: "/admin/orders/list",                  assert: (p) => assertPageTitle(p, "Ordenes") },
     { path: "/admin/orders-reconciliations/list",  assert: (p) => assertPageTitle(p, "Ordenes por Regularizar") },
     { path: "/admin/tables/management",            assert: (p) => assertTextContains(p, "Áreas") },
+    { path: "/admin/categories/extras/list",            assert: (p) => assertTextContains(p, "Categorías extra") }, //TES-214: Implemented smoke test route 
   ]);
 });

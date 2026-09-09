@@ -11,6 +11,8 @@ export const inventorySeed = {
     tallaColor:         { name: "test talla color",                code: "tes000000002", type: "TallaColor"          },
     tallaColorVariante: { name: "test talla color",                code: "0001",         type: "TallaColor-variante" },
     estandarLargo:      { name: "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompañadas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada", code: "Ali000000002", type: "Estandar Fisico" },
+    extraAlitasSinStock: { name: "extra alitas sin stock" },
+    extraAlitasStock:    { name: "extra alitas stock" },
   },
   recipeDecimals: {
     elaborado: {
@@ -33,5 +35,8 @@ export const inventorySeed = {
   },
   searchTerms: {
     alitas: "alitas"
+  },
+  categories: {
+    extra: { name: "Extras Alitas" }
   }
 };
