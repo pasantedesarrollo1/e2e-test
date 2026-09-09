@@ -5,6 +5,7 @@ export const extrasSeed = {
     },
     products: {
       searchTerm: "alitas",
+      baseProduct: "Caja de alitas de pollo",
       items: {
         sinStock: { name: "extra alitas sin stock" },
         conStock: { name: "extra alitas stock" },
@@ -17,7 +18,9 @@ export const extrasSeed = {
       changesSaved: "Cambios de productos extra guardados",
       relationDeleted: "Relación eliminada",
       noCategories: "Aún no hay categorías",
-      loadingProducts: "Cargando productos disponibles"
+      loadingProducts: "Cargando productos disponibles",
+      outOfStockLabel: "Sin stock disponible",
+      outOfStockToast: "No hay stock disponible para este acompañamiento"
     }
   }
 };

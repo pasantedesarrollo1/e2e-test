@@ -119,7 +119,16 @@ export async function addProductToExistingOrder(page, productName) {
 }
 
 export async function collectOrder(page) {
-  await page.getByRole("button", { name: /Cobrar Orden/i }).click();
+  const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar Pago/i }).first();
+  // Fallback in case the exact accessible name doesn't include both, we can just use the button that has 'Cobrar' but not 'pedidos'
+  const fallbackBtn = page.getByRole("button", { name: /^Cobrar$/i });
+  
+  await expect(cobrarBtn.or(fallbackBtn)).toBeVisible();
+  if (await cobrarBtn.isVisible()) {
+    await cobrarBtn.click();
+  } else {
+    await fallbackBtn.click();
+  }
 }
 
 export async function navigateToCloseOrderFromOptions(page) {
