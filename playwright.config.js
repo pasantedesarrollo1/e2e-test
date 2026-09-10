@@ -62,7 +62,7 @@ export default defineConfig({
     {
       name: 'POS-Retail',
       dependencies: ['setup'],
-      testMatch: /Wanqara\/regression\/POS\/(POS-C|common)\/.*\.spec\.js/,
+      testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-C|common|sales)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
@@ -73,7 +73,7 @@ export default defineConfig({
     {
       name: 'POS-Restaurant',
       dependencies: ['setup'],
-      testMatch: /Wanqara\/regression\/POS\/POS-R\/.*\.spec\.js/,
+      testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-R|sales)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
@@ -106,7 +106,7 @@ export default defineConfig({
     {
       name: 'Release',
       dependencies: ['setup'],
-      testMatch: /Wanqara\/regression\/.*\.spec\.js/, 
+      testMatch: /Wanqara\/(regression|specific-cases)\/.*\.spec\.js/,
       grep: /@release/,                               
       use: {
         ...devices['Desktop Chrome'],
