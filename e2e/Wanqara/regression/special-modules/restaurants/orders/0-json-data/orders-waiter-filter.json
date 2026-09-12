@@ -1,0 +1,23 @@
+[
+  {
+    "id": "ORDERS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-1000",
+      "tes": "TES-209",
+      "release": "v7.9.1",
+      "summary": "Orders Waiter Filter",
+      "testScope": "regression",
+      "addedToRegression": "true"
+    },
+    "description": "Filtro de Meseros - Búsqueda Avanzada",
+    "authType": "restaurant",
+    "filterData": {
+      "waiterName": "QA developer 1",
+      "searchKeyword": "QA",
+      "apiEndpointPattern": "/api/v1/restaurant/orders"
+    }
+  }
+]

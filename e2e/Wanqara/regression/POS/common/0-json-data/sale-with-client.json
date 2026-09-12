@@ -1,0 +1,40 @@
+[
+  {
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-1008",
+      "tes": "TES-217",
+      "release": "v7.9.1",
+      "summary": "POS Sale with Client - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "fixture": "posPage",
+    "clientParams": {
+      "testCedula": "0000000001",
+      "testName": "Usuario Test",
+      "consumidorFinalCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)"
+    }
+  },
+  {
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1008",
+      "tes": "TES-217",
+      "release": "v7.9.1",
+      "summary": "POS Sale with Client - Restaurant",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant",
+    "fixture": "posRestaurantPage",
+    "clientParams": {
+      "testCedula": "0000000001",
+      "testName": "Usuario Test",
+      "consumidorFinalCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)"
+    }
+  }
+]

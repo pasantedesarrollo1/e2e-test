@@ -1,0 +1,30 @@
+[
+  {
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-217",
+      "release": "v7.10.0",
+      "summary": "POS Cart Click Stress Test - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "fixture": "posPage",
+    "searchKeyword": "alitas"
+  },
+  {
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-217",
+      "release": "v7.10.0",
+      "summary": "POS Cart Click Stress Test - Restaurant",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant",
+    "fixture": "posRestaurantPage",
+    "searchKeyword": "alitas"
+  }
+]

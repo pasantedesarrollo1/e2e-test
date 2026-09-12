@@ -1,0 +1,42 @@
+[
+  {
+    "id": "PPL-CRUD-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo completo CRUD Cliente",
+      "testScope": "regression"
+    },
+    "description": "Retail - CRUD Completo de Cliente",
+    "authType": "retail",
+    "personData": {
+      "name": "CRUD Cliente Automatizado",
+      "identity": "1283728939",
+      "identityType": "CEDULA",
+      "roles": ["^Cliente$"]
+    }
+  },
+  {
+    "id": "PPL-CRUD-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo completo CRUD Empleado",
+      "testScope": "regression"
+    },
+    "description": "Retail - CRUD Completo de Empleado",
+    "authType": "retail",
+    "personData": {
+      "name": "CRUD Empleado Automatizado",
+      "identity": "1283728939",
+      "identityType": "CEDULA",
+      "roles": ["^Empleado$"]
+    }
+  }
+]

@@ -1,0 +1,476 @@
+[
+  {
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-1003",
+      "tes": "TES-212",
+      "release": "v7.9.1",
+      "summary": "POS Financial Calculation Accuracy - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "fixture": "posPage",
+    "surchargeProducts": [
+      {
+        "productKey": "tallaColor",
+        "afterSelectFn": "selectFirstVariant",
+        "productName": "test talla color",
+        "productType": "TallaColor"
+      },
+      {
+        "productKey": "serie",
+        "afterSelectFn": "selectFirstSerie",
+        "productName": "series test",
+        "productType": "Serie"
+      },
+      {
+        "productKey": "servicio",
+        "afterSelectFn": null,
+        "productName": "servicio alita",
+        "productType": "Servicio"
+      },
+      {
+        "productKey": "elaborado",
+        "afterSelectFn": null,
+        "productName": "Porción de Alitas Marinadas",
+        "productType": "Elaborado"
+      },
+      {
+        "productKey": "combo",
+        "afterSelectFn": null,
+        "productName": "Combo alitas",
+        "productType": "Combo"
+      },
+      {
+        "productKey": "estandar",
+        "afterSelectFn": null,
+        "productName": "Caja de alitas de pollo (100 u)",
+        "productType": "Estandar Fisico"
+      },
+      {
+        "productKey": "preElaborado",
+        "afterSelectFn": null,
+        "productName": "Bowl de Alitas Marinadas (20 u)",
+        "productType": "Pre-Elaborado"
+      },
+      {
+        "productKey": "subproducto",
+        "afterSelectFn": null,
+        "productName": "Alita Individual",
+        "productType": "Subproducto"
+      }
+    ],
+    "surchargePrecisionKey": "allProducts",
+    "discountName": "Descuento General",
+    "discountCases": [
+      {
+        "key": "estandar",
+        "product": {
+          "type": "Estandar Fisico",
+          "name": "Caja de alitas de pollo (100 u)"
+        },
+        "requiresClient": null,
+        "precision": {
+          "ui": {
+            "descuentos": "$0.11",
+            "subtotal": "$3.26",
+            "impuestos": "$0.49",
+            "total": "$3.75"
+          },
+          "detail": {
+            "price": "3.3773263982716",
+            "discount": "0.112591191139383",
+            "taxedDiscount": "0.12947986981029",
+            "total": "3.264735207132217",
+            "taxedTotal": "3.754445488202047",
+            "taxedPrice": "3.88"
+          },
+          "summary": {
+            "discount": "0.112591191139383",
+            "subtotal": "3.264735207132217",
+            "total": "3.75"
+          }
+        },
+        "precisionHoliday": {
+          "ui": {
+            "descuentos": "$0.11",
+            "subtotal": "$3.26",
+            "impuestos": "$0.26",
+            "total": "$3.53"
+          },
+          "detail": {
+            "price": "3.3773263982716",
+            "discount": "0.112591191139383",
+            "taxedDiscount": "0.121598486430534",
+            "total": "3.264735207132217",
+            "taxedTotal": "3.525914023702797",
+            "taxedPrice": "3.65"
+          },
+          "summary": {
+            "discount": "0.112591191139383",
+            "subtotal": "3.264735207132217",
+            "total": "3.53"
+          }
+        }
+      },
+      {
+        "key": "combo",
+        "product": {
+          "type": "Combo",
+          "name": "Combo alitas"
+        },
+        "requiresClient": "0000000001",
+        "precision": {
+          "ui": {
+            "descuentos": "$1.03",
+            "subtotal": "$29.94",
+            "impuestos": "$4.49",
+            "total": "$34.43"
+          },
+          "detail": {
+            "price": "30.9730162676336",
+            "discount": "1.032559007781135",
+            "taxedDiscount": "1.032559007781135",
+            "total": "29.940457259852465",
+            "taxedTotal": "29.940457259852465",
+            "taxedPrice": "30.97"
+          },
+          "summary": {
+            "discount": "1.032559007781135",
+            "subtotal": "29.940457259852465",
+            "total": "34.43"
+          }
+        },
+        "precisionHoliday": {
+          "ui": {
+            "descuentos": "$1.03",
+            "subtotal": "$29.94",
+            "impuestos": "$2.40",
+            "total": "$32.34"
+          },
+          "detail": {
+            "price": "30.9730162676336",
+            "discount": "1.032559007781135",
+            "taxedDiscount": "1.032559007781135",
+            "total": "29.940457259852465",
+            "taxedTotal": "29.940457259852465",
+            "taxedPrice": "30.97"
+          },
+          "summary": {
+            "discount": "1.032559007781135",
+            "subtotal": "29.940457259852465",
+            "total": "32.34"
+          }
+        }
+      }
+    ],
+    "surchargeName": "Recargo Manual",
+    "surchargePrecision": {
+      "ui": {
+        "subtotal": "$54.96",
+        "impuestos": "$8.24",
+        "total": "$63.20"
+      },
+      "details": [
+        {
+          "price": "1.376760150061104",
+          "discount": "0",
+          "taxedPrice": "1.58",
+          "total": "1.376760150061104",
+          "taxedTotal": "1.583274172570274"
+        },
+        {
+          "price": "1.309578230312948",
+          "discount": "0",
+          "taxedPrice": "1.51",
+          "total": "1.309578230312948",
+          "taxedTotal": "1.506014964859888"
+        },
+        {
+          "price": "2.192867686054737",
+          "discount": "0",
+          "taxedPrice": "2.52",
+          "total": "2.192867686054737",
+          "taxedTotal": "2.521797838962947"
+        },
+        {
+          "price": "8.032477843761389",
+          "discount": "0",
+          "taxedPrice": "9.24",
+          "total": "8.032477843761388",
+          "taxedTotal": "9.237349520325588"
+        },
+        {
+          "price": "32.005575275414735",
+          "discount": "0",
+          "taxedPrice": "32.01",
+          "total": "32.005575275414735",
+          "taxedTotal": "32.005575275414735"
+        },
+        {
+          "price": "3.489917589410983",
+          "discount": "0",
+          "taxedPrice": "4.01",
+          "total": "3.489917589410983",
+          "taxedTotal": "4.013405227822633"
+        },
+        {
+          "price": "2.695694813349389",
+          "discount": "0",
+          "taxedPrice": "3.1",
+          "total": "2.695694813349389",
+          "taxedTotal": "3.100049035351799"
+        },
+        {
+          "price": "3.857689654169822",
+          "discount": "0",
+          "taxedPrice": "4.44",
+          "total": "3.857689654169821",
+          "taxedTotal": "4.436343102295291"
+        }
+      ],
+      "summary": {
+        "subtotal": "54.960561242535105",
+        "total": "63.2"
+      }
+    },
+    "surchargePrecisionHoliday": {
+      "ui": {
+        "subtotal": "$54.96",
+        "impuestos": "$4.49",
+        "total": "$59.45"
+      },
+      "summary": {
+        "subtotal": "54.960561242535105",
+        "total": "59.45"
+      },
+      "details": []
+    },
+    "surchargeClientCedula": "0000000001"
+  },
+  {
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1003",
+      "tes": "TES-212",
+      "release": "v7.9.1",
+      "summary": "POS Financial Calculation Accuracy - Restaurant",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant",
+    "fixture": "posRestaurantPage",
+    "surchargeProducts": [
+      {
+        "productKey": "servicio",
+        "afterSelectFn": null,
+        "productName": "servicio alita",
+        "productType": "Servicio"
+      },
+      {
+        "productKey": "elaborado",
+        "afterSelectFn": null,
+        "productName": "Porción de Alitas Marinadas",
+        "productType": "Elaborado"
+      },
+      {
+        "productKey": "combo",
+        "afterSelectFn": null,
+        "productName": "Combo alitas",
+        "productType": "Combo"
+      },
+      {
+        "productKey": "estandar",
+        "afterSelectFn": null,
+        "productName": "Caja de alitas de pollo (100 u)",
+        "productType": "Estandar Fisico"
+      },
+      {
+        "productKey": "preElaborado",
+        "afterSelectFn": null,
+        "productName": "Bowl de Alitas Marinadas (20 u)",
+        "productType": "Pre-Elaborado"
+      },
+      {
+        "productKey": "subproducto",
+        "afterSelectFn": null,
+        "productName": "Alita Individual",
+        "productType": "Subproducto"
+      }
+    ],
+    "surchargePrecisionKey": "restaurantProducts",
+    "discountName": "Descuento General",
+    "discountCases": [
+      {
+        "key": "estandar",
+        "product": {
+          "type": "Estandar Fisico",
+          "name": "Caja de alitas de pollo (100 u)"
+        },
+        "requiresClient": null,
+        "precision": {
+          "ui": {
+            "descuentos": "$0.11",
+            "subtotal": "$3.26",
+            "impuestos": "$0.49",
+            "total": "$3.75"
+          },
+          "detail": {
+            "price": "3.3773263982716",
+            "discount": "0.112591191139383",
+            "taxedDiscount": "0.12947986981029",
+            "total": "3.264735207132217",
+            "taxedTotal": "3.754445488202047",
+            "taxedPrice": "3.88"
+          },
+          "summary": {
+            "discount": "0.112591191139383",
+            "subtotal": "3.264735207132217",
+            "total": "3.75"
+          }
+        },
+        "precisionHoliday": {
+          "ui": {
+            "descuentos": "$0.11",
+            "subtotal": "$3.26",
+            "impuestos": "$0.26",
+            "total": "$3.53"
+          },
+          "detail": {
+            "price": "3.3773263982716",
+            "discount": "0.112591191139383",
+            "taxedDiscount": "0.121598486430534",
+            "total": "3.264735207132217",
+            "taxedTotal": "3.525914023702797",
+            "taxedPrice": "3.65"
+          },
+          "summary": {
+            "discount": "0.112591191139383",
+            "subtotal": "3.264735207132217",
+            "total": "3.53"
+          }
+        }
+      },
+      {
+        "key": "combo",
+        "product": {
+          "type": "Combo",
+          "name": "Combo alitas"
+        },
+        "requiresClient": "0000000001",
+        "precision": {
+          "ui": {
+            "descuentos": "$1.03",
+            "subtotal": "$29.94",
+            "impuestos": "$4.49",
+            "total": "$34.43"
+          },
+          "detail": {
+            "price": "30.9730162676336",
+            "discount": "1.032559007781135",
+            "taxedDiscount": "1.032559007781135",
+            "total": "29.940457259852465",
+            "taxedTotal": "29.940457259852465",
+            "taxedPrice": "30.97"
+          },
+          "summary": {
+            "discount": "1.032559007781135",
+            "subtotal": "29.940457259852465",
+            "total": "34.43"
+          }
+        },
+        "precisionHoliday": {
+          "ui": {
+            "descuentos": "$1.03",
+            "subtotal": "$29.94",
+            "impuestos": "$2.40",
+            "total": "$32.34"
+          },
+          "detail": {
+            "price": "30.9730162676336",
+            "discount": "1.032559007781135",
+            "taxedDiscount": "1.032559007781135",
+            "total": "29.940457259852465",
+            "taxedTotal": "29.940457259852465",
+            "taxedPrice": "30.97"
+          },
+          "summary": {
+            "discount": "1.032559007781135",
+            "subtotal": "29.940457259852465",
+            "total": "32.34"
+          }
+        }
+      }
+    ],
+    "surchargeName": "Recargo Manual",
+    "surchargePrecision": {
+      "ui": {
+        "subtotal": "$52.27",
+        "impuestos": "$7.84",
+        "total": "$60.12"
+      },
+      "details": [
+        {
+          "price": "2.192867686054737",
+          "discount": "0",
+          "taxedPrice": "2.52",
+          "total": "2.192867686054737",
+          "taxedTotal": "2.521797838962947"
+        },
+        {
+          "price": "8.032477843761389",
+          "discount": "0",
+          "taxedPrice": "9.24",
+          "total": "8.032477843761388",
+          "taxedTotal": "9.237349520325588"
+        },
+        {
+          "price": "32.005575275414735",
+          "discount": "0",
+          "taxedPrice": "32.01",
+          "total": "32.005575275414735",
+          "taxedTotal": "32.005575275414735"
+        },
+        {
+          "price": "3.489917589410983",
+          "discount": "0",
+          "taxedPrice": "4.01",
+          "total": "3.489917589410983",
+          "taxedTotal": "4.013405227822633"
+        },
+        {
+          "price": "2.695694813349389",
+          "discount": "0",
+          "taxedPrice": "3.1",
+          "total": "2.695694813349389",
+          "taxedTotal": "3.100049035351799"
+        },
+        {
+          "price": "3.857689654169822",
+          "discount": "0",
+          "taxedPrice": "4.44",
+          "total": "3.857689654169821",
+          "taxedTotal": "4.436343102295291"
+        }
+      ],
+      "summary": {
+        "subtotal": "52.274222862161053",
+        "total": "60.12"
+      }
+    },
+    "surchargePrecisionHoliday": {
+      "ui": {
+        "subtotal": "$52.27",
+        "impuestos": "$4.18",
+        "total": "$56.46"
+      },
+      "summary": {
+        "subtotal": "52.274222862161053",
+        "total": "56.46"
+      },
+      "details": []
+    },
+    "surchargeClientCedula": "0000000001"
+  }
+]

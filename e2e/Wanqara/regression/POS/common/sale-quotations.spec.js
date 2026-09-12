@@ -1,21 +1,31 @@
 import { test, expect } from "../harness/pos-fixtures.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { withPath } from "../../../harness/urls.js";
-import { SEED } from "../../../harness/seed.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
+import { withPath } from "../../../harness/config/urls.js";
 import { searchAndSelectProduct } from "../harness/pos-search.js";
 import { selectClientByCedula, openDrawer } from "../harness/pos-sale-flow.js";
 import { completePayment } from "../harness/pos-payment.js";
-import { getSessionPath } from "../../../harness/auth.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
 
-async function runQuoteFlow(page, { homePath, observacion, paymentTerms, pdfChoice }) {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-quotations.json"), "utf-8")
+);
+
+
+async function runQuoteFlow(page, { homePath, quoteParams, pdfChoice }) {
   await page.goto(withPath(getTenantBaseUrl(), homePath));
   await page.waitForURL(new RegExp(homePath));
 
   await expect(page.getByText(/Cliente:/i)).toBeVisible();
   await page.getByPlaceholder("Ingresa Cédula o RUC").clear();
 
-  await selectClientByCedula(page, SEED.clients.consumidorFinal.cedula);
-  await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
+  await selectClientByCedula(page, quoteParams.clientCedula);
+  await searchAndSelectProduct(page, { name: quoteParams.productName });
 
   const cotizarButton = page.getByRole("button", { name: /Cotizar/i }).first();
   await cotizarButton.click();
@@ -26,8 +36,8 @@ async function runQuoteFlow(page, { homePath, observacion, paymentTerms, pdfChoi
   const quoteModal = page.locator(".v-overlay__content").filter({ hasText: /Resumen de la cotización actual/i }).first();
   await expect(quoteModal).toBeVisible();
 
-  await quoteModal.locator("textarea").nth(0).fill(observacion);
-  await quoteModal.locator("textarea").nth(1).fill(paymentTerms);
+  await quoteModal.locator("textarea").nth(0).fill(quoteParams.observation);
+  await quoteModal.locator("textarea").nth(1).fill(quoteParams.paymentTerms);
 
   if (pdfChoice) {
     await quoteModal.getByRole("radio", { name: pdfChoice }).click();
@@ -75,18 +85,17 @@ async function selectFirstQuoteAndBill(page) {
   await expect(page.locator(".v-snackbar").filter({ hasText: /Se ha convertido la cotización/i })).toBeVisible();
 }
 
-const environments = [
-  { name: 'Retail',     authType: 'retail',     fixture: 'posPage',           homePath: '/pos/home',            paymentUrl: /\/pos\/payments/ },
-  { name: 'Restaurant', authType: 'restaurant', fixture: 'posRestaurantPage', homePath: '/pos/restaurant-home', paymentUrl: /\/pos\/restaurant-payments/ }
-];
-
-for (const env of environments) {
-  test.describe.serial(`POS ${env.name} — Quotation Workflow @regression`, () => {
+for (const scenario of scenarios) {
+  test.describe.serial(`POS ${scenario.description} - Quotation Workflow @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(env.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType) });
+
+    if (scenario.metadata && scenario.metadata.ws) {
+      annotateTicket(test, scenario.metadata);
+    }
 
     const runTest = (title, bodyFn) => {
-      if (env.fixture === 'posPage') {
+      if (scenario.fixture === 'posPage') {
         test(title, async ({ posPage: page }) => await bodyFn(page));
       } else {
         test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
@@ -98,18 +107,16 @@ for (const env of environments) {
 
       await test.step("Create a quotation with PDF", async () => {
         await runQuoteFlow(page, {
-          homePath: env.homePath,
-          observacion: SEED.sale.quoteObservation,
-          paymentTerms: SEED.sale.quotePaymentTerms,
+          homePath: scenario.homePath,
+          quoteParams: scenario.quoteParams,
           pdfChoice: null,
         });
       });
 
       await test.step("Create a quotation without generating a PDF", async () => {
         await runQuoteFlow(page, {
-          homePath: env.homePath,
-          observacion: SEED.sale.quoteObservation,
-          paymentTerms: SEED.sale.quotePaymentTerms,
+          homePath: scenario.homePath,
+          quoteParams: scenario.quoteParams,
           pdfChoice: "No mostrar PDF",
         });
       });
@@ -131,7 +138,7 @@ for (const env of environments) {
       await test.step("Complete the sales workflow", async () => {
         const finishSaleButton = page.getByRole("button", { name: /Terminar Venta/i });
         await finishSaleButton.click();
-        await page.waitForURL(env.paymentUrl);
+        await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
         await completePayment(page);
       });
     });

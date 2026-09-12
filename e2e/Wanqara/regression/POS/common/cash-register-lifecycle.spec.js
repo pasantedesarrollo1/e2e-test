@@ -1,28 +1,46 @@
 import { test, expect } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { SEED } from "../../../harness/seed.js";
-import { getSessionPath, ensureAuthenticated } from "../../../harness/auth.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
+import { SEED } from "../../../harness/config/seed.js";
+import { getSessionPath, ensureAuthenticated } from "../../../harness/helpers/auth.js";
 import { closeCashRegister } from "../harness/cash-register-helpers.js";
-import { withPath } from "../../../harness/urls.js";
+import { withPath } from "../../../harness/config/urls.js";
 import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-test.describe("POS Retail — Cash Register Lifecycle @regression", () => {
-  requirePosCredentials(test);
-  test.use({ storageState: getSessionPath('retail') });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "cash-register-lifecycle.json"), "utf-8")
+);
 
-  test("validates conditional cash register open and final close", async ({ page }) => {
-    test.setTimeout(180_000);
-    
-    const tenantBaseUrl = getTenantBaseUrl();
-    const subsidiaryName = SEED.subsidiaries['retail'].name;
+test.describe("POS - Cash Register Lifecycle @regression", () => {
+  test.describe.configure({ mode: 'default' });
 
-    await test.step("Navegar al home del POS", async () => {
-       await ensureAuthenticated(page, {
-         tenantBaseUrl,
-         targetPath: '/pos/home',
-         authType: 'retail'
-       });
-    });
+  if (scenarios.length > 0) {
+    annotateTicket(test, scenarios[0].metadata);
+  }
+
+  for (const scenario of scenarios) {
+    test.describe(`Environment: ${scenario.environment}`, () => {
+      requirePosCredentials(test);
+      test.use({ storageState: getSessionPath(scenario.authType) });
+
+      test(scenario.description, async ({ page }) => {
+        test.setTimeout(180_000);
+        
+        const tenantBaseUrl = getTenantBaseUrl();
+        const subsidiaryName = SEED.subsidiaries[scenario.authType].name;
+
+        await test.step("Navegar al home del POS", async () => {
+           await ensureAuthenticated(page, {
+             tenantBaseUrl,
+             targetPath: scenario.basePath,
+             authType: scenario.authType
+           });
+        });
 
     await test.step("Evaluar estado inicial de la caja", async () => {
       try {
@@ -67,7 +85,7 @@ test.describe("POS Retail — Cash Register Lifecycle @regression", () => {
       await specificCheckout.click();
 
       const montoInput = page.locator('input[type="number"]').first();
-      await montoInput.fill("10");
+      await montoInput.fill(scenario.openingAmount);
 
       const abrirCajaBtn = page.getByRole("button", { name: /Abrir Caja/i }).first();
       await Promise.all([
@@ -93,9 +111,11 @@ test.describe("POS Retail — Cash Register Lifecycle @regression", () => {
       await closeCashRegister(page, tenantBaseUrl, {
         beforeConfirm: async () => {
           await expect(page.getByText('Apertura :')).toBeVisible();
-          await expect(page.locator('span').filter({ hasText: '10' }).first()).toBeVisible();
+          await expect(page.locator('span').filter({ hasText: scenario.openingAmount }).first()).toBeVisible();
         }
       });
     });
-  });
+      });
+    });
+  }
 });

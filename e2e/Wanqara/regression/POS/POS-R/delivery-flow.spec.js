@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { SEED } from "../../../harness/seed.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { SEED } from "../../../harness/config/seed.js";
 import { navigateToRestaurantPOS } from "./harness/pos-orders-common.js";
 import {
   DELIVERY_SEED,

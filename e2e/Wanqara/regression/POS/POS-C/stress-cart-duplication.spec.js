@@ -1,26 +1,40 @@
 import { test, expect } from "../harness/pos-fixtures.js";
-import { annotateTicket } from "../../../harness/annotate.js";
-import { requirePosCredentials } from "../../../harness/settings.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { SEED } from "../../../harness/seed.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const STRESS_TICKET = {
-  ws: 'WS-1025',
-  tes: 'TES-217',
-  release: 'v7.10.0',
-  summary: 'POS Cart Click Stress Test',
-  addedToRegression: 'true',
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "stress-cart-duplication.json"), "utf-8")
+);
 
-test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regression @release', () => {
-  annotateTicket(test, STRESS_TICKET);
-  requirePosCredentials(test);
-  test.use({ storageState: getSessionPath("retail") });
 
-  test('should not duplicate cart rows or corrupt store state under rapid random clicks', async ({ posPage: page }) => {
-    test.setTimeout(120000); 
 
-    const searchKeyword = SEED.searchTerms.alitas;
+for (const scenario of scenarios) {
+  test.describe.serial(`POS ${scenario.description} - Product Selection Stress & Rapid-Click Testing @${scenario.metadata?.testScope || 'regression'} @release`, () => {
+    
+    if (scenario.metadata && scenario.metadata.ws) {
+      annotateTicket(test, scenario.metadata);
+    }
+    
+    requirePosCredentials(test);
+    test.use({ storageState: getSessionPath(scenario.authType) });
+
+    const runTest = (title, bodyFn) => {
+      if (scenario.fixture === 'posPage') {
+        test(title, async ({ posPage: page }) => await bodyFn(page));
+      } else {
+        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
+      }
+    };
+
+    runTest('should not duplicate cart rows or corrupt store state under rapid random clicks', async (page) => {
+      test.setTimeout(120000); 
+      const searchKeyword = scenario.searchKeyword;
     
     const apiPromise = page.waitForResponse(response => 
       response.url().includes('/api/v1/inventory/products-list') && response.status() === 200
@@ -131,5 +145,6 @@ test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regr
       
       await expect(qtyInput).toHaveValue(clickTrackers[rowTitle].toString());
     }
+    });
   });
-});
+}

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "WAYBILL-INT-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.0",
+      "summary": "Internal Waybill Creation with carrier validation",
+      "testScope": "regression"
+    },
+    "description": "Crea una guía de remisión interna validando transportistas",
+    "authType": "dispatch",
+    "waybillData": {
+      "warehouseName": "",
+      "checkoutName": "",
+      "vehiclePlate": "AAC-0123",
+      "address": "Dir 1",
+      "reason": "razon 1",
+      "route": "ruta 1",
+      "destinationSubsidiary": "002 - Wanqara Retail Dispatch",
+      "shipmentAmountInternal": "1.23233356728372",
+      "isLongProductSale": false,
+      "productName": "Caja de alitas de pollo (100 u)"
+    }
+  },
+  {
+    "id": "WAYBILL-INT-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.0",
+      "summary": "Internal Waybill Creation with long product name",
+      "testScope": "regression"
+    },
+    "description": "Crea una guía interna con producto de nombre largo",
+    "authType": "dispatch",
+    "waybillData": {
+      "warehouseName": "",
+      "checkoutName": "",
+      "vehiclePlate": "AAC-0123",
+      "address": "Dir 1",
+      "reason": "razon 1",
+      "route": "ruta 1",
+      "destinationSubsidiary": "002 - Wanqara Retail Dispatch",
+      "shipmentAmountInternal": "1.23233356728372",
+      "isLongProductSale": true,
+      "productName": "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompañadas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada"
+    }
+  }
+]

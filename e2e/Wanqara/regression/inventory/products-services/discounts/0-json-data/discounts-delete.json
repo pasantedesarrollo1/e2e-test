@@ -1,0 +1,23 @@
+[
+  {
+    "id": "DSC-DELETE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de eliminación aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Eliminación de Descuento",
+    "authType": "retail",
+    "discountData": {
+      "name": "Descuento Para Eliminar",
+      "description": "Precondición UI para eliminación",
+      "applicationMethod": "always",
+      "type": "porcentaje",
+      "discount": 5
+    }
+  }
+]

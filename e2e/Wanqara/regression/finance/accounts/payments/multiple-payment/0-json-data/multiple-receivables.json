@@ -1,0 +1,24 @@
+[
+  {
+    "id": "PAY-MULTI-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-959, WS-974, WS-971, WS-953",
+      "tes": "TES-199, TES-215",
+      "release": "v7.9.0",
+      "summary": "Admin Payments Multiple Receivables & Printing",
+      "testScope": "regression"
+    },
+    "description": "Retail - Flujo completo de multicobros (Pago, PDF, Eliminación)",
+    "authType": "electronic_invoicing",
+    "paymentData": {
+      "cedula": "0000000001",
+      "paymentAmount": "0.01",
+      "paymentDescription": "Automated test payment",
+      "initialDeleteReason": "test",
+      "finalDeleteReason": "test deletion reason"
+    }
+  }
+]

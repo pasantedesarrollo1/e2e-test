@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ADMIN-SALE-CANCEL-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-840",
+      "tes": "TES-198",
+      "release": "v7.9.1",
+      "summary": "Cancel Normal Sales - Admin",
+      "splitFrom": "cancel-sales.spec.js",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Restaurant (No Dispatch) - Crea una venta normal y la cancela verificando el switch de inventario",
+    "authType": "restaurant",
+    "saleParams": {
+      "documentType": "Factura electrónica",
+      "productName": "Caja de alitas de pollo (100 u)"
+    },
+    "cancellationParams": {
+      "expectSwitch": true,
+      "expectMessage": false
+    }
+  },
+  {
+    "id": "ADMIN-SALE-CANCEL-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-840",
+      "tes": "TES-198",
+      "release": "v7.9.1",
+      "summary": "Cancel Normal Sales - Admin",
+      "splitFrom": "cancel-sales.spec.js",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Business (With Dispatch) - Crea una venta normal y la cancela verificando el mensaje sin el switch",
+    "authType": "dispatch",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)"
+    },
+    "cancellationParams": {
+      "expectSwitch": false,
+      "expectMessage": true
+    }
+  }
+]

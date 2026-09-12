@@ -1,10 +1,10 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../harness/seed.js";
-import { withPath } from "../../../harness/urls.js";
-import { ensureAuthenticated } from "../../../harness/auth.js";
+import { SEED } from "../../../harness/config/seed.js";
+import { withPath } from "../../../harness/config/urls.js";
+import { ensureAuthenticated } from "../../../harness/helpers/auth.js";
 import { completePayment } from "./pos-payment.js";
 import { searchAndSelectProduct } from "./pos-search.js";
-import { selectClientByCedula } from '../../../harness/client-helpers.js';
+import { selectClientByCedula } from "../../../harness/helpers/client-helpers.js";
 import { ensureCashRegisterOpen } from "./cash-register-helpers.js";
 
 export async function runPosSaleFlow(page, {
@@ -65,7 +65,7 @@ export async function captureSaleMutation(page) {
   );
 }
 
-export { selectClientByCedula } from '../../../harness/client-helpers.js';
+export { selectClientByCedula } from "../../../harness/helpers/client-helpers.js";
 
 export async function openDrawer(page, triggerLocator, filterText) {
   await triggerLocator.click();

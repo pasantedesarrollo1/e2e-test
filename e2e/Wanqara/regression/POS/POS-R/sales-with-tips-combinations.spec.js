@@ -3,9 +3,9 @@ import {
   requirePosCredentials,
   requireChefCredentials,
   getTenantBaseUrl,
-} from "../../../harness/settings.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { SEED } from "../../../harness/seed.js";
+} from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { SEED } from "../../../harness/config/seed.js";
 import { runPosSaleFlow, captureSaleMutation, selectClientByCedula } from "../harness/pos-sale-flow.js";
 import { searchAndSelectProduct } from "../harness/pos-search.js";
 import { completePayment } from "../harness/pos-payment.js";

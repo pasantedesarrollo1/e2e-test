@@ -1,0 +1,22 @@
+[
+  {
+    "id": "PPL-DELETE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de desactivación de persona",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Desactivación de Persona",
+    "authType": "retail",
+    "personData": {
+      "name": "Persona Para Eliminar",
+      "identity": "1283728939",
+      "identityType": "CEDULA",
+      "roles": ["^Cliente$"]
+    }
+  }
+]

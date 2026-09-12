@@ -1,10 +1,10 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../harness/ui-helpers.js";
+import { expectSnackbar } from "../../../../harness/helpers/ui-helpers.js";
 import { processOrderClosure } from "./pos-close-order.js";
-import { ensureAuthenticated, loginAndSelectSubsidiary } from "../../../../harness/auth.js";
-import { ensureChefAuthenticated } from "../../../../harness/chef-auth.js";
-import { chefHarness, playwrightHarness } from "../../../../harness/settings.js";
-import { SEED } from "../../../../harness/seed.js";
+import { ensureAuthenticated, loginAndSelectSubsidiary } from "../../../../harness/helpers/auth.js";
+import { ensureChefAuthenticated } from "../../../../harness/helpers/chef-auth.js";
+import { chefHarness, playwrightHarness } from "../../../../harness/config/settings.js";
+import { SEED } from "../../../../harness/config/seed.js";
 import {
   selectTable,
   searchAndSelectProduct,

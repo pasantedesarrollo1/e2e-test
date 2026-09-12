@@ -1,0 +1,78 @@
+[
+  {
+    "id": "ADMIN-SALE-MODIFIER-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Modifiers - General Discount (retail)",
+      "testScope": "regression"
+    },
+    "description": "Retail - completa una venta aplicando un descuento general",
+    "authType": "retail",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "modifierType": "discount"
+    }
+  },
+  {
+    "id": "ADMIN-SALE-MODIFIER-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Modifiers - Manual Surcharge (retail)",
+      "testScope": "regression"
+    },
+    "description": "Retail - completa una venta aplicando un recargo manual",
+    "authType": "retail",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "modifierType": "surcharge"
+    }
+  },
+  {
+    "id": "ADMIN-SALE-MODIFIER-003",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Modifiers - General Discount (dispatch)",
+      "testScope": "regression"
+    },
+    "description": "Dispatch - completa una venta aplicando un descuento general",
+    "authType": "dispatch",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "modifierType": "discount"
+    }
+  },
+  {
+    "id": "ADMIN-SALE-MODIFIER-004",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Modifiers - Manual Surcharge (dispatch)",
+      "testScope": "regression"
+    },
+    "description": "Dispatch - completa una venta aplicando un recargo manual",
+    "authType": "dispatch",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "modifierType": "surcharge"
+    }
+  }
+]

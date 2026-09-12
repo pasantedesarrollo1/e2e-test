@@ -1,0 +1,20 @@
+[
+  {
+    "id": "SUR-CREATE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de creación de recargo aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Creación de Recargo",
+    "authType": "retail",
+    "surchargeData": {
+      "name": "Recargo Creado Aislado",
+      "percentage": "5"
+    }
+  }
+]

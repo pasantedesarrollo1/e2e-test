@@ -1,14 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { SEED } from "../../../harness/seed.js";
+import { SEED } from "../../../harness/config/seed.js";
 import { selectFirstSerie, selectFirstVariant } from "./pos-products.js";
 import { captureSaleMutation, selectClientByCedula } from "./pos-sale-flow.js";
 import { searchAndSelectProduct } from "./pos-search.js";
 import { completePayment } from "./pos-payment.js";
-
-export const PRECISION_CASES = [
-  { key: "estandar", product: SEED.products.estandar, afterProductSelect: null, requiresClient: null,         skipAmount: false },
-  { key: "combo",    product: SEED.products.combo,    afterProductSelect: null, requiresClient: "0000000001", skipAmount: false },
-];
 
 export async function finalizeSaleAndAssert(page, { precision, multiProduct = false }) {
   const finishBtn = page.getByRole("button", { name: /Terminar Venta/i });

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "CLR-DELETE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de eliminación aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Eliminación de Color",
+    "authType": "retail",
+    "colorData": {
+      "name": "Color Para Eliminar",
+      "observation": "Precondición UI para eliminación"
+    }
+  }
+]

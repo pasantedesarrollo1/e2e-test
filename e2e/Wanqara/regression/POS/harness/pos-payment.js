@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../harness/seed.js";
-import { expectSnackbar } from "../../../harness/ui-helpers.js";
+import { SEED } from "../../../harness/config/seed.js";
+import { expectSnackbar } from "../../../harness/helpers/ui-helpers.js";
 
 async function ensureActionButton(page, locator, shouldBeActive) {
   await expect(locator).toHaveClass(/summary-action-btn--(active|inactive)/);

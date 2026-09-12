@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../../harness/seed.js";
-import { ensureAuthenticated } from "../../../../harness/auth.js";
-import { selectClientByCedula } from '../../../../harness/client-helpers.js';
+import { SEED } from "../../../../harness/config/seed.js";
+import { ensureAuthenticated } from "../../../../harness/helpers/auth.js";
+import { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
 
 import { selectCheckout as _selectCheckout } from './admin-sale-flow.js';
 
@@ -10,7 +10,7 @@ export const selectCheckout = (page) => _selectCheckout(page, /\/admin\/pre-sale
 import { selectDocumentType } from './admin-document-helpers.js';
 export { selectDocumentType };
 
-export { selectClientByCedula } from '../../../../harness/client-helpers.js';
+export { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
 
 import { searchAndSelectProduct } from './admin-sale-flow.js';
 export { searchAndSelectProduct };

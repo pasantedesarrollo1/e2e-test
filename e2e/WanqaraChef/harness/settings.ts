@@ -11,7 +11,7 @@ function env(name: string, fallback = ''): string {
   return trimmed;
 }
 
-const baseUrl = env('PLAYWRIGHT_BASE_URL', 'http://localhost:8100');
+const baseUrl = env('PLAYWRIGHT_LOCAL_CHEF_URL', 'http://localhost:8100');
 
 export type WorkModeName = 'Workstation' | 'Personal';
 

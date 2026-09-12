@@ -1,0 +1,20 @@
+[
+  {
+    "id": "SIZ-CRUD-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo completo CRUD",
+      "testScope": "regression"
+    },
+    "description": "Retail - CRUD Completo de Talla",
+    "authType": "retail",
+    "sizeData": {
+      "name": "Talla E2E Automática CRUD",
+      "observation": "Creada, buscada y eliminada vía DDT"
+    }
+  }
+]

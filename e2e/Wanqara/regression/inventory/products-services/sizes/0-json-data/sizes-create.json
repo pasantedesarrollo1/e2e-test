@@ -1,0 +1,20 @@
+[
+  {
+    "id": "SIZ-CREATE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de creación de talla aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Creación de Talla",
+    "authType": "retail",
+    "sizeData": {
+      "name": "Talla Creada Aislada",
+      "observation": "DDT - Prueba exclusiva de Creación"
+    }
+  }
+]

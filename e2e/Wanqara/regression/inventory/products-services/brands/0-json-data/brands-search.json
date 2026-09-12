@@ -1,0 +1,21 @@
+[
+  {
+    "id": "BRD-SEARCH-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de búsqueda aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Búsqueda de Marca",
+    "authType": "retail",
+    "brandData": {
+      "name": "Marca @#Busqueda Especial",
+      "order": "2",
+      "observation": "Esta marca se inyecta por API antes de buscarla"
+    }
+  }
+]

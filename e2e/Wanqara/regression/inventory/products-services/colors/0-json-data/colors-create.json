@@ -1,0 +1,20 @@
+[
+  {
+    "id": "CLR-CREATE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de creación de color aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Creación de Color",
+    "authType": "retail",
+    "colorData": {
+      "name": "Color Creado Aislado",
+      "observation": "DDT - Prueba exclusiva de Creación"
+    }
+  }
+]

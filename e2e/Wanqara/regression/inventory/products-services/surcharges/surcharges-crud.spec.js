@@ -1,0 +1,50 @@
+import { test } from "@playwright/test";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
+import { getSessionPath } from "../../../../harness/helpers/auth.js";
+import { createSurcharge, searchSurcharge, deleteSurcharge } from "./harness/surcharge-helpers.js";
+
+import scenarios from "./0-json-data/surcharges-crud.json" assert { type: "json" };
+
+test.describe("Inventory - Surcharges (CRUD)", () => {
+  requirePosCredentials(test);
+  const tenantBaseUrl = getTenantBaseUrl();
+
+  for (const scenario of scenarios) {
+    if (scenario.skip) {
+      test.describe.skip(`Escenario: ${scenario.description}`, () => {
+        const razon = scenario.skipReason ? scenario.skipReason : 'Omitido por configuración en JSON';
+        test(`Omitido: ${razon}`, async () => {});
+      });
+      continue;
+    }
+
+    const scope = (scenario.metadata && scenario.metadata.testScope) ? scenario.metadata.testScope : "regression";
+    const executionTag = `@${scope}`;
+    const describeBlock = scenario.only ? test.describe.only : test.describe;
+
+    describeBlock(`Escenario: ${scenario.description} ${executionTag}`, () => {
+      test.use({ storageState: getSessionPath(scenario.authType) });
+
+      test(`ensures full CRUD lifecycle for surcharge '${scenario.surchargeData.name}'`, async ({ page }) => {
+        await test.step('Paso 1: Crear el recargo', async () => {
+          await createSurcharge(page, {
+            ...scenario.surchargeData,
+            tenantBaseUrl
+          });
+        });
+        await test.step('Paso 2: Buscar y verificar', async () => {
+          await searchSurcharge(page, {
+            name: scenario.surchargeData.name,
+            tenantBaseUrl
+          });
+        });
+        await test.step('Paso 3: Eliminar registro', async () => {
+          await deleteSurcharge(page, {
+            name: scenario.surchargeData.name,
+            tenantBaseUrl
+          });
+        });
+      });
+    });
+  }
+});

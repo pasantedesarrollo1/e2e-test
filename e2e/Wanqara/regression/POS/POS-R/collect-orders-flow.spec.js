@@ -3,8 +3,8 @@ import {
   requirePosCredentials,
   requireChefCredentials,
   getTenantBaseUrl,
-} from "../../../harness/settings.js";
-import { getSessionPath } from "../../../harness/auth.js";
+} from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
 import {
   finalizeSaleWithPayment,
   withActiveRestaurantOrder,

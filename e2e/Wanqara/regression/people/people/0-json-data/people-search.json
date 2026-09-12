@@ -1,0 +1,22 @@
+[
+  {
+    "id": "PPL-SEARCH-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de búsqueda de persona",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Búsqueda de Persona",
+    "authType": "retail",
+    "personData": {
+      "name": "Persona Busqueda Test",
+      "identity": "1283728939",
+      "identityType": "CEDULA",
+      "roles": ["^Cliente$"]
+    }
+  }
+]

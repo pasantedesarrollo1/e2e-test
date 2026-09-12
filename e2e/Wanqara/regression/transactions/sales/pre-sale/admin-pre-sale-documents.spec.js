@@ -1,41 +1,42 @@
-import { test, expect } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
-import { getSessionPath } from "../../../../harness/auth.js";
-import { SEED, getElectronicInvoicingAuthType } from "../../../../harness/seed.js";
+import { test } from "@playwright/test";
+import { annotateTicket } from "../../../../harness/helpers/annotate.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
+import { getSessionPath } from "../../../../harness/helpers/auth.js";
 import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
 
-const tenantBaseUrl = getTenantBaseUrl();
+import scenarios from "./0-json-data/admin-pre-sale-documents.json" assert { type: "json" };
 
-test.describe("Admin Pre-Sales — Electronic Invoice @regression", () => {
-  requirePosCredentials(test);
+test.describe("Admin Pre-Sales - Different Document Types", () => {
+  for (const scenario of scenarios) {
+    test.describe(`Scenario: ${scenario.description} @${scenario.metadata.testScope}`, () => {
+      if (scenario.metadata && scenario.metadata.ws) {
+        annotateTicket(test, scenario.metadata);
+      }
 
-  test.use({ storageState: getSessionPath(getElectronicInvoicingAuthType()) });
+      if (scenario.skip) {
+        test.skip(true, scenario.skipReason);
+      }
 
-  test("successfully completes a pre-sale using an Electronic Invoice", async ({ page }) => {
-    test.setTimeout(120_000);
+      requirePosCredentials(test);
+      test.use({ storageState: getSessionPath(scenario.authType) });
 
-    await runAdminPreSaleFlow(page, {
-      tenantBaseUrl,
-      authType: getElectronicInvoicingAuthType(),
-      documentType: SEED.documentTypes.facturaElectronica,
-      productName: SEED.products.estandar.name,
+      test(
+        scenario.only ? "Completes a pre-sale using specified document type (focus)" : "Completes a pre-sale using specified document type",
+        { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+        async ({ page }) => {
+          test.setTimeout(120_000);
+          const tenantBaseUrl = getTenantBaseUrl();
+
+          await test.step(`Create Admin Pre-Sale with document: ${scenario.saleParams.documentType}`, async () => {
+            await runAdminPreSaleFlow(page, {
+              tenantBaseUrl,
+              authType: scenario.authType,
+              documentType: scenario.saleParams.documentType,
+              productName: scenario.saleParams.productName,
+            });
+          });
+        }
+      );
     });
-  });
-});
-
-test.describe("Admin Pre-Sales — Receipts (without dispatch) @regression", () => {
-  requirePosCredentials(test);
-
-  test.use({ storageState: getSessionPath("retail") });
-
-  test("successfully completes a pre-sale using Receipts", async ({ page }) => {
-    test.setTimeout(120_000);
-
-    await runAdminPreSaleFlow(page, {
-      tenantBaseUrl,
-      authType: "retail",
-      documentType: SEED.documentTypes.recibos,
-      productName: SEED.products.estandar.name,
-    });
-  });
+  }
 });

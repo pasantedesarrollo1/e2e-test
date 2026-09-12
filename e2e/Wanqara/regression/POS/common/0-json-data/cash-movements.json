@@ -1,0 +1,34 @@
+[
+  {
+    "description": "Cash Register Income and Expense Transactions (Retail)",
+    "metadata": {
+      "ws": "WS-1031",
+      "tes": "TES-225",
+      "release": "v7.9.2",
+      "summary": "Cash Movements Regression - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "environment": "Retail",
+    "authType": "retail",
+    "basePath": "/pos/home",
+    "fixture": "posPage",
+    "actions": ["in", "out"]
+  },
+  {
+    "description": "Cash Register Income and Expense Transactions (Restaurant)",
+    "metadata": {
+      "ws": "WS-1031",
+      "tes": "TES-225",
+      "release": "v7.9.2",
+      "summary": "Cash Movements Regression - Restaurant",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "environment": "Restaurant",
+    "authType": "restaurant",
+    "basePath": "/pos/restaurant-home",
+    "fixture": "posRestaurantPage",
+    "actions": ["in", "out"]
+  }
+]

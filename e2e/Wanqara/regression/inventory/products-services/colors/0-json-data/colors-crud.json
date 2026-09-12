@@ -1,0 +1,20 @@
+[
+  {
+    "id": "CLR-CRUD-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo completo CRUD",
+      "testScope": "regression"
+    },
+    "description": "Retail - CRUD Completo de Color",
+    "authType": "retail",
+    "colorData": {
+      "name": "Color E2E Automático CRUD",
+      "observation": "Creado, buscado y eliminado vía DDT"
+    }
+  }
+]

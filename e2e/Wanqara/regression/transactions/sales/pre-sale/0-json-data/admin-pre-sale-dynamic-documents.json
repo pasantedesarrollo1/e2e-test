@@ -1,0 +1,31 @@
+[
+  {
+    "id": "ADMIN-PRE-SALE-DYN-DOCS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-981",
+      "tes": "TES-206",
+      "release": "v7.9.1",
+      "summary": "Reactive Document Type by Subsidiary - Pre-Sales",
+      "addedToRegression": "2026-09-04",
+      "testScope": "regression"
+    },
+    "description": "validates dynamic document type restrictions when switching subsidiaries in Pre-sales",
+    "authType": "restaurant",
+    "targetPath": "/admin/pre-sale/add",
+    "steps": [
+      {
+        "subsidiaryCode": "001",
+        "expectedDefault": "Factura electrónica",
+        "expectElectronicOption": true
+      },
+      {
+        "subsidiaryCode": "100",
+        "expectedDefault": "Recibos",
+        "expectElectronicOption": false
+      }
+    ]
+  }
+]

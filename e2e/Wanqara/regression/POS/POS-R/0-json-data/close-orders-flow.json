@@ -1,0 +1,14 @@
+[
+  {
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1035",
+      "tes": "TES-230",
+      "release": "v7.10.0",
+      "summary": "POS Close Orders Flow",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant"
+  }
+]

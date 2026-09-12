@@ -1,0 +1,23 @@
+[
+  {
+    "id": "DSC-CREATE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de creación de descuento aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Creación de Descuento",
+    "authType": "retail",
+    "discountData": {
+      "name": "Descuento Creado Aislado",
+      "description": "DDT - Prueba exclusiva de Creación",
+      "applicationMethod": "always",
+      "type": "fijo",
+      "discount": 20
+    }
+  }
+]

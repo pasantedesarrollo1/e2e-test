@@ -1,0 +1,62 @@
+[
+  {
+    "description": "Sales WITH Post-Sale Inventory Dispatch",
+    "metadata": {
+      "ws": "WS-1009",
+      "tes": "TES-218",
+      "release": "v7.9.1",
+      "summary": "POS Sale Inventory Dispatch - Enabled",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "dispatch",
+    "dispatchEnabled": true,
+    "products": [
+      {
+        "name": "Caja de alitas de pollo (100 u)",
+        "type": "Estandar",
+        "afterSelectCallback": null
+      },
+      {
+        "name": "series test",
+        "type": "Serie-por-nombre",
+        "afterSelectCallback": null
+      },
+      {
+        "name": "test talla color",
+        "type": "TallaColor-por-nombre",
+        "afterSelectCallback": "selectFirstVariant"
+      }
+    ]
+  },
+  {
+    "description": "Sales WITHOUT Post-Sale Inventory Dispatch",
+    "metadata": {
+      "ws": "WS-1009",
+      "tes": "TES-218",
+      "release": "v7.9.1",
+      "summary": "POS Sale Inventory Dispatch - Disabled",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "dispatchEnabled": false,
+    "products": [
+      {
+        "name": "Caja de alitas de pollo (100 u)",
+        "type": "Estandar",
+        "afterSelectCallback": null
+      },
+      {
+        "name": "series test",
+        "type": "Serie-por-nombre",
+        "afterSelectCallback": "selectFirstSerie"
+      },
+      {
+        "name": "test talla color",
+        "type": "TallaColor-por-nombre",
+        "afterSelectCallback": "selectFirstVariant"
+      }
+    ]
+  }
+]

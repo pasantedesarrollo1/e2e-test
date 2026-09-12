@@ -1,9 +1,19 @@
 import { test, expect } from "../harness/pos-fixtures.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { SEED } from "../../../harness/seed.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
+import { SEED } from "../../../harness/config/seed.js";
 import { openDrawer, closeDrawer, runPosSaleFlow } from "../harness/pos-sale-flow.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { withPath } from "../../../harness/urls.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { withPath } from "../../../harness/config/urls.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "cash-movements.json"), "utf-8")
+);
 
 async function clickCashMovementOption(page, drawer) {
   const option = drawer.getByRole("button", { name: /Registro de Ingresos\/Egresos/i }).first();
@@ -46,56 +56,54 @@ async function fillAndSubmitCashForm(page, type) {
   await expect(dialog).not.toBeVisible();
 }
 
-const environments = [
-  { name: 'Retail',     authType: 'retail',     fixture: 'posPage' },
-  { name: 'Restaurant', authType: 'restaurant', fixture: 'posRestaurantPage' }
-];
+test.describe("POS - Cash Register Income and Expense Transactions", () => {
+  test.describe.configure({ mode: 'default' });
 
-for (const env of environments) {
-  test.describe(`POS ${env.name} — Cash Register Income and Expense Transactions @regression`, () => {
-    requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(env.authType) });
+  if (scenarios.length > 0) {
+    annotateTicket(test, scenarios[0].metadata);
+  }
 
-    const runTest = (title, bodyFn) => {
-      if (env.fixture === 'posPage') {
-        test(title, async ({ posPage: page }) => await bodyFn(page));
-      } else {
-        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
-      }
-    };
+  for (const scenario of scenarios) {
+    test.describe(`Environment: ${scenario.environment} @${scenario.metadata.testScope}`, () => {
+      requirePosCredentials(test);
+      test.use({ storageState: getSessionPath(scenario.authType) });
 
-    runTest("records both a cash income and a cash expense from the More Options menu", async (page) => {
-      test.setTimeout(180_000);
-      await test.step("Venta previa y registro secuencial de ingreso y egreso", async () => {
-        await test.step("Realizar venta simple de alitas", async () => {
-          await runPosSaleFlow(page, {
-            tenantBaseUrl: getTenantBaseUrl(),
-            skipNavigation: true,
-            productName: SEED.products.estandar.name,
-            searchTerm: null,
+      const runTest = (title, bodyFn) => {
+        if (scenario.fixture === 'posPage') {
+          test(title, async ({ posPage: page }) => await bodyFn(page));
+        } else {
+          test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
+        }
+      };
+
+      runTest(scenario.description, async (page) => {
+        test.setTimeout(180_000);
+        await test.step("Venta previa y registro secuencial de ingreso y egreso", async () => {
+          await test.step("Realizar venta simple de alitas", async () => {
+            await runPosSaleFlow(page, {
+              tenantBaseUrl: getTenantBaseUrl(),
+              skipNavigation: true,
+              productName: SEED.products.estandar.name,
+              searchTerm: null,
+            });
+            const basePath = scenario.basePath;
+            await page.goto(withPath(getTenantBaseUrl(), basePath));
+            await page.waitForURL(new RegExp(basePath));
           });
-          const basePath = env.name === 'Restaurant' ? '/pos/restaurant-home' : '/pos/home';
-          await page.goto(withPath(getTenantBaseUrl(), basePath));
-          await page.waitForURL(new RegExp(basePath));
-        });
 
-        const drawerFilter = /Opciones/i;
-        const triggerLocator = page.getByRole("button", { name: /Más Opciones/i }).first();
-        
-        await test.step("Registrar ingreso", async () => {
-          const drawer = await openDrawer(page, triggerLocator, drawerFilter);
-          await clickCashMovementOption(page, drawer);
-          await fillAndSubmitCashForm(page, "in");
-          await closeDrawer(page, drawerFilter);
-        });
-
-        await test.step("Registrar egreso", async () => {
-          const drawer = await openDrawer(page, triggerLocator, drawerFilter);
-          await clickCashMovementOption(page, drawer);
-          await fillAndSubmitCashForm(page, "out");
-          await closeDrawer(page, drawerFilter);
+          const drawerFilter = /Opciones/i;
+          const triggerLocator = page.getByRole("button", { name: /Más Opciones/i }).first();
+          
+          for (const action of scenario.actions) {
+            await test.step(`Registrar ${action === 'in' ? 'ingreso' : 'egreso'}`, async () => {
+              const drawer = await openDrawer(page, triggerLocator, drawerFilter);
+              await clickCashMovementOption(page, drawer);
+              await fillAndSubmitCashForm(page, action);
+              await closeDrawer(page, drawerFilter);
+            });
+          }
         });
       });
     });
-  });
-}
+  }
+});

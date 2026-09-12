@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../harness/ui-helpers.js";
+import { expectSnackbar } from "../../../../harness/helpers/ui-helpers.js";
 
 export async function selectOrderToChangeStatus(page) {
   const orderCard = page.locator(".tw-cursor-pointer.tw-group").first();

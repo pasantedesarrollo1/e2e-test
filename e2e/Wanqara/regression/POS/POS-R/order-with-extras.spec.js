@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { requireChefCredentials, chefHarness, getTenantBaseUrl } from "../../../harness/settings.js";
-import { ensureChefAuthenticated, CHEF_SESSION_PATH } from "../../../harness/chef-auth.js";
-import { SEED } from "../../../harness/seed.js";
+import { requireChefCredentials, chefHarness, getTenantBaseUrl } from "../../../harness/config/settings.js";
+import { ensureChefAuthenticated, CHEF_SESSION_PATH } from "../../../harness/helpers/chef-auth.js";
+import { SEED } from "../../../harness/config/seed.js";
 import { 
   openExtrasSelection, 
   validateOutOfStockExtra, 

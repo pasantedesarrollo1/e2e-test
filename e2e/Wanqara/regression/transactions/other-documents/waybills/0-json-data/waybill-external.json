@@ -1,0 +1,53 @@
+[
+  {
+    "id": "WAYBILL-EXT-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.0",
+      "summary": "External Waybill Creation with carrier validation",
+      "testScope": "regression"
+    },
+    "description": "Crea una guia de remision externa validando transportistas",
+    "authType": "restaurant",
+    "waybillData": {
+      "checkoutName": "",
+      "vehiclePlate": "AAC-0123",
+      "address": "Dir 1",
+      "reason": "razon 1",
+      "route": "ruta 1",
+      "shipmentAmountExternal": "1",
+      "isLongProductSale": false
+    }
+  },
+  {
+    "id": "WAYBILL-EXT-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.0",
+      "summary": "External Waybill Creation with long product name",
+      "testScope": "regression"
+    },
+    "description": "Venta y guia externa con producto de nombre largo",
+    "authType": "restaurant",
+    "waybillData": {
+      "checkoutName": "",
+      "vehiclePlate": "AAC-0123",
+      "address": "Dir 1",
+      "reason": "razon 1",
+      "route": "ruta 1",
+      "shipmentAmountExternal": "1",
+      "isLongProductSale": true,
+      "saleParams": {
+        "documentType": "Factura electrónica",
+        "clientCedula": "0000000001",
+        "productName": "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompañadas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada"
+      }
+    }
+  }
+]

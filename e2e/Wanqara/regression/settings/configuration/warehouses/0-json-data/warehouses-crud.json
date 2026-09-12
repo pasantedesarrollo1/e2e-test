@@ -1,0 +1,62 @@
+[
+  {
+    "id": "WAREHOUSE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Warehouse Management CRUD - Retail",
+      "testScope": "regression"
+    },
+    "description": "Crear, buscar y eliminar Bodega (Retail)",
+    "authType": "retail",
+    "warehouseData": {
+      "name": "Bodega Test Ret",
+      "code": "1111",
+      "address": "Automated Test Address Ret",
+      "description": "Automated Test Desc Ret"
+    }
+  },
+  {
+    "id": "WAREHOUSE-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Warehouse Management CRUD - Dispatch",
+      "testScope": "regression"
+    },
+    "description": "Crear, buscar y eliminar Bodega (Dispatch)",
+    "authType": "dispatch",
+    "warehouseData": {
+      "name": "Bodega Test Dis",
+      "code": "1112",
+      "address": "Automated Test Address Dis",
+      "description": "Automated Test Desc Dis"
+    }
+  },
+  {
+    "id": "WAREHOUSE-003",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Warehouse Management CRUD - Restaurant",
+      "testScope": "regression"
+    },
+    "description": "Crear, buscar y eliminar Bodega (Restaurant)",
+    "authType": "restaurant",
+    "warehouseData": {
+      "name": "Bodega Test Res",
+      "code": "1113",
+      "address": "Automated Test Address Res",
+      "description": "Automated Test Desc Res"
+    }
+  }
+]

@@ -1,0 +1,21 @@
+[
+  {
+    "id": "BRD-CRUD-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo completo CRUD",
+      "testScope": "regression"
+    },
+    "description": "Retail - CRUD Completo de Marca",
+    "authType": "retail",
+    "brandData": {
+      "name": "Marca E2E Automática CRUD",
+      "order": "1",
+      "observation": "Creada, buscada y eliminada vía DDT"
+    }
+  }
+]

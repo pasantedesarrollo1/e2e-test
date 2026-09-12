@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../harness/seed.js";
-import { ensureAuthenticated } from "../../../harness/auth.js";
+import { SEED } from "../../../harness/config/seed.js";
+import { ensureAuthenticated } from "../../../harness/helpers/auth.js";
 import { searchAndSelectProduct } from "./pos-search.js";
 import { selectClientByCedula } from "./pos-sale-flow.js";
 

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "SIZ-SEARCH-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de búsqueda aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Búsqueda de Talla",
+    "authType": "retail",
+    "sizeData": {
+      "name": "Talla Búsqueda Especial",
+      "observation": "Precondición UI para búsqueda"
+    }
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "CLR-SEARCH-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de búsqueda aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Búsqueda de Color",
+    "authType": "retail",
+    "colorData": {
+      "name": "Color Búsqueda Especial",
+      "observation": "Precondición UI para búsqueda"
+    }
+  }
+]

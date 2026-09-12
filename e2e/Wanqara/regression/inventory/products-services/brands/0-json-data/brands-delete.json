@@ -1,0 +1,21 @@
+[
+  {
+    "id": "BRD-DELETE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de eliminación aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Eliminación de Marca",
+    "authType": "retail",
+    "brandData": {
+      "name": "Marca Para Eliminar",
+      "order": "3",
+      "observation": "Precondición UI"
+    }
+  }
+]

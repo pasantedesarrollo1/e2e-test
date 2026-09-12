@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ADMIN-SALE-DOCS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Electronic Invoice",
+      "testScope": "regression"
+    },
+    "description": "Completa exitosamente una venta desde el panel admin usando Factura Electrónica",
+    "authType": "restaurant",
+    "saleParams": {
+      "documentType": "Factura electrónica",
+      "productName": "Caja de alitas de pollo (100 u)"
+    }
+  },
+  {
+    "id": "ADMIN-SALE-DOCS-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Receipts (without dispatch)",
+      "testScope": "regression"
+    },
+    "description": "Completa exitosamente una venta desde el panel admin usando Recibos",
+    "authType": "retail",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)"
+    }
+  }
+]

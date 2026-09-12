@@ -1,0 +1,20 @@
+[
+  {
+    "id": "SUR-SEARCH-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de búsqueda aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Búsqueda de Recargo",
+    "authType": "retail",
+    "surchargeData": {
+      "name": "Recargo Búsqueda Especial",
+      "percentage": "10"
+    }
+  }
+]

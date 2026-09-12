@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ADMIN-PRE-SALE-CANCEL-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-840",
+      "tes": "TES-198",
+      "release": "v7.9.1",
+      "summary": "Cancel Pre-Sales - Admin (Restaurant)",
+      "splitFrom": "cancel-sales.spec.js",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Restaurant (No Dispatch) - Creates a pre-sale and cancels it, verifying that the message is displayed without the switch",
+    "authType": "restaurant",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)"
+    },
+    "cancelParams": {
+      "expectSwitch": false,
+      "expectMessage": true
+    }
+  },
+  {
+    "id": "ADMIN-PRE-SALE-CANCEL-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-840",
+      "tes": "TES-198",
+      "release": "v7.9.1",
+      "summary": "Cancel Pre-Sales - Admin (Dispatch)",
+      "splitFrom": "cancel-sales.spec.js",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Business (With Dispatch) - Creates a pre-sale and cancels it, verifying that the message is displayed without the switch",
+    "authType": "dispatch",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)"
+    },
+    "cancelParams": {
+      "expectSwitch": false,
+      "expectMessage": true
+    }
+  }
+]

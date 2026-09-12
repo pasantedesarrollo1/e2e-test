@@ -1,0 +1,24 @@
+[
+  {
+    "id": "PAY-PRINT-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "tes": "TES-215",
+      "release": "v7.10.0",
+      "summary": "Admin Payments Receivables Amount Print Issue",
+      "testScope": "release",
+      "addedToRegression": "true"
+    },
+    "description": "Validar envío correcto de montos a la impresora en cuentas por cobrar",
+    "authType": "electronic_invoicing",
+    "paymentData": {
+      "cedula": "0000000001",
+      "amount": "0.01",
+      "description": "Automated test payment",
+      "paymentMethodRegex": "^Efectivo$"
+    }
+  }
+]

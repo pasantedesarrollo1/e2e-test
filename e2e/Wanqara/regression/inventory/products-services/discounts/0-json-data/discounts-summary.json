@@ -1,0 +1,67 @@
+[
+  {
+    "id": "DSC-SUM-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Resumen: Siempre + Porcentaje",
+      "testScope": "regression"
+    },
+    "description": "Retail - Resumen: Siempre + Porcentaje",
+    "authType": "retail",
+    "discountData": {
+      "name": "Siempre 10%",
+      "description": "Prueba de UI",
+      "applicationMethod": "always",
+      "type": "porcentaje",
+      "discount": 10
+    }
+  },
+  {
+    "id": "DSC-SUM-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Resumen: Por Cada + Fijo",
+      "testScope": "regression"
+    },
+    "description": "Retail - Resumen: Por Cada + Fijo",
+    "authType": "retail",
+    "discountData": {
+      "name": "Por Cada 2 Fijo 5",
+      "description": "Prueba de UI",
+      "applicationMethod": "every_to",
+      "type": "fijo",
+      "discount": 5,
+      "quantity": 2
+    }
+  },
+  {
+    "id": "DSC-SUM-003",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Resumen: A partir de + Porcentaje",
+      "testScope": "regression"
+    },
+    "description": "Retail - Resumen: A partir de + Porcentaje",
+    "authType": "retail",
+    "discountData": {
+      "name": "A partir de 3, 15%",
+      "description": "Prueba de UI",
+      "applicationMethod": "from_to",
+      "type": "porcentaje",
+      "discount": 15,
+      "quantity": 3
+    }
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "description": "Retail (100) - Creates a POS sale and cancels it, verifying that the inventory switch is displayed",
+    "metadata": {
+      "ws": "WS-840",
+      "tes": "TES-198",
+      "release": "v7.9.1",
+      "summary": "Cancel Sales - POS - Retail",
+      "splitFrom": "cancel-sales.spec.js",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "targetPath": "/pos/home",
+    "expectSwitch": true,
+    "expectMessage": false,
+    "saleParams": {
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001"
+    }
+  },
+  {
+    "description": "Dispatch (101) - Creates a POS sale and cancels it, verifying that the message is displayed without the switch",
+    "metadata": {
+      "ws": "WS-840",
+      "tes": "TES-198",
+      "release": "v7.9.1",
+      "summary": "Cancel Sales - POS - Dispatch",
+      "splitFrom": "cancel-sales.spec.js",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "dispatch",
+    "targetPath": "/pos/home",
+    "expectSwitch": false,
+    "expectMessage": true,
+    "saleParams": {
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001"
+    }
+  },
+  {
+    "description": "Restaurant (001) - Creates a POS sale and cancels it, verifying that the message is displayed without the switch",
+    "metadata": {
+      "ws": "WS-840",
+      "tes": "TES-198",
+      "release": "v7.9.1",
+      "summary": "Cancel Sales - POS - Restaurant",
+      "splitFrom": "cancel-sales.spec.js",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant",
+    "targetPath": "/pos/restaurant-home",
+    "expectSwitch": false,
+    "expectMessage": true,
+    "saleParams": {
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001"
+    }
+  }
+]

@@ -1,0 +1,57 @@
+[
+  {
+    "type": "retail-sale",
+    "description": "POS sale in branch 100 with receipts",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "POS Sales with Sequential Validation - Commerce 100",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "environment": "Commerce 100",
+    "authType": "retail",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": { "label": "EFECTIVO" }
+    }
+  },
+  {
+    "type": "retail-sale",
+    "description": "POS sale in branch 101 with receipts",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "POS Sales with Sequential Validation - Commerce 101",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "environment": "Commerce Dispatch 101",
+    "authType": "dispatch",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": { "label": "EFECTIVO" }
+    }
+  },
+  {
+    "type": "restaurant-flow",
+    "description": "Creates order in Chef and charges it verifying access_key",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "POS Restaurant - Sale with Electronic Invoice",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "environment": "POS Restaurant",
+    "authType": "restaurant",
+    "chefOrderParams": {
+      "productName": "Caja de alitas de pollo (100 u)"
+    }
+  }
+]

@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../../harness/seed.js";
+import { SEED } from "../../../../harness/config/seed.js";
+import { selectDropdownOption } from "../../../../harness/helpers/ui-helpers.js";
 
 export async function selectDocumentType(page, documentType) {
   if (!documentType) return;
@@ -9,7 +10,8 @@ export async function selectDocumentType(page, documentType) {
 
   const docInputWrapper = docLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
 
-  const normalize = (s) => s.replace(/[""'']/g, '').replace(/\s+/g, ' ').trim();
+  // Defensivo: Reemplaza tildes y caracteres mal codificados () con el wildcard '.' de regex
+  const normalize = (s) => s.replace(/[""'']/g, '').replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.').replace(/\s+/g, ' ').trim();
 
   const FACTURA_CODES = ["01"];
 
@@ -24,16 +26,13 @@ export async function selectDocumentType(page, documentType) {
   if (alreadySelected) return;
 
   const dropdownIcon = docInputWrapper.locator('.v-icon').last();
-  await dropdownIcon.click({ force: true });
+  
+  await selectDropdownOption(page, {
+    triggerLocator: dropdownIcon,
+    optionText: normalize(documentType)
+  });
 
-  const activeListbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
-  await expect(activeListbox).toBeVisible({ timeout: 5000 });
-
-  const option = activeListbox.getByRole("option", { name: new RegExp(normalize(documentType), "i") }).first();
-  await expect(option).toBeVisible({ timeout: 5000 });
-  await option.click();
-
-  await expect(activeListbox).not.toBeVisible({ timeout: 5000 });
+  // Cierra cualquier overlay que haya quedado residual
   await page.keyboard.press("Escape");
 }
 
@@ -52,12 +51,11 @@ export async function switchAdminSubsidiary(page, targetSubsidiary) {
   await expect(profileModal).toBeVisible({ timeout: 5000 });
 
   const branchSelect = profileModal.locator(".v-select").first();
-  await branchSelect.click();
-
-  const listbox = page.getByRole("listbox");
-  await expect(listbox).toBeVisible({ timeout: 5000 });
-  await listbox.getByRole("option", { name: new RegExp(targetSubsidiary, "i") }).first().click();
-  await expect(listbox).not.toBeVisible({ timeout: 5000 });
+  
+  await selectDropdownOption(page, {
+    triggerLocator: branchSelect,
+    optionText: targetSubsidiary
+  });
 
   await page.keyboard.press("Escape");
   await expect(profileModal).not.toBeVisible({ timeout: 5000 });

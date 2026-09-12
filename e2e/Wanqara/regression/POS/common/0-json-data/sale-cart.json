@@ -1,0 +1,42 @@
+[
+  {
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-1002",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Operations - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "fixture": "posPage",
+    "includeDynamicDocumentTest": true,
+    "cartParams": {
+      "productName": "Caja de alitas de pollo (100 u)",
+      "restrictedAmount": "14",
+      "testClientCedula": "0000000001",
+      "dynamicDocumentType": "Recibos"
+    }
+  },
+  {
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1002",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Operations - Restaurant",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant",
+    "fixture": "posRestaurantPage",
+    "includeDynamicDocumentTest": false,
+    "cartParams": {
+      "productName": "Caja de alitas de pollo (100 u)",
+      "restrictedAmount": "14",
+      "testClientCedula": "0000000001",
+      "dynamicDocumentType": "Recibos"
+    }
+  }
+]

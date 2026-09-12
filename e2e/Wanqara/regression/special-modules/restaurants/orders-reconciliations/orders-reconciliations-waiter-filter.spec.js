@@ -1,41 +1,45 @@
 import { test } from "@playwright/test";
-import { annotateTicket } from "../../../../harness/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../../harness/auth.js";
-import { filterByWaiter } from "../harness/waiter-filter-flow.js";
+import { annotateTicket } from "../../../../harness/helpers/annotate.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
+import { getSessionPath, ensureAuthenticated } from "../../../../harness/helpers/auth.js";
+import { filterByWaiter } from "../harness/restaurant-helpers.js";
 
-const TICKET = {
-  ws: 'WS-1000',
-  tes: 'TES-209',
-  release: 'v7.9.1',
-  summary: 'Orders Reconciliations Waiter Filter',
-  addedToRegression: 'true',
-};
+import scenarios from "./0-json-data/orders-reconciliations-waiter-filter.json" assert { type: "json" };
 
-test.describe("Orders Reconciliations — Waiter Filter @regression", () => {
-  annotateTicket(test, TICKET);
-  requirePosCredentials(test);
+test.describe("Orders Reconciliations - Waiter Filter", () => {
+  for (const scenario of scenarios) {
+    test.describe(`Scenario: ${scenario.description} @${scenario.metadata.testScope}`, () => {
+      if (scenario.metadata && scenario.metadata.ws) {
+        annotateTicket(test, scenario.metadata);
+      }
 
-  test.use({ storageState: getSessionPath("restaurant") });
+      if (scenario.skip) {
+        test.skip(true, scenario.skipReason);
+      }
 
-  test("filters reconciliations by waiter using advanced search", async ({ page }) => {
-    test.setTimeout(120_000);
-    const tenantBaseUrl = getTenantBaseUrl();
+      requirePosCredentials(test);
+      test.use({ storageState: getSessionPath(scenario.authType) });
 
-    await test.step("Navigate to orders reconciliations list", async () => {
-      await ensureAuthenticated(page, {
-        tenantBaseUrl,
-        targetPath: "/admin/orders-reconciliations/list",
-        authType: "restaurant",
-      });
+      test(
+        scenario.only ? "filters reconciliations by waiter using advanced search (focus)" : "filters reconciliations by waiter using advanced search",
+        { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+        async ({ page }) => {
+          test.setTimeout(120_000);
+          const tenantBaseUrl = getTenantBaseUrl();
+
+          await test.step("Navigate to orders reconciliations list", async () => {
+            await ensureAuthenticated(page, {
+              tenantBaseUrl,
+              targetPath: "/admin/orders-reconciliations/list",
+              authType: scenario.authType,
+            });
+          });
+
+          await test.step("Filter by waiter and validate results", async () => {
+            await filterByWaiter(page, scenario.filterData);
+          });
+        }
+      );
     });
-
-    await test.step("Filter by waiter and validate results", async () => {
-      await filterByWaiter(page, {
-        waiterName: "QA developer 1",
-        searchKeyword: "QA",
-        apiEndpointPattern: "/api/v1/inventory/reconciliations/orders",
-      });
-    });
-  });
+  }
 });

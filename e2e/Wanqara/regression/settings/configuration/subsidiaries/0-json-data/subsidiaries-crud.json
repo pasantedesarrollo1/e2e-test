@@ -1,0 +1,65 @@
+[
+  {
+    "id": "SUBSIDIARY-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Subsidiary Management CRUD - Comercios (Sin Despacho)",
+      "testScope": "regression"
+    },
+    "description": "Comercios (Sin Despacho)",
+    "authType": "retail",
+    "subsidiaryData": {
+      "type": "Comercios (Sin Despacho)",
+      "name": "Sucursal Comercios Test",
+      "code": "901",
+      "isRestaurant": false,
+      "hasDispatch": false
+    }
+  },
+  {
+    "id": "SUBSIDIARY-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Subsidiary Management CRUD - Comercios (Con Despacho)",
+      "testScope": "regression"
+    },
+    "description": "Comercios (Con Despacho)",
+    "authType": "retail",
+    "subsidiaryData": {
+      "type": "Comercios (Con Despacho)",
+      "name": "Sucursal Despacho Test",
+      "code": "902",
+      "isRestaurant": false,
+      "hasDispatch": true
+    }
+  },
+  {
+    "id": "SUBSIDIARY-003",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Subsidiary Management CRUD - Restaurantes (Sin Despacho)",
+      "testScope": "regression"
+    },
+    "description": "Restaurantes (Sin Despacho)",
+    "authType": "retail",
+    "subsidiaryData": {
+      "type": "Restaurantes (Sin Despacho)",
+      "name": "Sucursal Restaurante Test",
+      "code": "903",
+      "isRestaurant": true,
+      "hasDispatch": false
+    }
+  }
+]

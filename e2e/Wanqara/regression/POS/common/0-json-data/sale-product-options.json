@@ -1,0 +1,42 @@
+[
+  {
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-1006",
+      "tes": "TES-215",
+      "release": "v7.9.1",
+      "summary": "POS Sale Product Options - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "fixture": "posPage",
+    "paymentUrlPattern": "/pos/payments",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productOptionsParams": {
+      "quantity": "3.3337373372323",
+      "unitPrice": "3.3337373372323",
+      "discountRate": "3.3337373372323"
+    }
+  },
+  {
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1006",
+      "tes": "TES-215",
+      "release": "v7.9.1",
+      "summary": "POS Sale Product Options - Restaurant",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant",
+    "fixture": "posRestaurantPage",
+    "paymentUrlPattern": "/pos/restaurant-payments",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productOptionsParams": {
+      "quantity": "3.3337373372323",
+      "unitPrice": "3.3337373372323",
+      "discountRate": "3.3337373372323"
+    }
+  }
+]

@@ -1,9 +1,19 @@
 import { test, expect } from "../harness/pos-fixtures.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { SEED } from "../../../harness/seed.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
 import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { selectClientFromSearchModal } from "../../../harness/client-helpers.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-with-client.json"), "utf-8")
+);
+
+import { selectClientFromSearchModal } from "../../../harness/helpers/client-helpers.js";
 
 async function confirmClientModal(page) {
   const clientModal = page
@@ -21,19 +31,18 @@ async function confirmClientModal(page) {
   ).toBeVisible({ timeout: 20000 });
 }
 
-const environments = [
-  { name: 'Retail',     authType: 'retail',     fixture: 'posPage' },
-  { name: 'Restaurant', authType: 'restaurant', fixture: 'posRestaurantPage' }
-];
-
-for (const env of environments) {
-  test.describe(`POS ${env.name} — Sales with Customer Assignment @regression`, () => {
+for (const scenario of scenarios) {
+  test.describe(`POS ${scenario.description} - Sales with Customer Assignment @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
 
-    test.use({ storageState: getSessionPath(env.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType) });
+
+    if (scenario.metadata && scenario.metadata.ws) {
+      annotateTicket(test, scenario.metadata);
+    }
 
     const runTest = (title, bodyFn) => {
-      if (env.fixture === 'posPage') {
+      if (scenario.fixture === 'posPage') {
         test(title, async ({ posPage: page }) => await bodyFn(page));
       } else {
         test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
@@ -53,18 +62,18 @@ for (const env of environments) {
           .filter({ hasText: /Personas/i })
           .first();
 
-        await selectClientFromSearchModal(page, SEED.clients.test.cedula, {
+        await selectClientFromSearchModal(page, scenario.clientParams.testCedula, {
           triggerLocator: personasButton,
           modalLocator: personModal,
           expectModalClosed: true,
         });
 
-        await expect(page.getByText(SEED.clients.test.name)).toBeVisible();
+        await expect(page.getByText(scenario.clientParams.testName)).toBeVisible();
       });
 
       await test.step("Reassign customer by typing cedula directly", async () => {
         const cedulaInput = page.getByRole("textbox", { name: /Ingresa Cédula o RUC/i });
-        await cedulaInput.fill(SEED.clients.consumidorFinal.cedula);
+        await cedulaInput.fill(scenario.clientParams.consumidorFinalCedula);
         await cedulaInput.press("Enter");
 
         await confirmClientModal(page);
@@ -74,7 +83,7 @@ for (const env of environments) {
         ).not.toBeVisible({ timeout: 10000 });
 
         await expect(
-          page.getByText(SEED.clients.consumidorFinal.cedula)
+          page.getByText(scenario.clientParams.consumidorFinalCedula)
         ).toBeVisible();
       });
 
@@ -111,7 +120,7 @@ for (const env of environments) {
         const identityInput = clientModal.locator("#identity-input");
         await expect(identityInput).toBeVisible();
         await expect(identityInput).not.toHaveAttribute("readonly");
-        await identityInput.fill(SEED.clients.consumidorFinal.cedula);
+        await identityInput.fill(scenario.clientParams.consumidorFinalCedula);
 
         const magnifyButton = clientModal
           .locator("button")
@@ -123,14 +132,14 @@ for (const env of environments) {
         await confirmClientModal(page);
 
         await expect(
-          page.getByText(SEED.clients.consumidorFinal.cedula)
+          page.getByText(scenario.clientParams.consumidorFinalCedula)
         ).toBeVisible();
       });
 
       await test.step("Complete the sale with the assigned customer and print ticket", async () => {
         await runPosSaleFlow(page, {
           tenantBaseUrl: getTenantBaseUrl(),
-          productName: SEED.products.estandar.name,
+          productName: scenario.clientParams.productName,
           skipNavigation: true,
           printTicket: true,
         });

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "SIZ-DELETE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de eliminación aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Eliminación de Talla",
+    "authType": "retail",
+    "sizeData": {
+      "name": "Talla Para Eliminar",
+      "observation": "Precondición UI para eliminación"
+    }
+  }
+]

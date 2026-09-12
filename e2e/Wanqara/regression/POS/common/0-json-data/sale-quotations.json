@@ -1,0 +1,44 @@
+[
+  {
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-1007",
+      "tes": "TES-216",
+      "release": "v7.9.1",
+      "summary": "POS Sale Quotations - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "fixture": "posPage",
+    "homePath": "/pos/home",
+    "paymentUrlPattern": "/pos/payments",
+    "quoteParams": {
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "observation": "Observación de prueba automatizada",
+      "paymentTerms": "Términos de pago de prueba automatizada"
+    }
+  },
+  {
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1007",
+      "tes": "TES-216",
+      "release": "v7.9.1",
+      "summary": "POS Sale Quotations - Restaurant",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant",
+    "fixture": "posRestaurantPage",
+    "homePath": "/pos/restaurant-home",
+    "paymentUrlPattern": "/pos/restaurant-payments",
+    "quoteParams": {
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "observation": "Observación de prueba automatizada",
+      "paymentTerms": "Términos de pago de prueba automatizada"
+    }
+  }
+]

@@ -54,14 +54,24 @@ export default defineConfig({
     // WANQARA (POS / Admin) PROJECTS
     // ==========================================
     {
-      name: 'setup',
-      testMatch: /Wanqara\/.*\.setup\.js/,
+      name: 'setup-retail',
+      testMatch: /Wanqara\/harness\/setups\/retail\.setup\.js/,
+      use: { baseURL }
+    },
+    {
+      name: 'setup-restaurant',
+      testMatch: /Wanqara\/harness\/setups\/restaurant\.setup\.js/,
+      use: { baseURL }
+    },
+    {
+      name: 'setup-dispatch',
+      testMatch: /Wanqara\/harness\/setups\/dispatch\.setup\.js/,
       use: { baseURL }
     },
     
     {
       name: 'POS-Retail',
-      dependencies: ['setup'],
+      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant'],
       testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-C|common|sales)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
@@ -72,7 +82,7 @@ export default defineConfig({
     },
     {
       name: 'POS-Restaurant',
-      dependencies: ['setup'],
+      dependencies: ['setup-restaurant', 'setup-retail'],
       testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-R|sales)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
@@ -83,7 +93,7 @@ export default defineConfig({
     },
     {
       name: 'Admin-Inventory',
-      dependencies: ['setup'],
+      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant'],
       testMatch: /Wanqara\/regression\/(inventory|transactions|settings|people|finance|main|special-modules)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
@@ -95,7 +105,7 @@ export default defineConfig({
 
     {
       name: 'Smoke',
-      dependencies: ['setup'],
+      dependencies: ['setup-retail', 'setup-dispatch'],
       testMatch: /Wanqara\/smoke\/.*\.spec\.js/,
       use: {
         ...devices['Desktop Chrome'],
@@ -105,7 +115,7 @@ export default defineConfig({
     },
     {
       name: 'Release',
-      dependencies: ['setup'],
+      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant'],
       testMatch: /Wanqara\/(regression|specific-cases)\/.*\.spec\.js/,
       grep: /@release/,                               
       use: {

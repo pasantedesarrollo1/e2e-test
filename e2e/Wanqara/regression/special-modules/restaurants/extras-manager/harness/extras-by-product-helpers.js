@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../../harness/ui-helpers.js";
-import { SEED } from "../../../../../harness/seed.js";
+import { expectSnackbar } from "../../../../../harness/helpers/ui-helpers.js";
+import { SEED } from "../../../../../harness/config/seed.js";
 
 /**
  * Tests the "Por producto" flow: relates products to a category and cleans them up.
@@ -27,11 +27,11 @@ export async function testByProductFlow(page, categoryName, productSearchTerm) {
       await sidebarListItems.nth(i).click();
       await page.waitForTimeout(500); // wait for detail panel to load
 
-      const deleteRelationBtn = page.getByRole('button', { name: /Eliminar relación/i }).first();
+      const deleteRelationBtn = page.getByRole('button', { name: /Eliminar relaci.n/i }).first();
       while (await deleteRelationBtn.isVisible()) {
         await deleteRelationBtn.click();
 
-        const confirmDeleteBtn = page.getByRole('dialog').getByRole('button', { name: /Eliminar relación/i }).last();
+        const confirmDeleteBtn = page.getByRole('dialog').getByRole('button', { name: /Eliminar relaci.n/i }).last();
         await expect(confirmDeleteBtn).toBeVisible();
 
         const deleteResponsePromise = page.waitForResponse(
@@ -57,7 +57,7 @@ export async function testByProductFlow(page, categoryName, productSearchTerm) {
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible();
 
-    const categorySearchInput = dialog.getByRole('textbox', { name: /Buscar categoría extra/i });
+    const categorySearchInput = dialog.getByRole('textbox', { name: /Buscar categor.a extra/i });
     await expect(categorySearchInput).toBeVisible();
     
     const categorySearchResponse = page.waitForResponse(

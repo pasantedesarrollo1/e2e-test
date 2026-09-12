@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../harness/seed.js";
+import { SEED } from "../../../harness/config/seed.js";
 
 export const STANDARD_PRODUCTS = [
   { ...SEED.products.estandar,        searchTerm: null },

@@ -3,35 +3,67 @@ import {
   requirePosCredentials,
   requireChefCredentials,
   getTenantBaseUrl,
-} from "../../../harness/settings.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { SEED } from "../../../harness/seed.js";
+} from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "close-orders-flow.json"), "utf-8")
+);
+
 import {
-  withActiveRestaurantOrder,
+  closeAllActiveOrders,
+  createChefOrder,
+  navigateToRestaurantPOS,
+  openAndSelectOrder,
 } from "./harness/pos-orders-common.js";
 import {
   navigateToCloseOrder,
   processOrderClosure,
 } from "./harness/pos-close-order.js";
 
-test.describe("POS Restaurant — Close Orders @regression", () => {
-  requirePosCredentials(test);
-  requireChefCredentials(test);
+async function withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, actionCallback, orderOptions = {}) {
+  await closeAllActiveOrders(page, tenantBaseUrl);
+  
+  const chefContext = await browser.newContext({ storageState: getSessionPath("chef") });
+  const chefPage = await chefContext.newPage();
+  const activeTableName = await createChefOrder(chefPage, orderOptions);
+  await chefContext.close();
 
-  test.use({ storageState: getSessionPath("restaurant") });
+  await navigateToRestaurantPOS(page, tenantBaseUrl);
+  await openAndSelectOrder(page, activeTableName);
+  await actionCallback(page, activeTableName);
+}
 
-  test("closes an existing order from the POS", async ({ page }) => {
-    test.setTimeout(180_000);
-    const tenantBaseUrl = getTenantBaseUrl();
+for (const scenario of scenarios) {
+  test.describe(`POS ${scenario.description} - Close Orders @${scenario.metadata?.testScope || 'regression'}`, () => {
+    requirePosCredentials(test);
+    requireChefCredentials(test);
 
-    await withActiveRestaurantOrder(page, tenantBaseUrl, async (page, activeTableName) => {
-      await test.step("Navigate to close order screen", async () => {
-        await navigateToCloseOrder(page);
-      });
+    test.use({ storageState: getSessionPath(scenario.authType) });
 
-      await test.step("Process order closure with observations", async () => {
-        await processOrderClosure(page, SEED.restaurant.closeReason);
+    if (scenario.metadata && scenario.metadata.ws) {
+      annotateTicket(test, scenario.metadata);
+    }
+
+    test("closes an existing order from the POS", async ({ page, browser }) => {
+      test.setTimeout(180_000);
+      const tenantBaseUrl = getTenantBaseUrl();
+
+      await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, async (page, activeTableName) => {
+        await test.step("Navigate to close order screen", async () => {
+          await navigateToCloseOrder(page);
+        });
+
+        await test.step("Process order closure with observations", async () => {
+          await processOrderClosure(page, "Cierre de prueba automatizada");
+        });
       });
     });
   });
-});
+}

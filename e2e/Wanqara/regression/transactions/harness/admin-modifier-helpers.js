@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../harness/seed.js";
+import { SEED } from "../../../harness/config/seed.js";
 
 export async function applyGeneralDiscount(page, rate = SEED.discount.rate) {
   const discountBtn = page.getByRole("button", { name: /Descuento General/i }).first();

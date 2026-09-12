@@ -1,55 +1,45 @@
-import { test, expect } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
-import { getSessionPath } from "../../../../harness/auth.js";
-import { SEED, getDynamicDocumentType } from "../../../../harness/seed.js";
-import { runAdminPreSaleFlow, searchAndSelectProduct } from "../harness/admin-pre-sale-flow.js";
-import { selectFirstVariant } from "../../../POS/harness/pos-products.js";
+import { test } from "@playwright/test";
+import { annotateTicket } from "../../../../harness/helpers/annotate.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
+import { getSessionPath } from "../../../../harness/helpers/auth.js";
+import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
+import { buildPreSaleMixedCart } from "../harness/admin-cart-helpers.js";
 
-const tenantBaseUrl = getTenantBaseUrl();
+import scenarios from "./0-json-data/admin-pre-sale-dispatch.json" assert { type: "json" };
 
-async function buildMixedCart(page, dispatchEnabled = false) {
-  await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
-  await expect(page.locator("main").getByText(SEED.products.estandar.name, { exact: false }).first()).toBeVisible();
+test.describe("Admin Pre-Sales - Mixed Cart / Dispatch Logic", () => {
+  for (const scenario of scenarios) {
+    test.describe(`Scenario: ${scenario.description} @${scenario.metadata.testScope}`, () => {
+      if (scenario.metadata && scenario.metadata.ws) {
+        annotateTicket(test, scenario.metadata);
+      }
 
-  await searchAndSelectProduct(page, { name: SEED.products.serie.name });
-  await expect(page.locator("main").getByText(SEED.products.serie.name, { exact: false }).first()).toBeVisible();
+      if (scenario.skip) {
+        test.skip(true, scenario.skipReason);
+      }
 
-  await searchAndSelectProduct(page, { name: SEED.products.tallaColor.name });
-  await selectFirstVariant(page);
-}
+      requirePosCredentials(test);
+      test.use({ storageState: getSessionPath(scenario.authType) });
 
-test.describe("Admin Pre-Sales — Mixed Cart WITH Subsequent Dispatch @regression", () => {
-  requirePosCredentials(test);
+      test(
+        scenario.only ? "Completes an admin pre-sale with mixed cart (focus)" : "Completes an admin pre-sale with mixed cart",
+        { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+        async ({ page }) => {
+          test.setTimeout(120_000);
+          const tenantBaseUrl = getTenantBaseUrl();
 
-  test.use({ storageState: getSessionPath("dispatch") });
-
-  test("completes a pre-sale with a mixed cart with subsequent dispatch enabled", async ({ page }) => {
-    test.setTimeout(120_000);
-
-    await runAdminPreSaleFlow(page, {
-      tenantBaseUrl,
-      authType: "dispatch",
-      documentType: getDynamicDocumentType("dispatch"),
-      productName: null,
-      beforeFinish: async (p) => await buildMixedCart(p, true),
+          await test.step("Create Admin Pre-Sale with Mixed Cart", async () => {
+            await runAdminPreSaleFlow(page, {
+              tenantBaseUrl,
+              authType: scenario.authType,
+              documentType: scenario.saleParams.documentType,
+              // Intentionally null so `runAdminPreSaleFlow` doesn't auto-add a default product
+              productName: null, 
+              beforeFinish: async (p) => await buildPreSaleMixedCart(p),
+            });
+          });
+        }
+      );
     });
-  });
-});
-
-test.describe("Admin Pre-Sales — Mixed Cart WITHOUT Subsequent Dispatch @regression", () => {
-  requirePosCredentials(test);
-
-  test.use({ storageState: getSessionPath("retail") });
-
-  test("completes a pre-sale with a mixed cart without subsequent dispatch enabled", async ({ page }) => {
-    test.setTimeout(120_000);
-
-    await runAdminPreSaleFlow(page, {
-      tenantBaseUrl,
-      authType: "retail",
-      documentType: getDynamicDocumentType("retail"),
-      productName: null,
-      beforeFinish: async (p) => await buildMixedCart(p, false),
-    });
-  });
+  }
 });

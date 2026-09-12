@@ -1,0 +1,42 @@
+[
+  {
+    "id": "PPL-CREATE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de creación de Cliente",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Creación de Cliente",
+    "authType": "retail",
+    "personData": {
+      "name": "Cliente Test Automatizado",
+      "identity": "1283728939",
+      "identityType": "CEDULA",
+      "roles": ["^Cliente$"]
+    }
+  },
+  {
+    "id": "PPL-CREATE-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de creación de Empleado",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Creación de Empleado",
+    "authType": "retail",
+    "personData": {
+      "name": "Empleado Test Automatizado",
+      "identity": "1283728939",
+      "identityType": "CEDULA",
+      "roles": ["^Empleado$"]
+    }
+  }
+]

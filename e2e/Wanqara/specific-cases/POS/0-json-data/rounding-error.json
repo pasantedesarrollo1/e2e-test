@@ -1,0 +1,60 @@
+[
+  {
+    "id": "SPECIFIC-POS-ROUNDING-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-1038",
+      "tes": "TES-220",
+      "release": "v7.10.0",
+      "summary": "Rounding error on POS sales checkout (Retail)",
+      "addedToRegression": "true",
+      "testScope": "release"
+    },
+    "description": "Retail Reproduction of rounding-error-issue-129-57 @ws-1038",
+    "authType": "retail",
+    "paymentUrl": "\\/pos\\/payments",
+    "fixture": "posPage",
+    "caseData": {
+      "productName": "General Test Product iva 0",
+      "quantity": 35.5,
+      "unitPriceWithoutTax": 3.65,
+      "unitPriceWithTax": null,
+      "discountPercentage": 0,
+      "discountFixed": 0,
+      "expectedSubtotal": 129.58,
+      "expectedPaymentError": true,
+      "fallbackPaymentAmount": 129.57
+    }
+  },
+  {
+    "id": "SPECIFIC-POS-ROUNDING-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-1038",
+      "tes": "TES-220",
+      "release": "v7.10.0",
+      "summary": "Rounding error on POS sales checkout (Restaurant)",
+      "addedToRegression": "true",
+      "testScope": "release"
+    },
+    "description": "Restaurant Reproduction of rounding-error-issue-129-57 @ws-1038",
+    "authType": "restaurant",
+    "paymentUrl": "\\/pos\\/restaurant-payments",
+    "fixture": "posRestaurantPage",
+    "caseData": {
+      "productName": "General Test Product iva 0",
+      "quantity": 35.5,
+      "unitPriceWithoutTax": 3.65,
+      "unitPriceWithTax": null,
+      "discountPercentage": 0,
+      "discountFixed": 0,
+      "expectedSubtotal": 129.58,
+      "expectedPaymentError": true,
+      "fallbackPaymentAmount": 129.57
+    }
+  }
+]

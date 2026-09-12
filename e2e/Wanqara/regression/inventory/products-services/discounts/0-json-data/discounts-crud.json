@@ -1,0 +1,23 @@
+[
+  {
+    "id": "DSC-CRUD-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo completo CRUD",
+      "testScope": "regression"
+    },
+    "description": "Retail - CRUD Completo de Descuento",
+    "authType": "retail",
+    "discountData": {
+      "name": "Descuento E2E Automático CRUD",
+      "description": "Creado, buscado y eliminado vía DDT",
+      "applicationMethod": "always",
+      "type": "fijo",
+      "discount": 10
+    }
+  }
+]

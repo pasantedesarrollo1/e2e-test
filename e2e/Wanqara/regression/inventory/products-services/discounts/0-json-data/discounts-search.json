@@ -1,0 +1,23 @@
+[
+  {
+    "id": "DSC-SEARCH-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de búsqueda aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Búsqueda de Descuento",
+    "authType": "retail",
+    "discountData": {
+      "name": "Descuento Búsqueda Especial",
+      "description": "Precondición UI para búsqueda",
+      "applicationMethod": "always",
+      "type": "porcentaje",
+      "discount": 10
+    }
+  }
+]

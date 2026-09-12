@@ -1,0 +1,14 @@
+[
+  {
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1033",
+      "tes": "TES-228",
+      "release": "v7.10.0",
+      "summary": "POS Change Order Status Flow",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant"
+  }
+]

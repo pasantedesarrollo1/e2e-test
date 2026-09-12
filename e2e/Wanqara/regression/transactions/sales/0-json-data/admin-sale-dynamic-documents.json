@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ADMIN-DYN-DOCS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-981",
+      "tes": "TES-206",
+      "release": "v7.9.1",
+      "summary": "Reactive Document Type by Subsidiary - Sales",
+      "addedToRegression": "2026-09-04",
+      "testScope": "regression"
+    },
+    "description": "validates dynamic document type restrictions when switching subsidiaries in Sales",
+    "targetPath": "/admin/ventas/add",
+    "steps": [
+      {
+        "subsidiaryCode": "001",
+        "description": "Access the sales module with an electronic invoicing-enabled subsidiary",
+        "expectedDefault": "Factura electrónica",
+        "expectElectronicOption": true
+      },
+      {
+        "subsidiaryCode": "100",
+        "description": "Switch dynamically to a subsidiary without electronic invoicing",
+        "expectedDefault": "Recibos",
+        "expectElectronicOption": false
+      },
+      {
+        "subsidiaryCode": "001",
+        "description": "Switch back to the electronic invoicing-enabled subsidiary",
+        "expectedDefault": "Factura electrónica",
+        "expectElectronicOption": true
+      }
+    ]
+  }
+]

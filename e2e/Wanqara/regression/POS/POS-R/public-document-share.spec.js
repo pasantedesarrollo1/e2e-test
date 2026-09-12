@@ -1,11 +1,11 @@
 import { test, expect } from "../harness/pos-fixtures.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../harness/auth.js";
-import { expectSnackbar } from "../../../harness/ui-helpers.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
+import { getSessionPath, ensureAuthenticated } from "../../../harness/helpers/auth.js";
+import { expectSnackbar } from "../../../harness/helpers/ui-helpers.js";
 import { selectClientByCedula } from "../harness/pos-sale-flow.js";
 import { searchAndSelectProduct } from "../harness/pos-search.js";
 import { completePayment } from "../harness/pos-payment.js";
-import { SEED } from "../../../harness/seed.js";
+import { SEED } from "../../../harness/config/seed.js";
 
 const TICKET = {
   ws: 'WS-995',

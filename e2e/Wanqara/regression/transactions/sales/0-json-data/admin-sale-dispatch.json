@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ADMIN-SALE-DISPATCH-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Mixed Cart WITH Subsequent Dispatch",
+      "testScope": "regression"
+    },
+    "description": "completes a sale with a mixed cart with subsequent dispatch enabled",
+    "authType": "dispatch",
+    "saleParams": {
+      "documentType": "Recibos",
+      "dispatchEnabled": true
+    }
+  },
+  {
+    "id": "ADMIN-SALE-DISPATCH-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Mixed Cart WITHOUT Subsequent Dispatch",
+      "testScope": "regression"
+    },
+    "description": "completes a sale with a mixed cart without subsequent dispatch enabled",
+    "authType": "retail",
+    "saleParams": {
+      "documentType": "Recibos",
+      "dispatchEnabled": false
+    }
+  }
+]

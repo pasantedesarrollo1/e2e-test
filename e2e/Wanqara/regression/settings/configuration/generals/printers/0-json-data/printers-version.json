@@ -1,0 +1,22 @@
+[
+  {
+    "id": "PRINTERS-VERSION-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "ws-1055",
+      "tes": "TES-219",
+      "release": "v7.10.0",
+      "summary": "Printer errors and new settings section",
+      "testScope": "release",
+      "addedToRegression": "true"
+    },
+    "description": "Verificar que la versión sugerida de la impresora exista en GitHub Releases",
+    "authType": "retail",
+    "printerData": {
+      "platformPrefix": "Windows ",
+      "githubReleasesUrl": "https://github.com/KevinWanqara/Wanqara-device-admin/releases"
+    }
+  }
+]

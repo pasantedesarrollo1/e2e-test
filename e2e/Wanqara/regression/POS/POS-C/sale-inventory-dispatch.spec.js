@@ -1,71 +1,57 @@
 import { test } from "../harness/pos-fixtures.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { SEED } from "../../../harness/seed.js";
-import { getSessionPath } from "../../../harness/auth.js";
+import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-inventory-dispatch.json"), "utf-8")
+);
+
 import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
 import { selectFirstVariant, selectFirstSerie } from "../harness/pos-products.js";
 
-function buildProbeProducts({ dispatchEnabled }) {
-  return [
-    {
-      ...SEED.products.estandar,
-      searchTerm: null,
-      afterProductSelect: null,
-    },
-    {
-      ...SEED.products.serie,
-      searchTerm: null,
-      type: "Serie-por-nombre",
-      afterProductSelect: dispatchEnabled ? null : selectFirstSerie,
-    },
-    {
-      ...SEED.products.tallaColor,
-      searchTerm: null,
-      type: "TallaColor-por-nombre",
-      afterProductSelect: selectFirstVariant,
-    },
-  ];
-}
+const CALLBACK_MAP = {
+  selectFirstVariant,
+  selectFirstSerie
+};
 
-async function executeSales(page, { tenantBaseUrl, dispatchEnabled }) {
-  const products = buildProbeProducts({ dispatchEnabled });
 
-  for (const { name, type, searchTerm, afterProductSelect } of products) {
-    await test.step(`Sale [${type}] — ${name}`, async () => {
+async function executeSales(page, { tenantBaseUrl, dispatchEnabled, products }) {
+  for (const product of products) {
+    const afterProductSelect = product.afterSelectCallback ? CALLBACK_MAP[product.afterSelectCallback] : null;
+    await test.step(`Sale [${product.type}] - ${product.name}`, async () => {
       await runPosSaleFlow(page, {
         tenantBaseUrl,
-        productName: name,
-        searchTerm,
+        productName: product.name,
+        searchTerm: null,
         afterProductSelect,
       });
     });
   }
 }
 
-test.describe("POS Retail — Sales WITH Post-Sale Inventory Dispatch @regression", () => {
-  requirePosCredentials(test);
+for (const scenario of scenarios) {
+  test.describe(`POS Retail - ${scenario.description} @${scenario.metadata?.testScope || 'regression'}`, () => {
+    requirePosCredentials(test);
 
-  test.use({ storageState: getSessionPath("dispatch") });
+    test.use({ storageState: getSessionPath(scenario.authType) });
 
-  test("completes multiple sales seamlessly with dispatch enabled", async ({ posPage: page }) => {
-    test.setTimeout(180_000);
-    await executeSales(page, {
-      tenantBaseUrl: getTenantBaseUrl(),
-      dispatchEnabled: true,
+    if (scenario.metadata && scenario.metadata.ws) {
+      annotateTicket(test, scenario.metadata);
+    }
+
+    test(`completes multiple sales seamlessly with dispatch ${scenario.dispatchEnabled ? 'enabled' : 'disabled'}`, async ({ posPage: page }) => {
+      test.setTimeout(180_000);
+      await executeSales(page, {
+        tenantBaseUrl: getTenantBaseUrl(),
+        dispatchEnabled: scenario.dispatchEnabled,
+        products: scenario.products,
+      });
     });
   });
-});
-
-test.describe("POS Retail — Sales WITHOUT Post-Sale Inventory Dispatch @regression", () => {
-  requirePosCredentials(test);
-
-  test.use({ storageState: getSessionPath("retail") });
-
-  test("completes multiple sales seamlessly with dispatch disabled", async ({ posPage: page }) => {
-    test.setTimeout(180_000);
-    await executeSales(page, {
-      tenantBaseUrl: getTenantBaseUrl(),
-      dispatchEnabled: false,
-    });
-  });
-});
+}

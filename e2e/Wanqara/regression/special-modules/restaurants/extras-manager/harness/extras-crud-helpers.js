@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../../harness/ui-helpers.js";
-import { SEED } from "../../../../../harness/seed.js";
+import { expectSnackbar } from "../../../../../harness/helpers/ui-helpers.js";
+import { SEED } from "../../../../../harness/config/seed.js";
 
 /**
  * Creates an extra category using the UI.
@@ -8,12 +8,12 @@ import { SEED } from "../../../../../harness/seed.js";
  * @param {string} categoryName 
  */
 export async function createExtraCategory(page, categoryName) {
-  const categoriesTab = page.getByRole('button', { name: /Categorías/i });
+  const categoriesTab = page.getByRole('button', { name: /Categor.as/i });
   if (await categoriesTab.isVisible()) {
     await categoriesTab.click();
   }
 
-  const createCategoryBtn = page.getByRole('button', { name: /Nueva categoría extra/i });
+  const createCategoryBtn = page.getByRole('button', { name: /Nueva categor.a extra/i });
   await expect(createCategoryBtn).toBeVisible();
   await createCategoryBtn.click();
 
@@ -47,7 +47,7 @@ export async function createExtraCategory(page, categoryName) {
  * @param {string[]} productNamesToSelect
  */
 export async function assignProductsToExtraCategory(page, categoryName, productSearchTerm, productNamesToSelect) {
-  const categorySearchInput = page.getByPlaceholder(/Buscar categoría/i);
+  const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
   await expect(categorySearchInput).toBeVisible();
   await categorySearchInput.fill(categoryName);
 
@@ -94,7 +94,7 @@ export async function assignProductsToExtraCategory(page, categoryName, productS
  * @param {import('@playwright/test').Page} page 
  */
 export async function verifyDeletionConstraintsAndRemoveProducts(page) {
-  const deleteCategoryBtn = page.getByRole("button", { name: "Eliminar categoría" });
+  const deleteCategoryBtn = page.getByRole("button", { name: /Eliminar categor.a/i });
   await expect(deleteCategoryBtn).toBeVisible();
   await deleteCategoryBtn.click();
 
@@ -132,7 +132,7 @@ export async function verifyDeletionConstraintsAndRemoveProducts(page) {
  * @param {import('@playwright/test').Page} page 
  */
 export async function deleteExtraCategory(page) {
-  const deleteCategoryBtn = page.getByRole("button", { name: "Eliminar categoría" });
+  const deleteCategoryBtn = page.getByRole("button", { name: /Eliminar categor.a/i });
   await expect(deleteCategoryBtn).toBeVisible();
   await deleteCategoryBtn.click();
 

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "DISPATCH-CRUD-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-983",
+      "tes": "TES-208",
+      "release": "v7.9.1",
+      "summary": "Dispatch Types",
+      "testScope": "regression"
+    },
+    "description": "Retail - Flujo completo de Tipo de Despacho",
+    "authType": "retail",
+    "dispatchData": {
+      "name": "Tipo Despacho Test",
+      "type": "Local",
+      "description": "Test automatizado de tipo de despacho"
+    }
+  }
+]

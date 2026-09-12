@@ -1,0 +1,21 @@
+[
+  {
+    "id": "BRD-CREATE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Validación de creación de marca aislada",
+      "testScope": "regression"
+    },
+    "description": "Retail - Solo Creación de Marca",
+    "authType": "retail",
+    "brandData": {
+      "name": "Marca Creada Aislada",
+      "order": "1",
+      "observation": "DDT - Prueba exclusiva de Creación"
+    }
+  }
+]

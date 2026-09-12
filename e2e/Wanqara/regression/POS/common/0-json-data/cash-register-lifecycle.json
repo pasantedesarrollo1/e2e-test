@@ -1,0 +1,17 @@
+[
+  {
+    "description": "validates conditional cash register open and final close",
+    "metadata": {
+      "ws": "WS-1032",
+      "tes": "TES-230",
+      "release": "v7.9.2",
+      "summary": "Cash Register Lifecycle - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "environment": "Retail",
+    "authType": "retail",
+    "basePath": "/pos/home",
+    "openingAmount": "10"
+  }
+]

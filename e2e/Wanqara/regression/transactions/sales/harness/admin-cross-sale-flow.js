@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../../harness/seed.js";
-import { ensureAuthenticated } from "../../../../harness/auth.js";
-import { selectClientByCedula } from '../../../../harness/client-helpers.js';
+import { SEED } from "../../../../harness/config/seed.js";
+import { ensureAuthenticated } from "../../../../harness/helpers/auth.js";
+import { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
 
 export async function selectCustomCheckout(page, bodegaName, cajaName) {
   const bodegaLabel = page.locator("main").getByText(/Bodega/i).first();
@@ -88,7 +88,7 @@ export async function selectCustomDocumentType(page, documentType) {
   await page.keyboard.press("Escape");
 }
 
-export { selectClientByCedula } from '../../../../harness/client-helpers.js';
+export { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
 
 import { searchAndSelectProduct, selectCheckout, submitAdminSale } from './admin-sale-flow.js';
 export { searchAndSelectProduct, selectCheckout, submitAdminSale };

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ADMIN-PRE-SALE-DOCS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Pre-Sales - Electronic Invoice",
+      "testScope": "regression"
+    },
+    "description": "successfully completes a pre-sale using an Electronic Invoice",
+    "authType": "restaurant",
+    "saleParams": {
+      "documentType": "Factura electrónica",
+      "productName": "Caja de alitas de pollo (100 u)"
+    }
+  },
+  {
+    "id": "ADMIN-PRE-SALE-DOCS-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Pre-Sales - Receipts (without dispatch)",
+      "testScope": "regression"
+    },
+    "description": "successfully completes a pre-sale using Receipts",
+    "authType": "retail",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)"
+    }
+  }
+]

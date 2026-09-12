@@ -1,0 +1,42 @@
+[
+  {
+    "id": "PROD-RECIPE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Valida que el producto elaborado muestre 2 decimales en UI y cantidad exacta en tooltip",
+      "testScope": "regression"
+    },
+    "description": "Retail - Producto Elaborado",
+    "authType": "retail",
+    "recipeData": {
+      "productName": "Porción de Alitas Marinadas - ToolTip",
+      "ingredientName": "Bowl de Alitas Marinadas (20 u)",
+      "exactAmount": "0.74626865671642",
+      "roundedAmount": "0.75"
+    }
+  },
+  {
+    "id": "PROD-RECIPE-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Valida que el producto pre-elaborado muestre 2 decimales en UI y cantidad exacta en tooltip",
+      "testScope": "regression"
+    },
+    "description": "Retail - Producto Pre-elaborado",
+    "authType": "retail",
+    "recipeData": {
+      "productName": "Bowl de Alitas Marinadas (20 u) - ToolTip",
+      "ingredientName": "Alita Individual",
+      "exactAmount": "0.30000300003",
+      "roundedAmount": "0.3"
+    }
+  }
+]

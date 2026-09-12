@@ -1,0 +1,23 @@
+[
+  {
+    "id": "SUPPORT-TICKETS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-986",
+      "tes": "TES-210",
+      "release": "v7.9.1",
+      "summary": "Support Tickets Search & Create",
+      "testScope": "regression",
+      "addedToRegression": "true"
+    },
+    "description": "Retail - Buscar Ticket de Soporte y Llenar Formulario",
+    "authType": "retail",
+    "ticketData": {
+      "searchId": "17902",
+      "whatsapp": "999999999",
+      "observation": "test automatizado"
+    }
+  }
+]

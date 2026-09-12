@@ -1,0 +1,284 @@
+[
+  {
+    "description": "Flow 1: Scanner and interface iteration",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Duplication",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "actions": [
+      {
+        "type": "searchByCode",
+        "expectedQuantity": 1
+      },
+      {
+        "type": "clickCard",
+        "expectedQuantity": 2
+      },
+      {
+        "type": "clickCartPlus",
+        "expectedQuantity": 3
+      },
+      {
+        "type": "searchByCode",
+        "expectedQuantity": 4
+      }
+    ],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productCode": "Caj000000001"
+  },
+  {
+    "description": "Flow 2: Manual override and increments",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Duplication",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "actions": [
+      {
+        "type": "clickCard",
+        "expectedQuantity": 1
+      },
+      {
+        "type": "setCartManualAmount",
+        "amount": 5,
+        "expectedQuantity": 5
+      },
+      {
+        "type": "clickCardBadgePlus",
+        "expectedQuantity": 6
+      },
+      {
+        "type": "searchByCode",
+        "expectedQuantity": 7
+      }
+    ],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productCode": "Caj000000001"
+  },
+  {
+    "description": "Flow 3: Chaos of sums and subtractions",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Duplication",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "actions": [
+      {
+        "type": "clickCard",
+        "expectedQuantity": 1
+      },
+      {
+        "type": "clickCardBadgePlus",
+        "expectedQuantity": 2
+      },
+      {
+        "type": "clickCartMinus",
+        "expectedQuantity": 1
+      },
+      {
+        "type": "setCartManualAmount",
+        "amount": 10,
+        "expectedQuantity": 10
+      },
+      {
+        "type": "clickCard",
+        "expectedQuantity": 11
+      }
+    ],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productCode": "Caj000000001"
+  },
+  {
+    "description": "Flow 4: Rapid fire codes",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Duplication",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "actions": [
+      {
+        "type": "searchByCode",
+        "expectedQuantity": 1
+      },
+      {
+        "type": "searchByCode",
+        "expectedQuantity": 2
+      },
+      {
+        "type": "clickCardBadgePlus",
+        "expectedQuantity": 3
+      },
+      {
+        "type": "searchByCode",
+        "expectedQuantity": 4
+      }
+    ],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productCode": "Caj000000001"
+  },
+  {
+    "description": "Flow 5: Consecutive scans without delay (scanner race condition)",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Duplication",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "actions": [
+      {
+        "type": "searchByCode",
+        "fast": true,
+        "expectedQuantity": 1
+      },
+      {
+        "type": "searchByCode",
+        "fast": true,
+        "expectedQuantity": 2
+      },
+      {
+        "type": "searchByCode",
+        "fast": true,
+        "expectedQuantity": 3
+      }
+    ],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productCode": "Caj000000001"
+  },
+  {
+    "description": "Flow 6: Double-click on badge (rapid badge race condition)",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Duplication",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "actions": [
+      {
+        "type": "clickCard",
+        "expectedQuantity": 1
+      },
+      {
+        "type": "clickCardBadgePlus",
+        "fast": true
+      },
+      {
+        "type": "clickCardBadgePlus",
+        "fast": true,
+        "expectedQuantity": 3
+      }
+    ],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productCode": "Caj000000001"
+  },
+  {
+    "description": "Flow 7: Double-click on product card (rapid card tap)",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Duplication",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "actions": [
+      {
+        "type": "clickCard",
+        "fast": true,
+        "expectedQuantity": 1
+      },
+      {
+        "type": "clickCard",
+        "fast": true,
+        "expectedQuantity": 2
+      }
+    ],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productCode": "Caj000000001"
+  },
+  {
+    "description": "Flow 8: Manual amount set to 0, then re-add via card",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Duplication",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "actions": [
+      {
+        "type": "clickCard",
+        "expectedQuantity": 1
+      },
+      {
+        "type": "setCartManualAmount",
+        "amount": 0
+      },
+      {
+        "type": "clickCard",
+        "expectedQuantity": 1
+      }
+    ],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productCode": "Caj000000001"
+  },
+  {
+    "description": "Flow 9: Scanner then badge plus, alternating mechanisms",
+    "metadata": {
+      "ws": "WS-1025",
+      "tes": "TES-211",
+      "release": "v7.9.1",
+      "summary": "POS Cart Duplication",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "retail",
+    "actions": [
+      {
+        "type": "searchByCode",
+        "expectedQuantity": 1
+      },
+      {
+        "type": "clickCardBadgePlus",
+        "expectedQuantity": 2
+      },
+      {
+        "type": "searchByCode",
+        "fast": true,
+        "expectedQuantity": 3
+      },
+      {
+        "type": "clickCardBadgePlus",
+        "fast": true,
+        "expectedQuantity": 4
+      }
+    ],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productCode": "Caj000000001"
+  }
+]
