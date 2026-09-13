@@ -1,5 +1,9 @@
 [
   {
+    "id": "SALE-INVENTORY-DISPATCH-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Sales WITH Post-Sale Inventory Dispatch",
     "metadata": {
       "ws": "WS-1009",
@@ -30,6 +34,10 @@
     ]
   },
   {
+    "id": "SALE-INVENTORY-DISPATCH-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Sales WITHOUT Post-Sale Inventory Dispatch",
     "metadata": {
       "ws": "WS-1009",

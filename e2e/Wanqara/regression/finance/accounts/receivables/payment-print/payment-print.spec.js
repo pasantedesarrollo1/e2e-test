@@ -1,8 +1,8 @@
 import { test } from "@playwright/test";
-import { annotateTicket } from "../../../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../../harness/config/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../../../harness/helpers/auth.js";
 import { getElectronicInvoicingAuthType } from "../../../../../harness/config/seed.js";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../../harness/config/settings.js";
+import { annotateTicket } from "../../../../../harness/helpers/annotate.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../../harness/helpers/auth.js";
 import { processPaymentAndVerifyPrinter } from "./harness/payment-print-helpers.js";
 
 import scenarios from "./0-json-data/payment-print.json" assert { type: "json" };

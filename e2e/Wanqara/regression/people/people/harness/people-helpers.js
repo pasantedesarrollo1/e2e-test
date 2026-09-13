@@ -1,8 +1,8 @@
 import { expect } from "@playwright/test";
-import { selectDropdownOption } from "../../../../harness/helpers/ui-helpers.js";
 import { withPath } from "../../../../harness/config/urls.js";
-import { searchInList, clickTableRowAction } from "../../../../harness/helpers/crud-helpers.js";
 import { ACTION_TOOLTIPS } from "../../../../harness/helpers/action-tooltips.js";
+import { clickTableRowAction, searchInList } from "../../../../harness/helpers/crud-helpers.js";
+import { selectDropdownOption } from "../../../../harness/helpers/ui-helpers.js";
 
 export async function fillPersonForm(page, data) {
   await page.getByPlaceholder("Nombre completo").fill(data.name);

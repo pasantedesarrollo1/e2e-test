@@ -1,16 +1,16 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
 import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
 import { getSessionPath } from "../../../../harness/helpers/auth.js";
 import { runAdminSaleFlow } from "../../sales/harness/admin-sale-flow.js";
 import {
   CARRIER_CASES,
   assignCarrier,
-  fillExternalWaybillForm,
-  fillVehiclePlate,
   fillAddressDetails,
-  selectFirstAvailableShipmentProductFromSale,
+  fillExternalWaybillForm,
   fillShipmentAmount,
+  fillVehiclePlate,
+  selectFirstAvailableShipmentProductFromSale,
   submitWaybillAndVerify,
 } from "./harness/waybill-helpers.js";
 

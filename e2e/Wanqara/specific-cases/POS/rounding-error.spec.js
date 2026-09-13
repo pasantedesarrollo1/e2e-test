@@ -1,18 +1,18 @@
-import { test, expect } from "@playwright/test";
-import { annotateTicket } from "../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../harness/config/settings.js";
-import { getSessionPath, ensureAuthenticated, withSessionWatchdog } from "../../harness/helpers/auth.js";
+import { expect, test } from "@playwright/test";
 import { SEED } from "../../harness/config/seed.js";
-import { ensureCashRegisterOpen } from "../../regression/POS/harness/cash-register-helpers.js";
-import { searchAndSelectProduct } from "../../regression/POS/harness/pos-search.js";
+import { getTenantBaseUrl, requirePosCredentials } from "../../harness/config/settings.js";
+import { annotateTicket } from "../../harness/helpers/annotate.js";
+import { ensureAuthenticated, getSessionPath, withSessionWatchdog } from "../../harness/helpers/auth.js";
 import { selectClientByCedula } from "../../harness/helpers/client-helpers.js";
+import { ensureCashRegisterOpen } from "../../regression/POS/harness/cash-register-helpers.js";
 import {
   openProductOptions,
+  saveProductOptions,
+  setDiscountInOptions,
   setQuantityInOptions,
   setUnitPriceInOptions,
-  setDiscountInOptions,
-  saveProductOptions,
 } from "../../regression/POS/harness/pos-product-options.js";
+import { searchAndSelectProduct } from "../../regression/POS/harness/pos-search.js";
 
 import scenarios from "./0-json-data/rounding-error.json" assert { type: "json" };
 

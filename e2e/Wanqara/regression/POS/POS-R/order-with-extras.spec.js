@@ -1,102 +1,104 @@
-import { test, expect } from "@playwright/test";
-import { requireChefCredentials, chefHarness, getTenantBaseUrl } from "../../../harness/config/settings.js";
-import { ensureChefAuthenticated, CHEF_SESSION_PATH } from "../../../harness/helpers/chef-auth.js";
-import { SEED } from "../../../harness/config/seed.js";
-import { 
-  openExtrasSelection, 
-  validateOutOfStockExtra, 
-  addInStockExtra, 
-  confirmExtrasAndAddToCart 
+import { expect, test } from "@playwright/test";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { chefHarness, getTenantBaseUrl, requireChefCredentials } from "../../../harness/config/settings.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { CHEF_SESSION_PATH, ensureChefAuthenticated } from "../../../harness/helpers/chef-auth.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "order-with-extras.json"), "utf-8")
+);
+
+import { searchAndSelectProduct, selectTable, submitOrder } from "./harness/chef-orders-flow.js";
+import {
+  addInStockExtra,
+  confirmExtrasAndAddToCart,
+  openExtrasSelection,
+  validateOutOfStockExtra
 } from "./harness/pos-extras-helpers.js";
-import { selectTable, searchAndSelectProduct, submitOrder } from "./harness/chef-orders-flow.js";
-import { 
-  navigateToRestaurantPOS, 
-  openAndSelectOrder, 
-  collectOrder, 
+import {
+  closeAllActiveOrders,
+  collectOrder,
   finalizeSaleWithPayment,
-  closeAllActiveOrders
+  navigateToRestaurantPOS,
+  openAndSelectOrder
 } from "./harness/pos-orders-common.js";
 
-const TICKET = {
-  ws: null,
-  tes: 'TES-214',
-  release: 'v7.10.0',
-  summary: 'Implementar test de creacion de categoria extra',
-  addedToRegression: 'true',
-};
 
-test.describe.serial("Restaurant POS - Order with Extras @release", () => {
-  requireChefCredentials(test);
+for (const scenario of scenarios) {
+  test.describe.serial(`Restaurant POS ${scenario.description} - Order with Extras @${scenario.metadata?.testScope || 'regression'} @release`, () => {
+    requireChefCredentials(test);
 
-  test.use({ storageState: CHEF_SESSION_PATH });
+    test.use({ storageState: CHEF_SESSION_PATH });
 
-  let baseProduct;
-  let sinStockExtra;
-  let conStockExtra;
+    let baseProduct = scenario.extrasData.baseProduct;
+    let sinStockExtra = scenario.extrasData.sinStockExtra;
+    let conStockExtra = scenario.extrasData.conStockExtra;
 
-  test.beforeAll(() => {
-    baseProduct = SEED.extrasManager.products.baseProduct;
-    sinStockExtra = SEED.extrasManager.products.items.sinStock.name;
-    conStockExtra = SEED.extrasManager.products.items.conStock.name;
-  });
+    if (scenario.metadata && scenario.metadata.ws) {
+      annotateTicket(test, scenario.metadata);
+    }
 
-  test.beforeEach(async ({ page }) => {
-    const chefBaseUrl = chefHarness.baseUrl;
-    await ensureChefAuthenticated(page, {
-      chefBaseUrl,
-      targetPath: "/tables"
+    test.beforeEach(async ({ page }) => {
+      const chefBaseUrl = chefHarness.baseUrl;
+      await ensureChefAuthenticated(page, {
+        chefBaseUrl,
+        targetPath: "/tables"
+      });
+      
+      await expect(page).toHaveURL(/\/tables/);
+      await expect(page.getByText(chefHarness.login.ruc).first()).toBeAttached();
+      await expect(
+        page.locator("ion-segment-button").filter({ hasText: "Todos" })
+      ).toBeVisible();
     });
-    
-    await expect(page).toHaveURL(/\/tables/);
-    await expect(page.getByText(chefHarness.login.ruc).first()).toBeAttached();
-    await expect(
-      page.locator("ion-segment-button").filter({ hasText: "Todos" })
-    ).toBeVisible();
-  });
 
-  test("selects a product and opens the modifiers sheet", async ({ page }) => {
-    await selectTable(page);
-    await searchAndSelectProduct(page, baseProduct);
-    
-    // Open the extras selection
-    await openExtrasSelection(page);
-  });
+    test("selects a product and opens the modifiers sheet", async ({ page }) => {
+      await selectTable(page);
+      await searchAndSelectProduct(page, baseProduct);
+      await openExtrasSelection(page);
+    });
 
-  test("validates out-of-stock extra shows correct labels and notifications", async ({ page }) => {
-    await selectTable(page);
-    await searchAndSelectProduct(page, baseProduct);
-    await openExtrasSelection(page);
-    
-    await validateOutOfStockExtra(page, sinStockExtra);
-  });
+    test("validates out-of-stock extra shows correct labels and notifications", async ({ page }) => {
+      await selectTable(page);
+      await searchAndSelectProduct(page, baseProduct);
+      await openExtrasSelection(page);
+      await validateOutOfStockExtra(page, sinStockExtra);
+    });
 
-  test("adds an in-stock extra, completes the order, and processes payment in POS", async ({ page }) => {
-    const tenantBaseUrl = getTenantBaseUrl();
-    await closeAllActiveOrders(page, tenantBaseUrl);
-    
-    // Now we must ensure we are back in the chef view
-    const chefBaseUrl = chefHarness.baseUrl;
-    await ensureChefAuthenticated(page, { chefBaseUrl, targetPath: "/tables" });
-    
-    const tableName = await selectTable(page);
-    await searchAndSelectProduct(page, baseProduct);
-    await openExtrasSelection(page);
-    
-    await addInStockExtra(page, conStockExtra);
-    await confirmExtrasAndAddToCart(page);
-    await submitOrder(page);
-    
-    // Now switch to the POS and collect the payment
-    await navigateToRestaurantPOS(page, tenantBaseUrl);
-    
-    // Open the pending order
-    await openAndSelectOrder(page, tableName);
-    
-    // Collect order and finalize payment
-    await collectOrder(page);
-    await finalizeSaleWithPayment(page);
-    
-    // Verify successful payment (e.g., success snackbar or preticket dialog)
-    // The finalizeSaleWithPayment helper waits for the payment to complete
+    test("adds an in-stock extra, completes the order, and processes payment in POS", async ({ page, browser }) => {
+      test.setTimeout(180000);
+      const tenantBaseUrl = getTenantBaseUrl();
+      
+      // Cleanup using an isolated POS context
+      const cleanupContext = await browser.newContext({ storageState: getSessionPath("restaurant") });
+      const cleanupPage = await cleanupContext.newPage();
+      await closeAllActiveOrders(cleanupPage, tenantBaseUrl);
+      await cleanupContext.close();
+      
+      // Use the chef page for chef actions
+      const tableName = await selectTable(page);
+      await searchAndSelectProduct(page, baseProduct);
+      await openExtrasSelection(page);
+      
+      await addInStockExtra(page, conStockExtra);
+      await confirmExtrasAndAddToCart(page);
+      await submitOrder(page);
+      
+      // Create isolated POS context to collect payment
+      const posContext = await browser.newContext({ storageState: getSessionPath("restaurant") });
+      const posPage = await posContext.newPage();
+      
+      await navigateToRestaurantPOS(posPage, tenantBaseUrl);
+      await openAndSelectOrder(posPage, tableName);
+      await collectOrder(posPage);
+      await finalizeSaleWithPayment(posPage);
+      
+      await posContext.close();
+    });
   });
-});
+}

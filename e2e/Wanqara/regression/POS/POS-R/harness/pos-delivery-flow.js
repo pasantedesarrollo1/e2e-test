@@ -1,5 +1,4 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../../harness/config/seed.js";
 import { fillIdentityModal } from "../../../../harness/helpers/client-helpers.js";
 import { expectSnackbar } from "../../../../harness/helpers/ui-helpers.js";
 

@@ -1,0 +1,21 @@
+[
+  {
+    "id": "UPDATE-ORDER-FLOW-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1042",
+      "tes": "TES-237",
+      "release": "v7.10.0",
+      "summary": "POS Update Order Flow",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant",
+    "updateData": {
+      "productName": "Caja de alitas de pollo (100 u)"
+    }
+  }
+]

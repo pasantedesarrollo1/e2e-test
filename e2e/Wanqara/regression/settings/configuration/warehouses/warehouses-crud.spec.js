@@ -1,10 +1,10 @@
 import { test } from '@playwright/test';
-import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from '../../../../harness/config/settings.js';
-import { getSessionPath, ensureAuthenticated } from "../../../../harness/helpers/auth.js";
+import { getTenantBaseUrl, requirePosCredentials } from '../../../../harness/config/settings.js';
 import { withPath } from '../../../../harness/config/urls.js';
-import { deleteRecordFromList } from '../../../../harness/helpers/crud-helpers.js';
 import { ACTION_TOOLTIPS } from '../../../../harness/helpers/action-tooltips.js';
+import { annotateTicket } from "../../../../harness/helpers/annotate.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth.js";
+import { deleteRecordFromList } from '../../../../harness/helpers/crud-helpers.js';
 import { createWarehouse } from "./harness/warehouses-helpers.js";
 
 import scenarios from "./0-json-data/warehouses-crud.json" assert { type: "json" };

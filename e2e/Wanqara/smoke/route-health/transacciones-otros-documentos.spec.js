@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../harness/config/settings.js";
+import { getTenantBaseUrl, requirePosCredentials } from "../../harness/config/settings.js";
+import { assertPageTitle, assertTextContains, assertTextVisible } from "./harness/smoke-assertions.js";
 import { generateSmokeTests } from "./harness/smoke-nav.js";
-import { assertPageTitle, assertTextVisible, assertTextContains } from "./harness/smoke-assertions.js";
 
 test.describe("Smoke — Transacciones > Otros Documentos", { tag: "@smoke" }, () => {
   requirePosCredentials(test);

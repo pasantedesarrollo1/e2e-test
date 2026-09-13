@@ -1,0 +1,23 @@
+[
+  {
+    "id": "ORDER-WITH-EXTRAS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Order with Extras",
+    "metadata": {
+      "ws": "WS-1038",
+      "tes": "TES-214",
+      "release": "v7.10.0",
+      "summary": "Implementar test de creacion de categoria extra",
+      "addedToRegression": "true",
+      "testScope": "release"
+    },
+    "authType": "chef",
+    "extrasData": {
+      "baseProduct": "Caja de alitas de pollo",
+      "sinStockExtra": "extra alitas sin stock",
+      "conStockExtra": "extra alitas stock"
+    }
+  }
+]

@@ -1,5 +1,9 @@
 [
   {
+    "id": "CASH-REGISTER-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "validates conditional cash register open and final close",
     "metadata": {
       "ws": "WS-1032",
@@ -12,6 +16,9 @@
     "environment": "Retail",
     "authType": "retail",
     "basePath": "/pos/home",
-    "openingAmount": "10"
+    "openingAmount": "10",
+    "subsidiaryName": "Wanqara Comercios 100",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "0000000001"
   }
 ]

@@ -1,5 +1,4 @@
 import { expect } from "@playwright/test";
-import { clickTableRowAction } from "../../../../../../harness/helpers/crud-helpers.js";
 import { selectClientFromSearchModal } from "../../../../../../harness/helpers/client-helpers.js";
 
 export async function selectClientAndAccounts(page, { cedula }) {

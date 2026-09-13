@@ -1,6 +1,6 @@
-import { test, expect } from "@playwright/test";
-import { openDrawer } from "../../harness/pos-sale-flow.js";
+import { expect, test } from "@playwright/test";
 import { expectSnackbar } from "../../../../harness/helpers/ui-helpers.js";
+import { openDrawer } from "../../harness/pos-sale-flow.js";
 
 export async function assignTipToSale(page, amount) {
   await test.step(`Asignar propina adicional de ${amount}`, async () => {

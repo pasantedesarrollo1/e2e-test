@@ -1,5 +1,9 @@
 [
   {
+    "id": "STRESS-CART-DUPLICATION-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Retail",
     "metadata": {
       "ws": "WS-1025",
@@ -14,6 +18,10 @@
     "searchKeyword": "alitas"
   },
   {
+    "id": "STRESS-CART-DUPLICATION-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Restaurant",
     "metadata": {
       "ws": "WS-1025",

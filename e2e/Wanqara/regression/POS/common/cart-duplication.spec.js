@@ -1,8 +1,7 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
 import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { ensureAuthenticated } from "../../../harness/helpers/auth.js";
+import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth.js";
 
 import fs from "fs";
 import path from "path";

@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
 import { getSessionPath } from "../../../../harness/helpers/auth.js";
-import { createDiscount, searchDiscount, deleteDiscount } from "./harness/discount-helpers.js";
+import { createDiscount, deleteDiscount, searchDiscount } from "./harness/discount-helpers.js";
 
 import scenarios from "./0-json-data/discounts-crud.json" assert { type: "json" };
 

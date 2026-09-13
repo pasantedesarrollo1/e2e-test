@@ -1,19 +1,19 @@
-import { test, expect } from "@playwright/test";
-import { annotateTicket } from "../../../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../../harness/config/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../../../harness/helpers/auth.js";
+import { expect, test } from "@playwright/test";
 import { getElectronicInvoicingAuthType } from "../../../../../harness/config/seed.js";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../../harness/config/settings.js";
+import { annotateTicket } from "../../../../../harness/helpers/annotate.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../../harness/helpers/auth.js";
 import { clickTableRowAction } from "../../../../../harness/helpers/crud-helpers.js";
 
 import {
-  selectClientAndAccounts,
-  fillPaymentDetailsAndSubmit,
-  searchReceivableAccount,
-  validateInitialDeletionError,
-  navigateToSettlementDetails,
-  generateAndViewPDF,
   confirmFinalDeletion,
-  printPaymentTicket
+  fillPaymentDetailsAndSubmit,
+  generateAndViewPDF,
+  navigateToSettlementDetails,
+  printPaymentTicket,
+  searchReceivableAccount,
+  selectClientAndAccounts,
+  validateInitialDeletionError
 } from "./harness/multiple-receivables-helpers.js";
 
 import scenarios from "./0-json-data/multiple-receivables.json" assert { type: "json" };

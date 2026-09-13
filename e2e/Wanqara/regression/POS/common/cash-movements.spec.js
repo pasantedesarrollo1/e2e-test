@@ -1,13 +1,12 @@
-import { test, expect } from "../harness/pos-fixtures.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
-import { SEED } from "../../../harness/config/seed.js";
-import { openDrawer, closeDrawer, runPosSaleFlow } from "../harness/pos-sale-flow.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { withPath } from "../../../harness/config/urls.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
+import { withPath } from "../../../harness/config/urls.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { expect, test } from "../harness/pos-fixtures.js";
+import { closeDrawer, openDrawer, runPosSaleFlow } from "../harness/pos-sale-flow.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,7 +19,7 @@ async function clickCashMovementOption(page, drawer) {
   await option.click({ force: true });
 }
 
-async function fillAndSubmitCashForm(page, type) {
+async function fillAndSubmitCashForm(page, type, scenario) {
   const dialog = page.locator(".v-overlay__content").filter({
     hasText: /Registro de Ingresos\/Egresos/i,
   }).first();
@@ -30,11 +29,11 @@ async function fillAndSubmitCashForm(page, type) {
   await typeSpan.click();
 
   const montoField = dialog.getByPlaceholder('Monto');
-  await montoField.fill(SEED.cashMovement.monto);
+  await montoField.fill(scenario.cashMovement.monto);
   await montoField.press("Tab");
 
   const descField = dialog.getByRole('textbox', { name: /Descripción/i });
-  await descField.fill(SEED.cashMovement.descripcion);
+  await descField.fill(scenario.cashMovement.descripcion);
   await descField.press("Tab");
 
   const saveBtnLabel = type === "in" ? /Guardar Ingreso/i : /Guardar Egreso/i;
@@ -65,14 +64,18 @@ test.describe("POS - Cash Register Income and Expense Transactions", () => {
 
   for (const scenario of scenarios) {
     test.describe(`Environment: ${scenario.environment} @${scenario.metadata.testScope}`, () => {
+      if (scenario.skip) {
+        test.skip(true, scenario.skipReason);
+      }
+
       requirePosCredentials(test);
       test.use({ storageState: getSessionPath(scenario.authType) });
 
       const runTest = (title, bodyFn) => {
         if (scenario.fixture === 'posPage') {
-          test(title, async ({ posPage: page }) => await bodyFn(page));
+          test(scenario.only ? `${title} (focus)` : title, { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined }, async ({ posPage: page }) => await bodyFn(page));
         } else {
-          test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
+          test(scenario.only ? `${title} (focus)` : title, { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined }, async ({ posRestaurantPage: page }) => await bodyFn(page));
         }
       };
 
@@ -83,7 +86,7 @@ test.describe("POS - Cash Register Income and Expense Transactions", () => {
             await runPosSaleFlow(page, {
               tenantBaseUrl: getTenantBaseUrl(),
               skipNavigation: true,
-              productName: SEED.products.estandar.name,
+              productName: scenario.productName,
               searchTerm: null,
             });
             const basePath = scenario.basePath;
@@ -98,7 +101,7 @@ test.describe("POS - Cash Register Income and Expense Transactions", () => {
             await test.step(`Registrar ${action === 'in' ? 'ingreso' : 'egreso'}`, async () => {
               const drawer = await openDrawer(page, triggerLocator, drawerFilter);
               await clickCashMovementOption(page, drawer);
-              await fillAndSubmitCashForm(page, action);
+              await fillAndSubmitCashForm(page, action, scenario);
               await closeDrawer(page, drawerFilter);
             });
           }

@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
 import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../../harness/helpers/auth.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth.js";
 import { filterByWaiter } from "../harness/restaurant-helpers.js";
 
 import scenarios from "./0-json-data/orders-waiter-filter.json" assert { type: "json" };

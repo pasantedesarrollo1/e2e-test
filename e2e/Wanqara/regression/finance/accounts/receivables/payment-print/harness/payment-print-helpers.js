@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { searchReceivableAccount, fillSingleReceivablePayment } from "../../../payments/multiple-payment/harness/multiple-receivables-helpers.js";
 import { clickTableRowAction } from "../../../../../../harness/helpers/crud-helpers.js";
+import { fillSingleReceivablePayment, searchReceivableAccount } from "../../../payments/multiple-payment/harness/multiple-receivables-helpers.js";
 
 export async function processPaymentAndVerifyPrinter(page, { cedula, amount, description, paymentMethodRegex }) {
   await searchReceivableAccount(page, cedula);

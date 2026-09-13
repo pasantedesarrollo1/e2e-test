@@ -1,21 +1,21 @@
-import { test as setup, expect } from "@playwright/test";
+import { expect, test as setup } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
 
-import { 
-  clearSharedSessionSuspect, 
-  loginAndSelectSubsidiary, 
-  getSessionPath, 
-  logoutAndLoginAgain 
-} from "../helpers/auth.js";
+import { SEED } from "../config/seed.js";
 import {
-  hasTenantData,
-  hasLoginCredentials,
   getTenantBaseUrl,
+  hasLoginCredentials,
+  hasTenantData,
   playwrightHarness,
 } from "../config/settings.js";
-import { SEED } from "../config/seed.js";
 import { withPath } from "../config/urls.js";
+import {
+  clearSharedSessionSuspect,
+  getSessionPath,
+  loginAndSelectSubsidiary,
+  logoutAndLoginAgain
+} from "../helpers/auth.js";
 
 
 const authType = "restaurant";

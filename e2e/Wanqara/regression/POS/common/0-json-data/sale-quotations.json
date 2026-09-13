@@ -1,5 +1,9 @@
 [
   {
+    "id": "SALE-QUOTATIONS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Retail",
     "metadata": {
       "ws": "WS-1007",
@@ -21,6 +25,10 @@
     }
   },
   {
+    "id": "SALE-QUOTATIONS-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Restaurant",
     "metadata": {
       "ws": "WS-1007",

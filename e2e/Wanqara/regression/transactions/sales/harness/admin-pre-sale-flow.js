@@ -10,12 +10,12 @@ export const selectCheckout = (page) => _selectCheckout(page, /\/admin\/pre-sale
 import { selectDocumentType } from './admin-document-helpers.js';
 export { selectDocumentType };
 
-export { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
+  export { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
 
 import { searchAndSelectProduct } from './admin-sale-flow.js';
 export { searchAndSelectProduct };
 
-export { applyGeneralDiscount, applyManualSurcharge } from '../../harness/admin-modifier-helpers.js';
+  export { applyGeneralDiscount, applyManualSurcharge } from '../../harness/admin-modifier-helpers.js';
 
 export async function selectPaymentMethod(page, methodName = SEED.paymentMethods.efectivo.label) {
   const methodItem = page.getByText(methodName, { exact: true }).first();

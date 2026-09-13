@@ -1,13 +1,13 @@
 import { test } from "@playwright/test";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { requirePosCredentials, requireChefCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { runReleasePosSaleFlow, finalizeValidatedRestaurantSale } from "../harness/pos-cross-sale-flow.js";
-import { PosSaleBuilder } from "../../../harness/helpers/builders/pos-sale-builder.js";
-import { createChefOrder, navigateToRestaurantPOS, openAndSelectOrder, closeAllActiveOrders } from "../POS-R/harness/pos-orders-common.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { getTenantBaseUrl, requireChefCredentials, requirePosCredentials } from "../../../harness/config/settings.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { PosSaleBuilder } from "../../../harness/helpers/builders/pos-sale-builder.js";
+import { finalizeValidatedRestaurantSale } from "../harness/pos-cross-sale-flow.js";
+import { closeAllActiveOrders, createChefOrder, navigateToRestaurantPOS, openAndSelectOrder } from "../POS-R/harness/pos-orders-common.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

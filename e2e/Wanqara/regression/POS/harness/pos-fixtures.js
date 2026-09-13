@@ -1,8 +1,8 @@
 import { test as base, expect } from "@playwright/test";
+import { SEED } from "../../../harness/config/seed.js";
 import { getTenantBaseUrl } from "../../../harness/config/settings.js";
 import { ensureAuthenticated, withSessionWatchdog } from "../../../harness/helpers/auth.js";
 import { ensureCashRegisterOpen } from "./cash-register-helpers.js";
-import { SEED } from "../../../harness/config/seed.js";
 
 const grantSetupHeadroom = (testInfo, ms) => testInfo.setTimeout(testInfo.timeout + ms);
 

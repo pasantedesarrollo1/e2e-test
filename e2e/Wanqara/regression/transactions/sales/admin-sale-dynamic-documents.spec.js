@@ -1,14 +1,14 @@
-import { test, expect } from "@playwright/test";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../harness/helpers/auth.js";
+import { expect, test } from "@playwright/test";
 import { getElectronicInvoicingAuthType } from "../../../harness/config/seed.js";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth.js";
+import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
 import {
   getAvailableDocumentOptions,
-  waitForFormDefaults,
-  getDocumentTypeLocator
+  getDocumentTypeLocator,
+  waitForFormDefaults
 } from "./harness/admin-dynamic-documents-helpers.js";
-import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
 
 import scenarios from "./0-json-data/admin-sale-dynamic-documents.json" assert { type: "json" };
 

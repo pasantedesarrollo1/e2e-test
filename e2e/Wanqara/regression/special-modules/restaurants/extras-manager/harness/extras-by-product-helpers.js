@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../../harness/helpers/ui-helpers.js";
 import { SEED } from "../../../../../harness/config/seed.js";
+import { expectSnackbar } from "../../../../../harness/helpers/ui-helpers.js";
 
 /**
  * Tests the "Por producto" flow: relates products to a category and cleans them up.

@@ -16,7 +16,10 @@
     "authType": "retail",
     "transaction": {
       "path": "/admin/ventas/add",
-      "endpoint": "/api/v2/billing/sales"
+      "endpoint": "/api/v2/billing/sales",
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": "EFECTIVO"
     },
     "sucursales": [
       {
@@ -60,7 +63,10 @@
     "authType": "retail",
     "transaction": {
       "path": "/admin/pre-sale/add",
-      "endpoint": "/api/v2/billing/pre-sales"
+      "endpoint": "/api/v2/billing/pre-sales",
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": "EFECTIVO"
     },
     "sucursales": [
       {

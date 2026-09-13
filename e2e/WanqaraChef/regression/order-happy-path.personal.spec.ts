@@ -5,8 +5,8 @@ import {
   completeObsWithoutExtrasOrder,
   completeSimpleOrder,
 } from '../harness/order.js';
-import { hasFullCredentials, requireCredentials } from '../harness/settings.js';
 import { independentPosCleanup } from '../harness/pos-cleanup.js';
+import { hasFullCredentials, requireCredentials } from '../harness/settings.js';
 
 test.describe('Order happy path personal @regression', () => {
   const usedTableIds: string[] = [];

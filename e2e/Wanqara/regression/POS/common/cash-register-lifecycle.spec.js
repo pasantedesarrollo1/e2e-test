@@ -1,14 +1,14 @@
-import { test, expect } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
-import { SEED } from "../../../harness/config/seed.js";
-import { getSessionPath, ensureAuthenticated } from "../../../harness/helpers/auth.js";
-import { closeCashRegister } from "../harness/cash-register-helpers.js";
-import { withPath } from "../../../harness/config/urls.js";
-import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { expect, test } from "@playwright/test";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
+import { withPath } from "../../../harness/config/urls.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth.js";
+import { selectClientByCedula } from "../../../harness/helpers/client-helpers.js";
+import { closeCashRegister } from "../harness/cash-register-helpers.js";
+import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,14 +25,18 @@ test.describe("POS - Cash Register Lifecycle @regression", () => {
 
   for (const scenario of scenarios) {
     test.describe(`Environment: ${scenario.environment}`, () => {
+      if (scenario.skip) {
+        test.skip(true, scenario.skipReason);
+      }
+
       requirePosCredentials(test);
       test.use({ storageState: getSessionPath(scenario.authType) });
 
-      test(scenario.description, async ({ page }) => {
+      test(scenario.only ? `${scenario.description} (focus)` : scenario.description, { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined }, async ({ page }) => {
         test.setTimeout(180_000);
         
         const tenantBaseUrl = getTenantBaseUrl();
-        const subsidiaryName = SEED.subsidiaries[scenario.authType].name;
+        const subsidiaryName = scenario.subsidiaryName;
 
         await test.step("Navegar al home del POS", async () => {
            await ensureAuthenticated(page, {
@@ -52,6 +56,18 @@ test.describe("POS - Cash Register Lifecycle @regression", () => {
       const currentUrl = page.url();
       if (currentUrl.match(/\/pos\/home/)) {
         await test.step("Caja detectada como ABIERTA: Cerrando caja antes de reabrir", async () => {
+          await test.step("Realizar venta requerida antes del cierre", async () => {
+            await selectClientByCedula(page, scenario.clientCedula);
+            await runPosSaleFlow(page, {
+              tenantBaseUrl,
+              skipNavigation: true,
+              productName: scenario.productName,
+              searchTerm: null,
+            });
+            await page.goto(withPath(tenantBaseUrl, '/pos/home'));
+            await page.waitForURL(/\/pos\/home/);
+          });
+          
           await closeCashRegister(page, tenantBaseUrl);
           await page.goto(withPath(tenantBaseUrl, '/pos/home'));
           await page.waitForURL(/\/pos\/open-cash-register/);
@@ -97,10 +113,11 @@ test.describe("POS - Cash Register Lifecycle @regression", () => {
     });
 
     await test.step("Realizar venta de caja de alitas de pollo", async () => {
+      await selectClientByCedula(page, scenario.clientCedula);
       await runPosSaleFlow(page, {
         tenantBaseUrl,
         skipNavigation: true,
-        productName: SEED.products.estandar.name,
+        productName: scenario.productName,
         searchTerm: null,
       });
       await page.goto(withPath(tenantBaseUrl, '/pos/home'));

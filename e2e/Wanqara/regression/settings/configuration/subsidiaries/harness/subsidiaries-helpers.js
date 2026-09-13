@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { selectDropdownOption, expectSnackbar } from "../../../../../harness/helpers/ui-helpers.js";
+import { expectSnackbar, selectDropdownOption } from "../../../../../harness/helpers/ui-helpers.js";
 
 export async function createSubsidiary(page, { 
   name, 

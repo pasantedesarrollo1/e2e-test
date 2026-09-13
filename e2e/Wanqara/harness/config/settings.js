@@ -1,7 +1,6 @@
 // e2e/harness/config/settings.js
 
-import { assertNonProductionBaseUrl } from "./urls.js";
-import { buildTenantBaseUrl } from "./urls.js";
+import { assertNonProductionBaseUrl, buildTenantBaseUrl } from "./urls.js";
 
 
 // Validar Base URL central

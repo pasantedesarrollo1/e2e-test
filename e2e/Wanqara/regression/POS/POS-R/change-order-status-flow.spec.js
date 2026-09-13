@@ -1,14 +1,14 @@
 import { test } from "@playwright/test";
-import {
-  requirePosCredentials,
-  requireChefCredentials,
-  getTenantBaseUrl,
-} from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import {
+  getTenantBaseUrl,
+  requireChefCredentials,
+  requirePosCredentials,
+} from "../../../harness/config/settings.js";
 import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,18 +17,18 @@ const scenarios = JSON.parse(
 );
 
 import {
-  createChefOrder,
-  navigateToRestaurantPOS,
-  navigateToChangeOrderStatusFromOptions,
-  closeAllActiveOrders,
-} from "./harness/pos-orders-common.js";
-import { 
-  printPreticket 
+  printPreticket
 } from "./harness/chef-orders-flow.js";
 import {
-  selectOrderToChangeStatus,
   processOrderStatusChange,
+  selectOrderToChangeStatus,
 } from "./harness/pos-change-order-status.js";
+import {
+  closeAllActiveOrders,
+  createChefOrder,
+  navigateToChangeOrderStatusFromOptions,
+  navigateToRestaurantPOS,
+} from "./harness/pos-orders-common.js";
 
 for (const scenario of scenarios) {
   test.describe.serial(`POS ${scenario.description} - Change Order Status Flow @${scenario.metadata?.testScope || 'regression'}`, () => {

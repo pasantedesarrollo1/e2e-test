@@ -1,5 +1,9 @@
 [
   {
+    "id": "CART-DUPLICATION-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Flow 1: Scanner and interface iteration",
     "metadata": {
       "ws": "WS-1025",
@@ -32,6 +36,10 @@
     "productCode": "Caj000000001"
   },
   {
+    "id": "CART-DUPLICATION-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Flow 2: Manual override and increments",
     "metadata": {
       "ws": "WS-1025",
@@ -65,6 +73,10 @@
     "productCode": "Caj000000001"
   },
   {
+    "id": "CART-DUPLICATION-003",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Flow 3: Chaos of sums and subtractions",
     "metadata": {
       "ws": "WS-1025",
@@ -102,6 +114,10 @@
     "productCode": "Caj000000001"
   },
   {
+    "id": "CART-DUPLICATION-004",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Flow 4: Rapid fire codes",
     "metadata": {
       "ws": "WS-1025",
@@ -134,6 +150,10 @@
     "productCode": "Caj000000001"
   },
   {
+    "id": "CART-DUPLICATION-005",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Flow 5: Consecutive scans without delay (scanner race condition)",
     "metadata": {
       "ws": "WS-1025",
@@ -165,6 +185,10 @@
     "productCode": "Caj000000001"
   },
   {
+    "id": "CART-DUPLICATION-006",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Flow 6: Double-click on badge (rapid badge race condition)",
     "metadata": {
       "ws": "WS-1025",
@@ -194,6 +218,10 @@
     "productCode": "Caj000000001"
   },
   {
+    "id": "CART-DUPLICATION-007",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Flow 7: Double-click on product card (rapid card tap)",
     "metadata": {
       "ws": "WS-1025",
@@ -220,6 +248,10 @@
     "productCode": "Caj000000001"
   },
   {
+    "id": "CART-DUPLICATION-008",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Flow 8: Manual amount set to 0, then re-add via card",
     "metadata": {
       "ws": "WS-1025",
@@ -248,6 +280,10 @@
     "productCode": "Caj000000001"
   },
   {
+    "id": "CART-DUPLICATION-009",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Flow 9: Scanner then badge plus, alternating mechanisms",
     "metadata": {
       "ws": "WS-1025",

@@ -1,10 +1,9 @@
-import { test as setup, expect } from "@playwright/test";
-import path from "node:path";
+import { expect, test as setup } from "@playwright/test";
 import fs from "node:fs";
-import { fileURLToPath } from "node:url";
+import path from "node:path";
 
-import { loginChef, CHEF_AUTH_PATH, CHEF_SESSION_PATH } from "../helpers/chef-auth.js";
-import { hasChefCredentials, chefHarness } from "../config/settings.js";
+import { chefHarness, hasChefCredentials } from "../config/settings.js";
+import { CHEF_AUTH_PATH, CHEF_SESSION_PATH, loginChef } from "../helpers/chef-auth.js";
 
 setup("authenticate chef", async ({ page }) => {
   fs.mkdirSync(path.dirname(CHEF_SESSION_PATH), { recursive: true });

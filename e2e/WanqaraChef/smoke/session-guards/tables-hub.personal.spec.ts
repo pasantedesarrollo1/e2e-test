@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { visibleTestId } from '../../harness/ionic.js';
-import { expectTablesHub } from '../../harness/tables.js';
 import { hasFullCredentials, requireCredentials } from '../../harness/settings.js';
+import { expectTablesHub } from '../../harness/tables.js';
 
 test.describe('Tables hub personal @smoke', () => {
   test.beforeEach(() => {

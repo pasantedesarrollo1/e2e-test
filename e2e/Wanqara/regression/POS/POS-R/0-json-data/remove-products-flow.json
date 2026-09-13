@@ -1,0 +1,21 @@
+[
+  {
+    "id": "REMOVE-PRODUCTS-FLOW-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1039",
+      "tes": "TES-234",
+      "release": "v7.10.0",
+      "summary": "POS Remove Products Flow",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant",
+    "removeData": {
+      "productName": "Caja de alitas de pollo (100 u)"
+    }
+  }
+]

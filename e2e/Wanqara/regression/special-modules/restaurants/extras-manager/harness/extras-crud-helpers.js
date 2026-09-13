@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../../harness/helpers/ui-helpers.js";
 import { SEED } from "../../../../../harness/config/seed.js";
+import { expectSnackbar } from "../../../../../harness/helpers/ui-helpers.js";
 
 /**
  * Creates an extra category using the UI.

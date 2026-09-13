@@ -1,9 +1,9 @@
 import { expect } from "@playwright/test";
 import { SEED, getElectronicInvoicingAuthType } from "../../../../../harness/config/seed.js";
 import { ensureAuthenticated } from "../../../../../harness/helpers/auth.js";
-import { searchInList } from "../../../../../harness/helpers/crud-helpers.js";
-import { selectDropdownOption, expectSnackbar } from "../../../../../harness/helpers/ui-helpers.js";
 import { fillIdentityModal } from "../../../../../harness/helpers/client-helpers.js";
+import { searchInList } from "../../../../../harness/helpers/crud-helpers.js";
+import { expectSnackbar, selectDropdownOption } from "../../../../../harness/helpers/ui-helpers.js";
 
 export const CARRIER_CASES = [
   { label: "por cédula",                 carrier: "cedula"   },

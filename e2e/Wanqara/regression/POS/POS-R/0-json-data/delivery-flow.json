@@ -1,0 +1,29 @@
+[
+  {
+    "id": "DELIVERY-FLOW-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-871",
+      "tes": "TES-233",
+      "release": "v7.10.0",
+      "summary": "POS Restaurant - Delivery Flow",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant",
+    "deliveryData": {
+      "phone": "0999999922",
+      "clientName": "Cliente Delivery Test",
+      "observation": "Observación de prueba automatizada",
+      "address": {
+        "name": "Casa Test",
+        "address": "Av. Principal 123",
+        "observation": "Timbre azul, segundo piso"
+      },
+      "cedula": "0000000001"
+    }
+  }
+]

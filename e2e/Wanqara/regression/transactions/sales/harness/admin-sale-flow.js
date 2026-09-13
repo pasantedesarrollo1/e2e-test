@@ -79,7 +79,7 @@ export async function selectCheckout(page, urlPattern = /\/admin\/ventas\/add/) 
 import { selectDocumentType } from './admin-document-helpers.js';
 export { selectDocumentType };
 
-export { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
+  export { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
 
 export async function searchAndSelectProduct(page, { name, searchTerm }) {
   const term = searchTerm || name;

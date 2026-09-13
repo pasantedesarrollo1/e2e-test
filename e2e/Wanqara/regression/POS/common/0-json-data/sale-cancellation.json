@@ -1,5 +1,9 @@
 [
   {
+    "id": "SALE-CANCELLATION-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Retail (100) - Creates a POS sale and cancels it, verifying that the inventory switch is displayed",
     "metadata": {
       "ws": "WS-840",
@@ -20,6 +24,10 @@
     }
   },
   {
+    "id": "SALE-CANCELLATION-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Dispatch (101) - Creates a POS sale and cancels it, verifying that the message is displayed without the switch",
     "metadata": {
       "ws": "WS-840",
@@ -40,6 +48,10 @@
     }
   },
   {
+    "id": "SALE-CANCELLATION-003",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Restaurant (001) - Creates a POS sale and cancels it, verifying that the message is displayed without the switch",
     "metadata": {
       "ws": "WS-840",

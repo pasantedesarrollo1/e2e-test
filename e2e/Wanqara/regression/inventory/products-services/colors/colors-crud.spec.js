@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
 import { getSessionPath } from "../../../../harness/helpers/auth.js";
-import { createColor, searchColor, deleteColor } from "./harness/color-helpers.js";
+import { createColor, deleteColor, searchColor } from "./harness/color-helpers.js";
 
 import scenarios from "./0-json-data/colors-crud.json" assert { type: "json" };
 

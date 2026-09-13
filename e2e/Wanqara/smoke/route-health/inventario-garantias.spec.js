@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../harness/config/settings.js";
-import { generateSmokeTests } from "./harness/smoke-nav.js";
+import { getTenantBaseUrl, requirePosCredentials } from "../../harness/config/settings.js";
 import { assertPageTitle, assertTextContains } from "./harness/smoke-assertions.js";
+import { generateSmokeTests } from "./harness/smoke-nav.js";
 
 test.describe("Smoke — Inventario > Garantías y Devoluciones", { tag: "@smoke" }, () => {
   requirePosCredentials(test);

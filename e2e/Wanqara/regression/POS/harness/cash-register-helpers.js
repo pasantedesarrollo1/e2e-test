@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import { openDrawer } from "./pos-sale-flow.js";
-import { withPath } from "../../../harness/config/urls.js";
 import { SEED } from "../../../harness/config/seed.js";
+import { withPath } from "../../../harness/config/urls.js";
+import { openDrawer } from "./pos-sale-flow.js";
 
 export async function ensureCashRegisterOpen(page, tenantBaseUrl, amount = "10", subsidiaryName) {
   if (!tenantBaseUrl) throw new Error("tenantBaseUrl is required");

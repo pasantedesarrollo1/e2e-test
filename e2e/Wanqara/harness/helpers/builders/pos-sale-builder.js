@@ -1,10 +1,9 @@
-import { expect } from "@playwright/test";
-import { SEED } from "../../config/seed.js";
-import { searchAndSelectProduct } from "../../../regression/POS/harness/pos-search.js";
-import { completePayment } from "../../../regression/POS/harness/pos-payment.js";
-import { selectClientByCedula } from "../client-helpers.js";
 import { ensureCashRegisterOpen } from "../../../regression/POS/harness/cash-register-helpers.js";
+import { completePayment } from "../../../regression/POS/harness/pos-payment.js";
+import { searchAndSelectProduct } from "../../../regression/POS/harness/pos-search.js";
+import { SEED } from "../../config/seed.js";
 import { ensureAuthenticated } from "../auth.js";
+import { selectClientByCedula } from "../client-helpers.js";
 
 /**
  * Patrón Builder para el Flujo de Ventas POS.

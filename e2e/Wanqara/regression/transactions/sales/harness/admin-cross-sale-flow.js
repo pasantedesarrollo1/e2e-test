@@ -89,11 +89,11 @@ export async function selectCustomDocumentType(page, documentType) {
 }
 
 export { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
-
-import { searchAndSelectProduct, selectCheckout, submitAdminSale } from './admin-sale-flow.js';
 export { searchAndSelectProduct, selectCheckout, submitAdminSale };
 
-export { applyGeneralDiscount, applyManualSurcharge } from '../../harness/admin-modifier-helpers.js';
+import { searchAndSelectProduct, selectCheckout, submitAdminSale } from './admin-sale-flow.js';
+
+  export { applyGeneralDiscount, applyManualSurcharge } from '../../harness/admin-modifier-helpers.js';
 
 export async function selectPaymentMethod(page, methodName) {
   const methodItem = page.getByText(methodName, { exact: true }).first();

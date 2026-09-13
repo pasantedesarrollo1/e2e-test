@@ -1,14 +1,14 @@
 import { test } from "@playwright/test";
-import {
-  requirePosCredentials,
-  requireChefCredentials,
-  getTenantBaseUrl,
-} from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import {
+  getTenantBaseUrl,
+  requireChefCredentials,
+  requirePosCredentials,
+} from "../../../harness/config/settings.js";
 import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,15 +17,15 @@ const scenarios = JSON.parse(
 );
 
 import {
+  navigateToCloseOrder,
+  processOrderClosure,
+} from "./harness/pos-close-order.js";
+import {
   closeAllActiveOrders,
   createChefOrder,
   navigateToRestaurantPOS,
   openAndSelectOrder,
 } from "./harness/pos-orders-common.js";
-import {
-  navigateToCloseOrder,
-  processOrderClosure,
-} from "./harness/pos-close-order.js";
 
 async function withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, actionCallback, orderOptions = {}) {
   await closeAllActiveOrders(page, tenantBaseUrl);

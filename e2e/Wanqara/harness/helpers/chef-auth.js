@@ -1,9 +1,9 @@
 import { expect } from "@playwright/test";
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { chefHarness } from "../config/settings.js";
 import { withPath } from "../config/urls.js";
-import { chefHarness, playwrightHarness } from "../config/settings.js";
 
 export const CHEF_AUTH_PATH = /\/auth\//;
 

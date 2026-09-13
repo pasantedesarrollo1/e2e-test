@@ -1,18 +1,18 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../harness/helpers/ui-helpers.js";
-import { processOrderClosure } from "./pos-close-order.js";
+import { SEED } from "../../../../harness/config/seed.js";
+import { chefHarness, playwrightHarness } from "../../../../harness/config/settings.js";
 import { ensureAuthenticated, loginAndSelectSubsidiary } from "../../../../harness/helpers/auth.js";
 import { ensureChefAuthenticated } from "../../../../harness/helpers/chef-auth.js";
-import { chefHarness, playwrightHarness } from "../../../../harness/config/settings.js";
-import { SEED } from "../../../../harness/config/seed.js";
+import { expectSnackbar } from "../../../../harness/helpers/ui-helpers.js";
+import { completePayment } from "../../harness/pos-payment.js";
+import { openDrawer, selectClientByCedula } from "../../harness/pos-sale-flow.js";
 import {
-  selectTable,
-  searchAndSelectProduct,
   addProductToCart,
+  searchAndSelectProduct,
+  selectTable,
   submitOrder,
 } from "./chef-orders-flow.js";
-import { selectClientByCedula, openDrawer } from "../../harness/pos-sale-flow.js";
-import { completePayment } from "../../harness/pos-payment.js";
+import { processOrderClosure } from "./pos-close-order.js";
 
 export async function navigateToRestaurantPOS(page, tenantBaseUrl) {
   await ensureAuthenticated(page, {
@@ -121,7 +121,7 @@ export async function addProductToExistingOrder(page, productName) {
 export async function collectOrder(page) {
   const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar Pago/i }).first();
   // Fallback in case the exact accessible name doesn't include both, we can just use the button that has 'Cobrar' but not 'pedidos'
-  const fallbackBtn = page.getByRole("button", { name: /^Cobrar$/i });
+  const fallbackBtn = page.getByRole("button", { name: /^Cobrar( Orden)?$/i });
   
   await expect(cobrarBtn.or(fallbackBtn)).toBeVisible();
   if (await cobrarBtn.isVisible()) {

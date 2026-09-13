@@ -1,10 +1,10 @@
-import { test } from "../harness/pos-fixtures.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
 import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { test } from "../harness/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,8 +12,8 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sale-inventory-dispatch.json"), "utf-8")
 );
 
+import { selectFirstSerie, selectFirstVariant } from "../harness/pos-products.js";
 import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
-import { selectFirstVariant, selectFirstSerie } from "../harness/pos-products.js";
 
 const CALLBACK_MAP = {
   selectFirstVariant,

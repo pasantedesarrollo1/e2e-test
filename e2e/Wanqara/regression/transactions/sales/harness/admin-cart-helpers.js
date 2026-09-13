@@ -1,6 +1,6 @@
 import { SEED } from "../../../../harness/config/seed.js";
+import { selectFirstSerie, selectFirstVariant } from "../../../POS/harness/pos-products.js";
 import { searchAndSelectProduct } from "./admin-sale-flow.js";
-import { selectFirstVariant, selectFirstSerie } from "../../../POS/harness/pos-products.js";
 
 export async function buildMixedCart(page, dispatchEnabled = false) {
   await searchAndSelectProduct(page, { name: SEED.products.estandar.name });

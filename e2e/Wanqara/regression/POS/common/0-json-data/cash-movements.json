@@ -1,5 +1,9 @@
 [
   {
+    "id": "CASH-MOVEMENTS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Cash Register Income and Expense Transactions (Retail)",
     "metadata": {
       "ws": "WS-1031",
@@ -13,9 +17,18 @@
     "authType": "retail",
     "basePath": "/pos/home",
     "fixture": "posPage",
-    "actions": ["in", "out"]
+    "actions": ["in", "out"],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "cashMovement": {
+      "monto": "1",
+      "descripcion": "test automatizado"
+    }
   },
   {
+    "id": "CASH-MOVEMENTS-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Cash Register Income and Expense Transactions (Restaurant)",
     "metadata": {
       "ws": "WS-1031",
@@ -29,6 +42,11 @@
     "authType": "restaurant",
     "basePath": "/pos/restaurant-home",
     "fixture": "posRestaurantPage",
-    "actions": ["in", "out"]
+    "actions": ["in", "out"],
+    "productName": "Caja de alitas de pollo (100 u)",
+    "cashMovement": {
+      "monto": "1",
+      "descripcion": "test automatizado"
+    }
   }
 ]

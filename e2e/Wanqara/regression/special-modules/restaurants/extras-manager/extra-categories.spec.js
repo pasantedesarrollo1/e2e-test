@@ -1,16 +1,15 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
 import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../../harness/helpers/auth.js";
-import { withPath } from "../../../../harness/config/urls.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth.js";
 
-import { 
-  createExtraCategory, 
-  assignProductsToExtraCategory, 
-  verifyDeletionConstraintsAndRemoveProducts, 
-  deleteExtraCategory 
-} from "./harness/extras-crud-helpers.js";
 import { testByProductFlow } from "./harness/extras-by-product-helpers.js";
+import {
+  assignProductsToExtraCategory,
+  createExtraCategory,
+  deleteExtraCategory,
+  verifyDeletionConstraintsAndRemoveProducts
+} from "./harness/extras-crud-helpers.js";
 
 import scenarios from "./0-json-data/extra-categories.json" assert { type: "json" };
 

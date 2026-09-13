@@ -1,9 +1,9 @@
 import { test } from "@playwright/test";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
 import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
 import { getSessionPath } from "../../../../harness/helpers/auth.js";
-import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
 import { buildPreSaleMixedCart } from "../harness/admin-cart-helpers.js";
+import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
 
 import scenarios from "./0-json-data/admin-pre-sale-dispatch.json" assert { type: "json" };
 

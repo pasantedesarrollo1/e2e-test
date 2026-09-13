@@ -1,5 +1,9 @@
 [
   {
+    "id": "SALE-WITH-CLIENT-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Retail",
     "metadata": {
       "ws": "WS-1008",
@@ -19,6 +23,10 @@
     }
   },
   {
+    "id": "SALE-WITH-CLIENT-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Restaurant",
     "metadata": {
       "ws": "WS-1008",

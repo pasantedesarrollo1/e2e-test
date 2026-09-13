@@ -1,20 +1,20 @@
-import { test } from "../harness/pos-fixtures.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { selectClientByCedula } from "../harness/pos-sale-flow.js";
-import { searchAndSelectProduct } from "../harness/pos-search.js";
-import { selectFirstVariant, selectFirstSerie } from "../harness/pos-products.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
 import { getSessionPath } from "../../../harness/helpers/auth.js";
 import {
-    applyGeneralDiscount,
+  applyGeneralDiscount,
   applyManualSurcharge,
   assertSalePanelUI,
   finalizeSaleAndAssert,
   runFinancialPrecisionFlow,
 } from "../harness/pos-financial-assertions.js";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { test } from "../harness/pos-fixtures.js";
+import { selectFirstSerie, selectFirstVariant } from "../harness/pos-products.js";
+import { selectClientByCedula } from "../harness/pos-sale-flow.js";
+import { searchAndSelectProduct } from "../harness/pos-search.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

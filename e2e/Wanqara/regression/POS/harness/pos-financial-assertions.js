@@ -1,9 +1,8 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { SEED } from "../../../harness/config/seed.js";
-import { selectFirstSerie, selectFirstVariant } from "./pos-products.js";
+import { completePayment } from "./pos-payment.js";
 import { captureSaleMutation, selectClientByCedula } from "./pos-sale-flow.js";
 import { searchAndSelectProduct } from "./pos-search.js";
-import { completePayment } from "./pos-payment.js";
 
 export async function finalizeSaleAndAssert(page, { precision, multiProduct = false }) {
   const finishBtn = page.getByRole("button", { name: /Terminar Venta/i });

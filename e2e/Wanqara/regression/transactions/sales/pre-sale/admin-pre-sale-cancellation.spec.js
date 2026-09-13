@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
 import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
 import { getSessionPath } from "../../../../harness/helpers/auth.js";
 import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
 import { cancelFirstSaleAndVerify } from "../harness/cancel-sale-helpers.js";

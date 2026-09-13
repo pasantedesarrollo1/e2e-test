@@ -1,11 +1,9 @@
 import { expect } from "@playwright/test";
 import { SEED } from "../../../harness/config/seed.js";
-import { withPath } from "../../../harness/config/urls.js";
 import { ensureAuthenticated } from "../../../harness/helpers/auth.js";
+import { ensureCashRegisterOpen } from "./cash-register-helpers.js";
 import { completePayment } from "./pos-payment.js";
 import { searchAndSelectProduct } from "./pos-search.js";
-import { selectClientByCedula } from "../../../harness/helpers/client-helpers.js";
-import { ensureCashRegisterOpen } from "./cash-register-helpers.js";
 
 export async function runPosSaleFlow(page, {
   tenantBaseUrl,

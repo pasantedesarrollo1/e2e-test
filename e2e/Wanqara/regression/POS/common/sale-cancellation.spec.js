@@ -1,12 +1,12 @@
 import { test } from "@playwright/test";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/config/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../harness/helpers/auth.js";
-import { runPosSaleFlow, selectClientByCedula } from "../harness/pos-sale-flow.js";
-import { cancelFirstSaleAndVerify } from "../../transactions/sales/harness/cancel-sale-flow.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth.js";
+import { cancelFirstSaleAndVerify } from "../../transactions/sales/harness/cancel-sale-flow.js";
+import { runPosSaleFlow, selectClientByCedula } from "../harness/pos-sale-flow.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

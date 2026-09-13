@@ -1,0 +1,25 @@
+[
+  {
+    "id": "PUBLIC-DOCUMENT-SHARE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-995",
+      "tes": "TES-214",
+      "release": "v7.9.0",
+      "summary": "Compartición de Facturas y Cotizaciones vía WhatsApp en POS",
+      "addedToRegression": "true",
+      "testScope": "release"
+    },
+    "authType": "retail",
+    "shareData": {
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": {
+        "label": "EFECTIVO"
+      }
+    }
+  }
+]

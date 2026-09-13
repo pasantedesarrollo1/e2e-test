@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { selectDropdownOption, expectSnackbar } from "./ui-helpers.js";
+import { expectSnackbar, selectDropdownOption } from "./ui-helpers.js";
 
 export async function fillIdentityModal(page, modalLocator, {
   identityType = "CEDULA",

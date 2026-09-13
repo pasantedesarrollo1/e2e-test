@@ -1,5 +1,9 @@
 [
   {
+    "id": "SALE-CART-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Retail",
     "metadata": {
       "ws": "WS-1002",
@@ -20,6 +24,10 @@
     }
   },
   {
+    "id": "SALE-CART-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Restaurant",
     "metadata": {
       "ws": "WS-1002",

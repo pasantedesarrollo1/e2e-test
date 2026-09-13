@@ -1,5 +1,9 @@
 [
   {
+    "id": "CLOSE-ORDERS-FLOW-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Restaurant",
     "metadata": {
       "ws": "WS-1035",

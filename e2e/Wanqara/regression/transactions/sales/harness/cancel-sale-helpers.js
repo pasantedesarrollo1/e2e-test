@@ -1,8 +1,8 @@
-import { test, expect } from "@playwright/test";
-import { withPath } from "../../../../harness/config/urls.js";
+import { expect, test } from "@playwright/test";
 import { SEED } from "../../../../harness/config/seed.js";
-import { clickTableRowAction } from "../../../../harness/helpers/crud-helpers.js";
+import { withPath } from "../../../../harness/config/urls.js";
 import { ACTION_TOOLTIPS } from "../../../../harness/helpers/action-tooltips.js";
+import { clickTableRowAction } from "../../../../harness/helpers/crud-helpers.js";
 
 export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwitch, expectMessage, confirmCancellation = true }) {
   const getSalesPromise = page.waitForResponse(res => 

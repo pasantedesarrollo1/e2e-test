@@ -1,10 +1,10 @@
-import { test, expect } from "../harness/pos-fixtures.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { annotateTicket } from "../../../harness/helpers/annotate.js";
+import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { expect, test } from "../harness/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "CLOSE-ORDERS-FROM-OPTIONS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1036",
+      "tes": "TES-231",
+      "release": "v7.10.0",
+      "summary": "POS Close Orders from Options Menu",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant"
+  }
+]

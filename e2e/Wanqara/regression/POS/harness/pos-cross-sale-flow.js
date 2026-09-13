@@ -1,8 +1,8 @@
 import { expect } from "@playwright/test";
 import { SEED } from "../../../harness/config/seed.js";
 import { ensureAuthenticated } from "../../../harness/helpers/auth.js";
-import { searchAndSelectProduct } from "./pos-search.js";
 import { selectClientByCedula } from "./pos-sale-flow.js";
+import { searchAndSelectProduct } from "./pos-search.js";
 
 export async function completeValidatedPosPayment(page) {
   const methodOption = page.getByText(SEED.paymentMethods.efectivo.label, { exact: true }).first();

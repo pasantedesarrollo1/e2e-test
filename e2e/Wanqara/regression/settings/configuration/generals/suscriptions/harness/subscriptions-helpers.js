@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { withPath } from "../../../../../../harness/config/urls.js";
 
 const normalizeText = (str) => {

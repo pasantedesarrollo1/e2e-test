@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
 import { getSessionPath } from "../../../../harness/helpers/auth.js";
 import { createSurcharge, searchSurcharge } from "./harness/surcharge-helpers.js";
 

@@ -1,18 +1,18 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
 import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/config/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../../harness/helpers/auth.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth.js";
 import { searchInList } from "../../../../harness/helpers/crud-helpers.js";
-import { 
-  navigateToCreateTicket, 
-  selectFirstCategory, 
-  clickSiguiente, 
-  selectFirstService, 
-  selectFirstDateAndSlot, 
-  fillWhatsapp, 
-  fillObservation, 
-  acceptTerms, 
-  checkFormFilledCorrectly 
+import {
+  acceptTerms,
+  checkFormFilledCorrectly,
+  clickSiguiente,
+  fillObservation,
+  fillWhatsapp,
+  navigateToCreateTicket,
+  selectFirstCategory,
+  selectFirstDateAndSlot,
+  selectFirstService
 } from "./harness/support-tickets-helpers.js";
 
 import scenarios from "./0-json-data/support-tickets.json" assert { type: "json" };

@@ -1,5 +1,9 @@
 [
   {
+    "id": "SALE-FINANCIAL-PRECISION-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Retail",
     "metadata": {
       "ws": "WS-1003",
@@ -250,6 +254,10 @@
     "surchargeClientCedula": "0000000001"
   },
   {
+    "id": "SALE-FINANCIAL-PRECISION-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
     "description": "Restaurant",
     "metadata": {
       "ws": "WS-1003",

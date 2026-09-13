@@ -1,0 +1,18 @@
+[
+  {
+    "id": "COLLECT-ORDERS-FLOW-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1037",
+      "tes": "TES-232",
+      "release": "v7.10.0",
+      "summary": "POS Collect Orders Flow",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "restaurant"
+  }
+]
