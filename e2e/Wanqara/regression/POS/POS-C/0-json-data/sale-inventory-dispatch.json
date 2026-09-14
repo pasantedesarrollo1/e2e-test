@@ -32,9 +32,10 @@
         "afterSelectCallback": "selectFirstVariant"
       }
     ],
-    "subsidiaryName": "Wanqara Comercios 100",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
     "paymentMethod": "EFECTIVO",
-    "openingAmount": "10"
+    "openingAmount": "10",
+    "subsidiaryCode": "101"
   },
   {
     "id": "SALE-INVENTORY-DISPATCH-002",
@@ -69,7 +70,9 @@
         "afterSelectCallback": "selectFirstVariant"
       }
     ],
-    "subsidiaryName": "Wanqara Comercios 100",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara Comercios",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100"
   }
 ]

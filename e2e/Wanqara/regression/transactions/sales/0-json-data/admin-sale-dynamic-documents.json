@@ -18,26 +18,31 @@
       {
         "subsidiaryCode": "001",
         "description": "Access the sales module with an electronic invoicing-enabled subsidiary",
-        "expectedDefault": "Factura electr\u00f3nica",
+        "expectedDefault": "Factura electrónica",
         "expectElectronicOption": true,
-        "electronicKeyword": "Factura"
+        "electronicKeyword": "Factura",
+        "subsidiaryName": "Wanqara"
       },
       {
         "subsidiaryCode": "100",
         "description": "Switch dynamically to a subsidiary without electronic invoicing",
         "expectedDefault": "Recibos",
         "expectElectronicOption": false,
-        "electronicKeyword": "Factura"
+        "electronicKeyword": "Factura",
+        "subsidiaryName": "Wanqara Comercios"
       },
       {
         "subsidiaryCode": "001",
         "description": "Switch back to the electronic invoicing-enabled subsidiary",
-        "expectedDefault": "Factura electr\u00f3nica",
+        "expectedDefault": "Factura electrónica",
         "expectElectronicOption": true,
-        "electronicKeyword": "Factura"
+        "electronicKeyword": "Factura",
+        "subsidiaryName": "Wanqara"
       }
     ],
     "authType": "restaurant",
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001"
   }
 ]

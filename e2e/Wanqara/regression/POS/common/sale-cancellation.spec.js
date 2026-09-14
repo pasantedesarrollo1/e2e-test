@@ -23,7 +23,7 @@ test.describe.serial("Cancel Sales (POS)", () => {
   for (const scenario of scenarios) {
     test.describe(`Scenario: ${scenario.description} @${scenario.metadata.testScope}`, () => {
       requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
+      test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
 
       if (scenario.metadata && scenario.metadata.ws) {
         annotateTicket(test, scenario.metadata);

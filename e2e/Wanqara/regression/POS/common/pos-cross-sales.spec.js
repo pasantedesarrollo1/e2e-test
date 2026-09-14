@@ -2,7 +2,7 @@ import { test } from "@playwright/test";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getTenantBaseUrl, requireChefCredentials, requirePosCredentials, playwrightHarness } from "../../../harness/config/settings.js";
+import { requireChefCredentials, requirePosCredentials } from "../../../harness/config/settings.js";
 import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { PosSaleBuilder } from "../../../harness/helpers/builders/pos-sale-builder.js";
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
@@ -19,8 +19,6 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "pos-cross-sales.json"), "utf-8")
 );
 
-const tenantBaseUrl = getTenantBaseUrl();
-
 test.describe("POS Cross Sales", () => {
   test.describe.configure({ mode: 'default' });
 
@@ -28,20 +26,21 @@ test.describe("POS Cross Sales", () => {
     if (scenario.type === 'retail-sale') {
       test.describe(`Environment: ${scenario.environment} @${scenario.metadata.testScope}`, () => {
         requirePosCredentials(test);
-        test.use({ storageState: getSessionPath(scenario.authType) });
+        test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
         annotateTicket(test, scenario.metadata);
 
         test(scenario.description, async ({ page }) => {
           test.setTimeout(120_000);
           
           const deps = { ensureCashRegisterOpen, completePayment, searchAndSelectProduct };
-          const venta = new PosSaleBuilder(page, tenantBaseUrl, scenario.subsidiaryName || playwrightHarness.subsidiaries.retail, deps)
+          const venta = new PosSaleBuilder(page, scenario.subsidiaryName, scenario.subsidiaryCode, deps)
+            .withOpeningAmount(scenario.openingAmount)
             .withDocumentType(scenario.saleParams.documentType)
             .withProduct(scenario.saleParams.productName)
             .withPaymentMethod(scenario.saleParams.paymentMethod)
             .withPrintedTicket(scenario.saleParams.openDrawer)
             .andThen(async (p) => {
-                const finalizarVentaButton = p.getByRole("button", { name: /Terminar Venta/i });
+                await p.getByRole("button", { name: /Terminar Venta/i });
             });
             
           await venta.execute();
@@ -51,14 +50,14 @@ test.describe("POS Cross Sales", () => {
       test.describe.serial(`Environment: ${scenario.environment} @${scenario.metadata.testScope}`, () => {
         requirePosCredentials(test);
         requireChefCredentials(test);
-        test.use({ storageState: getSessionPath(scenario.authType) });
+        test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
 
         annotateTicket(test, scenario.metadata);
 
         test.beforeAll(async ({ browser }) => {
           const context = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
           const cleanupPage = await context.newPage();
-          await closeAllActiveOrders(cleanupPage, tenantBaseUrl, scenario.subsidiaryName, scenario.cleanupReason);
+          await closeAllActiveOrders(cleanupPage, scenario.subsidiaryName, scenario.cleanupReason);
           await context.close();
         });
 
@@ -74,7 +73,7 @@ test.describe("POS Cross Sales", () => {
           // Cerramos la ventana de Chef para volver al flujo de POS limpio
           await chefContext.close();
 
-          await navigateToRestaurantPOS(page, tenantBaseUrl, scenario.subsidiaryName);
+          await navigateToRestaurantPOS(page, scenario.subsidiaryName);
           await openAndSelectOrder(page, activeTableName);
           
           const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar pago/i }).first();

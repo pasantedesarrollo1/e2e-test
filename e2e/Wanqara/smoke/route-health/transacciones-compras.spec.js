@@ -1,14 +1,13 @@
 import { test } from "@playwright/test";
-import { getTenantBaseUrl, requirePosCredentials } from "../../harness/config/settings.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
 import { assertPageTitle, assertTextContains, assertTextVisible } from "./harness/smoke-assertions.js";
 import { generateSmokeTests } from "./harness/smoke-nav.js";
 
 test.describe("Smoke — Transacciones > Compras", { tag: "@smoke" }, () => {
   requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
 
-  generateSmokeTests(tenantBaseUrl, [
+  generateSmokeTests([
     { path: "/admin/purchases/list/",                assert: (p) => assertPageTitle(p, "Historial de Compras") },
     { path: "/admin/inventory-purchases/add",        assert: (p) => assertTextVisible(p, "Compras con Movimientos de Inventario") },
     { path: "/admin/no-inventory-purchases/add",     assert: (p) => assertTextVisible(p, "Compras sin Movimientos de Inventario") },

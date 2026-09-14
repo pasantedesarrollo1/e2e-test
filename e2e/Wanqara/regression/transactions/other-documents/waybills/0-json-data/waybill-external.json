@@ -30,7 +30,9 @@
         "name": "Empleado Test 1"
       }
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001"
   },
   {
     "id": "WAYBILL-EXT-002",
@@ -54,9 +56,9 @@
       "shipmentAmountExternal": "1",
       "isLongProductSale": true,
       "saleParams": {
-        "documentType": "Factura electr\u00f3nica",
+        "documentType": "Factura electrónica",
         "clientCedula": "0000000001",
-        "productName": "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompa\u00f1adas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada",
+        "productName": "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompañadas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada",
         "paymentMethod": "EFECTIVO"
       },
       "documentType": "Factura",
@@ -69,6 +71,8 @@
         "name": "Empleado Test 1"
       }
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001"
   }
 ]

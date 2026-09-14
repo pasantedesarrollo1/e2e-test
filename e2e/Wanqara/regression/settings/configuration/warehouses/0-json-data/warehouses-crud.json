@@ -18,7 +18,9 @@
       "address": "Automated Test Address Ret",
       "description": "Automated Test Desc Ret"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   },
   {
     "id": "WAREHOUSE-002",
@@ -39,7 +41,9 @@
       "address": "Automated Test Address Dis",
       "description": "Automated Test Desc Dis"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101"
   },
   {
     "id": "WAREHOUSE-003",
@@ -60,6 +64,8 @@
       "address": "Automated Test Address Res",
       "description": "Automated Test Desc Res"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001"
   }
 ]

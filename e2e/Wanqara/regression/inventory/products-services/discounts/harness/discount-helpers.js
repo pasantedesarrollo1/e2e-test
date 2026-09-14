@@ -1,22 +1,18 @@
 import { expect } from "@playwright/test";
-import { withPath } from "../../../../../harness/config/urls.js";
 import {
   deleteRecordFromList,
   saveFormAndVerify,
-  verifyRecordInList,
-} from "../../../../../harness/helpers/crud/crud-helpers.js";
+  verifyRecordInList} from "../../../../../harness/helpers/crud/crud-helpers.js";
 import { ACTION_TOOLTIPS } from "../../../../../harness/helpers/ui/action-tooltips.js";
 
 export async function fillDiscountForm(page, {
-  tenantBaseUrl,
   name,
   description,
   applicationMethod,
   type,
   discount,
-  quantity,
-}) {
-  await page.goto(withPath(tenantBaseUrl, "/admin/discounts/add"));
+  quantity}) {
+  await page.goto("/admin/discounts/add");
   await expect(page).not.toHaveURL(/\/login(\/|$)/);
 
   await page.getByRole("textbox", { name: /Nombre del descuento/i }).fill(name);
@@ -28,19 +24,16 @@ export async function fillDiscountForm(page, {
   const methodLabel = {
     always:   "Siempre",
     every_to: "Por Cada",
-    from_to:  "A partir de",
-  }[applicationMethod];
+    from_to:  "A partir de"}[applicationMethod];
 
   const methodField = page.locator(".v-field").filter({
-    has: page.locator("input[placeholder='Selecciona el método de aplicación']"),
-  });
+    has: page.locator("input[placeholder='Selecciona el método de aplicación']")});
   await methodField.locator(".v-field__append-inner").click();
   await page.getByRole("option", { name: new RegExp(methodLabel) }).first().click();
 
   const typeLabel = type === "porcentaje" ? "Porcentaje" : "Fijo";
   const typeField = page.locator(".v-field").filter({
-    has: page.locator("input[placeholder='Selecciona el tipo de descuento']"),
-  });
+    has: page.locator("input[placeholder='Selecciona el tipo de descuento']")});
   await typeField.locator(".v-field__append-inner").click();
   await page.getByRole("option", { name: new RegExp(typeLabel) }).first().click();
 
@@ -92,8 +85,7 @@ export async function assertDiscountSummary(page, { applicationMethod, type, dis
 export async function saveDiscount(page) {
   await saveFormAndVerify(page, {
     endpointPattern: "/api/v1/inventory/discounts",
-    successMessage: "Descuento creado exitosamente",
-  });
+    successMessage: "Descuento creado exitosamente"});
 }
 
 export async function createDiscount(page, payload) {
@@ -101,23 +93,21 @@ export async function createDiscount(page, payload) {
   await saveDiscount(page);
 }
 
-export async function searchDiscount(page, { tenantBaseUrl, name }) {
-  await page.goto(withPath(tenantBaseUrl, "/admin/discounts/list"));
+export async function searchDiscount(page, { name }) {
+  await page.goto("/admin/discounts/list");
   await expect(page).not.toHaveURL(/\/login(\/|$)/);
 
   await verifyRecordInList(page, {
-    searchName: name,
-  });
+    searchName: name});
 }
 
-export async function deleteDiscount(page, { tenantBaseUrl, name }) {
-  await page.goto(withPath(tenantBaseUrl, "/admin/discounts/list"));
+export async function deleteDiscount(page, { name }) {
+  await page.goto("/admin/discounts/list");
   await expect(page).not.toHaveURL(/\/login(\/|$)/);
 
   await deleteRecordFromList(page, {
     searchName: name,
     endpointPattern: "/api/v1/inventory/discounts/",
     confirmButtonRegex: /^Confirmar$/i,
-    deleteTooltip: ACTION_TOOLTIPS.discounts.delete,
-  });
+    deleteTooltip: ACTION_TOOLTIPS.discounts.delete});
 }

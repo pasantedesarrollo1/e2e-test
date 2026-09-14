@@ -25,8 +25,7 @@ export async function assignCarrier(page, carrier, carrierParams) {
     await verifyAndSaveCarrierModal(page, {
       expectedIdentityType: identityType,
       expectedIdentity:     identity,
-      expectedName:         name,
-    });
+      expectedName:         name});
     return;
   }
 
@@ -38,13 +37,12 @@ export async function assignCarrier(page, carrier, carrierParams) {
   await addCarrierViaEmployeeForm(page, {
     identityType: identityType,
     identity:     identity,
-    expectedName: name,
-  });
+    expectedName: name});
 }
 
-export async function openAddWaybillDialog(page, { tenantBaseUrl, authType }) {
+export async function openAddWaybillDialog(page, { authType }) {
   if (!authType) throw new Error("openAddWaybillDialog requires authType");
-  await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/admin/waybills/list", authType });
+  await ensureAuthenticated(page, { targetPath: "/admin/waybills/list", authType });
   await expect(page).toHaveURL(/\/admin\/waybills\/list/);
 
   const addBtn = page.getByRole("button", { name: /Agregar Guía/i }).first();
@@ -119,8 +117,7 @@ export async function searchCarrierByCedula(page, cedula) {
 export async function verifyAndSaveCarrierModal(page, {
   expectedIdentityType,
   expectedIdentity,
-  expectedName,
-}) {
+  expectedName}) {
   const dialog = page.locator(".v-dialog").filter({ hasText: /Agregar Empleado/i }).first();
 
   await expect(dialog.locator(".v-select").filter({ hasText: expectedIdentityType }).first()).toBeVisible();
@@ -136,22 +133,19 @@ export async function verifyAndSaveCarrierModal(page, {
 }
 
 export async function fillInternalWaybillForm(page, {
-  tenantBaseUrl,
   authType,
   startDate,
   finishDate,
   warehouseName,
-  checkoutName,
-}) {
+  checkoutName}) {
   const today = new Date();
 
-  const dialog = await openAddWaybillDialog(page, { tenantBaseUrl, authType });
+  const dialog = await openAddWaybillDialog(page, { authType });
   await selectWaybillTypeAndContinue(page, dialog, "internal");
 
   await fillWaybillDates(page, {
     startDate:  startDate  ?? today,
-    finishDate: finishDate ?? today,
-  });
+    finishDate: finishDate ?? today});
 
   await selectWarehouse(page, warehouseName);
   await selectCheckout(page, checkoutName);
@@ -182,7 +176,7 @@ export async function fillShipmentAmount(page, amount) {
   await fillInput(page, "Ingrese la cantidad a enviar", String(amount));
 }
 
-export async function submitWaybillAndVerify(page, { tenantBaseUrl }) {
+export async function submitWaybillAndVerify(page, ) {
   const saveBtn = page.getByRole("button", { name: /Guardar/i }).filter({ hasText: /Guardar/i }).first();
   const [response] = await Promise.all([
     page.waitForResponse(res => 
@@ -228,8 +222,7 @@ export async function openCarrierSelectorAndSelect(page, searchTerm) {
 export async function addCarrierViaEmployeeForm(page, {
   identityType,
   identity,
-  expectedName,
-}) {
+  expectedName}) {
   const carrierInput = page.getByPlaceholder("Ingresa Cédula o RUC").first();
   const carrierField = page.locator(".v-text-field").filter({ has: carrierInput }).first();
   
@@ -264,24 +257,21 @@ export async function selectSaleFromModal(page, index = 0) {
 }
 
 export async function fillExternalWaybillForm(page, {
-  tenantBaseUrl,
   authType,
   startDate,
   finishDate,
   checkoutName,
-  saleIndex = 0,
-}) {
+  saleIndex = 0}) {
   const today = new Date();
 
-  const dialog = await openAddWaybillDialog(page, { tenantBaseUrl, authType });
+  const dialog = await openAddWaybillDialog(page, { authType });
   await selectWaybillTypeAndContinue(page, dialog, "external");
 
   await selectSaleFromModal(page, saleIndex);
 
   await fillWaybillDates(page, {
     startDate:  startDate  ?? today,
-    finishDate: finishDate ?? today,
-  });
+    finishDate: finishDate ?? today});
 
   await selectCheckout(page, checkoutName);
 }
@@ -292,6 +282,6 @@ export async function selectFirstAvailableShipmentProductFromSale(page) {
   try {
     await selectDropdownOption(page, { triggerLocator: productField });
   } catch (error) {
-    throw new Error("The dropdown opened, but it is empty. The selected sale has no remaining quantity available for shipment.");
+    throw new Error("The dropdown opened, but it is empty. The selected sale has no remaining quantity available for shipment.", { cause: error });
   }
 }

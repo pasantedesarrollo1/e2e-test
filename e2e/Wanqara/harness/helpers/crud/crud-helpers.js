@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../ui/ui-helpers.js";
+import { expectSnackbar, clickAndWaitForApi } from "../ui/ui-helpers.js";
 
 export async function searchInList(page, searchName) {
   const searchField = page.getByRole("textbox", { name: /Busca lo que necesites|Buscar por Nombre|Buscar/i }).first();
@@ -24,12 +24,11 @@ export async function deleteRecordFromList(page, { searchName, endpointPattern, 
   const confirmButton = page.getByRole("button", { name: confirmButtonRegex });
   await expect(confirmButton).toBeVisible();
 
-  await Promise.all([
-    page.waitForResponse(
-      (res) => res.url().includes(endpointPattern) && res.request().method() === "DELETE" && res.status() === 200
-    ),
-    confirmButton.click({ force: true })
-  ]);
+  await clickAndWaitForApi(page, confirmButton, {
+    endpoint: endpointPattern,
+    method: "DELETE",
+    status: 200
+  });
 
   if (successMessage) {
     await expectSnackbar(page, successMessage);
@@ -40,14 +39,11 @@ export async function saveFormAndVerify(page, { endpointPattern, successMessage 
   const saveButton = page.getByRole("button", { name: /^Guardar$/i }).first();
   await expect(saveButton).toBeVisible();
 
-  await Promise.all([
-    page.waitForResponse(
-      (res) => res.url().includes(endpointPattern) && 
-               res.request().method() === "POST" && 
-               [200, 201].includes(res.status())
-    ),
-    saveButton.click(),
-  ]);
+  await clickAndWaitForApi(page, saveButton, {
+    endpoint: endpointPattern,
+    method: "POST",
+    status: [200, 201]
+  });
 
   if (successMessage) {
     await expectSnackbar(page, successMessage);
@@ -104,6 +100,7 @@ export async function clickTableRowAction(page, rowLocator, tooltipText) {
             foundTooltips.push(text.trim());
         }
       } catch {
+        // Ignore timeout if no tooltip appears
       }
       continue;
     }
@@ -124,16 +121,14 @@ export async function ensureCleanRecord(page, {
   successMessage,
   confirmButtonRegex,
   deleteSuccessMessage,
-  deleteTooltip,
-}) {
+  deleteTooltip}) {
   await page.goto(listPath);
   await deleteRecordFromList(page, {
     searchName: name,
     endpointPattern,
     confirmButtonRegex,
     successMessage: deleteSuccessMessage,
-    deleteTooltip,
-  });
+    deleteTooltip});
 
   await page.goto(addPath);
   await fillForm(page);

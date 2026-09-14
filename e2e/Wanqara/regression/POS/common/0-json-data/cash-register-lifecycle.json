@@ -17,9 +17,10 @@
     "authType": "retail",
     "basePath": "/pos/home",
     "openingAmount": "10",
-    "subsidiaryName": "Wanqara Comercios 100",
+    "subsidiaryName": "Wanqara Comercios",
     "productName": "Caja de alitas de pollo (100 u)",
     "clientCedula": "0000000001",
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryCode": "100"
   }
 ]

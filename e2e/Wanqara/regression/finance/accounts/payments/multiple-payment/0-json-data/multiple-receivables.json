@@ -11,7 +11,7 @@
       "summary": "Admin Payments Multiple Receivables & Printing",
       "testScope": "regression"
     },
-    "description": "Retail - Flujo completo de multicobros (Pago, PDF, Eliminaci\u00f3n)",
+    "description": "Retail - Flujo completo de multicobros (Pago, PDF, Eliminación)",
     "authType": "restaurant",
     "paymentData": {
       "cedula": "0000000001",
@@ -20,6 +20,8 @@
       "initialDeleteReason": "test",
       "finalDeleteReason": "test deletion reason"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001"
   }
 ]

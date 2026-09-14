@@ -14,6 +14,7 @@
     },
     "description": "Retail Reproduction of rounding-error-issue-129-57 @ws-1038",
     "authType": "retail",
+    "subsidiaryName": "Wanqara Comercios",
     "paymentUrl": "\\/pos\\/payments",
     "fixture": "posPage",
     "caseData": {
@@ -29,7 +30,8 @@
       "expectedPaymentError": true,
       "fallbackPaymentAmount": 129.57
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryCode": "100"
   },
   {
     "id": "SPECIFIC-POS-ROUNDING-002",
@@ -46,6 +48,7 @@
     },
     "description": "Restaurant Reproduction of rounding-error-issue-129-57 @ws-1038",
     "authType": "restaurant",
+    "subsidiaryName": "Wanqara",
     "paymentUrl": "\\/pos\\/restaurant-payments",
     "fixture": "posRestaurantPage",
     "caseData": {
@@ -61,6 +64,7 @@
       "expectedPaymentError": true,
       "fallbackPaymentAmount": 129.57
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryCode": "001"
   }
 ]

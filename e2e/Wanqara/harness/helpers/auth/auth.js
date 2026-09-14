@@ -3,9 +3,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { playwrightHarness } from "../../config/settings.js";
-import { withPath } from "../../config/urls.js";
-
-
 export const getSessionPath = (authType) => path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   `../../.auth/${authType}-session.json`,
@@ -18,8 +15,10 @@ export async function loginWithEmailPassword(page, { email, password }) {
   await expect(page).not.toHaveURL(/\/login(\/|$)/);
 }
 
-export async function loginAndSelectSubsidiary(page, { tenantBaseUrl, login, subsidiaryName }) {
-  await page.goto(withPath(tenantBaseUrl, "/login"));
+import { formatPosSubsidiary } from "../ui/ui-helpers.js";
+
+export async function loginAndSelectSubsidiary(page, { login, subsidiaryName, subsidiaryCode }) {
+  await page.goto("/login");
   await loginWithEmailPassword(page, login);
 
   try {
@@ -31,11 +30,13 @@ export async function loginAndSelectSubsidiary(page, { tenantBaseUrl, login, sub
     await page.waitForURL((url) => !/\/select-subsidiary(\/|$)/.test(url.pathname), { timeout: 3000 });
     return;
   } catch {
+    // Timeout is expected if not redirected
   }
 
   const listContainer = page.locator("div.tw-space-y-3.tw-mb-8.tw-max-h-64.tw-overflow-y-auto");
-  const targetCard = subsidiaryName
-    ? listContainer.locator(".v-card").filter({ hasText: subsidiaryName }).first()
+  const formattedName = subsidiaryName ? formatPosSubsidiary(subsidiaryName, subsidiaryCode) : null;
+  const targetCard = formattedName
+    ? listContainer.locator(".v-card").filter({ hasText: formattedName }).first()
     : listContainer.locator(".v-card").first();
 
   await targetCard.click();
@@ -47,9 +48,9 @@ export async function loginAndSelectSubsidiary(page, { tenantBaseUrl, login, sub
   await expect(page).not.toHaveURL(/\/select-subsidiary(\/|$)/);
 }
 
-export async function logoutFromSession(page, { tenantBaseUrl } = {}) {
-  if (tenantBaseUrl) {
-    await page.goto(withPath(tenantBaseUrl, "/admin/home"));
+export async function logoutFromSession(page, { navigateToHome = true } = {}) {
+  if (navigateToHome) {
+    await page.goto("/admin/home");
     await expect(page).not.toHaveURL(/\/login(\/|$)/);
   }
 
@@ -62,9 +63,9 @@ export async function logoutFromSession(page, { tenantBaseUrl } = {}) {
   await expect(page).toHaveURL(/\/login(\/|$)/);
 }
 
-export async function logoutAndLoginAgain(page, { tenantBaseUrl, login, subsidiaryName }) {
-  await logoutFromSession(page, { tenantBaseUrl });
-  await loginAndSelectSubsidiary(page, { tenantBaseUrl, login, subsidiaryName });
+export async function logoutAndLoginAgain(page, { login, subsidiaryName, subsidiaryCode }) {
+  await logoutFromSession(page);
+  await loginAndSelectSubsidiary(page, { login, subsidiaryName, subsidiaryCode });
 }
 
 const LOGIN_URL_PATTERN = /\/login(\/|$)/;
@@ -102,6 +103,7 @@ const markSharedSessionSuspect = (authType) => {
     fs.mkdirSync(path.dirname(suspectPath), { recursive: true });
     fs.writeFileSync(suspectPath, new Date().toISOString());
   } catch {
+    // Ignore error if unable to mark suspect
   }
 };
 
@@ -119,10 +121,11 @@ const annotate = (type, description) => {
   try {
     test.info().annotations.push({ type, description });
   } catch {
+    // Ignore if outside test context
   }
 };
 
-async function repairSharedSession(page, { tenantBaseUrl, authType }) {
+async function repairSharedSession(page, { authType }) {
   let repairs;
   try {
     const info = test.info();
@@ -138,34 +141,39 @@ async function repairSharedSession(page, { tenantBaseUrl, authType }) {
 
   const login = playwrightHarness.users[authType];
   if (!login) throw new Error(`No credentials configured for authType "${authType}".`);
+  const defaultBranches = JSON.parse(
+    fs.readFileSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../config/default-branches.json"), "utf-8")
+  );
+
   const fallbackSubsidiaries = {
-    retail: playwrightHarness.subsidiaries.retail,
-    dispatch: playwrightHarness.subsidiaries.dispatch,
-    restaurant: playwrightHarness.subsidiaries.restaurant,
-    admin: playwrightHarness.subsidiaries.retail,
-    chef: playwrightHarness.subsidiaries.restaurant
+    retail: { name: defaultBranches.retail.name, code: defaultBranches.retail.code },
+    dispatch: { name: defaultBranches.dispatch.name, code: defaultBranches.dispatch.code },
+    restaurant: { name: defaultBranches.restaurant.name, code: defaultBranches.restaurant.code },
+    admin: { name: defaultBranches.retail.name, code: defaultBranches.retail.code },
+    chef: { name: defaultBranches.restaurant.name, code: defaultBranches.restaurant.code }
   };
-  const subsidiaryName = fallbackSubsidiaries[authType];
+  const subsidiaryName = fallbackSubsidiaries[authType].name;
+  const subsidiaryCode = fallbackSubsidiaries[authType].code;
 
   await loginAndSelectSubsidiary(page, {
-    tenantBaseUrl,
     login,
     subsidiaryName,
+    subsidiaryCode
   });
   await page.context().storageState({ path: getSessionPath(authType) });
 
   return true;
 }
 
-export async function ensureAuthenticated(page, { tenantBaseUrl, targetPath, authType = "retail" }) {
-  const url = withPath(tenantBaseUrl, targetPath);
+export async function ensureAuthenticated(page, { targetPath, authType = "retail" }) {
+  const url = targetPath;
   if (isSharedSessionSuspect(authType)) {
-    await recoverSharedSession(page, { tenantBaseUrl, reason: "a previous attempt", authType });
+    await recoverSharedSession(page, { reason: "a previous attempt", authType });
   }
 
   await page.goto(url);
   if (isOnLogin(page)) {
-    await recoverSharedSession(page, { tenantBaseUrl, reason: targetPath, authType });
+    await recoverSharedSession(page, { reason: targetPath, authType });
     await page.goto(url);
 
     if (isOnLogin(page)) {
@@ -177,8 +185,8 @@ export async function ensureAuthenticated(page, { tenantBaseUrl, targetPath, aut
   }
 }
 
-async function recoverSharedSession(page, { tenantBaseUrl, reason, authType }) {
-  if (!(await repairSharedSession(page, { tenantBaseUrl, authType }))) {
+async function recoverSharedSession(page, { reason, authType }) {
+  if (!(await repairSharedSession(page, { authType }))) {
     throw new Error(
       `Shared session died ${MAX_SESSION_REPAIRS} times in this run. ` +
         `Something keeps signing in with the same account - a concurrent ` +
@@ -189,25 +197,14 @@ async function recoverSharedSession(page, { tenantBaseUrl, reason, authType }) {
 
   clearSharedSessionSuspect(authType);
 
+  const info = test.info();
+  const currentRepair = info._sessionRepairs ? info._sessionRepairs[authType] : 1;
+
   annotate(
     "session-repaired",
     `${reason} found the shared session revoked; signed in again and rewrote ` +
-      `the shared session (repair ${sessionRepairs[authType]}/${MAX_SESSION_REPAIRS}).`,
+      `the shared session (repair ${currentRepair}/${MAX_SESSION_REPAIRS}).`,
   );
 }
 
-export async function ensureTenantLanding(page, { publicBaseUrl, tenantRuc }) {
-  const { buildTenantBaseUrl } = await import("../urls.js");
-  const tenantBaseUrl = buildTenantBaseUrl(publicBaseUrl, tenantRuc);
-  const expectedTenantHost = new URL(tenantBaseUrl).hostname;
 
-  await page.goto(`${publicBaseUrl}/`);
-
-  if (new URL(page.url()).hostname !== expectedTenantHost) {
-    await page.getByPlaceholder("ejemplo").fill(tenantRuc);
-    await page.getByRole("button", { name: /^Ingresar$/i }).click();
-    await expect(page).toHaveURL(new RegExp(expectedTenantHost));
-  }
-
-  return { tenantBaseUrl, expectedTenantHost };
-}

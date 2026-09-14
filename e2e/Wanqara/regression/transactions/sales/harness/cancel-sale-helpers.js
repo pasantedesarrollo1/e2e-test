@@ -1,16 +1,15 @@
 import { expect, test } from "@playwright/test";
-import { withPath } from "../../../../harness/config/urls.js";
 import { clickTableRowAction } from "../../../../harness/helpers/crud/crud-helpers.js";
 import { ACTION_TOOLTIPS } from "../../../../harness/helpers/ui/action-tooltips.js";
 
-export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwitch, expectMessage, confirmCancellation = true, annulmentReason = "Anulación automatizada por E2E" }) {
+export async function cancelFirstSaleAndVerify(page, { expectSwitch, expectMessage, confirmCancellation = true, annulmentReason = "Anulación automatizada por E2E" }) {
   const getSalesPromise = page.waitForResponse(res => 
     res.url().includes('/api/v1/billing/sales') && 
     res.request().method() === 'GET'
   );
 
   await test.step("Navigate to sales list", async () => {
-    await page.goto(withPath(tenantBaseUrl, '/admin/sales/list'));
+    await page.goto('/admin/sales/list');
     await page.reload(); 
     
     await expect(

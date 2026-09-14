@@ -18,11 +18,13 @@
     "paymentUrlPattern": "/pos/payments",
     "optionsParams": {
       "productName": "Caja de alitas de pollo (100 u)",
-      "observationText": "Observaci\u00f3n de prueba automatizada",
+      "observationText": "Observación de prueba automatizada",
       "savedSaleAlias": "Venta de prueba automatizada"
     },
-    "subsidiaryName": "Wanqara Comercios 100",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara Comercios",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100"
   },
   {
     "id": "SALE-OPTIONS-002",
@@ -43,10 +45,12 @@
     "paymentUrlPattern": "/pos/restaurant-payments",
     "optionsParams": {
       "productName": "Caja de alitas de pollo (100 u)",
-      "observationText": "Observaci\u00f3n de prueba automatizada",
+      "observationText": "Observación de prueba automatizada",
       "savedSaleAlias": "Venta de prueba automatizada"
     },
-    "subsidiaryName": "Sucursal Matriz",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001"
   }
 ]

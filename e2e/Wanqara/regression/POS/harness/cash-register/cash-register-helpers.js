@@ -1,16 +1,15 @@
 import { expect } from "@playwright/test";
-import { withPath } from "../../../../harness/config/urls.js";
 import { openDrawer } from '../sales/pos-drawer-helpers.js';
+import { formatPosSubsidiary } from '../../../../harness/helpers/ui/ui-helpers.js';
 
-export async function ensureCashRegisterOpen(page, tenantBaseUrl, amount, subsidiaryName, authType) {
-  if (!tenantBaseUrl) throw new Error("tenantBaseUrl is required");
+export async function ensureCashRegisterOpen(page, amount, subsidiaryName, subsidiaryCode, authType = 'retail') {
   if (!subsidiaryName) throw new Error("subsidiaryName is required");
   if (!amount) throw new Error("amount is required (e.g. from JSON or settings)");
   if (!authType) throw new Error("authType is required");
 
   const homePath = authType === 'restaurant' ? '/pos/restaurant-home' : '/pos/home';
 
-  await page.goto(withPath(tenantBaseUrl, homePath));
+  await page.goto(homePath);
 
   const posHomeIndicator = page.getByText(/Cliente:/i).first();
   const openRegisterIndicator = page.getByRole("button", { name: /Abrir Caja/i }).first();
@@ -39,7 +38,8 @@ export async function ensureCashRegisterOpen(page, tenantBaseUrl, amount, subsid
     await cancelModalBtn.click();
   }
 
-  const subsidiaryCards = page.locator('.v-card').filter({ hasText: subsidiaryName });
+  const formattedName = formatPosSubsidiary(subsidiaryName, subsidiaryCode);
+  const subsidiaryCards = page.locator('.v-card').filter({ hasText: formattedName });
   if (await subsidiaryCards.first().isVisible({ timeout: 3000 })) {
     await subsidiaryCards.first().click();
     const continuarBtn = page.getByRole("button", { name: /Continuar/i });
@@ -67,8 +67,7 @@ export async function ensureCashRegisterOpen(page, tenantBaseUrl, amount, subsid
   await expect(posHomeIndicator).toBeVisible({ timeout: 15_000 });
 }
 
-export async function closeCashRegister(page, tenantBaseUrl, options = {}) {
-  if (!tenantBaseUrl) throw new Error("tenantBaseUrl is required");
+export async function closeCashRegister(page, options = {}) {
 
   const { beforeConfirm } = options;
   const triggerLocator = page.getByRole("button", { name: /Más Opciones/i }).first();
@@ -91,7 +90,7 @@ export async function closeCashRegister(page, tenantBaseUrl, options = {}) {
   const confirmBtn = page.locator('.v-overlay-container').getByRole("button", { name: /Aceptar/i }).last();
   await expect(confirmBtn).toBeVisible();
   
-  const [closeResponse] = await Promise.all([
+  await Promise.all([
     page.waitForResponse(
       res => res.url().includes('/close') && 
              res.request().method() === 'POST' && 

@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { selectDropdownOption } from "../../../../harness/helpers/ui/ui-helpers.js";
+import { selectDropdownOption, formatPosSubsidiary } from "../../../../harness/helpers/ui/ui-helpers.js";
 
 export async function selectDocumentType(page, documentType) {
   if (!documentType) return;
@@ -35,7 +35,8 @@ export async function selectDocumentType(page, documentType) {
   await page.keyboard.press("Escape");
 }
 
-export async function switchAdminSubsidiary(page, targetSubsidiary) {
+export async function switchAdminSubsidiary(page, targetSubsidiaryName, targetSubsidiaryCode) {
+  const targetSubsidiary = formatPosSubsidiary(targetSubsidiaryName, targetSubsidiaryCode);
   const shortName = targetSubsidiary.split("-").pop().trim();
 
   const headerText = await page.locator("header").first().innerText();

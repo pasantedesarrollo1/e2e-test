@@ -1,14 +1,13 @@
 import { test } from "@playwright/test";
-import { getTenantBaseUrl, requirePosCredentials } from "../../harness/config/settings.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
 import { assertMainContains, assertPageTitle, assertTextContains } from "./harness/smoke-assertions.js";
 import { generateSmokeTests } from "./harness/smoke-nav.js";
 
 test.describe("Smoke — Admin Ajustes", { tag: "@smoke" }, () => {
   requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
 
-  generateSmokeTests(tenantBaseUrl, [
+  generateSmokeTests([
     { path: "/admin/settings/general",       assert: (p) => assertTextContains(p, "Configuraciones de Empresa") },
     { path: "/admin/settings/franchise",     assert: (p) => assertTextContains(p, "Franquicia") },
     { path: "/admin/settings/signature",     assert: (p) => assertTextContains(p, "Configuraciones de Firma Electrónica") },

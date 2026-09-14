@@ -4,24 +4,16 @@ import path from "node:path";
 
 import { chefHarness, hasChefCredentials } from "../config/settings.js";
 import { CHEF_AUTH_PATH, CHEF_SESSION_PATH, loginChef } from "../helpers/auth/chef-auth.js";
+import { isSessionFresh } from "../helpers/auth/session-cache.js";
 
-setup("authenticate chef", async ({ page }) => {
+setup("authenticate chef", async ({ page }, testInfo) => {
+  testInfo.setTimeout(120_000);
   fs.mkdirSync(path.dirname(CHEF_SESSION_PATH), { recursive: true });
 
   // --- INICIO DE CACHÉ INTELIGENTE ---
-  if (fs.existsSync(CHEF_SESSION_PATH)) {
-    try {
-      const stats = fs.statSync(CHEF_SESSION_PATH);
-      // Validamos si la sesión tiene menos de 1 hora de antigüedad para evitar tokens expirados en backend
-      const isFresh = (Date.now() - stats.mtimeMs) < 1 * 60 * 60 * 1000;
-      const content = JSON.parse(fs.readFileSync(CHEF_SESSION_PATH, 'utf8'));
-      if (isFresh && ((content.cookies && content.cookies.length > 0) || (content.origins && content.origins.length > 0))) {
-        console.log(`[Setup] Caché activa encontrada para CHEF. Saltando login ⚡`);
-        return; 
-      }
-    } catch (e) {
-      // ignore
-    }
+  if (isSessionFresh(CHEF_SESSION_PATH)) {
+    console.log(`[Setup] Caché activa encontrada para CHEF. Saltando login ⚡`);
+    return;
   }
   // --- FIN DE CACHÉ INTELIGENTE ---
 
@@ -31,11 +23,15 @@ setup("authenticate chef", async ({ page }) => {
     return;
   }
 
-  const chefBaseUrl = chefHarness.baseUrl;
+
+  const defaultBranches = JSON.parse(
+    fs.readFileSync(path.resolve(path.dirname(CHEF_SESSION_PATH), "../config/default-branches.json"), "utf-8")
+  );
 
   await loginChef(page, {
-    chefBaseUrl,
     login: chefHarness.login,
+    subsidiary: defaultBranches.restaurant.name,
+    subsidiaryCode: defaultBranches.restaurant.code
   });
 
   await expect(page).not.toHaveURL(CHEF_AUTH_PATH);

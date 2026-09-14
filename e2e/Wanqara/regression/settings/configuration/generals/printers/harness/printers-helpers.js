@@ -1,12 +1,10 @@
 import { expect } from '@playwright/test';
-import { withPath } from "../../../../../../harness/config/urls.js";
-
 /**
  * Navigates to printers settings and extracts the suggested version for a given platform prefix.
  * Example platformPrefix: "Windows "
  */
-export async function getSuggestedPrinterVersion(page, { tenantBaseUrl }) {
-  await page.goto(withPath(tenantBaseUrl, '/admin/settings/printers'));
+export async function getSuggestedPrinterVersion(page, ) {
+  await page.goto('/admin/settings/printers');
   await page.waitForLoadState('networkidle');
 
   const summaryLocator = page.locator('span.text-medium-emphasis').filter({ hasText: /Windows.*v\d/i }).first();

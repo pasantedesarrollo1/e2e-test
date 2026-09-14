@@ -1,8 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { withPath } from "../../../harness/config/urls.js";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { selectClientByCedula } from '../../../harness/helpers/people/client-helpers.js';
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
@@ -19,7 +18,7 @@ const scenarios = JSON.parse(
 
 
 async function runQuoteFlow(page, { homePath, quoteParams, pdfChoice }) {
-  await page.goto(withPath(getTenantBaseUrl(), homePath));
+  await page.goto(homePath);
   await page.waitForURL(new RegExp(homePath));
 
   await expect(page.getByText(/Cliente:/i)).toBeVisible();
@@ -90,7 +89,8 @@ for (const scenario of scenarios) {
   test.describe.serial(`POS ${scenario.description} - Quotation Workflow @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
     test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName });
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);

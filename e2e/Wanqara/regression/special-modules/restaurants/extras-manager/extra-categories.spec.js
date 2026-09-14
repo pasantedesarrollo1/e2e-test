@@ -1,8 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth/auth.js";
-import { annotateTicket } from "../../../../harness/helpers/reporting/annotate.js";
-
+import { requirePosCredentials } from "../../../../harness/config/settings.js";
+import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
 import { testByProductFlow } from "./harness/extras-by-product-helpers.js";
 import {
   assignProductsToExtraCategory,
@@ -11,111 +9,99 @@ import {
   verifyDeletionConstraintsAndRemoveProducts
 } from "./harness/extras-crud-helpers.js";
 
-import scenarios from "./0-json-data/extra-categories.json" assert { type: "json" };
+import scenarios from "./0-json-data/extra-categories.json" with { type: "json" };
+
+import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";
 
 test.describe.serial("Extras Manager - Extra Categories", () => {
-  for (const scenario of scenarios) {
-    test.describe(`Scenario: ${scenario.description} @${scenario.metadata.testScope}`, () => {
-      if (scenario.metadata && scenario.metadata.ws) {
-        annotateTicket(test, scenario.metadata);
-      }
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
 
-      if (scenario.skip) {
-        test.skip(true, scenario.skipReason);
-      }
+    test(
+      scenario.only ? "Ejecuta el flujo completo de categorias extra (focus)" : "Ejecuta el flujo completo de categorias extra",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ page }) => {
+        test.setTimeout(180_000);
+        const { categoryName, searchTerm, productsToAssign } = scenario.extrasData;
 
-      requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
+        // Función auxiliar para volver a la lista base
+        const goToList = async () => {
+          await ensureAuthenticated(page, {
+            targetPath: "/admin/categories/extras/list",
+            authType: scenario.authType});
+          await page.waitForLoadState("networkidle");
+        };
 
-      test(
-        scenario.only ? "Ejecuta el flujo completo de categorias extra (focus)" : "Ejecuta el flujo completo de categorias extra",
-        { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
-        async ({ page }) => {
-          test.setTimeout(180_000);
-          const tenantBaseUrl = getTenantBaseUrl();
-          const { categoryName, searchTerm, productsToAssign } = scenario.extrasData;
+        await test.step("Step 1: ensures a clean state by removing existing category if present", async () => {
+          await goToList();
+          
+          const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
+          await expect(categorySearchInput).toBeVisible();
+          await categorySearchInput.fill(categoryName);
+          await page.waitForTimeout(1000); // Wait for search debounce
 
-          // Función auxiliar para volver a la lista base
-          const goToList = async () => {
-            await ensureAuthenticated(page, {
-              tenantBaseUrl,
-              targetPath: "/admin/categories/extras/list",
-              authType: scenario.authType,
-            });
-            await page.waitForLoadState("networkidle");
-          };
-
-          await test.step("Step 1: ensures a clean state by removing existing category if present", async () => {
-            await goToList();
+          const categoryItem = page.getByText(categoryName, { exact: true }).first();
+          if (await categoryItem.isVisible()) {
+            await categoryItem.click();
+            await page.waitForTimeout(1000);
             
-            const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
-            await expect(categorySearchInput).toBeVisible();
-            await categorySearchInput.fill(categoryName);
-            await page.waitForTimeout(1000); // Wait for search debounce
-
-            const categoryItem = page.getByText(categoryName, { exact: true }).first();
-            if (await categoryItem.isVisible()) {
-              await categoryItem.click();
-              await page.waitForTimeout(1000);
-              
-              const removeButtons = page.getByRole("button", { name: /Quitar producto/i });
-              const count = await removeButtons.count();
-              if (count > 0) {
-                for (let i = 0; i < count; i++) {
-                  await removeButtons.first().click();
-                }
-                const saveChangesBtn = page.getByRole("button", { name: new RegExp(`Guardar cambios \\(${count}\\)`, "i") });
-                const responsePromise = page.waitForResponse(
-                  (res) => res.url().includes("/inventory/products/") && res.request().method() === "PUT" && [200, 201].includes(res.status())
-                );
-                await saveChangesBtn.click();
-                await responsePromise;
+            const removeButtons = page.getByRole("button", { name: /Quitar producto/i });
+            const count = await removeButtons.count();
+            if (count > 0) {
+              for (let i = 0; i < count; i++) {
+                await removeButtons.first().click();
               }
-              await deleteExtraCategory(page);
+              const saveChangesBtn = page.getByRole("button", { name: new RegExp(`Guardar cambios \\(${count}\\)`, "i") });
+              const responsePromise = page.waitForResponse(
+                (res) => res.url().includes("/inventory/products/") && res.request().method() === "PUT" && [200, 201].includes(res.status())
+              );
+              await saveChangesBtn.click();
+              await responsePromise;
             }
-          });
-
-          await test.step("Step 2: creates a new extra category and assigns products", async () => {
-            await goToList();
-            await createExtraCategory(page, categoryName);
-            await assignProductsToExtraCategory(page, categoryName, searchTerm, productsToAssign);
-          });
-
-          await test.step("Step 3: validates deletion constraints when category has associated products", async () => {
-            await goToList();
-            const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
-            await categorySearchInput.fill(categoryName);
-            await page.waitForTimeout(1000);
-            
-            const categoryItem = page.getByText(categoryName, { exact: true }).first();
-            await categoryItem.click();
-            await page.waitForTimeout(1000);
-
-            await verifyDeletionConstraintsAndRemoveProducts(page);
-          });
-
-          await test.step("Step 4: deletes the category and recreates it for subsequent flows", async () => {
-            await goToList();
-            const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
-            await categorySearchInput.fill(categoryName);
-            await page.waitForTimeout(1000);
-            
-            const categoryItem = page.getByText(categoryName, { exact: true }).first();
-            await categoryItem.click();
-            await page.waitForTimeout(1000);
-
             await deleteExtraCategory(page);
-            await createExtraCategory(page, categoryName);
-            await assignProductsToExtraCategory(page, categoryName, searchTerm, productsToAssign);
-          });
+          }
+        });
 
-          await test.step("Step 5: validates 'Por producto' relation flow and cleanup", async () => {
-            // El helper testByProductFlow ya hace sus propias navegaciones internas si las necesita.
-            await testByProductFlow(page, categoryName, searchTerm);
-          });
+        await test.step("Step 2: creates a new extra category and assigns products", async () => {
+          await goToList();
+          await createExtraCategory(page, categoryName);
+          await assignProductsToExtraCategory(page, categoryName, searchTerm, productsToAssign);
+        });
 
-        }
-      );
-    });
-  }
+        await test.step("Step 3: validates deletion constraints when category has associated products", async () => {
+          await goToList();
+          const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
+          await categorySearchInput.fill(categoryName);
+          await page.waitForTimeout(1000);
+          
+          const categoryItem = page.getByText(categoryName, { exact: true }).first();
+          await categoryItem.click();
+          await page.waitForTimeout(1000);
+
+          await verifyDeletionConstraintsAndRemoveProducts(page);
+        });
+
+        await test.step("Step 4: deletes the category and recreates it for subsequent flows", async () => {
+          await goToList();
+          const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
+          await categorySearchInput.fill(categoryName);
+          await page.waitForTimeout(1000);
+          
+          const categoryItem = page.getByText(categoryName, { exact: true }).first();
+          await categoryItem.click();
+          await page.waitForTimeout(1000);
+
+          await deleteExtraCategory(page);
+          await createExtraCategory(page, categoryName);
+          await assignProductsToExtraCategory(page, categoryName, searchTerm, productsToAssign);
+        });
+
+        await test.step("Step 5: validates 'Por producto' relation flow and cleanup", async () => {
+          // El helper testByProductFlow ya hace sus propias navegaciones internas si las necesita.
+          await testByProductFlow(page, categoryName, searchTerm);
+        });
+
+      }
+    );
+  });
 });

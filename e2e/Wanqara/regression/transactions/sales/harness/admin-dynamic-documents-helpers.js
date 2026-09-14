@@ -47,7 +47,7 @@ export async function getAvailableDocumentOptions(page) {
   
   try {
     await expect(activeListbox).toBeVisible({ timeout: 3000 });
-  } catch (e) {
+  } catch {
     const singleOption = await readSelectedDocumentType(page);
     return [singleOption];
   }

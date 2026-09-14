@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { ensureCashRegisterOpen } from "../harness/cash-register/cash-register-helpers.js";
 import { selectClientByCedula } from '../../../harness/helpers/people/client-helpers.js';
@@ -16,17 +16,14 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "public-document-share.json"), "utf-8")
 );
 
-
-
 for (const scenario of scenarios) {
   test.describe(`POS ${scenario.description} - Public Document Share @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
     test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName });
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount });
 
-    test.use({
-      permissions: ['clipboard-read', 'clipboard-write'],
-    });
+    test.use({ permissions: ['clipboard-read', 'clipboard-write'], openingAmount: scenario.openingAmount });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -34,15 +31,14 @@ for (const scenario of scenarios) {
 
     test("validates tokenization via share-token API, clipboard flow, public view and error state", async ({ page, browser }) => {
       test.setTimeout(180_000);
-      const tenantBaseUrl = getTenantBaseUrl();
 
       let publicToken = null;
       let shareUrl = null;
 
       await test.step("Navigate to POS and setup", async () => {
         const targetPath = scenario.authType === 'restaurant' ? '/pos/restaurant-home' : '/pos/home';
-        await ensureAuthenticated(page, { tenantBaseUrl, targetPath, authType: scenario.authType });
-        await ensureCashRegisterOpen(page, tenantBaseUrl, scenario.openingAmount, scenario.subsidiaryName, scenario.authType);
+        await ensureAuthenticated(page, { targetPath, authType: scenario.authType });
+        await ensureCashRegisterOpen(page, scenario.openingAmount, scenario.subsidiaryName, scenario.subsidiaryCode, scenario.authType);
       });
 
       await test.step("Search and select product", async () => {

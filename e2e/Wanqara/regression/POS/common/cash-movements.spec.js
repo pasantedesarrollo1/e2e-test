@@ -1,8 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { withPath } from "../../../harness/config/urls.js";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
@@ -72,10 +71,9 @@ test.describe("POS - Cash Register Income and Expense Transactions", () => {
       }
 
       requirePosCredentials(test);
-      test.use({ 
-        storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName 
-      });
+      test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount });
 
       const runTest = (title, bodyFn) => {
         if (scenario.fixture === 'posPage') {
@@ -93,7 +91,7 @@ test.describe("POS - Cash Register Income and Expense Transactions", () => {
               await clickFinishSale(page);
               await completePayment(page, { paymentMethod: scenario.paymentMethod });
             const basePath = scenario.basePath;
-            await page.goto(withPath(getTenantBaseUrl(), basePath));
+            await page.goto(basePath);
             await page.waitForURL(new RegExp(basePath));
           });
 

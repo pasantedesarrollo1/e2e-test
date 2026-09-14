@@ -33,7 +33,8 @@ test.describe.serial("POS Cart Operations and Sale Validations", () => {
     test.describe(`Environment: ${scenario.description} @${scenario.metadata.testScope}`, () => {
       requirePosCredentials(test);
       test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName });
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount });
 
       if (scenario.metadata && scenario.metadata.ws) {
         annotateTicket(test, scenario.metadata);

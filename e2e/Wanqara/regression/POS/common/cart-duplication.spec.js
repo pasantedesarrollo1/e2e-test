@@ -23,7 +23,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
   for (const scenario of scenarios) {
     test.describe(scenario.description, () => {
       requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
+      test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
 
       test("Execute Flow", async ({ page }) => {
         test.setTimeout(120_000);
@@ -79,7 +79,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
       };
 
       const actionHandlers = {
-        searchByCode: async (page, action) => {
+        searchByCode: async (page) => {
           const searchInput = page.locator("#searchInput");
           const modeBtnCode = page.getByRole("button", { name: /Código/i }).first();
           if (!(await modeBtnCode.isVisible())) {
@@ -90,7 +90,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
           await searchInput.fill(productCode);
           await searchInput.press("Enter");
         },
-        clickCard: async (page, action) => {
+        clickCard: async (page) => {
           const searchInput = page.locator("#searchInput");
           await expect(searchInput).toBeVisible({ timeout: 10000 });
           const modeBtnName = page.getByRole("button", { name: /Nombre/i }).first();
@@ -104,7 +104,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
           const card = page.locator(".v-card").filter({ hasText: productName }).first();
           await card.click();
         },
-        clickCartPlus: async (page, action) => {
+        clickCartPlus: async (page) => {
           const cartItem = getCartItem(page, productName);
           const plusBtn = cartItem
             .locator("button")
@@ -113,7 +113,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
             .first();
           await plusBtn.click();
         },
-        clickCartMinus: async (page, action) => {
+        clickCartMinus: async (page) => {
           const cartItem = getCartItem(page, productName);
           const minusBtn = cartItem
             .locator("button")
@@ -129,7 +129,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
           await input.fill(String(action.amount));
           await input.press("Tab");
         },
-        clickCardBadgePlus: async (page, action) => {
+        clickCardBadgePlus: async (page) => {
             const searchInput = page.locator("#searchInput");
             await expect(searchInput).toBeVisible({ timeout: 10000 });
             const modeBtnName = page.getByRole("button", { name: /Nombre/i }).first();

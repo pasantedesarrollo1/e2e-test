@@ -1,74 +1,60 @@
 import { test } from '@playwright/test';
-import { getTenantBaseUrl, requirePosCredentials } from '../../../../harness/config/settings.js';
-import { withPath } from '../../../../harness/config/urls.js';
-import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth/auth.js";
+import { requirePosCredentials } from '../../../../harness/config/settings.js';
+import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
 import { deleteRecordFromList } from '../../../../harness/helpers/crud/crud-helpers.js';
-import { annotateTicket } from "../../../../harness/helpers/reporting/annotate.js";
 import { ACTION_TOOLTIPS } from '../../../../harness/helpers/ui/action-tooltips.js';
 import { createWarehouse } from "./harness/warehouses-helpers.js";
 
-import scenarios from "./0-json-data/warehouses-crud.json" assert { type: "json" };
+import scenarios from "./0-json-data/warehouses-crud.json" with { type: "json" };
+
+import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";
 
 test.describe('Warehouse Management CRUD', () => {
-  for (const scenario of scenarios) {
-    test.describe(`Scenario: ${scenario.description} @${scenario.metadata.testScope}`, () => {
-      if (scenario.metadata && scenario.metadata.ws) {
-        annotateTicket(test, scenario.metadata);
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
+
+    test(
+      scenario.only ? "Successfully create, search, and delete a warehouse (focus)" : "Successfully create, search, and delete a warehouse",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ page }) => {
+        test.setTimeout(120_000);
+        const listPath = '/admin/warehouses/list';
+
+        await test.step('Step 0: Authenticate and Navigate', async () => {
+          await ensureAuthenticated(page, {
+            targetPath: "/admin/warehouses/list",
+            authType: scenario.authType});
+        });
+
+        await test.step('Step 1: Clean previous record if it exists', async () => {
+          await page.waitForLoadState('networkidle');
+          await deleteRecordFromList(page, {
+            searchName: scenario.warehouseData.name,
+            endpointPattern: '/api/v1/general/warehouses',
+            confirmButtonRegex: /^Eliminar$/i,
+            successMessage: 'Bodega eliminada correctamente',
+            deleteTooltip: ACTION_TOOLTIPS.warehouses.delete
+          });
+        });
+
+        await test.step('Step 2: Create the new warehouse', async () => {
+          await createWarehouse(page, scenario.warehouseData);
+        });
+
+        await test.step('Step 3: Verify list and delete the created warehouse', async () => {
+          await page.goto(listPath);
+          await page.waitForLoadState('networkidle');
+          
+          await deleteRecordFromList(page, {
+            searchName: scenario.warehouseData.name,
+            endpointPattern: '/api/v1/general/warehouses',
+            confirmButtonRegex: /^Eliminar$/i,
+            successMessage: 'Bodega eliminada correctamente',
+            deleteTooltip: ACTION_TOOLTIPS.warehouses.delete
+          });
+        });
+
       }
-
-      if (scenario.skip) {
-        test.skip(true, scenario.skipReason);
-      }
-
-      requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
-
-      test(
-        scenario.only ? "Successfully create, search, and delete a warehouse (focus)" : "Successfully create, search, and delete a warehouse",
-        { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
-        async ({ page }) => {
-          test.setTimeout(120_000);
-          const tenantBaseUrl = getTenantBaseUrl();
-          const listPath = withPath(tenantBaseUrl, '/admin/warehouses/list');
-
-          await test.step('Step 0: Authenticate and Navigate', async () => {
-            await ensureAuthenticated(page, {
-              tenantBaseUrl,
-              targetPath: "/admin/warehouses/list",
-              authType: scenario.authType,
-            });
-          });
-
-          await test.step('Step 1: Clean previous record if it exists', async () => {
-            await page.waitForLoadState('networkidle');
-            await deleteRecordFromList(page, {
-              searchName: scenario.warehouseData.name,
-              endpointPattern: '/api/v1/general/warehouses',
-              confirmButtonRegex: /^Eliminar$/i,
-              successMessage: 'Bodega eliminada correctamente',
-              deleteTooltip: ACTION_TOOLTIPS.warehouses.delete
-            });
-          });
-
-          await test.step('Step 2: Create the new warehouse', async () => {
-            await createWarehouse(page, scenario.warehouseData);
-          });
-
-          await test.step('Step 3: Verify list and delete the created warehouse', async () => {
-            await page.goto(listPath);
-            await page.waitForLoadState('networkidle');
-            
-            await deleteRecordFromList(page, {
-              searchName: scenario.warehouseData.name,
-              endpointPattern: '/api/v1/general/warehouses',
-              confirmButtonRegex: /^Eliminar$/i,
-              successMessage: 'Bodega eliminada correctamente',
-              deleteTooltip: ACTION_TOOLTIPS.warehouses.delete
-            });
-          });
-
-        }
-      );
-    });
-  }
+    );
+  });
 });

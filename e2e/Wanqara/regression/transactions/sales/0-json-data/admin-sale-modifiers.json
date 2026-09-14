@@ -21,7 +21,9 @@
       "warehouseName": "Bodega de Ventas W001",
       "modifierRate": "3.3337373372323"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   },
   {
     "id": "ADMIN-SALE-MODIFIER-002",
@@ -45,7 +47,9 @@
       "warehouseName": "Bodega de Ventas W001",
       "modifierRate": "3.3337373372323"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   },
   {
     "id": "ADMIN-SALE-MODIFIER-003",
@@ -69,7 +73,9 @@
       "warehouseName": "Bodega de Ventas W001",
       "modifierRate": "3.3337373372323"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101"
   },
   {
     "id": "ADMIN-SALE-MODIFIER-004",
@@ -93,6 +99,8 @@
       "warehouseName": "Bodega de Ventas W001",
       "modifierRate": "3.3337373372323"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101"
   }
 ]

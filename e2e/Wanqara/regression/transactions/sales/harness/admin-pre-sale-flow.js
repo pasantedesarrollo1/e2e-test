@@ -43,7 +43,6 @@ export async function submitAdminPreSale(page) {
 }
 
 export async function runAdminPreSaleFlow(page, {
-  tenantBaseUrl,
   authType,
   documentType,
   clientCedula,
@@ -52,10 +51,9 @@ export async function runAdminPreSaleFlow(page, {
   beforeFinish,
   paymentMethod,
   warehouseName,
-  skipNavigation = false,
-}) {
+  skipNavigation = false}) {
   if (!skipNavigation) {
-    await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/admin/pre-sale/add", authType });
+    await ensureAuthenticated(page, { targetPath: "/admin/pre-sale/add", authType });
     await page.waitForURL(/\/admin\/pre-sale\/add/);
   }
 

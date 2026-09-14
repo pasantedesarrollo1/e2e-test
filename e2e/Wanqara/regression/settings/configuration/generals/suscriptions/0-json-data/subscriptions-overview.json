@@ -7,10 +7,10 @@
     "metadata": {
       "ws": "",
       "release": "",
-      "summary": "Valida la informaci\u00f3n de suscripciones",
+      "summary": "Valida la información de suscripciones",
       "testScope": "regression"
     },
-    "description": "Validaci\u00f3n de Tarjetas y Badges de Suscripciones",
+    "description": "Validación de Tarjetas y Badges de Suscripciones",
     "authType": "retail",
     "subscriptionData": {
       "modules": [
@@ -137,11 +137,13 @@
         "Multibodegas"
       ],
       "moduleLabels": [
-        "Suscripci\u00f3n Restaurantes",
+        "Suscripción Restaurantes",
         "Balanzas digitales",
-        "M\u00f3dulo para multinegocio"
+        "Módulo para multinegocio"
       ]
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   }
 ]

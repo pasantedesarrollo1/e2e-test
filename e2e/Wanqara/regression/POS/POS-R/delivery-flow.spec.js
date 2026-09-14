@@ -30,7 +30,7 @@ for (const scenario of scenarios) {
   test.describe(`POS ${scenario.description} - Delivery Flow @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);

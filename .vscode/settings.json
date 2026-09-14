@@ -1,2 +1,9 @@
 {
+    "python-envs.pythonProjects": [
+        {
+            "path": "e2e/Wanqara/harness/.auth",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
+        }
+    ]
 }

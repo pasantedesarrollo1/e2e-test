@@ -1,4 +1,5 @@
 export function annotateTicket(test, ticket) {
+  // eslint-disable-next-line no-empty-pattern
   test.beforeEach(async ({}, testInfo) => {
     const ws = Array.isArray(ticket.ws) ? ticket.ws.join(', ') : ticket.ws;
     const tes = Array.isArray(ticket.tes) ? ticket.tes.join(', ') : ticket.tes;

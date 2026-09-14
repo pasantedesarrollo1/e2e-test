@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { clickTableRowAction } from "../../../../../../harness/helpers/crud/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../../../../../harness/helpers/ui/action-tooltips.js";
 import { fillSingleReceivablePayment, searchReceivableAccount } from "../../../payments/multiple-payment/harness/multiple-receivables-helpers.js";
 
 export async function processPaymentAndVerifyPrinter(page, { cedula, amount, description, paymentMethodRegex }) {
@@ -7,7 +8,7 @@ export async function processPaymentAndVerifyPrinter(page, { cedula, amount, des
   
   const firstRow = page.locator(".v-data-table__tr").first();
   await expect(firstRow).toBeVisible({ timeout: 15_000 });
-  await clickTableRowAction(page, firstRow, "Agregar Abono");
+  await clickTableRowAction(page, firstRow, ACTION_TOOLTIPS.receivableAccounts.addPayment);
 
   const pagarBtn = await fillSingleReceivablePayment(page, {
     amount,

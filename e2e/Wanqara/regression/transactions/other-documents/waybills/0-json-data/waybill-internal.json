@@ -10,7 +10,7 @@
       "summary": "Internal Waybill Creation with carrier validation",
       "testScope": "regression"
     },
-    "description": "Crea una gu\u00eda de remisi\u00f3n interna validando transportistas",
+    "description": "Crea una guía de remisión interna validando transportistas",
     "authType": "dispatch",
     "waybillData": {
       "warehouseName": "",
@@ -30,7 +30,9 @@
         "name": "Empleado Test 1"
       }
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101"
   },
   {
     "id": "WAYBILL-INT-002",
@@ -43,7 +45,7 @@
       "summary": "Internal Waybill Creation with long product name",
       "testScope": "regression"
     },
-    "description": "Crea una gu\u00eda interna con producto de nombre largo",
+    "description": "Crea una guía interna con producto de nombre largo",
     "authType": "dispatch",
     "waybillData": {
       "warehouseName": "",
@@ -55,7 +57,7 @@
       "destinationSubsidiary": "002 - Wanqara Retail Dispatch",
       "shipmentAmountInternal": "1.23233356728372",
       "isLongProductSale": true,
-      "productName": "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompa\u00f1adas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada",
+      "productName": "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompañadas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada",
       "carrierParams": {
         "cedula": "1000000001",
         "identityType": "CEDULA",
@@ -63,6 +65,8 @@
         "name": "Empleado Test 1"
       }
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101"
   }
 ]

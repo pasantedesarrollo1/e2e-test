@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import {
-  getTenantBaseUrl,
   requireChefCredentials,
   requirePosCredentials,
 } from "../../../harness/config/settings.js";
@@ -15,21 +14,19 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sales-with-tips-combinations.json"), "utf-8")
 );
 
-async function withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, orderOptions, posOptions, actionCallback) {
-  await closeAllActiveOrders(page, tenantBaseUrl, posOptions.subsidiaryName, posOptions.cleanupReason || "Limpieza pre-test");
+async function withActiveRestaurantOrderSafe(browser, page, orderOptions, posOptions, actionCallback) {
+  await closeAllActiveOrders(page, posOptions.subsidiaryName, posOptions.cleanupReason || "Limpieza pre-test");
   
   const chefContext = await browser.newContext({ storageState: getSessionPath("chef") });
   const chefPage = await chefContext.newPage();
   const activeTableName = await createChefOrder(chefPage, orderOptions);
   await chefContext.close();
 
-  await navigateToRestaurantPOS(page, tenantBaseUrl, posOptions.subsidiaryName);
+  await navigateToRestaurantPOS(page, posOptions.subsidiaryName);
   await openAndSelectOrder(page, activeTableName);
   await actionCallback(page, activeTableName);
 }
 
-import { ensureAuthenticated } from "../../../harness/helpers/auth/auth.js";
-import { ensureCashRegisterOpen } from "../harness/cash-register/cash-register-helpers.js";
 import { applyGeneralDiscount, applyManualSurcharge, assertPaymentModalUI, assertPaymentPayloadPrecision, assertSalePanelUI, assertSummaryPrecision } from "../harness/financials/pos-financial-assertions.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
@@ -56,14 +53,12 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
   requirePosCredentials(test);
   requireChefCredentials(test);
 
-  test.use({ 
-    storageState: getSessionPath("restaurant"),
-    subsidiaryName: scenario.subsidiaryName
-  });
+  test.use({ storageState: getSessionPath("restaurant"),
+    subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount });
 
   test("Case 1: Direct Sale with Mix (Standard + Combo + Service) and Tip", async ({ posRestaurantPage: page }) => {
     test.setTimeout(150_000);
-    const tenantBaseUrl = getTenantBaseUrl();
     const precision = scenario.case1;
 
     await searchAndSelectProduct(page, { name: scenario.products.estandar, searchTerm: null });
@@ -91,7 +86,6 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
 
   test("Case 2: Direct Sale with General Discount and Tip", async ({ posRestaurantPage: page }) => {
     test.setTimeout(120_000);
-    const tenantBaseUrl = getTenantBaseUrl();
     const precision = scenario.case2;
 
     await searchAndSelectProduct(page, { name: scenario.products.combo, searchTerm: null });
@@ -119,10 +113,9 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
 
   test("Case 3: Full Table Payment with Composite Inventory and Tip", async ({ page, browser }) => {
     test.setTimeout(180_000);
-    const tenantBaseUrl = getTenantBaseUrl();
     const precision = scenario.case3;
 
-    await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, cleanupReason: scenario.cleanupReason }, async (page, activeTableName) => {
+    await withActiveRestaurantOrderSafe(browser, page, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
       await test.step("Add recipe products (Elaborated and PreElaborated)", async () => {
         await addProductToExistingOrder(page, scenario.products.elaborado);
       });
@@ -161,10 +154,9 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
 
   test("Case 4: Separate Check Payment with Tip", async ({ page, browser }) => {
     test.setTimeout(180_000);
-    const tenantBaseUrl = getTenantBaseUrl();
     const precision = scenario.case4;
 
-    await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, cleanupReason: scenario.cleanupReason }, async (page, activeTableName) => {
+    await withActiveRestaurantOrderSafe(browser, page, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
       await test.step("Navigate to separate order screen", async () => {
         await navigateToSeparateOrder(page);
       });
@@ -200,7 +192,6 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
 
   test("Case 5: Direct Sale with Surcharge and Tip", async ({ posRestaurantPage: page }) => {
     test.setTimeout(120_000);
-    const tenantBaseUrl = getTenantBaseUrl();
     const precision = scenario.case5;
 
     await searchAndSelectProduct(page, { name: scenario.products.combo, searchTerm: null });

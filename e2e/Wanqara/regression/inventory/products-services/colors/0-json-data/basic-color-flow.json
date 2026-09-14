@@ -16,6 +16,8 @@
       "name": "Color E2E Base Flow",
       "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   }
 ]

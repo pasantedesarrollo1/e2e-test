@@ -24,7 +24,9 @@
         "tallaColorName": "test talla color"
       }
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101"
   },
   {
     "id": "ADMIN-SALE-DISPATCH-002",
@@ -51,6 +53,8 @@
         "tallaColorName": "test talla color"
       }
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   }
 ]

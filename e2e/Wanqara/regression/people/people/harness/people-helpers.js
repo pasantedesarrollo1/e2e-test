@@ -1,5 +1,4 @@
 import { expect } from "@playwright/test";
-import { withPath } from "../../../../harness/config/urls.js";
 import { clickTableRowAction, searchInList } from "../../../../harness/helpers/crud/crud-helpers.js";
 import { ACTION_TOOLTIPS } from "../../../../harness/helpers/ui/action-tooltips.js";
 import { selectDropdownOption } from "../../../../harness/helpers/ui/ui-helpers.js";
@@ -39,21 +38,21 @@ export async function submitPersonForm(page) {
 }
 
 export async function createPerson(page, data) {
-  await page.goto(withPath(data.tenantBaseUrl, "/admin/people/add"));
+  await page.goto("/admin/people/add");
   await expect(page.locator("header").filter({ hasText: "100" }).first()).toBeVisible({ timeout: 15000 });
   await fillPersonForm(page, data);
   await submitPersonForm(page);
 }
 
-export async function searchPerson(page, { identity, tenantBaseUrl }) {
-  await page.goto(withPath(tenantBaseUrl, "/admin/people/list"));
+export async function searchPerson(page, { identity }) {
+  await page.goto("/admin/people/list");
   await searchInList(page, identity);
   const row = page.locator(".v-data-table__tr").filter({ hasText: identity }).first();
   await expect(row).toBeVisible();
 }
 
-export async function deactivatePerson(page, { identity, tenantBaseUrl }) {
-  await page.goto(withPath(tenantBaseUrl, "/admin/people/list"));
+export async function deactivatePerson(page, { identity }) {
+  await page.goto("/admin/people/list");
   await searchInList(page, identity);
   const row = page.locator(".v-data-table__tr").filter({ hasText: identity }).first();
   
@@ -71,8 +70,8 @@ export async function deactivatePerson(page, { identity, tenantBaseUrl }) {
   await expect(page.locator(".v-snackbar").filter({ hasText: /persona desactivada/i })).toBeVisible();
 }
 
-export async function ensureCleanPerson(page, { identity, tenantBaseUrl }) {
-  await page.goto(withPath(tenantBaseUrl, "/admin/people/list"));
+export async function ensureCleanPerson(page, { identity }) {
+  await page.goto("/admin/people/list");
   await searchInList(page, identity);
   
   const row = page.locator(".v-data-table__tr").filter({ hasText: identity }).first();
@@ -93,8 +92,8 @@ export async function ensureCleanPerson(page, { identity, tenantBaseUrl }) {
     }
   }
 }
-export async function verifyDeactivatedStrikethrough(page, { identity, tenantBaseUrl }) {
-  await page.goto(withPath(tenantBaseUrl, "/admin/people/list"));
+export async function verifyDeactivatedStrikethrough(page, { identity }) {
+  await page.goto("/admin/people/list");
   await searchInList(page, ""); 
   await searchInList(page, identity);
 

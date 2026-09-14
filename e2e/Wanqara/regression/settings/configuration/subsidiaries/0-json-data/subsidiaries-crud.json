@@ -19,7 +19,9 @@
       "isRestaurant": false,
       "hasDispatch": false
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   },
   {
     "id": "SUBSIDIARY-002",
@@ -41,7 +43,9 @@
       "isRestaurant": false,
       "hasDispatch": true
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   },
   {
     "id": "SUBSIDIARY-003",
@@ -63,6 +67,8 @@
       "isRestaurant": true,
       "hasDispatch": false
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   }
 ]

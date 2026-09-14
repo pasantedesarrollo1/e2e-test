@@ -19,6 +19,8 @@
       "whatsapp": "999999999",
       "observation": "test automatizado"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   }
 ]

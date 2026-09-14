@@ -7,7 +7,7 @@
     "metadata": {
       "ws": "",
       "release": "",
-      "summary": "Flujo B\u00e1sico de Marcas",
+      "summary": "Flujo Básico de Marcas",
       "testScope": "regression"
     },
     "description": "Retail - Flujo Base de Marca (Pre-clean, Create, Search, Delete)",
@@ -17,6 +17,8 @@
       "order": "1",
       "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   }
 ]

@@ -33,7 +33,7 @@ for (const scenario of scenarios) {
   test.describe.serial(`Restaurant POS ${scenario.description} - Order with Extras @${scenario.metadata?.testScope || 'regression'}`, () => {
     requireChefCredentials(test);
 
-    test.use({ storageState: CHEF_SESSION_PATH });
+    test.use({ storageState: CHEF_SESSION_PATH, openingAmount: scenario.openingAmount });
 
     let baseProduct = scenario.extrasData.baseProduct;
     let categoryName = scenario.extrasData.categoryName;
@@ -51,7 +51,8 @@ for (const scenario of scenarios) {
         chefBaseUrl,
         targetPath: "/tables",
         login: scenario.chefLogin,
-        subsidiary: scenario.chefSubsidiary
+        subsidiary: scenario.subsidiaryName,
+        subsidiaryCode: scenario.subsidiaryCode
       });
       
       await expect(page).toHaveURL(/\/tables/);

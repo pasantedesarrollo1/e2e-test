@@ -1,5 +1,5 @@
 {
-  "retail": { "name": "Wanqara Comercios 100", "code": "100" },
-  "dispatch": { "name": "Wanqara Comercios Dispatch 101", "code": "101" },
-  "restaurant": { "name": "Wanqara 001", "code": "001" }
+  "retail": { "name": "Wanqara Comercios", "code": "100" },
+  "dispatch": { "name": "Wanqara Comercios Dispatch", "code": "101" },
+  "restaurant": { "name": "Wanqara", "code": "001" }
 }

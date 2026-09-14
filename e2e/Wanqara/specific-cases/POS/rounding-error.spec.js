@@ -1,51 +1,41 @@
 import { expect, test } from "@playwright/test";
-import { getTenantBaseUrl, requirePosCredentials } from "../../harness/config/settings.js";
-import { ensureAuthenticated, getSessionPath, withSessionWatchdog } from "../../harness/helpers/auth/auth.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
+import { ensureAuthenticated, withSessionWatchdog } from "../../harness/helpers/auth/auth.js";
 import { selectClientByCedula } from "../../harness/helpers/people/client-helpers.js";
-import { annotateTicket } from "../../harness/helpers/reporting/annotate.js";
 import { ensureCashRegisterOpen } from "../../regression/POS/harness/cash-register/cash-register-helpers.js";
 import {
   openProductOptions,
   saveProductOptions,
   setDiscountInOptions,
   setQuantityInOptions,
-  setUnitPriceInOptions,
-} from "../../regression/POS/harness/products/pos-product-options.js";
+  setUnitPriceInOptions} from "../../regression/POS/harness/products/pos-product-options.js";
 import { searchAndSelectProduct } from "../../regression/POS/harness/products/pos-search.js";
 
-import scenarios from "./0-json-data/rounding-error.json" assert { type: "json" };
+import { generateDataDrivenTests } from "../../harness/helpers/test-generator.js";
+
+import scenarios from "./0-json-data/rounding-error.json" with { type: "json" };
 
 test.describe("POS Specific Cases - Rounding Errors", () => {
-  for (const scenario of scenarios) {
-    test.describe(`Scenario: ${scenario.description} @${scenario.metadata.testScope}`, () => {
-      if (scenario.metadata && scenario.metadata.ws) {
-        annotateTicket(test, scenario.metadata);
-      }
+  requirePosCredentials(test);
 
-      if (scenario.skip) {
-        test.skip(true, scenario.skipReason);
-      }
-
-      requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
-
-      test(
-        scenario.only ? "Executes specific rounding error case (focus)" : "Executes specific rounding error case",
-        { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    test(
+      scenario.only ? "Executes specific rounding error case (focus)" : "Executes specific rounding error case",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
         async ({ page }) => {
           test.setTimeout(120_000);
           
           const paymentUrlRegex = new RegExp(scenario.paymentUrl);
           const tc = scenario.caseData;
-          const tenantBaseUrl = getTenantBaseUrl();
 
           await test.step("Setup POS Environment dynamically", async () => {
             const isRestaurant = scenario.fixture === "posRestaurantPage";
             const targetPath = isRestaurant ? "/pos/restaurant-home" : "/pos/home";
-            const subsidiaryName = isRestaurant ? scenario.posOptions.subsidiaryName : scenario.posOptions.subsidiaryName;
+            const subsidiaryName = scenario.subsidiaryName;
+            const subsidiaryCode = scenario.subsidiaryCode;
             
-            await ensureAuthenticated(page, { tenantBaseUrl, targetPath, authType: scenario.authType });
-            await ensureCashRegisterOpen(page, tenantBaseUrl, tc.openingAmount, subsidiaryName, scenario.authType);
+            await ensureAuthenticated(page, { targetPath, authType: scenario.authType });
+            await ensureCashRegisterOpen(page, tc.openingAmount, subsidiaryName, subsidiaryCode, scenario.authType);
             await withSessionWatchdog(page, () =>
               expect(page.getByText(/Cliente:/i).first()).toBeVisible({ timeout: 60_000 }),
               scenario.authType
@@ -96,7 +86,7 @@ test.describe("POS Specific Cases - Rounding Errors", () => {
           });
 
           await test.step("Pay and verify rounding behavior", async () => {
-            const methodOption = page.getByText(scenario.saleParams.paymentMethod.label, { exact: true }).first();
+            const methodOption = page.getByText(new RegExp(`^${scenario.paymentMethod}$`, 'i')).first();
             await methodOption.click();
 
             const finalizarVentaButton = page.getByRole("button", { name: /Finalizar Venta/i });
@@ -121,6 +111,5 @@ test.describe("POS Specific Cases - Rounding Errors", () => {
           });
         }
       );
-    });
-  }
+  });
 });

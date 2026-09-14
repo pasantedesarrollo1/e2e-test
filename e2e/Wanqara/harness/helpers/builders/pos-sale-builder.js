@@ -1,6 +1,6 @@
 import { ensureAuthenticated } from "../auth/auth.js";
 import { selectClientByCedula } from "../people/client-helpers.js";
-import { playwrightHarness } from "../../config/settings.js";
+import defaultBranches from "../../config/default-branches.json" with { type: "json" };
 
 /**
  * Patrón Builder para el Flujo de Ventas POS.
@@ -8,10 +8,10 @@ import { playwrightHarness } from "../../config/settings.js";
  * Permite encadenar los pasos de la venta explícitamente.
  */
 export class PosSaleBuilder {
-    constructor(page, tenantBaseUrl, subsidiaryName = playwrightHarness.subsidiaries.retail, deps = {}) {
+    constructor(page, subsidiaryName = defaultBranches.retail.name, subsidiaryCode = defaultBranches.retail.code, deps = {}) {
         this.page = page;
-        this.tenantBaseUrl = tenantBaseUrl;
         this.subsidiaryName = subsidiaryName;
+        this.subsidiaryCode = subsidiaryCode;
 
         this._ensureCashRegisterOpen = deps.ensureCashRegisterOpen;
         this._completePayment = deps.completePayment;
@@ -27,7 +27,7 @@ export class PosSaleBuilder {
         this.openDrawer = false;
         this.skipNavigation = false;
         this.authType = "retail"; // Default as POS is mostly retail, but overrideable
-        this.openingAmount = playwrightHarness.defaults.openingAmount;
+        this.openingAmount = "";
 
         // Custom actions if complex steps are needed between standard ones
         this.customActions = [];
@@ -36,8 +36,13 @@ export class PosSaleBuilder {
     /**
      * Construye una instancia del Builder alimentada por un JSON de Data-Driven Testing.
      */
-    static fromJson(page, tenantBaseUrl, scenarioData, deps = {}) {
-        const builder = new PosSaleBuilder(page, tenantBaseUrl, scenarioData.subsidiaryName || playwrightHarness.subsidiaries.retail, deps);
+    static fromJson(page, scenarioData, deps = {}) {
+        const builder = new PosSaleBuilder(
+            page, 
+            scenarioData.subsidiaryName || defaultBranches.retail.name, 
+            scenarioData.subsidiaryCode || defaultBranches.retail.code, 
+            deps
+        );
         
         if (scenarioData.documentType) builder.withDocumentType(scenarioData.documentType);
         if (scenarioData.productName) builder.withProduct(scenarioData.productName, scenarioData.searchTerm);
@@ -58,6 +63,11 @@ export class PosSaleBuilder {
 
     withDocumentType(type) {
         this.documentType = type;
+        return this;
+    }
+
+    withOpeningAmount(amount) {
+        this.openingAmount = amount;
         return this;
     }
 
@@ -89,21 +99,20 @@ export class PosSaleBuilder {
     }
 
     async execute() {
-        const { page, tenantBaseUrl, subsidiaryName } = this;
+        const { page, subsidiaryName, subsidiaryCode, authType } = this;
 
         // 1. Navegación y Precondiciones de Caja
         if (!this.skipNavigation) {
-            await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/pos/home", authType: this.authType });
+            await ensureAuthenticated(page, { targetPath: "/pos/home" });
             if (!this._ensureCashRegisterOpen) throw new Error("ensureCashRegisterOpen helper not injected in Builder.");
-            await this._ensureCashRegisterOpen(page, tenantBaseUrl, this.openingAmount, subsidiaryName, this.authType);
+            await this._ensureCashRegisterOpen(page, this.openingAmount, subsidiaryName, subsidiaryCode, authType);
             await page.waitForURL(/\/pos\/(home|restaurant-home)/);
         }
 
         // 2. Tipo de Documento
         if (this.documentType) {
             const documentTypeSelect = page.locator(".v-select").filter({
-                hasText: /Factura|Recibo|Tipo de documento/i,
-            }).first();
+                hasText: /Factura|Recibo|Tipo de documento/i}).first();
             const currentValue = await documentTypeSelect.innerText();
             
             if (!currentValue.includes(this.documentType)) {

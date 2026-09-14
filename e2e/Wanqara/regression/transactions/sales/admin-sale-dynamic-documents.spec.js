@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { ensureAuthenticated } from "../../../harness/helpers/auth/auth.js";
 import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
 import {
   getAvailableDocumentOptions,
@@ -9,9 +8,9 @@ import {
   waitForFormDefaults
 } from "./harness/admin-dynamic-documents-helpers.js";
 
-import scenarios from "./0-json-data/admin-sale-dynamic-documents.json" assert { type: "json" };
+import scenarios from "./0-json-data/admin-sale-dynamic-documents.json" with { type: "json" };
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 
-const tenantBaseUrl = getTenantBaseUrl();
 
 async function ensureUIReady(page) {
   const profileOverlay = page.locator(".v-overlay--active").filter({ hasText: /Cerrar Sesi.n/i });
@@ -21,67 +20,59 @@ async function ensureUIReady(page) {
 }
 
 test.describe("Admin Sales - Dynamic Document Types (WS-981)", () => {
-  for (const scenario of scenarios) {
-    test.describe(`Scenario: ${scenario.description} @${scenario.metadata.testScope}`, () => {
-      if (scenario.metadata && scenario.metadata.ws) {
-        annotateTicket(test, scenario.metadata);
-      }
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
 
-      if (scenario.skip) {
-        test.skip(true, scenario.skipReason);
-      }
-
-      requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
-
-      test(
-        scenario.only ? "Validates dynamic document type restrictions (focus)" : "Validates dynamic document type restrictions",
-        { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
-        async ({ page }) => {
-          test.setTimeout(120_000);
+    test(
+      scenario.only ? "Validates dynamic document type restrictions (focus)" : "Validates dynamic document type restrictions",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ page }) => {
+        test.setTimeout(120_000);
+        
+        const initialStep = scenario.steps[0];
+        await test.step(initialStep.description, async () => {
+          await ensureAuthenticated(page, { 
+            targetPath: scenario.targetPath, 
+            authType: scenario.authType 
+          });
+          await ensureUIReady(page);
           
-          const initialStep = scenario.steps[0];
-          await test.step(initialStep.description, async () => {
-            await ensureAuthenticated(page, { 
-              tenantBaseUrl, 
-              targetPath: scenario.targetPath, 
-              authType: scenario.authType 
-            });
+          await waitForFormDefaults(page);
+          
+          const docInput = await getDocumentTypeLocator(page);
+          // Tolerant regex for accents
+          const expectedRegex = new RegExp(initialStep.expectedDefault.replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.'), 'i');
+          await expect(docInput).toContainText(expectedRegex);
+          
+          const options = await getAvailableDocumentOptions(page);
+          const hasElectronic = options.some(o => o.includes(initialStep.electronicKeyword));
+          expect(hasElectronic).toBe(initialStep.expectElectronicOption);
+        });
+
+        // Execute remaining steps
+        for (let i = 1; i < scenario.steps.length; i++) {
+          const step = scenario.steps[i];
+          await test.step(step.description, async () => {
+            await switchAdminSubsidiary(page, step.subsidiaryName, step.subsidiaryCode);
             await ensureUIReady(page);
             
             await waitForFormDefaults(page);
             
             const docInput = await getDocumentTypeLocator(page);
             // Tolerant regex for accents
-            const expectedRegex = new RegExp(initialStep.expectedDefault.replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.'), 'i');
+            const expectedRegex = new RegExp(step.expectedDefault.replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.'), 'i');
             await expect(docInput).toContainText(expectedRegex);
             
             const options = await getAvailableDocumentOptions(page);
-            const hasElectronic = options.some(o => o.includes(initialStep.electronicKeyword));
-            expect(hasElectronic).toBe(initialStep.expectElectronicOption);
+            const hasElectronic = options.some(o => o.includes(step.electronicKeyword));
+            expect(hasElectronic).toBe(step.expectElectronicOption);
           });
-
-          // Execute remaining steps
-          for (let i = 1; i < scenario.steps.length; i++) {
-            const step = scenario.steps[i];
-            await test.step(step.description, async () => {
-              await switchAdminSubsidiary(page, step.subsidiaryCode);
-              await ensureUIReady(page);
-              
-              await waitForFormDefaults(page);
-              
-              const docInput = await getDocumentTypeLocator(page);
-              // Tolerant regex for accents
-              const expectedRegex = new RegExp(step.expectedDefault.replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.'), 'i');
-              await expect(docInput).toContainText(expectedRegex);
-              
-              const options = await getAvailableDocumentOptions(page);
-              const hasElectronic = options.some(o => o.includes(step.electronicKeyword));
-              expect(hasElectronic).toBe(step.expectElectronicOption);
-            });
-          }
         }
-      );
-    });
-  }
+
+        await test.step(`Teardown: Restore original UI context to branch: ${scenario.subsidiaryName}`, async () => {
+          await switchAdminSubsidiary(page, scenario.subsidiaryName, scenario.subsidiaryCode);
+        });
+      }
+    );
+  });
 });

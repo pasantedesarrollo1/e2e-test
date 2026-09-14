@@ -17,7 +17,7 @@
     "deliveryData": {
       "phone": "0999999922",
       "clientName": "Cliente Delivery Test",
-      "observation": "Observaci\u00f3n de prueba automatizada",
+      "observation": "Observación de prueba automatizada",
       "address": {
         "name": "Casa Test",
         "address": "Av. Principal 123",
@@ -26,9 +26,11 @@
       "cedula": "0000000001"
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Sucursal Matriz",
+    "subsidiaryName": "Wanqara",
     "cleanupReason": "Limpieza automtica pre-test",
     "productName": "Caja de alitas de pollo (100 u)",
-    "clientCedula": "9999999999999"
+    "clientCedula": "9999999999999",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001"
   }
 ]

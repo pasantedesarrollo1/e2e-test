@@ -36,11 +36,10 @@ export async function setUnitPriceInOptions(page, dialog, price, withTaxes = fal
 }
 
 export async function setDiscountInOptions(page, dialog, discount, discountType = "Porcentaje") {
-  const chipText = discountType === "Fijo" ? /Fijo \(\$\)/i : /Porcentaje \(\%\)/i;
+  const chipText = discountType === "Fijo" ? /Fijo \(\$\)/i : /Porcentaje \(%\)/i;
   const chip = dialog.locator(".v-chip").filter({ hasText: chipText }).first();
   await chip.click();
 
-  const discountLabel = dialog.getByText("Descuento:", { exact: true });
   const discountInput = dialog.getByText("Descuento:", { exact: true }).locator("xpath=ancestor::div[1]/following-sibling::div[2]//input");
   
   const input = await discountInput.count() > 0 ? discountInput.first() : dialog.locator("input[type='number']").nth(1);

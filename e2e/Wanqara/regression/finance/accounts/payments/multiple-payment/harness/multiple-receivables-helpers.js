@@ -3,8 +3,7 @@ import { selectClientFromSearchModal } from "../../../../../../harness/helpers/p
 
 export async function selectClientAndAccounts(page, { cedula }) {
   await selectClientFromSearchModal(page, cedula, {
-    triggerLocator: page.getByRole("button", { name: /Buscar cliente/i }),
-  });
+    triggerLocator: page.getByRole("button", { name: /Buscar cliente/i })});
 
   const agregarCuentasBtn = page.getByRole("button", { name: /Agregar cuentas/i });
   await expect(agregarCuentasBtn).toBeEnabled();

@@ -44,7 +44,7 @@ for (const scenario of scenarios) {
     requirePosCredentials(test);
     requireChefCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -58,7 +58,7 @@ for (const scenario of scenarios) {
         browser, 
         page, 
         tenantBaseUrl, 
-        { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, cleanupReason: scenario.cleanupReason }, async (page, activeTableName) => {
+        { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
           await test.step("Add a product to the existing order", async () => {
             await addProductToExistingOrder(page, scenario.updateData.productName);
           });

@@ -14,13 +14,13 @@
       "testScope": "regression"
     },
     "authType": "restaurant",
-    "subsidiaryName": "Sucursal Matriz",
+    "subsidiaryName": "Wanqara",
     "tipToType": "3.3337373372323",
     "products": {
       "estandar": "Caja de alitas de pollo (100 u)",
       "combo": "Combo alitas",
       "servicio": "servicio alita",
-      "elaborado": "Porci\u00f3n de Alitas Marinadas"
+      "elaborado": "Porción de Alitas Marinadas"
     },
     "clients": {
       "testCedula": "0000000001",
@@ -110,6 +110,8 @@
     "paymentMethod": "EFECTIVO",
     "cleanupReason": "Limpieza automtica pre-test",
     "productName": "Caja de alitas de pollo (100 u)",
-    "clientCedula": "9999999999999"
+    "clientCedula": "9999999999999",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001"
   }
 ]

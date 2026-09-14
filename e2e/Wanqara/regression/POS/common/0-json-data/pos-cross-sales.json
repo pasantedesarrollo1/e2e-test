@@ -28,7 +28,9 @@
       "warehouseName": "Bodega de Ventas W001"
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara Comercios 100"
+    "subsidiaryName": "Wanqara Comercios",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100"
   },
   {
     "id": "POS-CROSS-SALES-002",
@@ -59,7 +61,9 @@
       "warehouseName": "Bodega de Ventas W001"
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara Comercios 100"
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "101"
   },
   {
     "id": "POS-CROSS-SALES-003",
@@ -85,7 +89,9 @@
       "clientCedula": "0000000001"
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Sucursal Matriz",
-    "cleanupReason": "Limpieza autom\u00e1tica previa de tests de ventas cruzadas"
+    "subsidiaryName": "Wanqara",
+    "cleanupReason": "Limpieza automática previa de tests de ventas cruzadas",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001"
   }
 ]

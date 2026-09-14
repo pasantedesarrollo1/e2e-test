@@ -1,10 +1,9 @@
-import { expect } from "@playwright/test";
+import { clickAndWaitForApi, formatChefSubsidiary } from "../ui/ui-helpers.js";
 import fs from "node:fs";
+import { expect } from "@playwright/test";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chefHarness } from "../../config/settings.js";
-import { withPath } from "../../config/urls.js";
-
 export const CHEF_AUTH_PATH = /\/auth\//;
 
 export const CHEF_SESSION_PATH = path.resolve(
@@ -12,43 +11,38 @@ export const CHEF_SESSION_PATH = path.resolve(
   "../../.auth/chef-session.json"
 );
 
-export async function loginChef(page, { chefBaseUrl, login, subsidiary = "001 - Wanqara" }) {
-  await page.goto(withPath(chefBaseUrl, "/auth/ruc"));
+export async function loginChef(page, { chefBaseUrl, login, subsidiary, subsidiaryCode }) {
+  if (!subsidiary || !subsidiaryCode) throw new Error("loginChef requires subsidiary and subsidiaryCode parameters from JSON");
+  const formattedSubsidiary = formatChefSubsidiary(subsidiary, subsidiaryCode);
+  const url = chefBaseUrl ? new URL("/auth/ruc", chefBaseUrl).toString() : "/auth/ruc";
+  await page.goto(url);
 
   await page.getByRole("button", { name: /Soy cliente de Wanqara/i }).click();
 
   await page.getByPlaceholder(/Ingrese el dominio/i).fill(login.ruc);
 
-  await Promise.all([
-    page.waitForResponse(
-      (res) =>
-        res.url().includes("/api/v1/tenants/verify-ruc") &&
-        res.request().method() === "GET" &&
-        res.status() === 200
-    ),
-    page.getByRole("button", { name: /Verificar/i }).click(),
-  ]);
+  await clickAndWaitForApi(page, page.getByRole("button", { name: /Verificar/i }), {
+    endpoint: "/api/v1/tenants/verify-ruc",
+    method: "GET",
+    status: 200
+  });
 
   await expect(page).toHaveURL(/\/auth\/login/);
 
   await page.getByPlaceholder(/email@domain.com/i).fill(login.email);
   await page.getByPlaceholder(/Contraseña/i).fill(login.password);
 
-  await Promise.all([
-    page.waitForResponse(
-      (res) =>
-        res.url().includes("/api/v1/apps/orders/login") &&
-        res.request().method() === "POST" &&
-        res.status() === 200
-    ),
-    page.getByRole("button", { name: /Iniciar Sesión/i }).click(),
-  ]);
+  await clickAndWaitForApi(page, page.getByRole("button", { name: /Iniciar Sesión/i }), {
+    endpoint: "/api/v1/apps/orders/login",
+    method: "POST",
+    status: 200
+  });
 
   await expect(page).toHaveURL(/\/config\/user-onboarding/);
 
   await page
       .locator("div")
-      .filter({ hasText: new RegExp(`^${subsidiary}$`, 'i') })
+      .filter({ hasText: new RegExp(`^${formattedSubsidiary}$`, 'i') })
       .nth(5)
       .click();
 
@@ -57,24 +51,28 @@ export async function loginChef(page, { chefBaseUrl, login, subsidiary = "001 - 
   const skipModal = page.getByRole("heading", { name: /Omitir configuración/i });
   await expect(skipModal).toBeVisible();
 
-  await Promise.all([
-    page.waitForResponse(
-      (res) =>
-        res.url().includes("/api/v1/general/users/update-logged-user-settings") &&
-        res.request().method() === "PUT" &&
-        res.status() === 200
-    ),
-    page.getByRole("button", { name: /Omitir/i }).last().click(),
-  ]);
+  await clickAndWaitForApi(page, page.getByRole("button", { name: /Omitir/i }).last(), {
+    endpoint: "/api/v1/general/users/update-logged-user-settings",
+    method: "PUT",
+    status: 200
+  });
 
   await expect(page).toHaveURL(/\/tables/);
 }
 
-export async function ensureChefAuthenticated(page, { chefBaseUrl, targetPath, login, subsidiary }) {
+export async function ensureChefAuthenticated(page, { chefBaseUrl, targetPath, login, subsidiary, subsidiaryCode }) {
   const effectiveLogin = login || chefHarness.login;
-  const effectiveSubsidiary = subsidiary || "001 - Wanqara";
+  
+  const defaultBranches = JSON.parse(
+    fs.readFileSync(path.resolve(path.dirname(CHEF_SESSION_PATH), "../config/default-branches.json"), "utf-8")
+  );
 
-  const url = withPath(chefBaseUrl, targetPath);
+  const effectiveSubsidiary = subsidiary || defaultBranches.restaurant.name;
+  const effectiveSubsidiaryCode = subsidiaryCode || defaultBranches.restaurant.code;
+  
+  if (!effectiveSubsidiary || !effectiveSubsidiaryCode) throw new Error("ensureChefAuthenticated requires subsidiary and subsidiaryCode parameters from JSON");
+
+  const url = chefBaseUrl ? new URL(targetPath, chefBaseUrl).toString() : targetPath;
   await page.goto(url);
 
   // Solo intentar re-login si realmente aterrizamos en auth
@@ -91,11 +89,12 @@ export async function ensureChefAuthenticated(page, { chefBaseUrl, targetPath, l
     chefBaseUrl,
     login: effectiveLogin,
     subsidiary: effectiveSubsidiary,
+    subsidiaryCode: effectiveSubsidiaryCode
   });
 
   const isDefaultLogin = effectiveLogin.ruc === chefHarness.login.ruc && effectiveLogin.email === chefHarness.login.email;
-  const isDefaultSubsidiary = effectiveSubsidiary === "001 - Wanqara";
-  if (isDefaultLogin && isDefaultSubsidiary) {
+  // Solo se guarda sesión compartida si no se envían logins quemados custom (si es el login principal de chef)
+  if (isDefaultLogin) {
     await page.context().storageState({ path: CHEF_SESSION_PATH });
   }
 

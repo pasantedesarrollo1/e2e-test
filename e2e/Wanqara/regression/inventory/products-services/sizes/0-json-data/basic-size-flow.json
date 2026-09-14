@@ -7,7 +7,7 @@
     "metadata": {
       "ws": "",
       "release": "",
-      "summary": "Flujo B\u00e1sico de Tallas",
+      "summary": "Flujo Básico de Tallas",
       "testScope": "regression"
     },
     "description": "Retail - Flujo Base de Talla (Pre-clean, Create, Search, Delete)",
@@ -16,6 +16,8 @@
       "name": "Talla E2E Base Flow",
       "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   }
 ]

@@ -10,16 +10,18 @@
       "summary": "Admin Sales - Electronic Invoice",
       "testScope": "regression"
     },
-    "description": "Completa exitosamente una venta desde el panel admin usando Factura Electr\u00f3nica",
+    "description": "Completa exitosamente una venta desde el panel admin usando Factura Electrónica",
     "authType": "restaurant",
     "saleParams": {
-      "documentType": "Factura electr\u00f3nica",
+      "documentType": "Factura electrónica",
       "productName": "Caja de alitas de pollo (100 u)",
       "clientCedula": "0000000001",
       "paymentMethod": "EFECTIVO",
       "warehouseName": "Bodega de Ventas W001"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001"
   },
   {
     "id": "ADMIN-SALE-DOCS-002",
@@ -41,6 +43,8 @@
       "paymentMethod": "EFECTIVO",
       "warehouseName": "Bodega de Ventas W001"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   }
 ]

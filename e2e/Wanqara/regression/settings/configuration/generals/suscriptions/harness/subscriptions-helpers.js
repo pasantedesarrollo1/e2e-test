@@ -1,6 +1,4 @@
 import { expect, test } from "@playwright/test";
-import { withPath } from "../../../../../../harness/config/urls.js";
-
 const normalizeText = (str) => {
   return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase() : "";
 };
@@ -25,9 +23,9 @@ export async function validateSubscriptionsOverview(page, subscriptionData) {
   }
 }
 
-export async function validateSubsidiaryCapabilityBadges(page, { subscriptionData, tenantBaseUrl }) {
+export async function validateSubsidiaryCapabilityBadges(page, { subscriptionData }) {
   await test.step("Navigate to subsidiary creation form", async () => {
-    await page.goto(withPath(tenantBaseUrl, '/admin/subsidiaries/add'));
+    await page.goto('/admin/subsidiaries/add');
     await expect(page.getByText(/Agregar una Sucursal|Nueva Sucursal/i).first()).toBeVisible({ timeout: 15000 });
   });
 

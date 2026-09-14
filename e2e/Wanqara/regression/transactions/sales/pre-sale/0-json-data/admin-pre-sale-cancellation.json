@@ -31,7 +31,9 @@
       "expectSwitch": false,
       "expectMessage": true
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001"
   },
   {
     "id": "ADMIN-PRE-SALE-CANCEL-002",
@@ -65,6 +67,8 @@
       "expectSwitch": false,
       "expectMessage": true
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101"
   }
 ]

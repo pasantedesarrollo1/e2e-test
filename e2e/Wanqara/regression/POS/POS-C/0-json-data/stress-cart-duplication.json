@@ -16,8 +16,10 @@
     "authType": "retail",
     "fixture": "posPage",
     "searchKeyword": "alitas",
-    "subsidiaryName": "Wanqara Comercios 100",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara Comercios",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100"
   },
   {
     "id": "STRESS-CART-DUPLICATION-002",
@@ -36,7 +38,9 @@
     "authType": "restaurant",
     "fixture": "posRestaurantPage",
     "searchKeyword": "alitas",
-    "subsidiaryName": "Sucursal Matriz",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001"
   }
 ]

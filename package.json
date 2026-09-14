@@ -5,11 +5,16 @@
   "scripts": {
     "test": "playwright test",
     "test:smoke": "playwright test --grep @smoke",
-    "test:release": "playwright test --grep @release"
+    "test:release": "playwright test --grep @release",
+    "lint": "eslint e2e/",
+    "lint:fix": "eslint e2e/ --fix"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
     "@playwright/mcp": "^0.0.80",
     "@playwright/test": "^1.49.0",
-    "@types/node": "^26.2.0"
+    "@types/node": "^26.2.0",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0"
   }
 }

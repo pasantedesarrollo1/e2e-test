@@ -1,14 +1,13 @@
 import { test } from "@playwright/test";
-import { getTenantBaseUrl, requirePosCredentials } from "../../harness/config/settings.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
 import { assertPageTitle, assertTextContains } from "./harness/smoke-assertions.js";
 import { generateSmokeTests } from "./harness/smoke-nav.js";
 
 test.describe("Smoke — Inventario > Garantías y Devoluciones", { tag: "@smoke" }, () => {
   requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
 
-  generateSmokeTests(tenantBaseUrl, [
+  generateSmokeTests([
     { path: "/admin/warranty/sales/list",            assert: (p) => assertPageTitle(p, "Garantías de Ventas") },
     { path: "/admin/warranty/sales/add",             assert: (p) => assertTextContains(p, "Registrar Garantía de Ventas") },
     { path: "/admin/warranty/purchases/list",        assert: (p) => assertPageTitle(p, "Garantías de Compras") },

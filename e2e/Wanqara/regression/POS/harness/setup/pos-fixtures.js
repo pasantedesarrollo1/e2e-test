@@ -1,5 +1,5 @@
 import { test as base, expect } from "@playwright/test";
-import { getTenantBaseUrl, playwrightHarness } from "../../../../harness/config/settings.js";
+// removed unused import
 import { ensureAuthenticated, withSessionWatchdog } from "../../../../harness/helpers/auth/auth.js";
 import { ensureCashRegisterOpen } from "../cash-register/cash-register-helpers.js";
 
@@ -7,21 +7,21 @@ const grantSetupHeadroom = (testInfo, ms) => testInfo.setTimeout(testInfo.timeou
 
 export const test = base.extend({
   subsidiaryName: ["", { option: true }],
-  openingAmount: [playwrightHarness.defaults.openingAmount, { option: true }],
+  subsidiaryCode: ["", { option: true }],
+  openingAmount: ["", { option: true }],
 
-  posPage: async ({ page, subsidiaryName, openingAmount }, use, testInfo) => {
+  posPage: async ({ page, subsidiaryName, subsidiaryCode, openingAmount }, use, testInfo) => {
     grantSetupHeadroom(testInfo, 30_000);
-    const tenantBaseUrl = getTenantBaseUrl();
     
     if (!subsidiaryName) throw new Error("posPage fixture requires subsidiaryName option to be set via test.use()");
+    if (!openingAmount) throw new Error("posPage fixture requires openingAmount option to be set via test.use() from JSON");
 
     await ensureAuthenticated(page, { 
-      tenantBaseUrl, 
       targetPath: "/pos/home", 
       authType: "retail" 
     });
     
-    await ensureCashRegisterOpen(page, tenantBaseUrl, openingAmount, subsidiaryName, "retail");
+    await ensureCashRegisterOpen(page, openingAmount, subsidiaryName, subsidiaryCode, "retail");
     
     await withSessionWatchdog(page, () =>
       expect(page.getByText(/Cliente:/i).first()).toBeVisible({ timeout: 15_000 }),
@@ -31,19 +31,18 @@ export const test = base.extend({
     await use(page);
   },
 
-  posRestaurantPage: async ({ page, subsidiaryName, openingAmount }, use, testInfo) => {
+  posRestaurantPage: async ({ page, subsidiaryName, subsidiaryCode, openingAmount }, use, testInfo) => {
     grantSetupHeadroom(testInfo, 90_000);
-    const tenantBaseUrl = getTenantBaseUrl();
     
     if (!subsidiaryName) throw new Error("posRestaurantPage fixture requires subsidiaryName option to be set via test.use()");
+    if (!openingAmount) throw new Error("posRestaurantPage fixture requires openingAmount option to be set via test.use() from JSON");
 
     await ensureAuthenticated(page, { 
-      tenantBaseUrl, 
       targetPath: "/pos/restaurant-home", 
       authType: "restaurant" 
     });
     
-    await ensureCashRegisterOpen(page, tenantBaseUrl, openingAmount, subsidiaryName, "restaurant");
+    await ensureCashRegisterOpen(page, openingAmount, subsidiaryName, subsidiaryCode, "restaurant");
     
     await withSessionWatchdog(page, () =>
       expect(page.getByText(/Cliente:/i).first()).toBeVisible({ timeout: 60_000 }),

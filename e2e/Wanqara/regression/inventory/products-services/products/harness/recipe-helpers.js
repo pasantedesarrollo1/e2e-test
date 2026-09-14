@@ -1,16 +1,13 @@
 import { expect } from "@playwright/test";
-import { withPath } from "../../../../../harness/config/urls.js";
 import { clickTableRowAction } from "../../../../../harness/helpers/crud/crud-helpers.js";
 import { ACTION_TOOLTIPS } from "../../../../../harness/helpers/ui/action-tooltips.js";
 
 export async function navigateToProductAndVerifyRecipeDecimals(page, {
-  tenantBaseUrl,
   productName,
   ingredientName,
   exactAmount,
-  roundedAmount,
-}) {
-  await page.goto(withPath(tenantBaseUrl, '/admin/products/list?inventory_init=false'));
+  roundedAmount}) {
+  await page.goto('/admin/products/list?inventory_init=false');
   await page.waitForURL(/\/admin\/products\/list/);
 
   const searchInput = page.getByRole("textbox", { name: /Busca lo que necesites/i }).first();

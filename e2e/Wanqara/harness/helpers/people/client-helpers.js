@@ -29,12 +29,11 @@ export async function fillIdentityModal(page, modalLocator, {
 export async function selectClientByCedula(page, cedula, options = {}) {
   const {
     exactCedulaPlaceholder = false,
-    typingStrategy = 'pressSequentially',
+    typingStrategy = 'fill',
     clientModalSelector = ".v-overlay--active .v-overlay__content:not(.v-snackbar__wrapper)",
     expectModalClosed = true,
     snackbarRequired = false,
-    assertCedulaOnMain = false,
-  } = options;
+    assertCedulaOnMain = false} = options;
 
   const cedulaInput = exactCedulaPlaceholder
     ? page.getByPlaceholder("Ingresa Cédula o RUC").first()
@@ -57,8 +56,7 @@ export async function selectClientByCedula(page, cedula, options = {}) {
   }
 
   const clientModal = page.locator(clientModalSelector).filter({
-    hasText: /Cliente/i,
-  }).last();
+    hasText: /Cliente/i}).last();
 
   const successSnackbar = page.locator(".v-snackbar").filter({ hasText: /Cliente asignado correctamente/i }).last();
 

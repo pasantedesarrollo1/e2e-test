@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../../../harness/config/settings.js";
-import { ensureAuthenticated, getSessionPath } from "../../../../../harness/helpers/auth/auth.js";
-import { clickTableRowAction } from "../../../../../harness/helpers/crud/crud-helpers.js";
 import { annotateTicket } from "../../../../../harness/helpers/reporting/annotate.js";
-
+import { getSessionPath } from "../../../../../harness/helpers/auth/auth.js";
+import { requirePosCredentials } from "../../../../../harness/config/settings.js";
+import { ensureAuthenticated } from "../../../../../harness/helpers/auth/auth.js";
+import { clickTableRowAction } from "../../../../../harness/helpers/crud/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../../../../harness/helpers/ui/action-tooltips.js";
 import {
   confirmFinalDeletion,
   fillPaymentDetailsAndSubmit,
@@ -15,13 +16,13 @@ import {
   validateInitialDeletionError
 } from "./harness/multiple-receivables-helpers.js";
 
-import scenarios from "./0-json-data/multiple-receivables.json" assert { type: "json" };
+import scenarios from "./0-json-data/multiple-receivables.json" with { type: "json" };
 
 test.describe("Finance - Accounts - Multiple Receivables (E2E)", () => {
   requirePosCredentials(test);
-  const tenantBaseUrl = getTenantBaseUrl();
 
   for (const scenario of scenarios) {
+    scenario.metadata = scenario.metadata || { ws: null, testScope: "regression" };
     if (scenario.skip) {
       test.describe.skip(`Escenario: ${scenario.description}`, () => {
         const razon = scenario.skipReason ? scenario.skipReason : 'Omitido por configuración en JSON';
@@ -36,7 +37,7 @@ test.describe("Finance - Accounts - Multiple Receivables (E2E)", () => {
 
     describeBlock(`Escenario: ${scenario.description} ${executionTag}`, () => {
       
-      if (scenario.metadata && scenario.metadata.ws !== undefined) {
+      if (scenario.metadata.ws) {
         annotateTicket(test, scenario.metadata);
       }
       
@@ -49,7 +50,6 @@ test.describe("Finance - Accounts - Multiple Receivables (E2E)", () => {
 
         await test.step("Navigate to multiple receivables route", async () => {
           await ensureAuthenticated(page, { 
-            tenantBaseUrl, 
             targetPath: "/admin/payments/add/multiple-receivables", 
             authType: resolvedAuthType 
           });
@@ -67,7 +67,7 @@ test.describe("Finance - Accounts - Multiple Receivables (E2E)", () => {
         await test.step("Open account details", async () => {
           const firstRow = page.locator(".v-data-table__tr").first();
           await expect(firstRow).toBeVisible({ timeout: 15_000 });
-          await clickTableRowAction(page, firstRow, "Ver esta cuenta");
+          await clickTableRowAction(page, firstRow, ACTION_TOOLTIPS.receivableAccounts.view);
           await expect(page.getByText(/Abonos de la cuenta/i).first()).toBeVisible({ timeout: 15_000 });
         });
 

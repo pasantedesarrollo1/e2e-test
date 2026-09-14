@@ -1,66 +1,39 @@
 // e2e/harness/config/settings.js
 
-import { assertNonProductionBaseUrl, buildTenantBaseUrl } from "./urls.js";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+const tenantRuc = process.env.PLAYWRIGHT_TENANT_RUC;
+if (!tenantRuc) throw new Error("❌ PLAYWRIGHT_TENANT_RUC no está definido en el archivo .env.");
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const defaultBranches = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "default-branches.json"), "utf-8")
-);
-// Validar Base URL central
-const rawBaseUrl = process.env.PLAYWRIGHT_BASE_URL;
-if (!rawBaseUrl) {
-  console.warn("⚠️ PLAYWRIGHT_BASE_URL no está en .env, usando fallback http://localhost:5175");
-}
-const baseUrl = assertNonProductionBaseUrl(rawBaseUrl ?? "http://localhost:5175");
+const port = process.env.PLAYWRIGHT_WANQARA_PORT;
+if (!port) throw new Error("❌ PLAYWRIGHT_WANQARA_PORT no está definido en el archivo .env.");
+
+const baseUrl = `http://${tenantRuc}.localhost:${port}`;
 
 export const playwrightHarness = {
   publicBaseUrl: baseUrl,
-  tenantRuc: process.env.PLAYWRIGHT_TENANT_RUC ?? "",
+  tenantRuc,
   
   users: {
     retail: {
       email: process.env.PLAYWRIGHT_RETAIL_EMAIL ?? "",
-      password: process.env.PLAYWRIGHT_RETAIL_PASSWORD ?? "",
-    },
+      password: process.env.PLAYWRIGHT_RETAIL_PASSWORD ?? ""},
     dispatch: {
       email: process.env.PLAYWRIGHT_DISPATCH_EMAIL ?? "",
-      password: process.env.PLAYWRIGHT_DISPATCH_PASSWORD ?? "",
-    },
+      password: process.env.PLAYWRIGHT_DISPATCH_PASSWORD ?? ""},
     restaurant: {
       email: process.env.PLAYWRIGHT_RESTAURANT_EMAIL ?? "",
-      password: process.env.PLAYWRIGHT_RESTAURANT_PASSWORD ?? "",
-    }
+      password: process.env.PLAYWRIGHT_RESTAURANT_PASSWORD ?? ""}
   },
 
-  // Datos de negocio (limpios de falbacks mágicos en .env)
-  subsidiaries: {
-    retail: defaultBranches.retail.name,
-    dispatch: defaultBranches.dispatch.name,
-    restaurant: defaultBranches.restaurant.name,
-  },
-  
-  defaults: {
-    openingAmount: "10"
-  },
-  
   seeded: {
     enabled: process.env.PLAYWRIGHT_SEEDED === "true",
-    adminRoutes: [],
-  },
-};
+    adminRoutes: []}};
 
 export const chefHarness = {
-  baseUrl: process.env.PLAYWRIGHT_CHEF_URL ?? "https://chef.wanqara360.org",
+  baseUrl: process.env.PLAYWRIGHT_CHEF_URL ?? "",
   login: {
     ruc:      process.env.PLAYWRIGHT_CHEF_RUC ?? "",
     email:    process.env.PLAYWRIGHT_CHEF_EMAIL ?? "",
-    password: process.env.PLAYWRIGHT_CHEF_PASSWORD ?? "",
-  },
-};
+    password: process.env.PLAYWRIGHT_CHEF_PASSWORD ?? ""}};
 
 export const hasTenantData = () =>
   Boolean(playwrightHarness.publicBaseUrl && playwrightHarness.tenantRuc);
@@ -80,8 +53,7 @@ export const hasChefCredentials = () =>
 export const skipReloginTests = () =>
   process.env.PLAYWRIGHT_SKIP_RELOGIN === "true";
 
-export const getTenantBaseUrl = () =>
-  buildTenantBaseUrl(playwrightHarness.publicBaseUrl, playwrightHarness.tenantRuc);
+export const getTenantBaseUrl = () => playwrightHarness.publicBaseUrl;
 
 export function requirePosCredentials(test) {
   test.skip(

@@ -26,8 +26,10 @@
       "monto": "1",
       "descripcion": "test automatizado"
     },
-    "subsidiaryName": "Wanqara Comercios 100",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara Comercios",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100"
   },
   {
     "id": "CASH-MOVEMENTS-002",
@@ -56,7 +58,9 @@
       "monto": "1",
       "descripcion": "test automatizado"
     },
-    "subsidiaryName": "Sucursal Matriz",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001"
   }
 ]

@@ -22,8 +22,10 @@
       "testClientCedula": "0000000001",
       "dynamicDocumentType": "Recibos"
     },
-    "subsidiaryName": "Wanqara Comercios 100",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara Comercios",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100"
   },
   {
     "id": "SALE-CART-002",
@@ -48,7 +50,9 @@
       "testClientCedula": "0000000001",
       "dynamicDocumentType": "Recibos"
     },
-    "subsidiaryName": "Sucursal Matriz",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001"
   }
 ]

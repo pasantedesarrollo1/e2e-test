@@ -2,8 +2,7 @@ import { expect, test } from "@playwright/test";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { withPath } from "../../../harness/config/urls.js";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
@@ -33,46 +32,43 @@ test.describe("POS - Cash Register Lifecycle @regression", () => {
       }
 
       requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
+      test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
 
       test(scenario.only ? `${scenario.description} (focus)` : scenario.description, { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined }, async ({ page }) => {
         test.setTimeout(180_000);
         
-        const tenantBaseUrl = getTenantBaseUrl();
         const subsidiaryName = scenario.subsidiaryName;
 
         await test.step("Navegar al home del POS", async () => {
            await ensureAuthenticated(page, {
-             tenantBaseUrl,
              targetPath: scenario.basePath,
              authType: scenario.authType
            });
         });
 
     await test.step("Evaluar estado inicial de la caja", async () => {
-      try {
-        await page.waitForURL(/\/pos\/(home|open-cash-register)/, { timeout: 10000 });
-      } catch (e) {
-        // Ignorar timeout
-      }
-      
-      const currentUrl = page.url();
-      if (currentUrl.match(/\/pos\/home/)) {
+      const homeIndicator = page.getByText(/Cliente:/i).first();
+      const openBoxIndicator = page.getByRole("button", { name: /Abrir Caja/i }).first();
+      const openBoxIndicatorAlternative = page.getByText(/Seleccione una sucursal para abrir la caja/i).first();
+
+      await expect(homeIndicator.or(openBoxIndicator).or(openBoxIndicatorAlternative)).toBeVisible({ timeout: 15_000 });
+
+      if (await homeIndicator.isVisible()) {
         await test.step("Caja detectada como ABIERTA: Cerrando caja antes de reabrir", async () => {
           await test.step("Realizar venta requerida antes del cierre", async () => {
             await selectClientByCedula(page, scenario.clientCedula);
             await searchAndSelectProduct(page, { name: scenario.productName, searchTerm: null });
               await clickFinishSale(page);
               await completePayment(page, { paymentMethod: scenario.paymentMethod });
-            await page.goto(withPath(tenantBaseUrl, '/pos/home'));
+            await page.goto('/pos/home');
             await page.waitForURL(/\/pos\/home/);
           });
           
-          await closeCashRegister(page, tenantBaseUrl);
-          await page.goto(withPath(tenantBaseUrl, '/pos/home'));
+          await closeCashRegister(page);
+          await page.goto('/pos/home');
           await page.waitForURL(/\/pos\/open-cash-register/);
         });
-      } else if (currentUrl.match(/\/pos\/open-cash-register/)) {
+      } else {
         await test.step("Caja detectada como CERRADA: Procediendo a apertura", async () => {
         });
       }
@@ -117,12 +113,12 @@ test.describe("POS - Cash Register Lifecycle @regression", () => {
       await searchAndSelectProduct(page, { name: scenario.productName, searchTerm: null });
               await clickFinishSale(page);
               await completePayment(page, { paymentMethod: scenario.paymentMethod });
-      await page.goto(withPath(tenantBaseUrl, '/pos/home'));
+      await page.goto('/pos/home');
       await page.waitForURL(/\/pos\/home/);
     });
 
     await test.step("Cierre de caja con validación de monto", async () => {
-      await closeCashRegister(page, tenantBaseUrl, {
+      await closeCashRegister(page, {
         beforeConfirm: async () => {
           await expect(page.getByText('Apertura :')).toBeVisible();
           await expect(page.locator('span').filter({ hasText: scenario.openingAmount }).first()).toBeVisible();

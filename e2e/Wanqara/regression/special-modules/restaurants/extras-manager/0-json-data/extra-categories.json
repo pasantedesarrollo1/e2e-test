@@ -22,6 +22,8 @@
         "extra alitas stock"
       ]
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001"
   }
 ]

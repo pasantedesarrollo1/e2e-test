@@ -23,7 +23,8 @@ for (const scenario of scenarios) {
     
     requirePosCredentials(test);
     test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName });
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount });
 
     const runTest = (title, bodyFn) => {
       if (scenario.fixture === 'posPage') {

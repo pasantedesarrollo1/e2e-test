@@ -21,8 +21,10 @@
       "consumidorFinalCedula": "0000000001",
       "productName": "Caja de alitas de pollo (100 u)"
     },
-    "subsidiaryName": "Wanqara Comercios 100",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara Comercios",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100"
   },
   {
     "id": "SALE-WITH-CLIENT-002",
@@ -46,7 +48,9 @@
       "consumidorFinalCedula": "0000000001",
       "productName": "Caja de alitas de pollo (100 u)"
     },
-    "subsidiaryName": "Sucursal Matriz",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001"
   }
 ]

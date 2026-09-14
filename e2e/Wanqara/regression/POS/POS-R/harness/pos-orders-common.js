@@ -14,10 +14,9 @@ import {
 } from "./chef-orders-flow.js";
 import { processOrderClosure } from "./pos-close-order.js";
 
-export async function navigateToRestaurantPOS(page, tenantBaseUrl, subsidiaryName) {
+export async function navigateToRestaurantPOS(page, subsidiaryName) {
   if (!subsidiaryName) throw new Error("navigateToRestaurantPOS requires subsidiaryName parameter");
   await ensureAuthenticated(page, {
-      tenantBaseUrl,
       targetPath: "/pos/restaurant-home",
       authType: "restaurant" 
     });
@@ -29,11 +28,10 @@ export async function navigateToRestaurantPOS(page, tenantBaseUrl, subsidiaryNam
 
   if (await loginBtn.isVisible()) {
     await loginAndSelectSubsidiary(page, {
-      tenantBaseUrl,
       login: playwrightHarness.users.restaurant,
       subsidiaryName,
     });
-    await page.goto(`${tenantBaseUrl}/pos/restaurant-home`);
+    await page.goto("/pos/restaurant-home");
     await expect(clienteLabel).toBeVisible({ timeout: 60_000 });
   }
 }
@@ -43,6 +41,7 @@ export async function createChefOrder(page, {
   quantity = 1,
   chefLogin,
   chefSubsidiary,
+  chefSubsidiaryCode
 } = {}) {
   if (!productName) throw new Error("createChefOrder requires productName in options");
   await ensureChefAuthenticated(page, {
@@ -50,6 +49,7 @@ export async function createChefOrder(page, {
     targetPath: "/tables",
     login: chefLogin,
     subsidiary: chefSubsidiary,
+    subsidiaryCode: chefSubsidiaryCode
   });
 
   await expect(page).toHaveURL(/\/tables/);
@@ -183,7 +183,7 @@ export async function navigateToChangeOrderStatusFromOptions(page) {
   for (let i = 0; i < 5; i++) {
     if (await changeStatusOption.isVisible()) break;
     await page.mouse.wheel(0, 600); 
-    try { await changeStatusOption.waitFor({ state: "visible", timeout: 500 }); break; } catch {}
+    try { await changeStatusOption.waitFor({ state: "visible", timeout: 500 }); break; } catch { /* Ignore timeout, try scrolling again */ }
   }
 
   await expect(changeStatusOption).toBeVisible();
@@ -192,9 +192,9 @@ export async function navigateToChangeOrderStatusFromOptions(page) {
   await page.waitForURL(/\/pos\/change-order-status/);
 }
 
-export async function closeAllActiveOrders(page, tenantBaseUrl, subsidiaryName, reason) {
+export async function closeAllActiveOrders(page, subsidiaryName, reason) {
   if (!reason) throw new Error("closeAllActiveOrders requires a reason parameter");
-  await navigateToRestaurantPOS(page, tenantBaseUrl, subsidiaryName);
+  await navigateToRestaurantPOS(page, subsidiaryName);
 
   while (true) {
     await navigateToCloseOrderFromOptions(page);
@@ -205,21 +205,21 @@ export async function closeAllActiveOrders(page, tenantBaseUrl, subsidiaryName, 
     await expect(emptyMessage.or(orderCard)).toBeVisible({ timeout: 15000 });
 
     if (await emptyMessage.isVisible()) {
-      await page.goto(`${tenantBaseUrl}/pos/restaurant-home`);
+      await page.goto("/pos/restaurant-home");
       break;
     }
 
     await orderCard.click();
     await processOrderClosure(page, reason);
 
-    await page.goto(`${tenantBaseUrl}/pos/restaurant-home`);
+    await page.goto("/pos/restaurant-home");
   }
 }
 
-export async function withActiveRestaurantOrder(page, tenantBaseUrl, actionCallback, orderOptions = {}, posOptions = {}) {
-  await closeAllActiveOrders(page, tenantBaseUrl, posOptions.subsidiaryName, posOptions.cleanupReason);
+export async function withActiveRestaurantOrder(page, actionCallback, orderOptions = {}, posOptions = {}) {
+  await closeAllActiveOrders(page, posOptions.subsidiaryName, posOptions.cleanupReason);
   const activeTableName = await createChefOrder(page, orderOptions);
-  await navigateToRestaurantPOS(page, tenantBaseUrl, posOptions.subsidiaryName);
+  await navigateToRestaurantPOS(page, posOptions.subsidiaryName);
   await openAndSelectOrder(page, activeTableName);
   await actionCallback(page, activeTableName);
 }

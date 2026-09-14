@@ -2,12 +2,10 @@ import { expect } from "@playwright/test";
 import { ensureAuthenticated } from "../../../../../harness/helpers/auth/auth.js";
 import { selectDropdownOption } from "../../../../../harness/helpers/ui/ui-helpers.js";
 
-export async function navigateToCreateTicket(page, tenantBaseUrl, authType) {
+export async function navigateToCreateTicket(page, authType) {
   await ensureAuthenticated(page, {
-    tenantBaseUrl,
     targetPath: "/admin/support/tickets/list",
-    authType,
-  });
+    authType});
   await page.getByRole("link", { name: /Crear Ticket/i }).click();
   await expect(page).toHaveURL(/\/admin\/support\/tickets\/create/);
 }
@@ -88,8 +86,7 @@ export async function fillObservation(page, text) {
 export async function acceptTerms(page) {
   // Manejamos el texto con regex para soportar tíldes u otros caracteres (Términos)
   const checkbox = page.getByRole("checkbox", {
-    name: /Acepto los T.rminos y Condiciones/i,
-  });
+    name: /Acepto los T.rminos y Condiciones/i});
   await expect(checkbox).toBeVisible();
   await checkbox.check();
   await expect(checkbox).toBeChecked();

@@ -75,13 +75,14 @@ test.describe.serial("Financial Calculation Accuracy", () => {
     test.describe(`POS ${scenario.description} - Financial Calculation Accuracy with ${scenario.discountName} @${scenario.metadata.testScope}`, () => {
       requirePosCredentials(test);
       test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName });
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount });
       
       if (scenario.metadata && scenario.metadata.ws) {
         annotateTicket(test, scenario.metadata);
       }
 
-      for (const { key, product, afterProductSelect, precision, precisionHoliday } of scenario.discountCases) {
+      for (const { product, afterProductSelect, precision, precisionHoliday } of scenario.discountCases) {
         runTest(`validates financial calculations for [${product.type}] with a general discount`, async (page) => {
           test.setTimeout(120_000);
 
@@ -100,7 +101,8 @@ test.describe.serial("Financial Calculation Accuracy", () => {
     test.describe(`POS ${scenario.description} - Financial Calculation Accuracy with ${scenario.surchargeName} @${scenario.metadata.testScope}`, () => {
       requirePosCredentials(test);
       test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName });
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount });
 
       if (scenario.metadata && scenario.metadata.ws) {
         annotateTicket(test, scenario.metadata);

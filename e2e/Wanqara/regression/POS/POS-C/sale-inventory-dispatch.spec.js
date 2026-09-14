@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import { test, expect } from "@playwright/test";
@@ -24,7 +24,7 @@ const CALLBACK_MAP = {
   selectFirstSerie
 };
 
-async function executeSales(page, { tenantBaseUrl, dispatchEnabled, products, paymentMethod }) {
+async function executeSales(page, { products, paymentMethod }) {
   for (const product of products) {
     const afterProductSelect = product.afterSelectCallback ? CALLBACK_MAP[product.afterSelectCallback] : null;
     await test.step(`Sale [${product.type}] - ${product.name}`, async () => {
@@ -44,7 +44,8 @@ for (const scenario of scenarios) {
     requirePosCredentials(test);
 
     test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName });
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -52,15 +53,12 @@ for (const scenario of scenarios) {
 
     test(`completes multiple sales seamlessly with dispatch ${scenario.dispatchEnabled ? 'enabled' : 'disabled'}`, async ({ page }) => {
       test.setTimeout(180_000);
-      const tenantBaseUrl = getTenantBaseUrl();
       
-      await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/pos/home", authType: scenario.authType });
-      await ensureCashRegisterOpen(page, tenantBaseUrl, scenario.openingAmount, scenario.subsidiaryName, scenario.authType);
+      await ensureAuthenticated(page, { targetPath: "/pos/home" });
+      await ensureCashRegisterOpen(page, scenario.openingAmount, scenario.subsidiaryName, scenario.subsidiaryCode, scenario.authType);
       await page.waitForURL(/\/pos\/(home|restaurant-home)/);
 
       await executeSales(page, {
-        tenantBaseUrl,
-        dispatchEnabled: scenario.dispatchEnabled,
         products: scenario.products,
         paymentMethod: scenario.paymentMethod
       });

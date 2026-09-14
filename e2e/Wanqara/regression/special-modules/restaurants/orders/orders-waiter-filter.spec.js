@@ -1,45 +1,32 @@
 import { test } from "@playwright/test";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth/auth.js";
-import { annotateTicket } from "../../../../harness/helpers/reporting/annotate.js";
+import { requirePosCredentials } from "../../../../harness/config/settings.js";
+import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
 import { filterByWaiter } from "../harness/restaurant-helpers.js";
 
-import scenarios from "./0-json-data/orders-waiter-filter.json" assert { type: "json" };
+import scenarios from "./0-json-data/orders-waiter-filter.json" with { type: "json" };
+
+import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";
 
 test.describe("Orders - Waiter Filter", () => {
-  for (const scenario of scenarios) {
-    test.describe(`Scenario: ${scenario.description} @${scenario.metadata.testScope}`, () => {
-      if (scenario.metadata && scenario.metadata.ws) {
-        annotateTicket(test, scenario.metadata);
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
+
+    test(
+      scenario.only ? "Filters orders by waiter using advanced search (focus)" : "Filters orders by waiter using advanced search",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ page }) => {
+        test.setTimeout(120_000);
+
+        await test.step("Navigate to orders list", async () => {
+          await ensureAuthenticated(page, {
+            targetPath: "/admin/orders/list",
+            authType: scenario.authType});
+        });
+
+        await test.step("Filter by waiter and validate results", async () => {
+          await filterByWaiter(page, scenario.filterData);
+        });
       }
-
-      if (scenario.skip) {
-        test.skip(true, scenario.skipReason);
-      }
-
-      requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
-
-      test(
-        scenario.only ? "Filters orders by waiter using advanced search (focus)" : "Filters orders by waiter using advanced search",
-        { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
-        async ({ page }) => {
-          test.setTimeout(120_000);
-          const tenantBaseUrl = getTenantBaseUrl();
-
-          await test.step("Navigate to orders list", async () => {
-            await ensureAuthenticated(page, {
-              tenantBaseUrl,
-              targetPath: "/admin/orders/list",
-              authType: scenario.authType,
-            });
-          });
-
-          await test.step("Filter by waiter and validate results", async () => {
-            await filterByWaiter(page, scenario.filterData);
-          });
-        }
-      );
-    });
-  }
+    );
+  });
 });

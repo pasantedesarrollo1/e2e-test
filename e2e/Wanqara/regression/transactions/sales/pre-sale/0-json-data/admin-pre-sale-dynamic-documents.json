@@ -18,17 +18,21 @@
     "steps": [
       {
         "subsidiaryCode": "001",
-        "expectedDefault": "Factura electr\u00f3nica",
+        "expectedDefault": "Factura electrónica",
         "expectElectronicOption": true,
-        "electronicKeyword": "Factura"
+        "electronicKeyword": "Factura",
+        "subsidiaryName": "Wanqara"
       },
       {
         "subsidiaryCode": "100",
         "expectedDefault": "Recibos",
         "expectElectronicOption": false,
-        "electronicKeyword": "Factura"
+        "electronicKeyword": "Factura",
+        "subsidiaryName": "Wanqara Comercios"
       }
     ],
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001"
   }
 ]

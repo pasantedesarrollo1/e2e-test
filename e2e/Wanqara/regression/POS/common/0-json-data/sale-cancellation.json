@@ -25,7 +25,9 @@
       "warehouseName": "Bodega de Ventas W001"
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara Comercios 100"
+    "subsidiaryName": "Wanqara Comercios",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100"
   },
   {
     "id": "SALE-CANCELLATION-002",
@@ -52,7 +54,10 @@
       "paymentMethod": "EFECTIVO",
       "warehouseName": "Bodega de Ventas W001"
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101"
   },
   {
     "id": "SALE-CANCELLATION-003",
@@ -80,6 +85,8 @@
       "warehouseName": "Bodega de Ventas W001"
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Sucursal Matriz"
+    "subsidiaryName": "Wanqara",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001"
   }
 ]

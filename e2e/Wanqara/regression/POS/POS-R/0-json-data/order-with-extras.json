@@ -22,9 +22,11 @@
       "outOfStockLabelText": "Sin stock disponible"
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Sucursal Matriz",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "cleanupReason": "Limpieza automtica pre-test",
     "productName": "Caja de alitas de pollo (100 u)",
-    "clientCedula": "9999999999999"
+    "clientCedula": "9999999999999",
+    "openingAmount": "100.00"
   }
 ]

@@ -45,7 +45,7 @@ for (const scenario of scenarios) {
     requirePosCredentials(test);
     requireChefCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -55,7 +55,7 @@ for (const scenario of scenarios) {
       test.setTimeout(180_000);
       const tenantBaseUrl = getTenantBaseUrl();
 
-      await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, cleanupReason: scenario.cleanupReason }, async (page, activeTableName) => {
+      await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
         await test.step("Navigate to close order screen", async () => {
           await navigateToCloseOrder(page);
         });

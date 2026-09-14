@@ -20,7 +20,9 @@
         "^Cliente$"
       ]
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   },
   {
     "id": "PPL-CRUD-002",
@@ -43,6 +45,8 @@
         "^Empleado$"
       ]
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   }
 ]

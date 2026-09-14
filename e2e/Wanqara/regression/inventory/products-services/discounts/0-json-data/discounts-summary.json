@@ -19,7 +19,9 @@
       "type": "porcentaje",
       "discount": 10
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   },
   {
     "id": "DSC-SUM-002",
@@ -42,7 +44,9 @@
       "discount": 5,
       "quantity": 2
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   },
   {
     "id": "DSC-SUM-003",
@@ -65,6 +69,8 @@
       "discount": 15,
       "quantity": 3
     },
-    "paymentMethod": "EFECTIVO"
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100"
   }
 ]

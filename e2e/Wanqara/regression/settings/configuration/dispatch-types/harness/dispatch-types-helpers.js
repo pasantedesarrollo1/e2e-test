@@ -1,10 +1,9 @@
 import { expect } from "@playwright/test";
-import { withPath } from "../../../../../harness/config/urls.js";
 import { clickTableRowAction } from "../../../../../harness/helpers/crud/crud-helpers.js";
 import { ACTION_TOOLTIPS } from "../../../../../harness/helpers/ui/action-tooltips.js";
 
-export async function createDispatchType(page, { name, type, description, tenantBaseUrl }) {
-  await page.goto(withPath(tenantBaseUrl, "/admin/dispatch-types/list"));
+export async function createDispatchType(page, { name, type, description }) {
+  await page.goto("/admin/dispatch-types/list");
   await page.waitForURL(/\/admin\/dispatch-types\/list/);
 
   await page.getByRole("link", { name: /Agregar Tipo de Despacho/i }).click();
@@ -27,8 +26,8 @@ export async function createDispatchType(page, { name, type, description, tenant
   await expect(page.locator(".v-snackbar").filter({ hasText: /Tipo de Despacho creado con .xito/i })).toBeVisible();
 }
 
-export async function toggleDispatchTypeState(page, { name, expectedSnackbarText, tenantBaseUrl }) {
-  await page.goto(withPath(tenantBaseUrl, "/admin/dispatch-types/list"));
+export async function toggleDispatchTypeState(page, { name, expectedSnackbarText }) {
+  await page.goto("/admin/dispatch-types/list");
   await page.waitForURL(/\/admin\/dispatch-types\/list/);
 
   const row = page.locator(".v-data-table__tr").filter({ hasText: name }).first();

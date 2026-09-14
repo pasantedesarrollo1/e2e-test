@@ -22,8 +22,10 @@
       "unitPrice": "3.3337373372323",
       "discountRate": "3.3337373372323"
     },
-    "subsidiaryName": "Wanqara Comercios 100",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara Comercios",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100"
   },
   {
     "id": "SALE-PRODUCT-OPTIONS-002",
@@ -48,7 +50,9 @@
       "unitPrice": "3.3337373372323",
       "discountRate": "3.3337373372323"
     },
-    "subsidiaryName": "Sucursal Matriz",
-    "paymentMethod": "EFECTIVO"
+    "subsidiaryName": "Wanqara",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001"
   }
 ]
