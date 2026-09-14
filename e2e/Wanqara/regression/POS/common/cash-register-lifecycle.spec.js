@@ -4,11 +4,14 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
 import { withPath } from "../../../harness/config/urls.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth.js";
-import { selectClientByCedula } from "../../../harness/helpers/client-helpers.js";
-import { closeCashRegister } from "../harness/cash-register-helpers.js";
-import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
+import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { closeCashRegister } from "../harness/cash-register/cash-register-helpers.js";
+
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,12 +61,9 @@ test.describe("POS - Cash Register Lifecycle @regression", () => {
         await test.step("Caja detectada como ABIERTA: Cerrando caja antes de reabrir", async () => {
           await test.step("Realizar venta requerida antes del cierre", async () => {
             await selectClientByCedula(page, scenario.clientCedula);
-            await runPosSaleFlow(page, {
-              tenantBaseUrl,
-              skipNavigation: true,
-              productName: scenario.productName,
-              searchTerm: null,
-            });
+            await searchAndSelectProduct(page, { name: scenario.productName, searchTerm: null });
+              await clickFinishSale(page);
+              await completePayment(page, { paymentMethod: scenario.paymentMethod });
             await page.goto(withPath(tenantBaseUrl, '/pos/home'));
             await page.waitForURL(/\/pos\/home/);
           });
@@ -114,12 +114,9 @@ test.describe("POS - Cash Register Lifecycle @regression", () => {
 
     await test.step("Realizar venta de caja de alitas de pollo", async () => {
       await selectClientByCedula(page, scenario.clientCedula);
-      await runPosSaleFlow(page, {
-        tenantBaseUrl,
-        skipNavigation: true,
-        productName: scenario.productName,
-        searchTerm: null,
-      });
+      await searchAndSelectProduct(page, { name: scenario.productName, searchTerm: null });
+              await clickFinishSale(page);
+              await completePayment(page, { paymentMethod: scenario.paymentMethod });
       await page.goto(withPath(tenantBaseUrl, '/pos/home'));
       await page.waitForURL(/\/pos\/home/);
     });

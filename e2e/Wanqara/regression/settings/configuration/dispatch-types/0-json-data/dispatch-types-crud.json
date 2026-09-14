@@ -17,6 +17,7 @@
       "name": "Tipo Despacho Test",
       "type": "Local",
       "description": "Test automatizado de tipo de despacho"
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

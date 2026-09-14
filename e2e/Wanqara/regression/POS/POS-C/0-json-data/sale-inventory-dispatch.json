@@ -31,7 +31,10 @@
         "type": "TallaColor-por-nombre",
         "afterSelectCallback": "selectFirstVariant"
       }
-    ]
+    ],
+    "subsidiaryName": "Wanqara Comercios 100",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "10"
   },
   {
     "id": "SALE-INVENTORY-DISPATCH-002",
@@ -65,6 +68,8 @@
         "type": "TallaColor-por-nombre",
         "afterSelectCallback": "selectFirstVariant"
       }
-    ]
+    ],
+    "subsidiaryName": "Wanqara Comercios 100",
+    "paymentMethod": "EFECTIVO"
   }
 ]

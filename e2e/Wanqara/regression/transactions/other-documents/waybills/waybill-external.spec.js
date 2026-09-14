@@ -1,8 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../../harness/helpers/auth.js";
-import { runAdminSaleFlow } from "../../sales/harness/admin-sale-flow.js";
+import { annotateTicket } from "../../../../harness/helpers/reporting/annotate.js";
+import { selectClientByCedula } from "../../../../harness/helpers/people/client-helpers.js";
+import { selectCheckout, searchAndSelectProduct, selectPaymentMethod, submitAdminSale } from "../../sales/harness/admin-checkout-helpers.js";
+import { waitForFormDefaults } from "../../sales/harness/admin-dynamic-documents-helpers.js";
+import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
+import { getSessionPath } from "../../../../harness/helpers/auth/auth.js";
 import {
   CARRIER_CASES,
   assignCarrier,
@@ -39,19 +42,21 @@ test.describe.serial("Waybills - External Waybill", () => {
 
           if (scenario.waybillData.isLongProductSale) {
             await test.step("Create a sale with electronic invoice and the long product", async () => {
-              await runAdminSaleFlow(page, {
-                tenantBaseUrl,
-                authType: scenario.authType,
-                documentType: scenario.waybillData.saleParams.documentType,
-                clientCedula: scenario.waybillData.saleParams.clientCedula,
-                productName: scenario.waybillData.saleParams.productName,
-              });
+              await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/admin/ventas/add", authType: scenario.authType });
+              await page.waitForURL(/\/admin\/ventas\/add/);
+              await waitForFormDefaults(page);
+              await selectCheckout(page, { checkoutName: scenario.waybillData.checkoutName });
+              await selectClientByCedula(page, scenario.waybillData.saleParams.clientCedula);
+              await searchAndSelectProduct(page, { name: scenario.waybillData.saleParams.productName });
+              await selectPaymentMethod(page, scenario.waybillData.saleParams.paymentMethod);
+              await submitAdminSale(page);
             });
           }
 
           await test.step("Fill external waybill form using the sale", async () => {
             await fillExternalWaybillForm(page, {
               tenantBaseUrl,
+              authType: scenario.authType,
               checkoutName: scenario.waybillData.checkoutName,
               saleIndex: 0,
             });
@@ -66,7 +71,7 @@ test.describe.serial("Waybills - External Waybill", () => {
               const isLast = carrier === CARRIER_CASES[CARRIER_CASES.length - 1].carrier;
 
               await test.step(`Assign the carrier using ${label}`, async () => {
-                await assignCarrier(page, carrier);
+                await assignCarrier(page, carrier, scenario.waybillData.carrierParams);
                 await expect(page.getByText(/Empleado Test 1.*Identificaci.n:/i)).toBeVisible();
               });
 
@@ -82,7 +87,7 @@ test.describe.serial("Waybills - External Waybill", () => {
             }
           } else {
              await test.step("Assign carrier", async () => {
-               await assignCarrier(page, "cedula");
+               await assignCarrier(page, "cedula", scenario.waybillData.carrierParams);
              });
           }
 

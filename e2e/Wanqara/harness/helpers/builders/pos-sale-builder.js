@@ -1,9 +1,6 @@
-import { ensureCashRegisterOpen } from "../../../regression/POS/harness/cash-register-helpers.js";
-import { completePayment } from "../../../regression/POS/harness/pos-payment.js";
-import { searchAndSelectProduct } from "../../../regression/POS/harness/pos-search.js";
-import { SEED } from "../../config/seed.js";
-import { ensureAuthenticated } from "../auth.js";
-import { selectClientByCedula } from "../client-helpers.js";
+import { ensureAuthenticated } from "../auth/auth.js";
+import { selectClientByCedula } from "../people/client-helpers.js";
+import { playwrightHarness } from "../../config/settings.js";
 
 /**
  * Patrón Builder para el Flujo de Ventas POS.
@@ -11,20 +8,26 @@ import { selectClientByCedula } from "../client-helpers.js";
  * Permite encadenar los pasos de la venta explícitamente.
  */
 export class PosSaleBuilder {
-    constructor(page, tenantBaseUrl, subsidiaryName = "Wanqara Comercios 100") {
+    constructor(page, tenantBaseUrl, subsidiaryName = playwrightHarness.subsidiaries.retail, deps = {}) {
         this.page = page;
         this.tenantBaseUrl = tenantBaseUrl;
         this.subsidiaryName = subsidiaryName;
+
+        this._ensureCashRegisterOpen = deps.ensureCashRegisterOpen;
+        this._completePayment = deps.completePayment;
+        this._searchAndSelectProduct = deps.searchAndSelectProduct;
 
         // Estado inicial de la venta
         this.productName = null;
         this.searchTerm = null;
         this.documentType = null;
         this.clientCedula = null;
-        this.paymentMethod = SEED.paymentMethods.efectivo;
+        this.paymentMethod = null;
         this.printTicket = false;
         this.openDrawer = false;
         this.skipNavigation = false;
+        this.authType = "retail"; // Default as POS is mostly retail, but overrideable
+        this.openingAmount = playwrightHarness.defaults.openingAmount;
 
         // Custom actions if complex steps are needed between standard ones
         this.customActions = [];
@@ -33,14 +36,17 @@ export class PosSaleBuilder {
     /**
      * Construye una instancia del Builder alimentada por un JSON de Data-Driven Testing.
      */
-    static fromJson(page, tenantBaseUrl, scenarioData) {
-        const builder = new PosSaleBuilder(page, tenantBaseUrl);
+    static fromJson(page, tenantBaseUrl, scenarioData, deps = {}) {
+        const builder = new PosSaleBuilder(page, tenantBaseUrl, scenarioData.subsidiaryName || playwrightHarness.subsidiaries.retail, deps);
         
         if (scenarioData.documentType) builder.withDocumentType(scenarioData.documentType);
         if (scenarioData.productName) builder.withProduct(scenarioData.productName, scenarioData.searchTerm);
         if (scenarioData.clientCedula) builder.withClient(scenarioData.clientCedula);
         if (scenarioData.paymentMethod) builder.withPaymentMethod(scenarioData.paymentMethod);
         if (scenarioData.printTicket) builder.withPrintedTicket(scenarioData.openDrawer);
+        
+        if (scenarioData.authType) builder.authType = scenarioData.authType;
+        if (scenarioData.openingAmount) builder.openingAmount = scenarioData.openingAmount;
         
         return builder;
     }
@@ -50,14 +56,8 @@ export class PosSaleBuilder {
         return this;
     }
 
-    withDocumentType(documentType) {
-        this.documentType = documentType;
-        return this;
-    }
-
-    withProduct(productName, searchTerm = null) {
-        this.productName = productName;
-        this.searchTerm = searchTerm;
+    withDocumentType(type) {
+        this.documentType = type;
         return this;
     }
 
@@ -66,8 +66,14 @@ export class PosSaleBuilder {
         return this;
     }
 
-    withPaymentMethod(paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    withProduct(name, searchTerm = null) {
+        this.productName = name;
+        this.searchTerm = searchTerm;
+        return this;
+    }
+
+    withPaymentMethod(method) {
+        this.paymentMethod = method;
         return this;
     }
 
@@ -87,8 +93,9 @@ export class PosSaleBuilder {
 
         // 1. Navegación y Precondiciones de Caja
         if (!this.skipNavigation) {
-            await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/pos/home" });
-            await ensureCashRegisterOpen(page, tenantBaseUrl, "10", subsidiaryName);
+            await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/pos/home", authType: this.authType });
+            if (!this._ensureCashRegisterOpen) throw new Error("ensureCashRegisterOpen helper not injected in Builder.");
+            await this._ensureCashRegisterOpen(page, tenantBaseUrl, this.openingAmount, subsidiaryName, this.authType);
             await page.waitForURL(/\/pos\/(home|restaurant-home)/);
         }
 
@@ -113,7 +120,8 @@ export class PosSaleBuilder {
 
         // 4. Búsqueda y Selección del Producto
         if (this.productName) {
-            await searchAndSelectProduct(page, { name: this.productName, searchTerm: this.searchTerm });
+            if (!this._searchAndSelectProduct) throw new Error("searchAndSelectProduct helper not injected in Builder.");
+            await this._searchAndSelectProduct(page, { name: this.productName, searchTerm: this.searchTerm });
         }
 
         // 5. Ejecutar Acciones Personalizadas (Descuentos, Notas, etc.)
@@ -127,7 +135,9 @@ export class PosSaleBuilder {
         await page.waitForURL(/\/pos\/(restaurant-)?payments/);
 
         // 7. Completar el Pago
-        await completePayment(page, { 
+        if (!this.paymentMethod) throw new Error("Payment method must be explicitly provided from JSON");
+        if (!this._completePayment) throw new Error("completePayment helper not injected in Builder.");
+        await this._completePayment(page, { 
             paymentMethod: this.paymentMethod, 
             printTicket: this.printTicket, 
             openDrawer: this.openDrawer 

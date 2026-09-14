@@ -2,7 +2,7 @@ import { expect, test as setup } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
 
-import { SEED } from "../config/seed.js";
+import defaultBranches from "../config/default-branches.json" assert { type: "json" };
 import {
   getTenantBaseUrl,
   hasLoginCredentials,
@@ -15,7 +15,7 @@ import {
   getSessionPath,
   loginAndSelectSubsidiary,
   logoutAndLoginAgain
-} from "../helpers/auth.js";
+} from "../helpers/auth/auth.js";
 
 
 const authType = "restaurant";
@@ -28,8 +28,8 @@ setup(`authenticate ${authType}`, async ({ page }) => {
   if (fs.existsSync(sessionPath)) {
     try {
       const stats = fs.statSync(sessionPath);
-      // Validamos si la sesión tiene menos de 12 horas de antigüedad
-      const isFresh = (Date.now() - stats.mtimeMs) < 12 * 60 * 60 * 1000;
+      // Validamos si la sesión tiene menos de 1 hora de antigüedad para evitar tokens expirados en backend
+      const isFresh = (Date.now() - stats.mtimeMs) < 1 * 60 * 60 * 1000;
       const content = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
       
       // Si el archivo existe, es reciente y tiene cookies válidas, nos saltamos todo el login
@@ -53,7 +53,7 @@ setup(`authenticate ${authType}`, async ({ page }) => {
 
   const tenantBaseUrl = getTenantBaseUrl();
   const loginCredentials = playwrightHarness.users[authType];
-  const subsidiaryName = SEED.subsidiaries[authType].name;
+  const subsidiaryName = defaultBranches[authType].name;
 
   await loginAndSelectSubsidiary(page, {
     tenantBaseUrl,

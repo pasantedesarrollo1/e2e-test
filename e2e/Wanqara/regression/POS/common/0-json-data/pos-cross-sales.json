@@ -21,8 +21,14 @@
       "productName": "Caja de alitas de pollo (100 u)",
       "paymentMethod": {
         "label": "EFECTIVO"
-      }
-    }
+      },
+      "printTicket": false,
+      "openDrawer": false,
+      "clientCedula": "0000000001",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "POS-CROSS-SALES-002",
@@ -46,8 +52,14 @@
       "productName": "Caja de alitas de pollo (100 u)",
       "paymentMethod": {
         "label": "EFECTIVO"
-      }
-    }
+      },
+      "printTicket": false,
+      "openDrawer": false,
+      "clientCedula": "0000000001",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "POS-CROSS-SALES-003",
@@ -67,7 +79,13 @@
     "environment": "POS Restaurant",
     "authType": "restaurant",
     "chefOrderParams": {
-      "productName": "Caja de alitas de pollo (100 u)"
-    }
+      "productName": "Caja de alitas de pollo (100 u)",
+      "printTicket": false,
+      "openDrawer": false,
+      "clientCedula": "0000000001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Sucursal Matriz",
+    "cleanupReason": "Limpieza autom\u00e1tica previa de tests de ventas cruzadas"
   }
 ]

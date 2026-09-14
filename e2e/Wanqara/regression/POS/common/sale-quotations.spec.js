@@ -3,12 +3,13 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
 import { withPath } from "../../../harness/config/urls.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { expect, test } from "../harness/pos-fixtures.js";
-import { completePayment } from "../harness/pos-payment.js";
-import { openDrawer, selectClientByCedula } from "../harness/pos-sale-flow.js";
-import { searchAndSelectProduct } from "../harness/pos-search.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { selectClientByCedula } from '../../../harness/helpers/people/client-helpers.js';
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { openDrawer } from '../harness/sales/pos-drawer-helpers.js';
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -88,7 +89,8 @@ async function selectFirstQuoteAndBill(page) {
 for (const scenario of scenarios) {
   test.describe.serial(`POS ${scenario.description} - Quotation Workflow @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(scenario.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -139,7 +141,7 @@ for (const scenario of scenarios) {
         const finishSaleButton = page.getByRole("button", { name: /Terminar Venta/i });
         await finishSaleButton.click();
         await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
-        await completePayment(page);
+        await completePayment(page, { paymentMethod: scenario.paymentMethod });
       });
     });
   });

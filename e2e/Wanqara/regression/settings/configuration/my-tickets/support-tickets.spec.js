@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth.js";
-import { searchInList } from "../../../../harness/helpers/crud-helpers.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth/auth.js";
+import { searchInList } from "../../../../harness/helpers/crud/crud-helpers.js";
+import { annotateTicket } from "../../../../harness/helpers/reporting/annotate.js";
 import {
   acceptTerms,
   checkFormFilledCorrectly,

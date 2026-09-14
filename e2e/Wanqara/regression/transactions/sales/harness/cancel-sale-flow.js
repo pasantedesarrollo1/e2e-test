@@ -1,10 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { SEED } from "../../../../harness/config/seed.js";
 import { withPath } from "../../../../harness/config/urls.js";
-import { ACTION_TOOLTIPS } from "../../../../harness/helpers/action-tooltips.js";
-import { clickTableRowAction } from "../../../../harness/helpers/crud-helpers.js";
+import { clickTableRowAction } from "../../../../harness/helpers/crud/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../../../harness/helpers/ui/action-tooltips.js";
 
-export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwitch, expectMessage, confirmCancellation = true }) {
+export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwitch, expectMessage, confirmCancellation = true, annulmentReason = "Anulación automatizada por E2E" }) {
   const getSalesPromise = page.waitForResponse(res => 
     res.url().includes('/api/v1/billing/sales') && 
     res.request().method() === 'GET'
@@ -59,7 +58,7 @@ export async function cancelFirstSaleAndVerify(page, { tenantBaseUrl, expectSwit
       );
 
       const observationInput = modal.getByRole("textbox", { name: /Motivo de anulación/i });
-      await observationInput.fill(SEED.sale.annulmentReason);
+      await observationInput.fill(annulmentReason);
 
       if (expectSwitch) {
         const inventorySwitch = modal.locator('.v-switch').filter({ hasText: /Mover inventario/i });

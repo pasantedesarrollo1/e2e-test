@@ -1,0 +1,21 @@
+[
+  {
+    "id": "SUR-BASE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo B\u00e1sico de Recargos",
+      "testScope": "regression"
+    },
+    "description": "Retail - Flujo Base de Recargo (Pre-clean, Create, Search, Delete)",
+    "authType": "retail",
+    "surchargeData": {
+      "name": "Recargo E2E Base Flow",
+      "percentage": "12"
+    },
+    "paymentMethod": "EFECTIVO"
+  }
+]

@@ -7,8 +7,8 @@ import {
   requireChefCredentials,
   requirePosCredentials,
 } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +16,7 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "update-order-flow.json"), "utf-8")
 );
 
-import { completePayment } from "../harness/pos-payment.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
 import {
   addProductToExistingOrder,
   closeAllActiveOrders,
@@ -26,15 +26,15 @@ import {
   openAndSelectOrder,
 } from "./harness/pos-orders-common.js";
 
-async function withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, actionCallback, orderOptions = {}) {
-  await closeAllActiveOrders(page, tenantBaseUrl);
+async function withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, orderOptions, posOptions, actionCallback) {
+  await closeAllActiveOrders(page, tenantBaseUrl, posOptions.subsidiaryName, posOptions.cleanupReason || "Limpieza pre-test");
   
   const chefContext = await browser.newContext({ storageState: getSessionPath("chef") });
   const chefPage = await chefContext.newPage();
   const activeTableName = await createChefOrder(chefPage, orderOptions);
   await chefContext.close();
 
-  await navigateToRestaurantPOS(page, tenantBaseUrl);
+  await navigateToRestaurantPOS(page, tenantBaseUrl, posOptions.subsidiaryName);
   await openAndSelectOrder(page, activeTableName);
   await actionCallback(page, activeTableName);
 }
@@ -54,21 +54,28 @@ for (const scenario of scenarios) {
       test.setTimeout(180_000);
       const tenantBaseUrl = getTenantBaseUrl();
 
-      await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, async (page, activeTableName) => {
-        await test.step("Add a product to the existing order", async () => {
-          await addProductToExistingOrder(page, scenario.updateData.productName);
-        });
+      await withActiveRestaurantOrderSafe(
+        browser, 
+        page, 
+        tenantBaseUrl, 
+        { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, cleanupReason: scenario.cleanupReason }, async (page, activeTableName) => {
+          await test.step("Add a product to the existing order", async () => {
+            await addProductToExistingOrder(page, scenario.updateData.productName);
+          });
 
-        await test.step("Collect order and verify payments screen", async () => {
-          await collectOrder(page);
-          await page.waitForURL(/\/pos\/restaurant-payments/);
-          await expect(page.getByText(/Cliente:/i)).toBeVisible();
-        });
+          await test.step("Collect order and verify payments screen", async () => {
+            await collectOrder(page);
+            await page.waitForURL(/\/pos\/restaurant-payments/);
+            await expect(page.getByText(/Cliente:/i)).toBeVisible();
+          });
 
-        await test.step("Complete the payment process", async () => {
-          await completePayment(page);
-        });
-      });
+          await test.step("Complete the payment process", async () => {
+            await completePayment(page, { paymentMethod: scenario.paymentMethod });
+          });
+        },
+        {}, 
+        scenario.posOptions
+      );
     });
   });
 }

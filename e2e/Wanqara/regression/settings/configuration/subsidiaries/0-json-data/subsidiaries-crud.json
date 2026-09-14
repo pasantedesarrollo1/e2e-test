@@ -18,7 +18,8 @@
       "code": "901",
       "isRestaurant": false,
       "hasDispatch": false
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "SUBSIDIARY-002",
@@ -39,7 +40,8 @@
       "code": "902",
       "isRestaurant": false,
       "hasDispatch": true
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "SUBSIDIARY-003",
@@ -60,6 +62,7 @@
       "code": "903",
       "isRestaurant": true,
       "hasDispatch": false
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

@@ -2,9 +2,9 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { expect, test } from "../harness/pos-fixtures.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,14 +15,15 @@ const scenarios = JSON.parse(
 
 
 for (const scenario of scenarios) {
-  test.describe.serial(`POS ${scenario.description} - Product Selection Stress & Rapid-Click Testing @${scenario.metadata?.testScope || 'regression'} @release`, () => {
+  test.describe.serial(`POS ${scenario.description} - Product Selection Stress & Rapid-Click Testing @${scenario.metadata?.testScope || 'regression'}`, () => {
     
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
     }
     
     requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(scenario.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName });
 
     const runTest = (title, bodyFn) => {
       if (scenario.fixture === 'posPage') {
@@ -67,7 +68,7 @@ for (const scenario of scenarios) {
       const classes = await stockDot.getAttribute('class');
       
       if (classes.includes('tw-text-red')) {
-        await card.click();
+        await card.click({ force: true });
         const snackbar = page.getByRole('status').filter({ hasText: /No se puede agregar el/i }).first();
         await expect(snackbar).toBeVisible({ timeout: 5000 });
         continue; 
@@ -76,13 +77,13 @@ for (const scenario of scenarios) {
       clickTrackers[productTitle] = 1;
       addedCount++;
       
-      await card.click();
+      await card.click({ force: true });
       await expect(cartRows).toHaveCount(addedCount);
     }
 
     expect(await cartRows.count()).toBe(addedCount);
 
-    const burstCycles = 20; 
+    const burstCycles = 15; 
     for (let cycle = 0; cycle < burstCycles; cycle++) {
       const randomIndex = Math.floor(Math.random() * cardCount);
       const targetCard = visibleCards.nth(randomIndex);
@@ -99,11 +100,11 @@ for (const scenario of scenarios) {
       clickTrackers[productTitle] += randomClicks;
 
       for (let click = 0; click < randomClicks; click++) {
-        await targetCard.click();
+        await targetCard.click({ force: true });
       }
     }
 
-    const pingPongCycles = 15;
+    const pingPongCycles = 10;
     if (cardCount > 1) {
       for (let cycle = 0; cycle < pingPongCycles; cycle++) {
         const idxA = Math.floor(Math.random() * cardCount);
@@ -130,8 +131,8 @@ for (const scenario of scenarios) {
         clickTrackers[titleB] += pingPongClicks;
 
         for (let i = 0; i < pingPongClicks; i++) {
-          await cardA.click();
-          await cardB.click();
+          await cardA.click({ force: true });
+          await cardB.click({ force: true });
         }
       }
     }

@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../../harness/helpers/reporting/annotate.js";
 import { createDispatchType, toggleDispatchTypeState } from "./harness/dispatch-types-helpers.js";
 
 import scenarios from "./0-json-data/dispatch-types-crud.json" assert { type: "json" };

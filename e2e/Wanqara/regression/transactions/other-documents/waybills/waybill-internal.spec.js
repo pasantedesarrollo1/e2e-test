@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../../harness/helpers/auth.js";
+import { annotateTicket } from "../../../../harness/helpers/reporting/annotate.js";
+import { getSessionPath } from "../../../../harness/helpers/auth/auth.js";
 import {
   CARRIER_CASES,
   assignCarrier,
@@ -39,6 +39,7 @@ test.describe.serial("Waybills - Internal Waybill", () => {
           await test.step("Fill in the waybill information (dates, warehouse, and checkout)", async () => {
             await fillInternalWaybillForm(page, {
               tenantBaseUrl,
+              authType: scenario.authType,
               warehouseName: scenario.waybillData.warehouseName,
               checkoutName: scenario.waybillData.checkoutName,
             });
@@ -53,7 +54,7 @@ test.describe.serial("Waybills - Internal Waybill", () => {
               const isLast = carrier === CARRIER_CASES[CARRIER_CASES.length - 1].carrier;
 
               await test.step(`Assign the carrier using ${label}`, async () => {
-                await assignCarrier(page, carrier);
+                await assignCarrier(page, carrier, scenario.waybillData.carrierParams);
                 await expect(page.getByText(/Empleado Test 1.*Identificaci.n:/i)).toBeVisible();
               });
 
@@ -69,7 +70,7 @@ test.describe.serial("Waybills - Internal Waybill", () => {
             }
           } else {
              await test.step("Assign carrier", async () => {
-               await assignCarrier(page, "cedula");
+               await assignCarrier(page, "cedula", scenario.waybillData.carrierParams);
              });
           }
 

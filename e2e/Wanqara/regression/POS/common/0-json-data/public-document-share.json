@@ -1,0 +1,31 @@
+[
+  {
+    "id": "PUBLIC-DOCUMENT-SHARE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-995",
+      "tes": "TES-214",
+      "release": "v7.9.0",
+      "summary": "Compartici\u00f3n de Facturas y Cotizaciones v\u00eda WhatsApp en POS",
+      "addedToRegression": "true",
+      "testScope": "release"
+    },
+    "authType": "retail",
+    "shareData": {
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": {
+        "label": "EFECTIVO"
+      }
+    },
+    "subsidiaryName": "Wanqara Comercios 100",
+    "openingAmount": "10",
+    "paymentMethod": "EFECTIVO",
+    "cleanupReason": "Limpieza automtica pre-test",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "9999999999999"
+  }
+]

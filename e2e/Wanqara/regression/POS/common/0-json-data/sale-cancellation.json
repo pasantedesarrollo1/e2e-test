@@ -20,8 +20,12 @@
     "expectMessage": false,
     "saleParams": {
       "productName": "Caja de alitas de pollo (100 u)",
-      "clientCedula": "0000000001"
-    }
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "SALE-CANCELLATION-002",
@@ -44,8 +48,11 @@
     "expectMessage": true,
     "saleParams": {
       "productName": "Caja de alitas de pollo (100 u)",
-      "clientCedula": "0000000001"
-    }
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "SALE-CANCELLATION-003",
@@ -68,7 +75,11 @@
     "expectMessage": true,
     "saleParams": {
       "productName": "Caja de alitas de pollo (100 u)",
-      "clientCedula": "0000000001"
-    }
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Sucursal Matriz"
   }
 ]

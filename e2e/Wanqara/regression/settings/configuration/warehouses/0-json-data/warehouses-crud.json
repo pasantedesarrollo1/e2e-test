@@ -17,7 +17,8 @@
       "code": "1111",
       "address": "Automated Test Address Ret",
       "description": "Automated Test Desc Ret"
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "WAREHOUSE-002",
@@ -37,7 +38,8 @@
       "code": "1112",
       "address": "Automated Test Address Dis",
       "description": "Automated Test Desc Dis"
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "WAREHOUSE-003",
@@ -57,6 +59,7 @@
       "code": "1113",
       "address": "Automated Test Address Res",
       "description": "Automated Test Desc Res"
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

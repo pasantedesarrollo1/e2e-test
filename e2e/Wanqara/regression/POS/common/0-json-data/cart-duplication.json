@@ -33,7 +33,9 @@
       }
     ],
     "productName": "Caja de alitas de pollo (100 u)",
-    "productCode": "Caj000000001"
+    "productCode": "Caj000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "CART-DUPLICATION-002",
@@ -70,7 +72,9 @@
       }
     ],
     "productName": "Caja de alitas de pollo (100 u)",
-    "productCode": "Caj000000001"
+    "productCode": "Caj000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "CART-DUPLICATION-003",
@@ -111,7 +115,9 @@
       }
     ],
     "productName": "Caja de alitas de pollo (100 u)",
-    "productCode": "Caj000000001"
+    "productCode": "Caj000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "CART-DUPLICATION-004",
@@ -147,7 +153,9 @@
       }
     ],
     "productName": "Caja de alitas de pollo (100 u)",
-    "productCode": "Caj000000001"
+    "productCode": "Caj000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "CART-DUPLICATION-005",
@@ -182,7 +190,9 @@
       }
     ],
     "productName": "Caja de alitas de pollo (100 u)",
-    "productCode": "Caj000000001"
+    "productCode": "Caj000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "CART-DUPLICATION-006",
@@ -215,7 +225,9 @@
       }
     ],
     "productName": "Caja de alitas de pollo (100 u)",
-    "productCode": "Caj000000001"
+    "productCode": "Caj000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "CART-DUPLICATION-007",
@@ -245,7 +257,9 @@
       }
     ],
     "productName": "Caja de alitas de pollo (100 u)",
-    "productCode": "Caj000000001"
+    "productCode": "Caj000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "CART-DUPLICATION-008",
@@ -277,7 +291,9 @@
       }
     ],
     "productName": "Caja de alitas de pollo (100 u)",
-    "productCode": "Caj000000001"
+    "productCode": "Caj000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   },
   {
     "id": "CART-DUPLICATION-009",
@@ -315,6 +331,8 @@
       }
     ],
     "productName": "Caja de alitas de pollo (100 u)",
-    "productCode": "Caj000000001"
+    "productCode": "Caj000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios 100"
   }
 ]

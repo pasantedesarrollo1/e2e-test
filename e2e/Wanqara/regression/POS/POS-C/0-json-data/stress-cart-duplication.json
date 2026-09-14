@@ -15,7 +15,9 @@
     },
     "authType": "retail",
     "fixture": "posPage",
-    "searchKeyword": "alitas"
+    "searchKeyword": "alitas",
+    "subsidiaryName": "Wanqara Comercios 100",
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "STRESS-CART-DUPLICATION-002",
@@ -33,6 +35,8 @@
     },
     "authType": "restaurant",
     "fixture": "posRestaurantPage",
-    "searchKeyword": "alitas"
+    "searchKeyword": "alitas",
+    "subsidiaryName": "Sucursal Matriz",
+    "paymentMethod": "EFECTIVO"
   }
 ]

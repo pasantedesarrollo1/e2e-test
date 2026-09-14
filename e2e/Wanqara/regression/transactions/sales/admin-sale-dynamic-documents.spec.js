@@ -1,8 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { getElectronicInvoicingAuthType } from "../../../harness/config/seed.js";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth.js";
+import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
 import {
   getAvailableDocumentOptions,
@@ -33,7 +32,7 @@ test.describe("Admin Sales - Dynamic Document Types (WS-981)", () => {
       }
 
       requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(getElectronicInvoicingAuthType()) });
+      test.use({ storageState: getSessionPath(scenario.authType) });
 
       test(
         scenario.only ? "Validates dynamic document type restrictions (focus)" : "Validates dynamic document type restrictions",
@@ -46,7 +45,7 @@ test.describe("Admin Sales - Dynamic Document Types (WS-981)", () => {
             await ensureAuthenticated(page, { 
               tenantBaseUrl, 
               targetPath: scenario.targetPath, 
-              authType: getElectronicInvoicingAuthType() 
+              authType: scenario.authType 
             });
             await ensureUIReady(page);
             
@@ -58,7 +57,7 @@ test.describe("Admin Sales - Dynamic Document Types (WS-981)", () => {
             await expect(docInput).toContainText(expectedRegex);
             
             const options = await getAvailableDocumentOptions(page);
-            const hasElectronic = options.some(o => o.includes("Factura"));
+            const hasElectronic = options.some(o => o.includes(initialStep.electronicKeyword));
             expect(hasElectronic).toBe(initialStep.expectElectronicOption);
           });
 
@@ -77,7 +76,7 @@ test.describe("Admin Sales - Dynamic Document Types (WS-981)", () => {
               await expect(docInput).toContainText(expectedRegex);
               
               const options = await getAvailableDocumentOptions(page);
-              const hasElectronic = options.some(o => o.includes("Factura"));
+              const hasElectronic = options.some(o => o.includes(step.electronicKeyword));
               expect(hasElectronic).toBe(step.expectElectronicOption);
             });
           }

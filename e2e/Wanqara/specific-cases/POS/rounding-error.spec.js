@@ -1,18 +1,17 @@
 import { expect, test } from "@playwright/test";
-import { SEED } from "../../harness/config/seed.js";
 import { getTenantBaseUrl, requirePosCredentials } from "../../harness/config/settings.js";
-import { annotateTicket } from "../../harness/helpers/annotate.js";
-import { ensureAuthenticated, getSessionPath, withSessionWatchdog } from "../../harness/helpers/auth.js";
-import { selectClientByCedula } from "../../harness/helpers/client-helpers.js";
-import { ensureCashRegisterOpen } from "../../regression/POS/harness/cash-register-helpers.js";
+import { ensureAuthenticated, getSessionPath, withSessionWatchdog } from "../../harness/helpers/auth/auth.js";
+import { selectClientByCedula } from "../../harness/helpers/people/client-helpers.js";
+import { annotateTicket } from "../../harness/helpers/reporting/annotate.js";
+import { ensureCashRegisterOpen } from "../../regression/POS/harness/cash-register/cash-register-helpers.js";
 import {
   openProductOptions,
   saveProductOptions,
   setDiscountInOptions,
   setQuantityInOptions,
   setUnitPriceInOptions,
-} from "../../regression/POS/harness/pos-product-options.js";
-import { searchAndSelectProduct } from "../../regression/POS/harness/pos-search.js";
+} from "../../regression/POS/harness/products/pos-product-options.js";
+import { searchAndSelectProduct } from "../../regression/POS/harness/products/pos-search.js";
 
 import scenarios from "./0-json-data/rounding-error.json" assert { type: "json" };
 
@@ -43,10 +42,10 @@ test.describe("POS Specific Cases - Rounding Errors", () => {
           await test.step("Setup POS Environment dynamically", async () => {
             const isRestaurant = scenario.fixture === "posRestaurantPage";
             const targetPath = isRestaurant ? "/pos/restaurant-home" : "/pos/home";
-            const subsidiaryName = isRestaurant ? SEED.subsidiaries.restaurant.name : SEED.subsidiaries.retail.name;
+            const subsidiaryName = isRestaurant ? scenario.posOptions.subsidiaryName : scenario.posOptions.subsidiaryName;
             
             await ensureAuthenticated(page, { tenantBaseUrl, targetPath, authType: scenario.authType });
-            await ensureCashRegisterOpen(page, tenantBaseUrl, "10", subsidiaryName);
+            await ensureCashRegisterOpen(page, tenantBaseUrl, tc.openingAmount, subsidiaryName, scenario.authType);
             await withSessionWatchdog(page, () =>
               expect(page.getByText(/Cliente:/i).first()).toBeVisible({ timeout: 60_000 }),
               scenario.authType
@@ -54,7 +53,7 @@ test.describe("POS Specific Cases - Rounding Errors", () => {
           });
 
           await test.step(`Build cart with ${tc.productName}`, async () => {
-            await selectClientByCedula(page, "0000000001");
+            await selectClientByCedula(page, tc.clientCedula);
             await searchAndSelectProduct(page, { name: tc.productName });
             
             const dialog = await openProductOptions(page);
@@ -97,7 +96,7 @@ test.describe("POS Specific Cases - Rounding Errors", () => {
           });
 
           await test.step("Pay and verify rounding behavior", async () => {
-            const methodOption = page.getByText(SEED.paymentMethods.efectivo.label, { exact: true }).first();
+            const methodOption = page.getByText(scenario.saleParams.paymentMethod.label, { exact: true }).first();
             await methodOption.click();
 
             const finalizarVentaButton = page.getByRole("button", { name: /Finalizar Venta/i });

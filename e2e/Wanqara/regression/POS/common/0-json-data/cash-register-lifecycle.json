@@ -19,6 +19,7 @@
     "openingAmount": "10",
     "subsidiaryName": "Wanqara Comercios 100",
     "productName": "Caja de alitas de pollo (100 u)",
-    "clientCedula": "0000000001"
+    "clientCedula": "0000000001",
+    "paymentMethod": "EFECTIVO"
   }
 ]

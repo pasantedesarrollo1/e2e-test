@@ -2,9 +2,9 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { test } from "../harness/pos-fixtures.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { test, expect } from "@playwright/test";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,25 +12,29 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sale-inventory-dispatch.json"), "utf-8")
 );
 
-import { selectFirstSerie, selectFirstVariant } from "../harness/pos-products.js";
-import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
+import { ensureAuthenticated } from "../../../harness/helpers/auth/auth.js";
+import { ensureCashRegisterOpen } from "../harness/cash-register/cash-register-helpers.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { selectFirstSerie, selectFirstVariant } from "../harness/products/pos-products.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
 
 const CALLBACK_MAP = {
   selectFirstVariant,
   selectFirstSerie
 };
 
-
-async function executeSales(page, { tenantBaseUrl, dispatchEnabled, products }) {
+async function executeSales(page, { tenantBaseUrl, dispatchEnabled, products, paymentMethod }) {
   for (const product of products) {
     const afterProductSelect = product.afterSelectCallback ? CALLBACK_MAP[product.afterSelectCallback] : null;
     await test.step(`Sale [${product.type}] - ${product.name}`, async () => {
-      await runPosSaleFlow(page, {
-        tenantBaseUrl,
-        productName: product.name,
-        searchTerm: null,
-        afterProductSelect,
-      });
+      await expect(page).toHaveURL(/\/pos\/(home|restaurant-home)/);
+      await searchAndSelectProduct(page, { name: product.name, searchTerm: null });
+      if (afterProductSelect) {
+        await afterProductSelect(page);
+      }
+      await clickFinishSale(page);
+      await completePayment(page, { paymentMethod });
     });
   }
 }
@@ -39,18 +43,26 @@ for (const scenario of scenarios) {
   test.describe(`POS Retail - ${scenario.description} @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test(`completes multiple sales seamlessly with dispatch ${scenario.dispatchEnabled ? 'enabled' : 'disabled'}`, async ({ posPage: page }) => {
+    test(`completes multiple sales seamlessly with dispatch ${scenario.dispatchEnabled ? 'enabled' : 'disabled'}`, async ({ page }) => {
       test.setTimeout(180_000);
+      const tenantBaseUrl = getTenantBaseUrl();
+      
+      await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/pos/home", authType: scenario.authType });
+      await ensureCashRegisterOpen(page, tenantBaseUrl, scenario.openingAmount, scenario.subsidiaryName, scenario.authType);
+      await page.waitForURL(/\/pos\/(home|restaurant-home)/);
+
       await executeSales(page, {
-        tenantBaseUrl: getTenantBaseUrl(),
+        tenantBaseUrl,
         dispatchEnabled: scenario.dispatchEnabled,
         products: scenario.products,
+        paymentMethod: scenario.paymentMethod
       });
     });
   });

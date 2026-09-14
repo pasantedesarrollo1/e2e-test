@@ -3,10 +3,13 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth.js";
+import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import { cancelFirstSaleAndVerify } from "../../transactions/sales/harness/cancel-sale-flow.js";
-import { runPosSaleFlow, selectClientByCedula } from "../harness/pos-sale-flow.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,12 +39,10 @@ test.describe.serial("Cancel Sales (POS)", () => {
             authType: scenario.authType 
           });
           
-          await runPosSaleFlow(page, {
-            tenantBaseUrl,
-            productName: scenario.saleParams.productName,
-            skipNavigation: true,
-            beforeFinish: async (p) => await selectClientByCedula(p, scenario.saleParams.clientCedula),
-          });
+          await searchAndSelectProduct(page, { name: scenario.saleParams.productName });
+          await selectClientByCedula(page, scenario.saleParams.clientCedula);
+          await clickFinishSale(page);
+          await completePayment(page, { paymentMethod: scenario.paymentMethod });
         });
 
         await test.step("Cancel POS Sale and Verify Modal", async () => {

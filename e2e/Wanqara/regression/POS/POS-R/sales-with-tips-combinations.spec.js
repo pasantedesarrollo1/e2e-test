@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -7,7 +7,7 @@ import {
   requireChefCredentials,
   requirePosCredentials,
 } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,23 +15,25 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sales-with-tips-combinations.json"), "utf-8")
 );
 
-async function withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, actionCallback, orderOptions = {}) {
-  await closeAllActiveOrders(page, tenantBaseUrl);
+async function withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, orderOptions, posOptions, actionCallback) {
+  await closeAllActiveOrders(page, tenantBaseUrl, posOptions.subsidiaryName, posOptions.cleanupReason || "Limpieza pre-test");
   
   const chefContext = await browser.newContext({ storageState: getSessionPath("chef") });
   const chefPage = await chefContext.newPage();
   const activeTableName = await createChefOrder(chefPage, orderOptions);
   await chefContext.close();
 
-  await navigateToRestaurantPOS(page, tenantBaseUrl);
+  await navigateToRestaurantPOS(page, tenantBaseUrl, posOptions.subsidiaryName);
   await openAndSelectOrder(page, activeTableName);
   await actionCallback(page, activeTableName);
 }
 
-import { applyGeneralDiscount, applyManualSurcharge, assertPaymentModalUI, assertPaymentPayloadPrecision, assertSalePanelUI, assertSummaryPrecision } from "../harness/pos-financial-assertions.js";
-import { completePayment } from "../harness/pos-payment.js";
-import { captureSaleMutation, runPosSaleFlow } from "../harness/pos-sale-flow.js";
-import { searchAndSelectProduct } from "../harness/pos-search.js";
+import { ensureAuthenticated } from "../../../harness/helpers/auth/auth.js";
+import { ensureCashRegisterOpen } from "../harness/cash-register/cash-register-helpers.js";
+import { applyGeneralDiscount, applyManualSurcharge, assertPaymentModalUI, assertPaymentPayloadPrecision, assertSalePanelUI, assertSummaryPrecision } from "../harness/financials/pos-financial-assertions.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { captureSaleMutation, clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
 import {
   addProductToExistingOrder,
   closeAllActiveOrders,
@@ -54,34 +56,31 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
   requirePosCredentials(test);
   requireChefCredentials(test);
 
-  test.use({ storageState: getSessionPath("restaurant") });
+  test.use({ 
+    storageState: getSessionPath("restaurant"),
+    subsidiaryName: scenario.subsidiaryName
+  });
 
-  test("Case 1: Direct Sale with Mix (Standard + Combo + Service) and Tip", async ({ page }) => {
+  test("Case 1: Direct Sale with Mix (Standard + Combo + Service) and Tip", async ({ posRestaurantPage: page }) => {
     test.setTimeout(150_000);
     const tenantBaseUrl = getTenantBaseUrl();
     const precision = scenario.case1;
+
+    await searchAndSelectProduct(page, { name: scenario.products.estandar, searchTerm: null });
+
+    await test.step("Add additional products to the cart", async () => {
+      await searchAndSelectProduct(page, { name: scenario.products.combo });
+      await searchAndSelectProduct(page, { name: scenario.products.servicio });
+    });
+
+    await assignTipToSale(page, scenario.tipToType);
+
+    await assertSalePanelUI(page, precision.ui);
+    await clickFinishSale(page);
+    await assertPaymentModalUI(page, precision.ui);
     
     const requestPromise = captureSaleMutation(page);
-
-    await runPosSaleFlow(page, {
-      tenantBaseUrl,
-      subsidiaryName: scenario.subsidiaryName,
-      productName: scenario.products.estandar,
-      afterProductSelect: async (page) => {
-        await test.step("Add additional products to the cart", async () => {
-          await searchAndSelectProduct(page, { name: scenario.products.combo });
-          await searchAndSelectProduct(page, { name: scenario.products.servicio });
-        });
-
-        await assignTipToSale(page, scenario.tipToType);
-      },
-      beforeFinish: async (page) => {
-        await assertSalePanelUI(page, precision.ui);
-      },
-      afterPaymentModalOpen: async (page) => {
-        await assertPaymentModalUI(page, precision.ui);
-      }
-    });
+    await completePayment(page, { paymentMethod: scenario.paymentMethod });
 
     const request = await requestPromise;
     const body = request.postDataJSON();
@@ -90,32 +89,26 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
     assertPaymentPayloadPrecision(body, precision);
   });
 
-  test("Case 2: Direct Sale with General Discount and Tip", async ({ page }) => {
+  test("Case 2: Direct Sale with General Discount and Tip", async ({ posRestaurantPage: page }) => {
     test.setTimeout(120_000);
     const tenantBaseUrl = getTenantBaseUrl();
     const precision = scenario.case2;
+
+    await searchAndSelectProduct(page, { name: scenario.products.combo, searchTerm: null });
+
+    await test.step("Add another product and apply discount", async () => {
+      await searchAndSelectProduct(page, { name: scenario.products.estandar });
+      await applyGeneralDiscount(page, "3.3337373372323"); 
+    });
+
+    await assignTipToSale(page, scenario.tipToType);
+
+    await assertSalePanelUI(page, precision.ui);
+    await clickFinishSale(page);
+    await assertPaymentModalUI(page, precision.ui);
     
     const requestPromise = captureSaleMutation(page);
-
-    await runPosSaleFlow(page, {
-      tenantBaseUrl,
-      subsidiaryName: scenario.subsidiaryName,
-      productName: scenario.products.combo,
-      afterProductSelect: async (page) => {
-        await test.step("Add another product and apply discount", async () => {
-          await searchAndSelectProduct(page, { name: scenario.products.estandar });
-          await applyGeneralDiscount(page, "3.3337373372323"); 
-        });
-
-        await assignTipToSale(page, scenario.tipToType);
-      },
-      beforeFinish: async (page) => {
-        await assertSalePanelUI(page, precision.ui);
-      },
-      afterPaymentModalOpen: async (page) => {
-        await assertPaymentModalUI(page, precision.ui);
-      }
-    });
+    await completePayment(page, { paymentMethod: scenario.paymentMethod });
 
     const request = await requestPromise;
     const body = request.postDataJSON();
@@ -129,7 +122,7 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
     const tenantBaseUrl = getTenantBaseUrl();
     const precision = scenario.case3;
 
-    await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, async (page, activeTableName) => {
+    await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, cleanupReason: scenario.cleanupReason }, async (page, activeTableName) => {
       await test.step("Add recipe products (Elaborated and PreElaborated)", async () => {
         await addProductToExistingOrder(page, scenario.products.elaborado);
       });
@@ -150,15 +143,12 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
 
       await test.step("Assert UI, finalize sale, and check summary precision", async () => {
         await assertSalePanelUI(page, precision.ui);
-        const requestPromise = captureSaleMutation(page);
-        
-                const finishSaleButton = page.getByRole("button", { name: /Terminar Venta/i });
-        await finishSaleButton.click();
-        await page.waitForURL(/\/pos\/restaurant-payments/);
+        await clickFinishSale(page);
         
         await assertPaymentModalUI(page, precision.ui);
         
-        await completePayment(page);
+        const requestPromise = captureSaleMutation(page);
+        await completePayment(page, { paymentMethod: scenario.paymentMethod });
         
         const request = await requestPromise;
         const body = request.postDataJSON();
@@ -174,7 +164,7 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
     const tenantBaseUrl = getTenantBaseUrl();
     const precision = scenario.case4;
 
-    await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, async (page, activeTableName) => {
+    await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, cleanupReason: scenario.cleanupReason }, async (page, activeTableName) => {
       await test.step("Navigate to separate order screen", async () => {
         await navigateToSeparateOrder(page);
       });
@@ -192,15 +182,12 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
 
       await test.step("Assign customer, finish sale and complete payment of separate ticket", async () => {
         await assertSalePanelUI(page, precision.ui);
-        const requestPromise = captureSaleMutation(page);
-        
-                const finishSaleButton = page.getByRole("button", { name: /Terminar Venta/i });
-        await finishSaleButton.click();
-        await page.waitForURL(/\/pos\/restaurant-payments/);
+        await clickFinishSale(page);
         
         await assertPaymentModalUI(page, precision.ui);
         
-        await completePayment(page);
+        const requestPromise = captureSaleMutation(page);
+        await completePayment(page, { paymentMethod: scenario.paymentMethod });
         
         const request = await requestPromise;
         const body = request.postDataJSON();
@@ -211,32 +198,26 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
     }, { quantity: 2 });
   });
 
-  test("Case 5: Direct Sale with Surcharge and Tip", async ({ page }) => {
+  test("Case 5: Direct Sale with Surcharge and Tip", async ({ posRestaurantPage: page }) => {
     test.setTimeout(120_000);
     const tenantBaseUrl = getTenantBaseUrl();
     const precision = scenario.case5;
 
-    const requestPromise = captureSaleMutation(page);
+    await searchAndSelectProduct(page, { name: scenario.products.combo, searchTerm: null });
 
-    await runPosSaleFlow(page, {
-      tenantBaseUrl,
-      subsidiaryName: scenario.subsidiaryName,
-      productName: scenario.products.combo,
-      afterProductSelect: async (page) => {
-        await test.step("Add another product and apply surcharge", async () => {
-          await searchAndSelectProduct(page, { name: scenario.products.estandar });
-          await applyManualSurcharge(page, "3.3337373372323"); 
-        });
-
-        await assignTipToSale(page, scenario.tipToType);
-      },
-      beforeFinish: async (page) => {
-        await assertSalePanelUI(page, precision.ui);
-      },
-      afterPaymentModalOpen: async (page) => {
-        await assertPaymentModalUI(page, precision.ui);
-      }
+    await test.step("Add another product and apply surcharge", async () => {
+      await searchAndSelectProduct(page, { name: scenario.products.estandar });
+      await applyManualSurcharge(page, "3.3337373372323"); 
     });
+
+    await assignTipToSale(page, scenario.tipToType);
+
+    await assertSalePanelUI(page, precision.ui);
+    await clickFinishSale(page);
+    await assertPaymentModalUI(page, precision.ui);
+    
+    const requestPromise = captureSaleMutation(page);
+    await completePayment(page, { paymentMethod: scenario.paymentMethod });
 
     const request = await requestPromise;
     const body = request.postDataJSON();

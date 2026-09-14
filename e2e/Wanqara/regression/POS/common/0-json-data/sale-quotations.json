@@ -20,9 +20,11 @@
     "quoteParams": {
       "clientCedula": "0000000001",
       "productName": "Caja de alitas de pollo (100 u)",
-      "observation": "Observación de prueba automatizada",
-      "paymentTerms": "Términos de pago de prueba automatizada"
-    }
+      "observation": "Observaci\u00f3n de prueba automatizada",
+      "paymentTerms": "T\u00e9rminos de pago de prueba automatizada"
+    },
+    "subsidiaryName": "Wanqara Comercios 100",
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "SALE-QUOTATIONS-002",
@@ -45,8 +47,10 @@
     "quoteParams": {
       "clientCedula": "0000000001",
       "productName": "Caja de alitas de pollo (100 u)",
-      "observation": "Observación de prueba automatizada",
-      "paymentTerms": "Términos de pago de prueba automatizada"
-    }
+      "observation": "Observaci\u00f3n de prueba automatizada",
+      "paymentTerms": "T\u00e9rminos de pago de prueba automatizada"
+    },
+    "subsidiaryName": "Sucursal Matriz",
+    "paymentMethod": "EFECTIVO"
   }
 ]

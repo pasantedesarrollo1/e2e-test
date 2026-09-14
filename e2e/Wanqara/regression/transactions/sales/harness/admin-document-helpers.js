@@ -1,6 +1,5 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../../harness/config/seed.js";
-import { selectDropdownOption } from "../../../../harness/helpers/ui-helpers.js";
+import { selectDropdownOption } from "../../../../harness/helpers/ui/ui-helpers.js";
 
 export async function selectDocumentType(page, documentType) {
   if (!documentType) return;
@@ -20,7 +19,7 @@ export async function selectDocumentType(page, documentType) {
 
   const alreadySelected =
     currentText.includes(normalizedTarget) ||
-    (documentType === SEED.documentTypes.facturaElectronica &&
+    (documentType === "Factura electrónica" &&
       FACTURA_CODES.some((code) => currentText.includes(code)));
 
   if (alreadySelected) return;
@@ -57,6 +56,8 @@ export async function switchAdminSubsidiary(page, targetSubsidiary) {
     optionText: targetSubsidiary
   });
 
+  // Click outside to close the menu
+  await page.mouse.click(0, 0);
   await page.keyboard.press("Escape");
   await expect(profileModal).not.toBeVisible({ timeout: 5000 });
 

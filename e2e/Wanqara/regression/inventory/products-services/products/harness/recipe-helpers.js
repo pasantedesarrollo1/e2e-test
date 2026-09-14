@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { withPath } from "../../../../../harness/config/urls.js";
-import { ACTION_TOOLTIPS } from "../../../../../harness/helpers/action-tooltips.js";
-import { clickTableRowAction } from "../../../../../harness/helpers/crud-helpers.js";
+import { clickTableRowAction } from "../../../../../harness/helpers/crud/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../../../../harness/helpers/ui/action-tooltips.js";
 
 export async function navigateToProductAndVerifyRecipeDecimals(page, {
   tenantBaseUrl,

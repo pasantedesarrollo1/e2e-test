@@ -3,10 +3,13 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
 import { withPath } from "../../../harness/config/urls.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { expect, test } from "../harness/pos-fixtures.js";
-import { closeDrawer, openDrawer, runPosSaleFlow } from "../harness/pos-sale-flow.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
+import { closeDrawer, openDrawer } from '../harness/sales/pos-drawer-helpers.js';
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -69,7 +72,10 @@ test.describe("POS - Cash Register Income and Expense Transactions", () => {
       }
 
       requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
+      test.use({ 
+        storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName 
+      });
 
       const runTest = (title, bodyFn) => {
         if (scenario.fixture === 'posPage') {
@@ -83,12 +89,9 @@ test.describe("POS - Cash Register Income and Expense Transactions", () => {
         test.setTimeout(180_000);
         await test.step("Venta previa y registro secuencial de ingreso y egreso", async () => {
           await test.step("Realizar venta simple de alitas", async () => {
-            await runPosSaleFlow(page, {
-              tenantBaseUrl: getTenantBaseUrl(),
-              skipNavigation: true,
-              productName: scenario.productName,
-              searchTerm: null,
-            });
+            await searchAndSelectProduct(page, { name: scenario.productName, searchTerm: null });
+              await clickFinishSale(page);
+              await completePayment(page, { paymentMethod: scenario.paymentMethod });
             const basePath = scenario.basePath;
             await page.goto(withPath(getTenantBaseUrl(), basePath));
             await page.waitForURL(new RegExp(basePath));

@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../../harness/helpers/auth.js";
+import { getSessionPath } from "../../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../../harness/helpers/reporting/annotate.js";
 import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
 import { cancelFirstSaleAndVerify } from "../harness/cancel-sale-helpers.js";
 
@@ -36,6 +36,8 @@ test.describe.serial("Cancel Pre-Sales (Admin)", () => {
               tenantBaseUrl,
               authType: scenario.authType,
               documentType: scenario.saleParams.documentType,
+                clientCedula: scenario.saleParams.clientCedula,
+                paymentMethod: scenario.saleParams.paymentMethod,
               productName: scenario.saleParams.productName,
             });
           });

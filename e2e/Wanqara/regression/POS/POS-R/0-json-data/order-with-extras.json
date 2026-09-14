@@ -17,7 +17,14 @@
     "extrasData": {
       "baseProduct": "Caja de alitas de pollo",
       "sinStockExtra": "extra alitas sin stock",
-      "conStockExtra": "extra alitas stock"
-    }
+      "conStockExtra": "extra alitas stock",
+      "categoryName": "Extras Alitas",
+      "outOfStockLabelText": "Sin stock disponible"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Sucursal Matriz",
+    "cleanupReason": "Limpieza automtica pre-test",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "9999999999999"
   }
 ]

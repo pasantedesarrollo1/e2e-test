@@ -1,0 +1,21 @@
+[
+  {
+    "id": "CLR-BASE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo Basico de Colores",
+      "testScope": "regression"
+    },
+    "description": "Retail - Flujo Base de Color (Pre-clean, Create, Search, Delete)",
+    "authType": "retail",
+    "colorData": {
+      "name": "Color E2E Base Flow",
+      "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
+    },
+    "paymentMethod": "EFECTIVO"
+  }
+]

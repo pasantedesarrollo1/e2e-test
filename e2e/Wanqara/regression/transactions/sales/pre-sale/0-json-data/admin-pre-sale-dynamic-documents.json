@@ -18,14 +18,17 @@
     "steps": [
       {
         "subsidiaryCode": "001",
-        "expectedDefault": "Factura electrónica",
-        "expectElectronicOption": true
+        "expectedDefault": "Factura electr\u00f3nica",
+        "expectElectronicOption": true,
+        "electronicKeyword": "Factura"
       },
       {
         "subsidiaryCode": "100",
         "expectedDefault": "Recibos",
-        "expectElectronicOption": false
+        "expectElectronicOption": false,
+        "electronicKeyword": "Factura"
       }
-    ]
+    ],
+    "paymentMethod": "EFECTIVO"
   }
 ]

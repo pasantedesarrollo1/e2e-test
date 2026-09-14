@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import {
   searchAndSelectProduct,
   selectCustomCheckout,
@@ -10,7 +10,7 @@ import {
   submitValidatedAdminTransaction
 } from "./harness/admin-cross-sale-flow.js";
 // Note: selectClientByCedula was moved out of admin-cross-sale-flow directly to client-helpers, we use the exported one.
-import { selectClientByCedula } from "../../../harness/helpers/client-helpers.js";
+import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
 import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
 
 import scenarios from "./0-json-data/admin-cross-sales.json" assert { type: "json" };

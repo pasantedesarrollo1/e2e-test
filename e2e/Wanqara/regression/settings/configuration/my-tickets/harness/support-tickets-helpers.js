@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { ensureAuthenticated } from "../../../../../harness/helpers/auth.js";
-import { selectDropdownOption } from "../../../../../harness/helpers/ui-helpers.js";
+import { ensureAuthenticated } from "../../../../../harness/helpers/auth/auth.js";
+import { selectDropdownOption } from "../../../../../harness/helpers/ui/ui-helpers.js";
 
 export async function navigateToCreateTicket(page, tenantBaseUrl, authType) {
   await ensureAuthenticated(page, {

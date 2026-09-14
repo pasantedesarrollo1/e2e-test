@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth/auth.js";
 import { navigateToProductAndVerifyRecipeDecimals } from "./harness/recipe-helpers.js";
 
 import scenarios from "./0-json-data/recipe-decimals.json" assert { type: "json" };

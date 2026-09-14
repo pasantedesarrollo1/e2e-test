@@ -17,6 +17,8 @@
     "paymentUrl": "\\/pos\\/payments",
     "fixture": "posPage",
     "caseData": {
+      "openingAmount": "10",
+      "clientCedula": "0000000001",
       "productName": "General Test Product iva 0",
       "quantity": 35.5,
       "unitPriceWithoutTax": 3.65,
@@ -26,7 +28,8 @@
       "expectedSubtotal": 129.58,
       "expectedPaymentError": true,
       "fallbackPaymentAmount": 129.57
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "SPECIFIC-POS-ROUNDING-002",
@@ -46,6 +49,8 @@
     "paymentUrl": "\\/pos\\/restaurant-payments",
     "fixture": "posRestaurantPage",
     "caseData": {
+      "openingAmount": "10",
+      "clientCedula": "0000000001",
       "productName": "General Test Product iva 0",
       "quantity": 35.5,
       "unitPriceWithoutTax": 3.65,
@@ -55,6 +60,7 @@
       "expectedSubtotal": 129.58,
       "expectedPaymentError": true,
       "fallbackPaymentAmount": 129.57
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

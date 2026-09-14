@@ -19,8 +19,18 @@
       "reason": "razon 1",
       "route": "ruta 1",
       "shipmentAmountExternal": "1",
-      "isLongProductSale": false
-    }
+      "isLongProductSale": false,
+      "documentType": "Factura",
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "carrierParams": {
+        "cedula": "1000000001",
+        "identityType": "CEDULA",
+        "identity": "1000000001",
+        "name": "Empleado Test 1"
+      }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "WAYBILL-EXT-002",
@@ -44,10 +54,21 @@
       "shipmentAmountExternal": "1",
       "isLongProductSale": true,
       "saleParams": {
-        "documentType": "Factura electrónica",
+        "documentType": "Factura electr\u00f3nica",
         "clientCedula": "0000000001",
-        "productName": "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompañadas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada"
+        "productName": "Alitas de Pollo Crispy Extra Crujientes en Salsa BBQ Ahumada con Miel, Acompa\u00f1adas de Papas Fritas Artesanales, Aderezo Especial de la Casa y Cebolla Caramelizada",
+        "paymentMethod": "EFECTIVO"
+      },
+      "documentType": "Factura",
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "carrierParams": {
+        "cedula": "1000000001",
+        "identityType": "CEDULA",
+        "identity": "1000000001",
+        "name": "Empleado Test 1"
       }
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

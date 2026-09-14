@@ -1,9 +1,8 @@
 import { expect } from "@playwright/test";
-import { SEED, getElectronicInvoicingAuthType } from "../../../../../harness/config/seed.js";
-import { ensureAuthenticated } from "../../../../../harness/helpers/auth.js";
-import { fillIdentityModal } from "../../../../../harness/helpers/client-helpers.js";
-import { searchInList } from "../../../../../harness/helpers/crud-helpers.js";
-import { expectSnackbar, selectDropdownOption } from "../../../../../harness/helpers/ui-helpers.js";
+import { ensureAuthenticated } from "../../../../../harness/helpers/auth/auth.js";
+import { searchInList } from "../../../../../harness/helpers/crud/crud-helpers.js";
+import { fillIdentityModal } from "../../../../../harness/helpers/people/client-helpers.js";
+import { expectSnackbar, selectDropdownOption } from "../../../../../harness/helpers/ui/ui-helpers.js";
 
 export const CARRIER_CASES = [
   { label: "por cédula",                 carrier: "cedula"   },
@@ -17,31 +16,34 @@ async function fillInput(page, placeholder, value) {
   await input.press("Tab");
 }
 
-export async function assignCarrier(page, carrier) {
+export async function assignCarrier(page, carrier, carrierParams) {
+  if (!carrierParams) throw new Error("assignCarrier requires carrierParams");
+  const { cedula, identityType, identity, name } = carrierParams;
+
   if (carrier === "cedula") {
-    await searchCarrierByCedula(page, SEED.clients.carrier.cedula);
+    await searchCarrierByCedula(page, cedula);
     await verifyAndSaveCarrierModal(page, {
-      expectedIdentityType: SEED.clients.carrier.identityType,
-      expectedIdentity:     SEED.clients.carrier.identity,
-      expectedName:         SEED.clients.carrier.name,
+      expectedIdentityType: identityType,
+      expectedIdentity:     identity,
+      expectedName:         name,
     });
     return;
   }
 
   if (carrier === "selector") {
-    await openCarrierSelectorAndSelect(page, SEED.clients.carrier.cedula);
+    await openCarrierSelectorAndSelect(page, cedula);
     return;
   }
 
   await addCarrierViaEmployeeForm(page, {
-    identityType: SEED.clients.carrier.identityType,
-    identity:     SEED.clients.carrier.identity,
-    expectedName: SEED.clients.carrier.name,
+    identityType: identityType,
+    identity:     identity,
+    expectedName: name,
   });
 }
 
-export async function openAddWaybillDialog(page, { tenantBaseUrl }) {
-  const authType = getElectronicInvoicingAuthType();
+export async function openAddWaybillDialog(page, { tenantBaseUrl, authType }) {
+  if (!authType) throw new Error("openAddWaybillDialog requires authType");
   await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/admin/waybills/list", authType });
   await expect(page).toHaveURL(/\/admin\/waybills\/list/);
 
@@ -135,6 +137,7 @@ export async function verifyAndSaveCarrierModal(page, {
 
 export async function fillInternalWaybillForm(page, {
   tenantBaseUrl,
+  authType,
   startDate,
   finishDate,
   warehouseName,
@@ -142,7 +145,7 @@ export async function fillInternalWaybillForm(page, {
 }) {
   const today = new Date();
 
-  const dialog = await openAddWaybillDialog(page, { tenantBaseUrl });
+  const dialog = await openAddWaybillDialog(page, { tenantBaseUrl, authType });
   await selectWaybillTypeAndContinue(page, dialog, "internal");
 
   await fillWaybillDates(page, {
@@ -262,6 +265,7 @@ export async function selectSaleFromModal(page, index = 0) {
 
 export async function fillExternalWaybillForm(page, {
   tenantBaseUrl,
+  authType,
   startDate,
   finishDate,
   checkoutName,
@@ -269,7 +273,7 @@ export async function fillExternalWaybillForm(page, {
 }) {
   const today = new Date();
 
-  const dialog = await openAddWaybillDialog(page, { tenantBaseUrl });
+  const dialog = await openAddWaybillDialog(page, { tenantBaseUrl, authType });
   await selectWaybillTypeAndContinue(page, dialog, "external");
 
   await selectSaleFromModal(page, saleIndex);

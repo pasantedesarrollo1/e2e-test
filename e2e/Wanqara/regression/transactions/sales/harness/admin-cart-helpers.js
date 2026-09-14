@@ -1,23 +1,22 @@
-import { SEED } from "../../../../harness/config/seed.js";
-import { selectFirstSerie, selectFirstVariant } from "../../../POS/harness/pos-products.js";
-import { searchAndSelectProduct } from "./admin-sale-flow.js";
+import { selectFirstSerie, selectFirstVariant } from "../../../POS/harness/products/pos-products.js";
+import { searchAndSelectProduct } from "./admin-checkout-helpers.js";
 
-export async function buildMixedCart(page, dispatchEnabled = false) {
-  await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
+export async function buildMixedCart(page, { estandarName, serieName, tallaColorName }, dispatchEnabled = false) {
+  await searchAndSelectProduct(page, { name: estandarName });
 
-  await searchAndSelectProduct(page, { name: SEED.products.serie.name });
+  await searchAndSelectProduct(page, { name: serieName });
   if (!dispatchEnabled) {
     await selectFirstSerie(page);
   }
 
-  await searchAndSelectProduct(page, { name: SEED.products.tallaColor.name });
+  await searchAndSelectProduct(page, { name: tallaColorName });
   await selectFirstVariant(page);
 }
 
-export async function buildPreSaleMixedCart(page) {
+export async function buildPreSaleMixedCart(page, { estandarName, serieName, tallaColorName }) {
   // En preventas (pre-sales) no se requiere seleccionar la serie, independientemente de si hay despacho o no
-  await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
-  await searchAndSelectProduct(page, { name: SEED.products.serie.name });
-  await searchAndSelectProduct(page, { name: SEED.products.tallaColor.name });
+  await searchAndSelectProduct(page, { name: estandarName });
+  await searchAndSelectProduct(page, { name: serieName });
+  await searchAndSelectProduct(page, { name: tallaColorName });
   await selectFirstVariant(page);
 }

@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { withPath } from "../../../../../harness/config/urls.js";
-import { deleteRecordFromList, saveFormAndVerify, verifyRecordInList } from "../../../../../harness/helpers/crud-helpers.js";
+import { deleteRecordFromList, saveFormAndVerify, verifyRecordInList } from "../../../../../harness/helpers/crud/crud-helpers.js";
 
 export async function createColor(page, { name, observation, tenantBaseUrl }) {
   await page.goto(withPath(tenantBaseUrl, "/admin/colors/add"));

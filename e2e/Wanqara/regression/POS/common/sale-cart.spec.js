@@ -1,12 +1,14 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { expect, test } from "../harness/pos-fixtures.js";
-import { runPosSaleFlow, selectClientByCedula } from "../harness/pos-sale-flow.js";
-import { searchAndSelectProduct } from "../harness/pos-search.js";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { clickFinishSale, selectDocumentTypePos } from '../harness/sales/pos-checkout-helpers.js';
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,7 +32,8 @@ test.describe.serial("POS Cart Operations and Sale Validations", () => {
   for (const scenario of scenarios) {
     test.describe(`Environment: ${scenario.description} @${scenario.metadata.testScope}`, () => {
       requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
+      test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName });
 
       if (scenario.metadata && scenario.metadata.ws) {
         annotateTicket(test, scenario.metadata);
@@ -117,13 +120,10 @@ test.describe.serial("POS Cart Operations and Sale Validations", () => {
       if (scenario.includeDynamicDocumentTest) {
         runTest(`completes a sale using a dynamic document type for a standard product`, async (page) => {
           test.setTimeout(120_000);
-          await runPosSaleFlow(page, {
-            tenantBaseUrl: getTenantBaseUrl(),
-            skipNavigation: true,
-            productName: scenario.cartParams.productName,
-            searchTerm: null,
-            documentType: scenario.cartParams.dynamicDocumentType,
-          });
+          await selectDocumentTypePos(page, scenario.cartParams.dynamicDocumentType);
+          await searchAndSelectProduct(page, { name: scenario.cartParams.productName, searchTerm: null });
+          await clickFinishSale(page);
+          await completePayment(page, { paymentMethod: scenario.paymentMethod });
         });
       }
     });

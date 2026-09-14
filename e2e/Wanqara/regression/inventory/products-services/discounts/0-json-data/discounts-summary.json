@@ -18,7 +18,8 @@
       "applicationMethod": "always",
       "type": "porcentaje",
       "discount": 10
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "DSC-SUM-002",
@@ -40,7 +41,8 @@
       "type": "fijo",
       "discount": 5,
       "quantity": 2
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "DSC-SUM-003",
@@ -62,6 +64,7 @@
       "type": "porcentaje",
       "discount": 15,
       "quantity": 3
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

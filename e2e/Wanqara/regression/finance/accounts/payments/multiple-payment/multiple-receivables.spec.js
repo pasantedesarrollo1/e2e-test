@@ -1,9 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { getElectronicInvoicingAuthType } from "../../../../../harness/config/seed.js";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../../../harness/config/settings.js";
-import { annotateTicket } from "../../../../../harness/helpers/annotate.js";
-import { ensureAuthenticated, getSessionPath } from "../../../../../harness/helpers/auth.js";
-import { clickTableRowAction } from "../../../../../harness/helpers/crud-helpers.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../../harness/helpers/auth/auth.js";
+import { clickTableRowAction } from "../../../../../harness/helpers/crud/crud-helpers.js";
+import { annotateTicket } from "../../../../../harness/helpers/reporting/annotate.js";
 
 import {
   confirmFinalDeletion,
@@ -41,9 +40,7 @@ test.describe("Finance - Accounts - Multiple Receivables (E2E)", () => {
         annotateTicket(test, scenario.metadata);
       }
       
-      const resolvedAuthType = scenario.authType === "electronic_invoicing" 
-        ? getElectronicInvoicingAuthType() 
-        : scenario.authType;
+      const resolvedAuthType = scenario.authType;
 
       test.use({ storageState: getSessionPath(resolvedAuthType) });
 

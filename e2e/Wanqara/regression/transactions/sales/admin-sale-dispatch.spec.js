@@ -1,9 +1,11 @@
 import { test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import { buildMixedCart } from "./harness/admin-cart-helpers.js";
-import { runAdminSaleFlow } from "./harness/admin-sale-flow.js";
+import { selectCheckout, selectPaymentMethod, submitAdminSale } from "./harness/admin-checkout-helpers.js";
+import { selectDocumentType } from "./harness/admin-document-helpers.js";
 
 import scenarios from "./0-json-data/admin-sale-dispatch.json" assert { type: "json" };
 
@@ -29,14 +31,14 @@ test.describe("Admin Sales - Mixed Cart / Dispatch Logic", () => {
           const tenantBaseUrl = getTenantBaseUrl();
 
           await test.step("Create Admin Sale with Mixed Cart", async () => {
-            await runAdminSaleFlow(page, {
-              tenantBaseUrl,
-              authType: scenario.authType,
-              documentType: scenario.saleParams.documentType,
-              // Intentionally null so `runAdminSaleFlow` doesn't auto-add a default product
-              productName: null, 
-              beforeFinish: async (p) => await buildMixedCart(p, scenario.saleParams.dispatchEnabled),
-            });
+            await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/admin/ventas/add", authType: scenario.authType });
+              await page.waitForURL(/\/admin\/ventas\/add/);
+              await selectCheckout(page, { warehouseName: scenario.saleParams.warehouseName });
+              await selectDocumentType(page, scenario.saleParams.documentType);
+              await selectClientByCedula(page, scenario.saleParams.clientCedula);
+              await buildMixedCart(page, scenario.saleParams.mixedCart, scenario.saleParams.dispatchEnabled);
+              await selectPaymentMethod(page, scenario.saleParams.paymentMethod);
+              await submitAdminSale(page);
           });
         }
       );

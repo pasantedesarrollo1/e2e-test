@@ -17,12 +17,21 @@
     "authType": "restaurant",
     "saleParams": {
       "documentType": "Recibos",
-      "productName": "Caja de alitas de pollo (100 u)"
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "mixedCart": {
+        "estandarName": "Caja de alitas de pollo (100 u)",
+        "serieName": "series test",
+        "tallaColorName": "test talla color"
+      }
     },
     "cancelParams": {
       "expectSwitch": false,
       "expectMessage": true
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "ADMIN-PRE-SALE-CANCEL-002",
@@ -42,11 +51,20 @@
     "authType": "dispatch",
     "saleParams": {
       "documentType": "Recibos",
-      "productName": "Caja de alitas de pollo (100 u)"
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "mixedCart": {
+        "estandarName": "Caja de alitas de pollo (100 u)",
+        "serieName": "series test",
+        "tallaColorName": "test talla color"
+      }
     },
     "cancelParams": {
       "expectSwitch": false,
       "expectMessage": true
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

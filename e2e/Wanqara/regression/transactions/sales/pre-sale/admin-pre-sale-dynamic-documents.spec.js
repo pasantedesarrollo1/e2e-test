@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth.js";
+import { ensureAuthenticated, getSessionPath } from "../../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../../harness/helpers/reporting/annotate.js";
 import { switchAdminSubsidiary } from "../harness/admin-document-helpers.js";
 import {
   getAvailableDocumentOptions,
@@ -53,7 +53,7 @@ test.describe("Admin Pre-Sales - Dynamic Document Types", () => {
               await expect(docInput).toContainText(expectedRegex);
 
               const options = await getAvailableDocumentOptions(page);
-              const hasElectronic = options.some(o => o.includes("Factura") || o.includes("01"));
+              const hasElectronic = options.some(o => o.includes(stepData.electronicKeyword));
               expect(hasElectronic).toBe(stepData.expectElectronicOption);
             });
           }

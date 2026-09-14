@@ -18,21 +18,26 @@
       {
         "subsidiaryCode": "001",
         "description": "Access the sales module with an electronic invoicing-enabled subsidiary",
-        "expectedDefault": "Factura electrónica",
-        "expectElectronicOption": true
+        "expectedDefault": "Factura electr\u00f3nica",
+        "expectElectronicOption": true,
+        "electronicKeyword": "Factura"
       },
       {
         "subsidiaryCode": "100",
         "description": "Switch dynamically to a subsidiary without electronic invoicing",
         "expectedDefault": "Recibos",
-        "expectElectronicOption": false
+        "expectElectronicOption": false,
+        "electronicKeyword": "Factura"
       },
       {
         "subsidiaryCode": "001",
         "description": "Switch back to the electronic invoicing-enabled subsidiary",
-        "expectedDefault": "Factura electrónica",
-        "expectElectronicOption": true
+        "expectedDefault": "Factura electr\u00f3nica",
+        "expectElectronicOption": true,
+        "electronicKeyword": "Factura"
       }
-    ]
+    ],
+    "authType": "restaurant",
+    "paymentMethod": "EFECTIVO"
   }
 ]

@@ -3,8 +3,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,7 +51,7 @@ for (const scenario of scenarios) {
 
       const tenantBaseUrl = getTenantBaseUrl();
 
-      await navigateToRestaurantPOS(page, tenantBaseUrl);
+      await navigateToRestaurantPOS(page, tenantBaseUrl, scenario.subsidiaryName);
 
       const modal = await test.step("Open delivery modal", async () => {
         return await openDeliveryModal(page);

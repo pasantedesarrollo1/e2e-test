@@ -37,7 +37,7 @@
       {
         "productKey": "elaborado",
         "afterSelectFn": null,
-        "productName": "Porción de Alitas Marinadas",
+        "productName": "Porci\u00f3n de Alitas Marinadas",
         "productType": "Elaborado"
       },
       {
@@ -251,7 +251,9 @@
       },
       "details": []
     },
-    "surchargeClientCedula": "0000000001"
+    "surchargeClientCedula": "0000000001",
+    "subsidiaryName": "Wanqara Comercios 100",
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "SALE-FINANCIAL-PRECISION-002",
@@ -279,7 +281,7 @@
       {
         "productKey": "elaborado",
         "afterSelectFn": null,
-        "productName": "Porción de Alitas Marinadas",
+        "productName": "Porci\u00f3n de Alitas Marinadas",
         "productType": "Elaborado"
       },
       {
@@ -479,6 +481,8 @@
       },
       "details": []
     },
-    "surchargeClientCedula": "0000000001"
+    "surchargeClientCedula": "0000000001",
+    "subsidiaryName": "Sucursal Matriz",
+    "paymentMethod": "EFECTIVO"
   }
 ]

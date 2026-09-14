@@ -14,8 +14,17 @@
     "authType": "dispatch",
     "saleParams": {
       "documentType": "Recibos",
-      "dispatchEnabled": true
-    }
+      "dispatchEnabled": true,
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "mixedCart": {
+        "estandarName": "Caja de alitas de pollo (100 u)",
+        "serieName": "series test",
+        "tallaColorName": "test talla color"
+      }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "ADMIN-SALE-DISPATCH-002",
@@ -32,7 +41,16 @@
     "authType": "retail",
     "saleParams": {
       "documentType": "Recibos",
-      "dispatchEnabled": false
-    }
+      "dispatchEnabled": false,
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "mixedCart": {
+        "estandarName": "Caja de alitas de pollo (100 u)",
+        "serieName": "series test",
+        "tallaColorName": "test talla color"
+      }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

@@ -1,23 +1,23 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../../harness/config/seed.js";
-import { ensureAuthenticated } from "../../../../harness/helpers/auth.js";
-import { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
+import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
+import { selectClientByCedula } from '../../../../harness/helpers/people/client-helpers.js';
 
-import { selectCheckout as _selectCheckout } from './admin-sale-flow.js';
+import { selectCheckout as _selectCheckout } from './admin-checkout-helpers.js';
 
-export const selectCheckout = (page) => _selectCheckout(page, /\/admin\/pre-sale\/add/);
+export const selectCheckout = (page, options = {}) => _selectCheckout(page, { urlPattern: /\/admin\/pre-sale\/add/, ...options });
 
 import { selectDocumentType } from './admin-document-helpers.js';
 export { selectDocumentType };
 
-  export { selectClientByCedula } from '../../../../harness/helpers/client-helpers.js';
+  export { selectClientByCedula } from '../../../../harness/helpers/people/client-helpers.js';
 
-import { searchAndSelectProduct } from './admin-sale-flow.js';
+import { searchAndSelectProduct } from './admin-checkout-helpers.js';
 export { searchAndSelectProduct };
 
   export { applyGeneralDiscount, applyManualSurcharge } from '../../harness/admin-modifier-helpers.js';
 
-export async function selectPaymentMethod(page, methodName = SEED.paymentMethods.efectivo.label) {
+export async function selectPaymentMethod(page, methodName) {
+  if (!methodName) throw new Error("selectPaymentMethod requires a methodName parameter.");
   const methodItem = page.getByText(methodName, { exact: true }).first();
   await methodItem.scrollIntoViewIfNeeded();
   await methodItem.click({ force: true });
@@ -46,11 +46,12 @@ export async function runAdminPreSaleFlow(page, {
   tenantBaseUrl,
   authType,
   documentType,
-  clientCedula = SEED.clients.consumidorFinal.cedula,
+  clientCedula,
   productName,
   searchTerm,
   beforeFinish,
-  paymentMethod = SEED.paymentMethods.efectivo.label,
+  paymentMethod,
+  warehouseName,
   skipNavigation = false,
 }) {
   if (!skipNavigation) {
@@ -58,7 +59,7 @@ export async function runAdminPreSaleFlow(page, {
     await page.waitForURL(/\/admin\/pre-sale\/add/);
   }
 
-  await selectCheckout(page);
+  await selectCheckout(page, { warehouseName });
   await selectDocumentType(page, documentType);
   await selectClientByCedula(page, clientCedula);
 

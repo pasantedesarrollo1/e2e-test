@@ -12,13 +12,14 @@
       "testScope": "release",
       "addedToRegression": "true"
     },
-    "description": "Validar envío correcto de montos a la impresora en cuentas por cobrar",
-    "authType": "electronic_invoicing",
+    "description": "Validar env\u00edo correcto de montos a la impresora en cuentas por cobrar",
+    "authType": "restaurant",
     "paymentData": {
       "cedula": "0000000001",
       "amount": "0.01",
       "description": "Automated test payment",
       "paymentMethodRegex": "^Efectivo$"
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

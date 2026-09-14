@@ -12,11 +12,12 @@
       "testScope": "release",
       "addedToRegression": "true"
     },
-    "description": "Verificar que la versión sugerida de la impresora exista en GitHub Releases",
+    "description": "Verificar que la versi\u00f3n sugerida de la impresora exista en GitHub Releases",
     "authType": "retail",
     "printerData": {
       "platformPrefix": "Windows ",
       "githubReleasesUrl": "https://github.com/KevinWanqara/Wanqara-device-admin/releases"
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

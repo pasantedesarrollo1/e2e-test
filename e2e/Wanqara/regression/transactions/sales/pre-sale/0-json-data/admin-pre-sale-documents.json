@@ -13,9 +13,13 @@
     "description": "successfully completes a pre-sale using an Electronic Invoice",
     "authType": "restaurant",
     "saleParams": {
-      "documentType": "Factura electrónica",
-      "productName": "Caja de alitas de pollo (100 u)"
-    }
+      "documentType": "Factura electr\u00f3nica",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "ADMIN-PRE-SALE-DOCS-002",
@@ -32,7 +36,11 @@
     "authType": "retail",
     "saleParams": {
       "documentType": "Recibos",
-      "productName": "Caja de alitas de pollo (100 u)"
-    }
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

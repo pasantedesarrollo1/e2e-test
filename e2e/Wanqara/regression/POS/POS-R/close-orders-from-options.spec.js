@@ -7,8 +7,8 @@ import {
   requireChefCredentials,
   requirePosCredentials,
 } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,7 +39,7 @@ for (const scenario of scenarios) {
       const context = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
       const cleanupPage = await context.newPage();
       
-      await closeAllActiveOrders(cleanupPage, getTenantBaseUrl());
+      await closeAllActiveOrders(cleanupPage, getTenantBaseUrl(), scenario.subsidiaryName, scenario.cleanupReason || "Limpieza pre-test");
       
       await context.close();
     });
@@ -50,7 +50,7 @@ for (const scenario of scenarios) {
       const tenantBaseUrl = getTenantBaseUrl();
 
       await test.step("Navigate to restaurant POS", async () => {
-        await navigateToRestaurantPOS(page, tenantBaseUrl);
+        await navigateToRestaurantPOS(page, tenantBaseUrl, scenario.subsidiaryName);
       });
 
       await test.step("Open More Options menu and navigate to Close Orders", async () => {
@@ -69,13 +69,13 @@ for (const scenario of scenarios) {
           const chefContext = await browser.newContext({ storageState: getSessionPath("chef") });
           const chefPage = await chefContext.newPage();
           
-          await createChefOrder(chefPage);
+          await createChefOrder(chefPage, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary });
           
           await chefContext.close();
         });
 
         await test.step("Return to Close Orders screen", async () => {
-          await navigateToRestaurantPOS(page, tenantBaseUrl);
+          await navigateToRestaurantPOS(page, tenantBaseUrl, scenario.subsidiaryName);
           await navigateToCloseOrderFromOptions(page);
         });
       }

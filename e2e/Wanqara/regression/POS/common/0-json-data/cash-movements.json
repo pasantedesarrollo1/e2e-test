@@ -17,12 +17,17 @@
     "authType": "retail",
     "basePath": "/pos/home",
     "fixture": "posPage",
-    "actions": ["in", "out"],
+    "actions": [
+      "in",
+      "out"
+    ],
     "productName": "Caja de alitas de pollo (100 u)",
     "cashMovement": {
       "monto": "1",
       "descripcion": "test automatizado"
-    }
+    },
+    "subsidiaryName": "Wanqara Comercios 100",
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "CASH-MOVEMENTS-002",
@@ -42,11 +47,16 @@
     "authType": "restaurant",
     "basePath": "/pos/restaurant-home",
     "fixture": "posRestaurantPage",
-    "actions": ["in", "out"],
+    "actions": [
+      "in",
+      "out"
+    ],
     "productName": "Caja de alitas de pollo (100 u)",
     "cashMovement": {
       "monto": "1",
       "descripcion": "test automatizado"
-    }
+    },
+    "subsidiaryName": "Sucursal Matriz",
+    "paymentMethod": "EFECTIVO"
   }
 ]

@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { expectSnackbar } from "../../../../../harness/helpers/ui-helpers.js";
+import { expectSnackbar } from "../../../../../harness/helpers/ui/ui-helpers.js";
 
 export async function createWarehouse(page, { name, code, address, description }) {
   await page.getByRole('link', { name: /Agregar Bodega/i }).first().click();

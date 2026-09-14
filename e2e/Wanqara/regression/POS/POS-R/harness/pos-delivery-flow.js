@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { fillIdentityModal } from "../../../../harness/helpers/client-helpers.js";
-import { expectSnackbar } from "../../../../harness/helpers/ui-helpers.js";
+import { fillIdentityModal } from "../../../../harness/helpers/people/client-helpers.js";
+import { expectSnackbar } from "../../../../harness/helpers/ui/ui-helpers.js";
 
 export const DELIVERY_SEED = {
   phone: "0999999922",

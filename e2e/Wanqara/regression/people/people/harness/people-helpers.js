@@ -1,8 +1,8 @@
 import { expect } from "@playwright/test";
 import { withPath } from "../../../../harness/config/urls.js";
-import { ACTION_TOOLTIPS } from "../../../../harness/helpers/action-tooltips.js";
-import { clickTableRowAction, searchInList } from "../../../../harness/helpers/crud-helpers.js";
-import { selectDropdownOption } from "../../../../harness/helpers/ui-helpers.js";
+import { clickTableRowAction, searchInList } from "../../../../harness/helpers/crud/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "../../../../harness/helpers/ui/action-tooltips.js";
+import { selectDropdownOption } from "../../../../harness/helpers/ui/ui-helpers.js";
 
 export async function fillPersonForm(page, data) {
   await page.getByPlaceholder("Nombre completo").fill(data.name);
@@ -71,6 +71,28 @@ export async function deactivatePerson(page, { identity, tenantBaseUrl }) {
   await expect(page.locator(".v-snackbar").filter({ hasText: /persona desactivada/i })).toBeVisible();
 }
 
+export async function ensureCleanPerson(page, { identity, tenantBaseUrl }) {
+  await page.goto(withPath(tenantBaseUrl, "/admin/people/list"));
+  await searchInList(page, identity);
+  
+  const row = page.locator(".v-data-table__tr").filter({ hasText: identity }).first();
+  const isVisible = await row.isVisible({ timeout: 2000 }).catch(() => false);
+  
+  if (isVisible) {
+    const isStrikethrough = await row.evaluate(el => window.getComputedStyle(el).textDecorationLine === 'line-through').catch(() => false);
+    if (!isStrikethrough) {
+      await clickTableRowAction(page, row, ACTION_TOOLTIPS.people.delete);
+      const confirmBtn = page.getByRole("button", { name: "Confirmar", exact: true });
+      await Promise.all([
+        page.waitForResponse(
+          (res) => res.url().includes("/api/v1/general/people/") && res.request().method() === "DELETE" && res.status() === 200
+        ),
+        confirmBtn.click()
+      ]);
+      await expect(page.locator(".v-snackbar").filter({ hasText: /persona desactivada/i })).toBeVisible();
+    }
+  }
+}
 export async function verifyDeactivatedStrikethrough(page, { identity, tenantBaseUrl }) {
   await page.goto(withPath(tenantBaseUrl, "/admin/people/list"));
   await searchInList(page, ""); 

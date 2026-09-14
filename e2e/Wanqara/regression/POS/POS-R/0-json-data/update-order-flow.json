@@ -16,6 +16,14 @@
     "authType": "restaurant",
     "updateData": {
       "productName": "Caja de alitas de pollo (100 u)"
-    }
+    },
+    "posOptions": {
+      "cleanupReason": "Limpieza de \u00f3rdenes activas"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Sucursal Matriz",
+    "cleanupReason": "Limpieza automtica pre-test",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "9999999999999"
   }
 ]

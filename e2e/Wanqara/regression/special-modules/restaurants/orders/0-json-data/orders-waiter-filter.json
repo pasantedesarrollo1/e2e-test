@@ -12,12 +12,13 @@
       "testScope": "regression",
       "addedToRegression": "true"
     },
-    "description": "Filtro de Meseros - Búsqueda Avanzada",
+    "description": "Filtro de Meseros - B\u00fasqueda Avanzada",
     "authType": "restaurant",
     "filterData": {
       "waiterName": "QA developer 1",
       "searchKeyword": "QA",
       "apiEndpointPattern": "/api/v1/restaurant/orders"
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

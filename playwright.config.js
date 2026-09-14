@@ -19,7 +19,7 @@ const isLocalTarget =
   targetHostname === '127.0.0.1' ||
   targetHostname.endsWith('.localhost');
 
-const AUTH_DIR = path.join(rootDir, 'e2e', 'Wanqara', '.auth');
+const AUTH_DIR = path.join(rootDir, 'e2e', 'Wanqara', 'harness', '.auth');
 const CHEF_AUTH_DIR = path.join(rootDir, 'e2e', 'WanqaraChef', '.auth');
 
 export default defineConfig({
@@ -28,7 +28,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  workers: 1, // Modificado a 1 worker para evitar colisiones de sesin en smoke
 
   maxFailures: process.env.CI ? 10 : 0,
   timeout: process.env.CI ? 120 * 1000 : 45 * 1000,
@@ -68,10 +68,15 @@ export default defineConfig({
       testMatch: /Wanqara\/harness\/setups\/dispatch\.setup\.js/,
       use: { baseURL }
     },
+    {
+      name: 'setup-chef',
+      testMatch: /Wanqara\/harness\/setups\/chef-auth\.setup\.js/,
+      use: { baseURL: chefURL }
+    },
     
     {
       name: 'POS-Retail',
-      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant'],
+      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant', 'setup-chef'],
       testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-C|common|sales)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
@@ -82,7 +87,7 @@ export default defineConfig({
     },
     {
       name: 'POS-Restaurant',
-      dependencies: ['setup-restaurant', 'setup-retail'],
+      dependencies: ['setup-restaurant', 'setup-retail', 'setup-chef'],
       testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-R|sales)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
@@ -93,7 +98,7 @@ export default defineConfig({
     },
     {
       name: 'Admin-Inventory',
-      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant'],
+      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant', 'setup-chef'],
       testMatch: /Wanqara\/regression\/(inventory|transactions|settings|people|finance|main|special-modules)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
@@ -105,8 +110,9 @@ export default defineConfig({
 
     {
       name: 'Smoke',
-      dependencies: ['setup-retail', 'setup-dispatch'],
+      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant'],
       testMatch: /Wanqara\/smoke\/.*\.spec\.js/,
+      fullyParallel: false,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
@@ -115,7 +121,7 @@ export default defineConfig({
     },
     {
       name: 'Release',
-      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant'],
+      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant', 'setup-chef'],
       testMatch: /Wanqara\/(regression|specific-cases)\/.*\.spec\.js/,
       grep: /@release/,                               
       use: {

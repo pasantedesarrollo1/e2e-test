@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { annotateTicket } from "../../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../../harness/helpers/auth.js";
+import { getSessionPath } from "../../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../../harness/helpers/reporting/annotate.js";
 import { buildPreSaleMixedCart } from "../harness/admin-cart-helpers.js";
 import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
 
@@ -33,9 +33,11 @@ test.describe("Admin Pre-Sales - Mixed Cart / Dispatch Logic", () => {
               tenantBaseUrl,
               authType: scenario.authType,
               documentType: scenario.saleParams.documentType,
+                clientCedula: scenario.saleParams.clientCedula,
+                paymentMethod: scenario.saleParams.paymentMethod,
               // Intentionally null so `runAdminPreSaleFlow` doesn't auto-add a default product
               productName: null, 
-              beforeFinish: async (p) => await buildPreSaleMixedCart(p),
+              beforeFinish: async (p) => await buildPreSaleMixedCart(p, scenario.saleParams.mixedCart),
             });
           });
         }

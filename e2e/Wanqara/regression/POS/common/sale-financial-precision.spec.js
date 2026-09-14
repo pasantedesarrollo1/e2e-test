@@ -2,19 +2,19 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { selectClientByCedula } from '../../../harness/helpers/people/client-helpers.js';
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import {
   applyGeneralDiscount,
   applyManualSurcharge,
   assertSalePanelUI,
   finalizeSaleAndAssert,
   runFinancialPrecisionFlow,
-} from "../harness/pos-financial-assertions.js";
-import { test } from "../harness/pos-fixtures.js";
-import { selectFirstSerie, selectFirstVariant } from "../harness/pos-products.js";
-import { selectClientByCedula } from "../harness/pos-sale-flow.js";
-import { searchAndSelectProduct } from "../harness/pos-search.js";
+} from "../harness/financials/pos-financial-assertions.js";
+import { selectFirstSerie, selectFirstVariant } from "../harness/products/pos-products.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { test } from "../harness/setup/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,7 +27,7 @@ const functionMap = {
   selectFirstSerie
 };
 
-async function runAllProductsSurchargeFlow(page, { productsToAdd, precision, precisionHoliday, requiresClient, surchargeName }) {
+async function runAllProductsSurchargeFlow(page, { productsToAdd, precision, precisionHoliday, requiresClient, surchargeName, paymentMethod }) {
   await test.step(`Assign customer [${requiresClient}]`, async () => {
     await selectClientByCedula(page, requiresClient);
   });
@@ -40,7 +40,7 @@ async function runAllProductsSurchargeFlow(page, { productsToAdd, precision, pre
   }
 
   await test.step(`Apply ${surchargeName}`, async () => {
-    await applyManualSurcharge(page);
+    await applyManualSurcharge(page, '3.3337373372323');
   });
 
   let activePrecision = precision;
@@ -56,7 +56,7 @@ async function runAllProductsSurchargeFlow(page, { productsToAdd, precision, pre
   });
 
   await test.step("Complete the sale and validate financial calculations", async () => {
-    await finalizeSaleAndAssert(page, { precision: activePrecision, multiProduct: true });
+    await finalizeSaleAndAssert(page, { precision: activePrecision, multiProduct: true, paymentMethod });
   });
 }
 
@@ -74,7 +74,8 @@ test.describe.serial("Financial Calculation Accuracy", () => {
 
     test.describe(`POS ${scenario.description} - Financial Calculation Accuracy with ${scenario.discountName} @${scenario.metadata.testScope}`, () => {
       requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
+      test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName });
       
       if (scenario.metadata && scenario.metadata.ws) {
         annotateTicket(test, scenario.metadata);
@@ -87,9 +88,10 @@ test.describe.serial("Financial Calculation Accuracy", () => {
           await runFinancialPrecisionFlow(page, {
             product,
             afterProductSelect,
-            applyModifier: applyGeneralDiscount,
+            applyModifier: (page) => applyGeneralDiscount(page, "3.3337373372323"),
             precision,
             precisionHoliday,
+            paymentMethod: scenario.paymentMethod
           });
         });
       }
@@ -97,7 +99,8 @@ test.describe.serial("Financial Calculation Accuracy", () => {
 
     test.describe(`POS ${scenario.description} - Financial Calculation Accuracy with ${scenario.surchargeName} @${scenario.metadata.testScope}`, () => {
       requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType) });
+      test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName });
 
       if (scenario.metadata && scenario.metadata.ws) {
         annotateTicket(test, scenario.metadata);
@@ -118,6 +121,7 @@ test.describe.serial("Financial Calculation Accuracy", () => {
           precisionHoliday: scenario.surchargePrecisionHoliday,
           requiresClient: scenario.surchargeClientCedula,
           surchargeName: scenario.surchargeName,
+          paymentMethod: scenario.paymentMethod
         });
       });
     });

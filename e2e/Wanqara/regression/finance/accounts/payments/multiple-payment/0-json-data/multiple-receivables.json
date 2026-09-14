@@ -11,14 +11,15 @@
       "summary": "Admin Payments Multiple Receivables & Printing",
       "testScope": "regression"
     },
-    "description": "Retail - Flujo completo de multicobros (Pago, PDF, Eliminación)",
-    "authType": "electronic_invoicing",
+    "description": "Retail - Flujo completo de multicobros (Pago, PDF, Eliminaci\u00f3n)",
+    "authType": "restaurant",
     "paymentData": {
       "cedula": "0000000001",
       "paymentAmount": "0.01",
       "paymentDescription": "Automated test payment",
       "initialDeleteReason": "test",
       "finalDeleteReason": "test deletion reason"
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

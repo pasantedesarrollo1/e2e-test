@@ -2,11 +2,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { expect, test } from "../harness/pos-fixtures.js";
-import { completePayment } from "../harness/pos-payment.js";
-import { searchAndSelectProduct } from "../harness/pos-search.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,12 +14,7 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sale-options.json"), "utf-8")
 );
 
-import {
-  closeDrawer,
-  expandAndRecoverFirstSavedSale,
-  navigateToSavedSales,
-  openDrawer,
-} from "../harness/pos-sale-flow.js";
+import { closeDrawer, expandAndRecoverFirstSavedSale, navigateToSavedSales, openDrawer } from '../harness/sales/pos-drawer-helpers.js';
 
 async function openObservationDialog(page, drawer) {
   const option = drawer.locator(".v-btn, .v-card").filter({ hasText: /Agregar Observación/i }).first();
@@ -71,7 +66,8 @@ async function fillAliasAndSave(page, alias) {
 for (const scenario of scenarios) {
   test.describe(`POS ${scenario.description} - Sale Options @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(scenario.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName });
     
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -106,7 +102,7 @@ for (const scenario of scenarios) {
         const finishBtn = page.getByRole("button", { name: /Terminar Venta/i });
         await finishBtn.click();
         await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
-        await completePayment(page, { printTicket: true });
+        await completePayment(page, { paymentMethod: scenario.paymentMethod,  printTicket: true });
       });
 
       await test.step("Verify 'Comprobante Impreso' notification", async () => {
@@ -147,7 +143,7 @@ for (const scenario of scenarios) {
         const finishBtn = page.getByRole("button", { name: /Terminar Venta/i });
         await finishBtn.click();
         await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
-        await completePayment(page, { printTicket: true });
+        await completePayment(page, { paymentMethod: scenario.paymentMethod,  printTicket: true });
       });
 
       await test.step("Verify 'Comprobante Impreso' notification", async () => {

@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../../harness/config/settings.js";
-import { getSessionPath } from "../../../../harness/helpers/auth.js";
+import { getSessionPath } from "../../../../harness/helpers/auth/auth.js";
 import { assertDiscountSummary, fillDiscountForm } from "./harness/discount-helpers.js";
 
 import scenarios from "./0-json-data/discounts-summary.json" assert { type: "json" };

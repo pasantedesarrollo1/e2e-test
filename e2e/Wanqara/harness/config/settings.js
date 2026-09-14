@@ -1,8 +1,15 @@
 // e2e/harness/config/settings.js
 
 import { assertNonProductionBaseUrl, buildTenantBaseUrl } from "./urls.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const defaultBranches = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "default-branches.json"), "utf-8")
+);
 // Validar Base URL central
 const rawBaseUrl = process.env.PLAYWRIGHT_BASE_URL;
 if (!rawBaseUrl) {
@@ -31,9 +38,13 @@ export const playwrightHarness = {
 
   // Datos de negocio (limpios de falbacks mágicos en .env)
   subsidiaries: {
-    retail: 'Wanqara Comercios 100',
-    dispatch: 'Wanqara Comercios Dispatch 101',
-    restaurant: 'Wanqara 001',
+    retail: defaultBranches.retail.name,
+    dispatch: defaultBranches.dispatch.name,
+    restaurant: defaultBranches.restaurant.name,
+  },
+  
+  defaults: {
+    openingAmount: "10"
   },
   
   seeded: {

@@ -13,11 +13,12 @@
     "description": "Retail - Producto Elaborado",
     "authType": "retail",
     "recipeData": {
-      "productName": "Porción de Alitas Marinadas - ToolTip",
+      "productName": "Porci\u00f3n de Alitas Marinadas - ToolTip",
       "ingredientName": "Bowl de Alitas Marinadas (20 u)",
       "exactAmount": "0.74626865671642",
       "roundedAmount": "0.75"
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "PROD-RECIPE-002",
@@ -37,6 +38,7 @@
       "ingredientName": "Alita Individual",
       "exactAmount": "0.30000300003",
       "roundedAmount": "0.3"
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

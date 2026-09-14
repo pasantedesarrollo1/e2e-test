@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { selectClientFromSearchModal } from "../../../../../../harness/helpers/client-helpers.js";
+import { selectClientFromSearchModal } from "../../../../../../harness/helpers/people/client-helpers.js";
 
 export async function selectClientAndAccounts(page, { cedula }) {
   await selectClientFromSearchModal(page, cedula, {

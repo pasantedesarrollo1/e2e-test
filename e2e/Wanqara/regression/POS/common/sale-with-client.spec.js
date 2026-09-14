@@ -1,11 +1,13 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { expect, test } from "../harness/pos-fixtures.js";
-import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +15,7 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sale-with-client.json"), "utf-8")
 );
 
-import { selectClientFromSearchModal } from "../../../harness/helpers/client-helpers.js";
+import { selectClientFromSearchModal } from "../../../harness/helpers/people/client-helpers.js";
 
 async function confirmClientModal(page) {
   const clientModal = page
@@ -35,7 +37,8 @@ for (const scenario of scenarios) {
   test.describe(`POS ${scenario.description} - Sales with Customer Assignment @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -137,12 +140,9 @@ for (const scenario of scenarios) {
       });
 
       await test.step("Complete the sale with the assigned customer and print ticket", async () => {
-        await runPosSaleFlow(page, {
-          tenantBaseUrl: getTenantBaseUrl(),
-          productName: scenario.clientParams.productName,
-          skipNavigation: true,
-          printTicket: true,
-        });
+        await searchAndSelectProduct(page, { name: scenario.clientParams.productName });
+        await clickFinishSale(page);
+        await completePayment(page, { paymentMethod: scenario.paymentMethod,  printTicket: true });
       });
 
       await test.step("Verify 'Comprobante Impreso' notification", async () => {

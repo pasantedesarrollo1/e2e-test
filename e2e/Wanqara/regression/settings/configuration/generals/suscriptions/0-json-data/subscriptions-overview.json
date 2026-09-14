@@ -7,53 +7,125 @@
     "metadata": {
       "ws": "",
       "release": "",
-      "summary": "Valida la información de suscripciones",
+      "summary": "Valida la informaci\u00f3n de suscripciones",
       "testScope": "regression"
     },
-    "description": "Validación de Tarjetas y Badges de Suscripciones",
+    "description": "Validaci\u00f3n de Tarjetas y Badges de Suscripciones",
     "authType": "retail",
     "subscriptionData": {
       "modules": [
-        { "code": "BN001" },
-        { "code": "CS001" },
-        { "code": "VB001" },
-        { "code": "PS001" },
-        { "code": "KDS001" },
-        { "code": "WR001" },
-        { "code": "DT001" },
-        { "code": "TS001" },
-        { "code": "Res001" },
-        { "code": "S001" },
-        { "code": "BD008" },
-        { "code": "SC001" },
-        { "code": "MW001" },
-        { "code": "US-001" },
-        { "code": "AC001" }
+        {
+          "code": "BN001"
+        },
+        {
+          "code": "CS001"
+        },
+        {
+          "code": "VB001"
+        },
+        {
+          "code": "PS001"
+        },
+        {
+          "code": "KDS001"
+        },
+        {
+          "code": "WR001"
+        },
+        {
+          "code": "DT001"
+        },
+        {
+          "code": "TS001"
+        },
+        {
+          "code": "Res001"
+        },
+        {
+          "code": "S001"
+        },
+        {
+          "code": "BD008"
+        },
+        {
+          "code": "SC001"
+        },
+        {
+          "code": "MW001"
+        },
+        {
+          "code": "US-001"
+        },
+        {
+          "code": "AC001"
+        }
       ],
       "receipts": [
-        { "code": "RA101" },
-        { "code": "RA102" },
-        { "code": "RA103" },
-        { "code": "RA012" },
-        { "code": "RA010" },
-        { "code": "RA104" },
-        { "code": "RA011" },
-        { "code": "RA105" },
-        { "code": "004" },
-        { "code": "RA106" },
-        { "code": "RA013" },
-        { "code": "RA107" },
-        { "code": "007" }
+        {
+          "code": "RA101"
+        },
+        {
+          "code": "RA102"
+        },
+        {
+          "code": "RA103"
+        },
+        {
+          "code": "RA012"
+        },
+        {
+          "code": "RA010"
+        },
+        {
+          "code": "RA104"
+        },
+        {
+          "code": "RA011"
+        },
+        {
+          "code": "RA105"
+        },
+        {
+          "code": "004"
+        },
+        {
+          "code": "RA106"
+        },
+        {
+          "code": "RA013"
+        },
+        {
+          "code": "RA107"
+        },
+        {
+          "code": "007"
+        }
       ],
       "plans": [
-        { "code": "AP001" },
-        { "code": "F0001" },
-        { "code": "L001" },
-        { "code": "B001" },
-        { "code": "P001" },
-        { "code": "P002" },
-        { "code": "O001" },
-        { "code": "I001" }
+        {
+          "code": "AP001"
+        },
+        {
+          "code": "F0001"
+        },
+        {
+          "code": "L001"
+        },
+        {
+          "code": "B001"
+        },
+        {
+          "code": "P001"
+        },
+        {
+          "code": "P002"
+        },
+        {
+          "code": "O001"
+        },
+        {
+          "code": "I001"
+        }
       ],
       "capabilityLabels": [
         "Maneja Restaurantes",
@@ -69,6 +141,7 @@
         "Balanzas digitales",
         "M\u00f3dulo para multinegocio"
       ]
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

@@ -15,8 +15,13 @@
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
-      "modifierType": "discount"
-    }
+      "modifierType": "discount",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "modifierRate": "3.3337373372323"
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "ADMIN-SALE-MODIFIER-002",
@@ -34,8 +39,13 @@
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
-      "modifierType": "surcharge"
-    }
+      "modifierType": "surcharge",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "modifierRate": "3.3337373372323"
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "ADMIN-SALE-MODIFIER-003",
@@ -53,8 +63,13 @@
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
-      "modifierType": "discount"
-    }
+      "modifierType": "discount",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "modifierRate": "3.3337373372323"
+    },
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "ADMIN-SALE-MODIFIER-004",
@@ -72,7 +87,12 @@
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
-      "modifierType": "surcharge"
-    }
+      "modifierType": "surcharge",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "modifierRate": "3.3337373372323"
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

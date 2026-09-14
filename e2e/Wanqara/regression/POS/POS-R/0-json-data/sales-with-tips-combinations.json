@@ -20,7 +20,7 @@
       "estandar": "Caja de alitas de pollo (100 u)",
       "combo": "Combo alitas",
       "servicio": "servicio alita",
-      "elaborado": "Porción de Alitas Marinadas"
+      "elaborado": "Porci\u00f3n de Alitas Marinadas"
     },
     "clients": {
       "testCedula": "0000000001",
@@ -106,6 +106,10 @@
       "root": {
         "additional_tip": "3.33"
       }
-    }
+    },
+    "paymentMethod": "EFECTIVO",
+    "cleanupReason": "Limpieza automtica pre-test",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "9999999999999"
   }
 ]

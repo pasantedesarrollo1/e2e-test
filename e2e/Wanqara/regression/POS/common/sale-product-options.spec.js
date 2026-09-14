@@ -2,10 +2,9 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { expect, test } from "../harness/pos-fixtures.js";
-import { completePayment } from "../harness/pos-payment.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
 import {
   openProductOptions,
   saveProductOptions,
@@ -13,8 +12,9 @@ import {
   setDiscountInOptions,
   setQuantityInOptions,
   setUnitPriceInOptions,
-} from "../harness/pos-product-options.js";
-import { searchAndSelectProduct } from "../harness/pos-search.js";
+} from "../harness/products/pos-product-options.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,7 +42,8 @@ for (const scenario of scenarios) {
   test.describe(`POS ${scenario.description} - Product Options @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -85,7 +86,7 @@ for (const scenario of scenarios) {
         await finishButton.click();
 
         await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
-        await completePayment(page);
+        await completePayment(page, { paymentMethod: scenario.paymentMethod });
       });
     });
   });

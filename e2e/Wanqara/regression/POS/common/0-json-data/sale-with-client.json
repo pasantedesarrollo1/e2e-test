@@ -20,7 +20,9 @@
       "testName": "Usuario Test",
       "consumidorFinalCedula": "0000000001",
       "productName": "Caja de alitas de pollo (100 u)"
-    }
+    },
+    "subsidiaryName": "Wanqara Comercios 100",
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "SALE-WITH-CLIENT-002",
@@ -43,6 +45,8 @@
       "testName": "Usuario Test",
       "consumidorFinalCedula": "0000000001",
       "productName": "Caja de alitas de pollo (100 u)"
-    }
+    },
+    "subsidiaryName": "Sucursal Matriz",
+    "paymentMethod": "EFECTIVO"
   }
 ]

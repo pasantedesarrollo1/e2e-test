@@ -21,7 +21,9 @@
       "quantity": "3.3337373372323",
       "unitPrice": "3.3337373372323",
       "discountRate": "3.3337373372323"
-    }
+    },
+    "subsidiaryName": "Wanqara Comercios 100",
+    "paymentMethod": "EFECTIVO"
   },
   {
     "id": "SALE-PRODUCT-OPTIONS-002",
@@ -45,6 +47,8 @@
       "quantity": "3.3337373372323",
       "unitPrice": "3.3337373372323",
       "discountRate": "3.3337373372323"
-    }
+    },
+    "subsidiaryName": "Sucursal Matriz",
+    "paymentMethod": "EFECTIVO"
   }
 ]

@@ -21,6 +21,7 @@
         "extra alitas sin stock",
         "extra alitas stock"
       ]
-    }
+    },
+    "paymentMethod": "EFECTIVO"
   }
 ]

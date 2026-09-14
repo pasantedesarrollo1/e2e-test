@@ -3,9 +3,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { annotateTicket } from "../../../harness/helpers/annotate.js";
-import { getSessionPath } from "../../../harness/helpers/auth.js";
-import { runAdminSaleFlow } from "./harness/admin-sale-flow.js";
+import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { searchAndSelectProduct, selectCheckout, selectPaymentMethod, submitAdminSale } from "./harness/admin-checkout-helpers.js";
+import { selectDocumentType } from "./harness/admin-document-helpers.js";
 import { cancelFirstSaleAndVerify } from "./harness/cancel-sale-helpers.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -32,12 +34,14 @@ test.describe.serial("Cancel Normal Sales (Admin)", () => {
         test.setTimeout(180_000);
 
         await test.step("Create Normal Sale", async () => {
-          await runAdminSaleFlow(page, {
-            tenantBaseUrl,
-            authType: scenario.authType,
-            documentType: scenario.saleParams.documentType,
-            productName: scenario.saleParams.productName,
-          });
+          await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/admin/ventas/add", authType: scenario.authType });
+              await page.waitForURL(/\/admin\/ventas\/add/);
+              await selectCheckout(page, { warehouseName: scenario.saleParams.warehouseName });
+              await selectDocumentType(page, scenario.saleParams.documentType);
+              await selectClientByCedula(page, scenario.saleParams.clientCedula);
+              await searchAndSelectProduct(page, { name: scenario.saleParams.productName });
+              await selectPaymentMethod(page, scenario.saleParams.paymentMethod);
+              await submitAdminSale(page);
         });
 
         await test.step("Cancel Sale and Verify Modal", async () => {

@@ -1,6 +1,10 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../../../harness/config/seed.js";
-import { expectSnackbar } from "../../../../../harness/helpers/ui-helpers.js";
+import { expectSnackbar } from "../../../../../harness/helpers/ui/ui-helpers.js";
+
+const categoryCreatedMsg = /Categor.a( extra)? creada/i;
+const changesSavedMsg = /Cambios de productos extra guardados/i;
+const cannotDeleteMsg = /No se puede eliminar una categor.a con productos relacionados/i;
+const categoryDeletedMsg = /Categor.a extra eliminada/i;
 
 /**
  * Creates an extra category using the UI.
@@ -36,7 +40,7 @@ export async function createExtraCategory(page, categoryName) {
   await saveButton.click();
   await responsePromise;
 
-  await expectSnackbar(page, SEED.extrasManager.messages.categoryCreated);
+  await expectSnackbar(page, categoryCreatedMsg);
 }
 
 /**
@@ -85,7 +89,7 @@ export async function assignProductsToExtraCategory(page, categoryName, productS
   await saveChangesBtn.click();
   await responsePromise;
   
-  await expectSnackbar(page, SEED.extrasManager.messages.changesSaved);
+  await expectSnackbar(page, changesSavedMsg);
 }
 
 /**
@@ -98,7 +102,7 @@ export async function verifyDeletionConstraintsAndRemoveProducts(page) {
   await expect(deleteCategoryBtn).toBeVisible();
   await deleteCategoryBtn.click();
 
-  const cannotDeleteWarning = page.getByText(SEED.extrasManager.messages.cannotDelete);
+  const cannotDeleteWarning = page.getByText(cannotDeleteMsg);
   await expect(cannotDeleteWarning).toBeVisible();
 
   const closeBtn = page.getByRole("button", { name: "Cerrar" });
@@ -124,7 +128,7 @@ export async function verifyDeletionConstraintsAndRemoveProducts(page) {
   await saveChangesBtn.click();
   await responsePromise;
 
-  await expectSnackbar(page, SEED.extrasManager.messages.changesSaved);
+  await expectSnackbar(page, changesSavedMsg);
 }
 
 /**
@@ -148,5 +152,5 @@ export async function deleteExtraCategory(page) {
   await confirmDeleteBtn.click();
   await responsePromise;
 
-  await expectSnackbar(page, SEED.extrasManager.messages.categoryDeleted);
+  await expectSnackbar(page, categoryDeletedMsg);
 }
