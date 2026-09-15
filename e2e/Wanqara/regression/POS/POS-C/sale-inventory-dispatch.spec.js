@@ -2,9 +2,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
-import { test, expect } from "@playwright/test";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,8 +11,6 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sale-inventory-dispatch.json"), "utf-8")
 );
 
-import { ensureAuthenticated } from "../../../harness/helpers/auth/auth.js";
-import { ensureCashRegisterOpen } from "../harness/cash-register/cash-register-helpers.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { selectFirstSerie, selectFirstVariant } from "../harness/products/pos-products.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
@@ -39,29 +36,17 @@ async function executeSales(page, { products, paymentMethod }) {
   }
 }
 
-for (const scenario of scenarios) {
-  test.describe(`POS Retail - ${scenario.description} @${scenario.metadata?.testScope || 'regression'}`, () => {
-    requirePosCredentials(test);
+test.describe.serial("POS Retail - Sale Inventory Dispatch", () => {
+  requirePosCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount });
-
-    if (scenario.metadata && scenario.metadata.ws) {
-      annotateTicket(test, scenario.metadata);
-    }
-
-    test(`completes multiple sales seamlessly with dispatch ${scenario.dispatchEnabled ? 'enabled' : 'disabled'}`, async ({ page }) => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    test(`completes multiple sales seamlessly with dispatch ${scenario.dispatchEnabled ? 'enabled' : 'disabled'}`, async ({ posPage: page }) => {
       test.setTimeout(180_000);
       
-      await ensureAuthenticated(page, { targetPath: "/pos/home" });
-      await ensureCashRegisterOpen(page, scenario.openingAmount, scenario.subsidiaryName, scenario.subsidiaryCode, scenario.authType);
-      await page.waitForURL(/\/pos\/(home|restaurant-home)/);
-
       await executeSales(page, {
         products: scenario.products,
         paymentMethod: scenario.paymentMethod
       });
     });
   });
-}
+});

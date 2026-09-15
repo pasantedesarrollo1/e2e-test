@@ -13,7 +13,7 @@
       "addedToRegression": "true"
     },
     "description": "Validar envío correcto de montos a la impresora en cuentas por cobrar",
-    "authType": "restaurant",
+    "authType": "actor1",
     "paymentData": {
       "cedula": "0000000001",
       "amount": "0.01",
@@ -22,6 +22,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

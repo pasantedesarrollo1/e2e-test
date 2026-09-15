@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "Retail - Flujo Base de Descuento (Pre-clean, Create, Search, Delete)",
-    "authType": "retail",
+    "authType": "actor3",
     "discountData": {
       "name": "Descuento E2E Base Flow",
       "description": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)",
@@ -21,6 +21,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

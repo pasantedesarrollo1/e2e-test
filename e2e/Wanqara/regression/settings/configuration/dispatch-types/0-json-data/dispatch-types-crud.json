@@ -12,7 +12,7 @@
       "testScope": "regression"
     },
     "description": "Retail - Flujo completo de Tipo de Despacho",
-    "authType": "retail",
+    "authType": "actor3",
     "dispatchData": {
       "name": "Tipo Despacho Test",
       "type": "Local",
@@ -20,6 +20,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

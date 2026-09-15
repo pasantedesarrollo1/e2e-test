@@ -14,7 +14,7 @@
       "testScope": "regression"
     },
     "description": "Restaurant (No Dispatch) - Crea una venta normal y la cancela verificando el switch de inventario",
-    "authType": "restaurant",
+    "authType": "actor1",
     "saleParams": {
       "documentType": "Factura electrónica",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -28,7 +28,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-SALE-CANCEL-002",
@@ -45,7 +46,7 @@
       "testScope": "regression"
     },
     "description": "Business (With Dispatch) - Crea una venta normal y la cancela verificando el mensaje sin el switch",
-    "authType": "dispatch",
+    "authType": "actor2",
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -59,6 +60,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   }
 ]

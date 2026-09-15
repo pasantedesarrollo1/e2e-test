@@ -14,7 +14,7 @@
       "testScope": "regression"
     },
     "description": "Restaurant (No Dispatch) - Creates a pre-sale and cancels it, verifying that the message is displayed without the switch",
-    "authType": "restaurant",
+    "authType": "actor1",
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -33,7 +33,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-PRE-SALE-CANCEL-002",
@@ -50,7 +51,7 @@
       "testScope": "regression"
     },
     "description": "Business (With Dispatch) - Creates a pre-sale and cancels it, verifying that the message is displayed without the switch",
-    "authType": "dispatch",
+    "authType": "actor2",
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -69,6 +70,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   }
 ]

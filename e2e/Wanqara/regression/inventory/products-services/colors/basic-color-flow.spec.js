@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
 import { requirePosCredentials } from "../../../../harness/config/settings.js";
-import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
+import { SessionContextBuilder } from "../../../../harness/helpers/builders/session-context-builder.js";
 import { createColor, deleteColor, searchColor } from "./harness/color-helpers.js";
 
 import scenarios from "./0-json-data/basic-color-flow.json" with { type: "json" };
@@ -11,13 +11,12 @@ test.describe("Inventory - Colors (Basic Flow)", () => {
 
     generateDataDrivenTests(test, scenarios, (scenario) => {
 
-
       test(`ensures full basic lifecycle for color '${scenario.colorData.name}'`, async ({ page }) => {
         test.setTimeout(120_000); // Dar suficiente tiempo para el flujo completo
         
         await test.step('Paso 1: Pre-Limpieza (Garantizar entorno limpio)', async () => {
-          // ensureAuthenticated se encarga de inyectar la URL base del tenant correcto y verificar el token
-          await ensureAuthenticated(page, { targetPath: "/admin/colors/list", authType: scenario.authType });
+          // El Builder decide si usa caché o hace login nuevo, y nos deja en la sucursal correcta
+          await SessionContextBuilder.build(page, scenario, { targetPath: "/admin/colors/list" });
           
           // deleteColor es inteligente: si el color no existe, simplemente retorna sin fallar.
           await deleteColor(page, { name: scenario.colorData.name });

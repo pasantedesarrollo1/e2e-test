@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "Crea una guia de remision externa validando transportistas",
-    "authType": "restaurant",
+    "authType": "actor1",
     "waybillData": {
       "checkoutName": "",
       "vehiclePlate": "AAC-0123",
@@ -32,7 +32,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   },
   {
     "id": "WAYBILL-EXT-002",
@@ -46,7 +47,7 @@
       "testScope": "regression"
     },
     "description": "Venta y guia externa con producto de nombre largo",
-    "authType": "restaurant",
+    "authType": "actor1",
     "waybillData": {
       "checkoutName": "",
       "vehiclePlate": "AAC-0123",
@@ -73,6 +74,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

@@ -1,10 +1,9 @@
-import { test } from "@playwright/test";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
+import { test } from "../harness/setup/pos-fixtures.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,19 +23,12 @@ import {
   selectExistingDeliveryAddress,
   verifyDeliveryConfirmed,
 } from "./harness/pos-delivery-flow.js";
-import { navigateToRestaurantPOS } from "./harness/pos-orders-common.js";
 
-for (const scenario of scenarios) {
-  test.describe(`POS ${scenario.description} - Delivery Flow @${scenario.metadata?.testScope || 'regression'}`, () => {
-    requirePosCredentials(test);
+test.describe.serial("POS Restaurant - Delivery Flow", () => {
+  requirePosCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
-
-    if (scenario.metadata && scenario.metadata.ws) {
-      annotateTicket(test, scenario.metadata);
-    }
-
-    test("creates or selects a delivery address depending on prior state", async ({ page }) => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    test("creates or selects a delivery address depending on prior state", async ({ posRestaurantPage: page }) => {
       test.info().annotations.push({
         type: "issue",
         description: "https://wanqara-team.atlassian.net/browse/WS-871",
@@ -48,10 +40,6 @@ for (const scenario of scenarios) {
       });
 
       test.setTimeout(180_000);
-
-      const tenantBaseUrl = getTenantBaseUrl();
-
-      await navigateToRestaurantPOS(page, tenantBaseUrl, scenario.subsidiaryName);
 
       const modal = await test.step("Open delivery modal", async () => {
         return await openDeliveryModal(page);
@@ -109,4 +97,4 @@ for (const scenario of scenarios) {
       });
     });
   });
-}
+});

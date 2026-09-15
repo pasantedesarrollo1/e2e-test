@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "Crear, buscar y eliminar Bodega (Retail)",
-    "authType": "retail",
+    "authType": "actor3",
     "warehouseData": {
       "name": "Bodega Test Ret",
       "code": "1111",
@@ -20,7 +20,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "WAREHOUSE-002",
@@ -34,7 +35,7 @@
       "testScope": "regression"
     },
     "description": "Crear, buscar y eliminar Bodega (Dispatch)",
-    "authType": "dispatch",
+    "authType": "actor2",
     "warehouseData": {
       "name": "Bodega Test Dis",
       "code": "1112",
@@ -43,7 +44,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   },
   {
     "id": "WAREHOUSE-003",
@@ -57,7 +59,7 @@
       "testScope": "regression"
     },
     "description": "Crear, buscar y eliminar Bodega (Restaurant)",
-    "authType": "restaurant",
+    "authType": "actor1",
     "warehouseData": {
       "name": "Bodega Test Res",
       "code": "1113",
@@ -66,6 +68,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

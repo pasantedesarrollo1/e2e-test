@@ -13,7 +13,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "fixture": "posPage",
     "homePath": "/pos/home",
     "paymentUrlPattern": "/pos/payments",
@@ -26,7 +26,8 @@
     "subsidiaryName": "Wanqara Comercios",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "SALE-QUOTATIONS-002",
@@ -42,7 +43,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "restaurant",
+    "authType": "actor1",
     "fixture": "posRestaurantPage",
     "homePath": "/pos/restaurant-home",
     "paymentUrlPattern": "/pos/restaurant-payments",
@@ -55,6 +56,7 @@
     "subsidiaryName": "Wanqara",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

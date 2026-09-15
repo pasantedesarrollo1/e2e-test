@@ -14,7 +14,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "targetPath": "/pos/home",
     "expectSwitch": true,
     "expectMessage": false,
@@ -27,7 +27,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "SALE-CANCELLATION-002",
@@ -44,7 +45,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "dispatch",
+    "authType": "actor2",
     "targetPath": "/pos/home",
     "expectSwitch": false,
     "expectMessage": true,
@@ -57,7 +58,8 @@
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   },
   {
     "id": "SALE-CANCELLATION-003",
@@ -74,7 +76,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "restaurant",
+    "authType": "actor1",
     "targetPath": "/pos/restaurant-home",
     "expectSwitch": false,
     "expectMessage": true,
@@ -87,6 +89,7 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

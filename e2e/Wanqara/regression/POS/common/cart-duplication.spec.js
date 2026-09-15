@@ -23,7 +23,7 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
   for (const scenario of scenarios) {
     test.describe(scenario.description, () => {
       requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
+      test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
       test("Execute Flow", async ({ page }) => {
         test.setTimeout(120_000);

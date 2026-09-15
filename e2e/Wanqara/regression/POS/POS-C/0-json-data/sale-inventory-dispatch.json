@@ -13,7 +13,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "dispatch",
+    "authType": "actor2",
     "dispatchEnabled": true,
     "products": [
       {
@@ -35,7 +35,8 @@
     "subsidiaryName": "Wanqara Comercios Dispatch",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "10",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   },
   {
     "id": "SALE-INVENTORY-DISPATCH-002",
@@ -51,7 +52,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "dispatchEnabled": false,
     "products": [
       {
@@ -73,6 +74,7 @@
     "subsidiaryName": "Wanqara Comercios",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

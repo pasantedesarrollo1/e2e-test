@@ -1,3 +1,4 @@
+import { getChefSessionPath } from "../../../harness/helpers/auth/chef-auth.js";
 import { expect, test } from "@playwright/test";
 import fs from "fs";
 import path from "path";
@@ -29,7 +30,7 @@ for (const scenario of scenarios) {
     requirePosCredentials(test);
     requireChefCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
+    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -66,10 +67,11 @@ for (const scenario of scenarios) {
 
       if (hasNoOrders) {
         await test.step("No orders found - create one from Chef", async () => {
-          const chefContext = await browser.newContext({ storageState: getSessionPath("chef") });
+          const chefAuthType = scenario.chefAuthType;
+          const chefContext = await browser.newContext({ storageState: getChefSessionPath(chefAuthType) });
           const chefPage = await chefContext.newPage();
           
-          await createChefOrder(chefPage, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary });
+          await createChefOrder(chefPage, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary, chefAuthType: scenario.chefAuthType });
           
           await chefContext.close();
         });

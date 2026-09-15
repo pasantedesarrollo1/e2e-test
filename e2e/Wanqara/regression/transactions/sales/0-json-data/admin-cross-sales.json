@@ -12,8 +12,8 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "description": "Admin Sales Anti-Cross Validation for Wanqara 001",
-    "authType": "restaurant",
+    "description": "Admin Sales Anti-Cross Validation for Wanqara 001 (Ventas)",
+    "authType": "actor1",
     "transaction": {
       "path": "/admin/ventas/add",
       "endpoint": "/api/v2/billing/sales",
@@ -43,7 +43,8 @@
     ],
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-CROSS-SALES-001-2",
@@ -58,8 +59,8 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios 100",
-    "authType": "retail",
+    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios 100 (Ventas)",
+    "authType": "actor3",
     "transaction": {
       "path": "/admin/ventas/add",
       "endpoint": "/api/v2/billing/sales",
@@ -85,7 +86,8 @@
     ],
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-CROSS-SALES-001-3",
@@ -100,8 +102,8 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios Dispatch 101",
-    "authType": "dispatch",
+    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios Dispatch 101 (Ventas)",
+    "authType": "actor2",
     "transaction": {
       "path": "/admin/ventas/add",
       "endpoint": "/api/v2/billing/sales",
@@ -127,7 +129,8 @@
     ],
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-CROSS-SALES-002-1",
@@ -142,8 +145,8 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "description": "Admin Sales Anti-Cross Validation for Wanqara 001",
-    "authType": "restaurant",
+    "description": "Admin Sales Anti-Cross Validation for Wanqara 001 (Pre-Ventas)",
+    "authType": "actor1",
     "transaction": {
       "path": "/admin/pre-sale/add",
       "endpoint": "/api/v2/billing/pre-sales",
@@ -173,7 +176,8 @@
     ],
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-CROSS-SALES-002-2",
@@ -188,8 +192,8 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios 100",
-    "authType": "retail",
+    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios 100 (Pre-Ventas)",
+    "authType": "actor3",
     "transaction": {
       "path": "/admin/pre-sale/add",
       "endpoint": "/api/v2/billing/pre-sales",
@@ -215,7 +219,8 @@
     ],
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-CROSS-SALES-002-3",
@@ -230,8 +235,8 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios Dispatch 101",
-    "authType": "dispatch",
+    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios Dispatch 101 (Pre-Ventas)",
+    "authType": "actor2",
     "transaction": {
       "path": "/admin/pre-sale/add",
       "endpoint": "/api/v2/billing/pre-sales",
@@ -257,6 +262,7 @@
     ],
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   }
 ]

@@ -32,7 +32,7 @@ test.describe("POS - Cash Register Lifecycle @regression", () => {
       }
 
       requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
+      test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
       test(scenario.only ? `${scenario.description} (focus)` : scenario.description, { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined }, async ({ page }) => {
         test.setTimeout(180_000);

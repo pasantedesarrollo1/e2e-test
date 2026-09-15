@@ -33,7 +33,7 @@ const CHEF_AUTH_DIR = path.join(rootDir, 'e2e', 'WanqaraChef', '.auth');
 export default defineConfig({
   testDir: './e2e', 
   
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1, 
@@ -62,18 +62,8 @@ export default defineConfig({
     // WANQARA (POS / Admin) PROJECTS
     // ==========================================
     {
-      name: 'setup-retail',
-      testMatch: /Wanqara\/harness\/setups\/retail\.setup\.js/,
-      use: { baseURL }
-    },
-    {
-      name: 'setup-restaurant',
-      testMatch: /Wanqara\/harness\/setups\/restaurant\.setup\.js/,
-      use: { baseURL }
-    },
-    {
-      name: 'setup-dispatch',
-      testMatch: /Wanqara\/harness\/setups\/dispatch\.setup\.js/,
+      name: 'setup-actors',
+      testMatch: /Wanqara\/harness\/setups\/actors\.setup\.js/,
       use: { baseURL }
     },
     {
@@ -84,58 +74,58 @@ export default defineConfig({
     
     {
       name: 'POS-Retail',
-      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant', 'setup-chef'],
+      dependencies: ['setup-actors', 'setup-chef'],
       testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-C|common|sales)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'retail-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
       },
     },
     {
       name: 'POS-Restaurant',
-      dependencies: ['setup-restaurant', 'setup-retail', 'setup-chef'],
+      dependencies: ['setup-actors', 'setup-chef'],
       testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-R|sales)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'restaurant-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
       },
     },
     {
       name: 'Admin-Inventory',
-      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant', 'setup-chef'],
+      dependencies: ['setup-actors', 'setup-chef'],
       testMatch: /Wanqara\/regression\/(inventory|transactions|settings|people|finance|main|special-modules)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'retail-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
       },
     },
 
     {
       name: 'Smoke',
-      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant'],
+      dependencies: ['setup-actors'],
       testMatch: /Wanqara\/smoke\/.*\.spec\.js/,
       fullyParallel: false,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'retail-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
       },
     },
     {
       name: 'Release',
-      dependencies: ['setup-retail', 'setup-dispatch', 'setup-restaurant', 'setup-chef'],
+      dependencies: ['setup-actors', 'setup-chef'],
       testMatch: /Wanqara\/(regression|specific-cases)\/.*\.spec\.js/,
       grep: /@release/,                               
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'retail-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
       },
     },
 

@@ -7,18 +7,18 @@
     "metadata": {
       "ws": "",
       "release": "",
-      "summary": "Flujo Básico de Marcas",
+      "summary": "Flujo Basico de Marcas",
       "testScope": "regression"
     },
     "description": "Retail - Flujo Base de Marca (Pre-clean, Create, Search, Delete)",
-    "authType": "retail",
+    "authType": "actor3",
     "brandData": {
       "name": "Marca E2E Base Flow",
       "order": "1",
       "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

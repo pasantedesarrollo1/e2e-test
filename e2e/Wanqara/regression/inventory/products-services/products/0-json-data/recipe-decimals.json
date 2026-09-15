@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "Retail - Producto Elaborado",
-    "authType": "retail",
+    "authType": "actor3",
     "recipeData": {
       "productName": "Porción de Alitas Marinadas - ToolTip",
       "ingredientName": "Bowl de Alitas Marinadas (20 u)",
@@ -20,7 +20,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "PROD-RECIPE-002",
@@ -34,7 +35,7 @@
       "testScope": "regression"
     },
     "description": "Retail - Producto Pre-elaborado",
-    "authType": "retail",
+    "authType": "actor3",
     "recipeData": {
       "productName": "Bowl de Alitas Marinadas (20 u) - ToolTip",
       "ingredientName": "Alita Individual",
@@ -43,6 +44,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

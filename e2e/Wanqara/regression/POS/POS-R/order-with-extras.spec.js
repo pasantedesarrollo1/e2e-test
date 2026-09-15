@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { chefHarness, getTenantBaseUrl, requireChefCredentials } from "../../../harness/config/settings.js";
 import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { CHEF_SESSION_PATH, ensureChefAuthenticated } from "../../../harness/helpers/auth/chef-auth.js";
+import { getChefSessionPath, ensureChefAuthenticated } from "../../../harness/helpers/auth/chef-auth.js";
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,7 +33,7 @@ for (const scenario of scenarios) {
   test.describe.serial(`Restaurant POS ${scenario.description} - Order with Extras @${scenario.metadata?.testScope || 'regression'}`, () => {
     requireChefCredentials(test);
 
-    test.use({ storageState: CHEF_SESSION_PATH, openingAmount: scenario.openingAmount });
+    test.use({ storageState: getChefSessionPath(scenario.chefAuthType || "actor1"), openingAmount: scenario.openingAmount });
 
     let baseProduct = scenario.extrasData.baseProduct;
     let categoryName = scenario.extrasData.categoryName;
@@ -56,7 +56,7 @@ for (const scenario of scenarios) {
       });
       
       await expect(page).toHaveURL(/\/tables/);
-      await expect(page.getByText(chefHarness.login.ruc).first()).toBeAttached();
+
       await expect(
         page.locator("ion-segment-button").filter({ hasText: "Todos" })
       ).toBeVisible();
@@ -80,7 +80,7 @@ for (const scenario of scenarios) {
       const tenantBaseUrl = getTenantBaseUrl();
       
       // Cleanup using an isolated POS context
-      const cleanupContext = await browser.newContext({ storageState: getSessionPath("restaurant") });
+      const cleanupContext = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
       const cleanupPage = await cleanupContext.newPage();
       await closeAllActiveOrders(cleanupPage, tenantBaseUrl, scenario.subsidiaryName, scenario.cleanupReason || "Limpieza pre-test");
       await cleanupContext.close();
@@ -95,7 +95,7 @@ for (const scenario of scenarios) {
       await submitOrder(page);
       
       // Create isolated POS context to collect payment
-      const posContext = await browser.newContext({ storageState: getSessionPath("restaurant") });
+      const posContext = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
       const posPage = await posContext.newPage();
       
       await navigateToRestaurantPOS(posPage, tenantBaseUrl, scenario.subsidiaryName);

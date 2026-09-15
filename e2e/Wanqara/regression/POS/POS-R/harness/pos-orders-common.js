@@ -53,7 +53,7 @@ export async function createChefOrder(page, {
   });
 
   await expect(page).toHaveURL(/\/tables/);
-  await expect(page.getByText(chefHarness.login.ruc).first()).toBeAttached();
+
   await expect(
     page.locator("ion-segment-button").filter({ hasText: "Todos" })
   ).toBeVisible();

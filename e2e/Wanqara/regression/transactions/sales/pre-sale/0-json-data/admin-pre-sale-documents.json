@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "successfully completes a pre-sale using an Electronic Invoice",
-    "authType": "restaurant",
+    "authType": "actor1",
     "saleParams": {
       "documentType": "Factura electrónica",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -21,7 +21,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-PRE-SALE-DOCS-002",
@@ -35,7 +36,7 @@
       "testScope": "regression"
     },
     "description": "successfully completes a pre-sale using Receipts",
-    "authType": "retail",
+    "authType": "actor3",
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -45,6 +46,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "Comercios (Sin Despacho)",
-    "authType": "retail",
+    "authType": "actor3",
     "subsidiaryData": {
       "type": "Comercios (Sin Despacho)",
       "name": "Sucursal Comercios Test",
@@ -21,7 +21,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "SUBSIDIARY-002",
@@ -35,7 +36,7 @@
       "testScope": "regression"
     },
     "description": "Comercios (Con Despacho)",
-    "authType": "retail",
+    "authType": "actor3",
     "subsidiaryData": {
       "type": "Comercios (Con Despacho)",
       "name": "Sucursal Despacho Test",
@@ -45,7 +46,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "SUBSIDIARY-003",
@@ -59,7 +61,7 @@
       "testScope": "regression"
     },
     "description": "Restaurantes (Sin Despacho)",
-    "authType": "retail",
+    "authType": "actor3",
     "subsidiaryData": {
       "type": "Restaurantes (Sin Despacho)",
       "name": "Sucursal Restaurante Test",
@@ -69,6 +71,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

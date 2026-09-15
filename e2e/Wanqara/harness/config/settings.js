@@ -13,15 +13,15 @@ export const playwrightHarness = {
   tenantRuc,
   
   users: {
-    retail: {
-      email: process.env.PLAYWRIGHT_RETAIL_EMAIL ?? "",
-      password: process.env.PLAYWRIGHT_RETAIL_PASSWORD ?? ""},
-    dispatch: {
-      email: process.env.PLAYWRIGHT_DISPATCH_EMAIL ?? "",
-      password: process.env.PLAYWRIGHT_DISPATCH_PASSWORD ?? ""},
-    restaurant: {
-      email: process.env.PLAYWRIGHT_RESTAURANT_EMAIL ?? "",
-      password: process.env.PLAYWRIGHT_RESTAURANT_PASSWORD ?? ""}
+    actor1: {
+      email: process.env.PLAYWRIGHT_ACTOR_1_EMAIL ?? process.env.PLAYWRIGHT_RESTAURANT_EMAIL ?? "",
+      password: process.env.PLAYWRIGHT_ACTOR_1_PASSWORD ?? process.env.PLAYWRIGHT_RESTAURANT_PASSWORD ?? ""},
+    actor2: {
+      email: process.env.PLAYWRIGHT_ACTOR_2_EMAIL ?? process.env.PLAYWRIGHT_DISPATCH_EMAIL ?? "",
+      password: process.env.PLAYWRIGHT_ACTOR_2_PASSWORD ?? process.env.PLAYWRIGHT_DISPATCH_PASSWORD ?? ""},
+    actor3: {
+      email: process.env.PLAYWRIGHT_ACTOR_3_EMAIL ?? process.env.PLAYWRIGHT_RETAIL_EMAIL ?? "",
+      password: process.env.PLAYWRIGHT_ACTOR_3_PASSWORD ?? process.env.PLAYWRIGHT_RETAIL_PASSWORD ?? ""}
   },
 
   seeded: {
@@ -30,25 +30,31 @@ export const playwrightHarness = {
 
 export const chefHarness = {
   baseUrl: process.env.PLAYWRIGHT_CHEF_URL ?? "",
-  login: {
-    ruc:      process.env.PLAYWRIGHT_CHEF_RUC ?? "",
-    email:    process.env.PLAYWRIGHT_CHEF_EMAIL ?? "",
-    password: process.env.PLAYWRIGHT_CHEF_PASSWORD ?? ""}};
+  users: {
+    actor1: {
+      ruc:      process.env.PLAYWRIGHT_CHEF_ACTOR_1_RUC ?? process.env.PLAYWRIGHT_CHEF_RUC ?? "",
+      email:    process.env.PLAYWRIGHT_CHEF_ACTOR_1_EMAIL ?? process.env.PLAYWRIGHT_CHEF_EMAIL ?? "",
+      password: process.env.PLAYWRIGHT_CHEF_ACTOR_1_PASSWORD ?? process.env.PLAYWRIGHT_CHEF_PASSWORD ?? ""
+    }
+  }
+};
 
 export const hasTenantData = () =>
   Boolean(playwrightHarness.publicBaseUrl && playwrightHarness.tenantRuc);
 
 export const hasLoginCredentials = () => {
-  const { retail, dispatch, restaurant } = playwrightHarness.users;
+  const { actor1, actor2, actor3 } = playwrightHarness.users;
   return Boolean(
-    retail.email && retail.password &&
-    dispatch.email && dispatch.password &&
-    restaurant.email && restaurant.password
+    actor1?.email && actor1?.password &&
+    actor2?.email && actor2?.password &&
+    actor3?.email && actor3?.password
   );
 };
 
-export const hasChefCredentials = () =>
-  Boolean(chefHarness.login.ruc && chefHarness.login.email && chefHarness.login.password);
+export const hasChefCredentials = () => {
+  const actor1 = chefHarness.users.actor1;
+  return Boolean(actor1?.ruc && actor1?.email && actor1?.password);
+};
 
 export const skipReloginTests = () =>
   process.env.PLAYWRIGHT_SKIP_RELOGIN === "true";
@@ -58,7 +64,7 @@ export const getTenantBaseUrl = () => playwrightHarness.publicBaseUrl;
 export function requirePosCredentials(test) {
   test.skip(
     !hasTenantData() || !hasLoginCredentials(),
-    "Requires PLAYWRIGHT_TENANT_RUC and all specific user credentials (Retail, Dispatch, Restaurant)",
+    "Requires PLAYWRIGHT_TENANT_RUC and all specific actor credentials (Actor 1, Actor 2, Actor 3)",
   );
 }
 

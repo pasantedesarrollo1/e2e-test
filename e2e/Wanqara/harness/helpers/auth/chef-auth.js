@@ -6,9 +6,9 @@ import { fileURLToPath } from "node:url";
 import { chefHarness } from "../../config/settings.js";
 export const CHEF_AUTH_PATH = /\/auth\//;
 
-export const CHEF_SESSION_PATH = path.resolve(
+export const getChefSessionPath = (chefAuthType = "actor1") => path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
-  "../../.auth/chef-session.json"
+  `../../.auth/chef-${chefAuthType}-session.json`
 );
 
 export async function loginChef(page, { chefBaseUrl, login, subsidiary, subsidiaryCode }) {
@@ -60,17 +60,17 @@ export async function loginChef(page, { chefBaseUrl, login, subsidiary, subsidia
   await expect(page).toHaveURL(/\/tables/);
 }
 
-export async function ensureChefAuthenticated(page, { chefBaseUrl, targetPath, login, subsidiary, subsidiaryCode }) {
-  const effectiveLogin = login || chefHarness.login;
+export async function ensureChefAuthenticated(page, { chefBaseUrl, targetPath, login, subsidiary, subsidiaryCode, chefAuthType = "actor1" }) {
+  const effectiveLogin = login || chefHarness.users[chefAuthType];
   
   const defaultBranches = JSON.parse(
-    fs.readFileSync(path.resolve(path.dirname(CHEF_SESSION_PATH), "../config/default-branches.json"), "utf-8")
+    fs.readFileSync(path.resolve(path.dirname(getChefSessionPath(chefAuthType)), "../config/default-branches.json"), "utf-8")
   );
 
-  const effectiveSubsidiary = subsidiary || defaultBranches.restaurant.name;
-  const effectiveSubsidiaryCode = subsidiaryCode || defaultBranches.restaurant.code;
+  const effectiveSubsidiary = subsidiary || defaultBranches[chefAuthType]?.name;
+  const effectiveSubsidiaryCode = subsidiaryCode || defaultBranches[chefAuthType]?.code;
   
-  if (!effectiveSubsidiary || !effectiveSubsidiaryCode) throw new Error("ensureChefAuthenticated requires subsidiary and subsidiaryCode parameters from JSON");
+  if (!effectiveSubsidiary || !effectiveSubsidiaryCode) throw new Error(`ensureChefAuthenticated requires subsidiary and subsidiaryCode parameters for ${chefAuthType}`);
 
   const url = chefBaseUrl ? new URL(targetPath, chefBaseUrl).toString() : targetPath;
   await page.goto(url);
@@ -92,10 +92,11 @@ export async function ensureChefAuthenticated(page, { chefBaseUrl, targetPath, l
     subsidiaryCode: effectiveSubsidiaryCode
   });
 
-  const isDefaultLogin = effectiveLogin.ruc === chefHarness.login.ruc && effectiveLogin.email === chefHarness.login.email;
+  const defaultLogin = chefHarness.users[chefAuthType];
+  const isDefaultLogin = defaultLogin && effectiveLogin.ruc === defaultLogin.ruc && effectiveLogin.email === defaultLogin.email;
   // Solo se guarda sesión compartida si no se envían logins quemados custom (si es el login principal de chef)
   if (isDefaultLogin) {
-    await page.context().storageState({ path: CHEF_SESSION_PATH });
+    await page.context().storageState({ path: getChefSessionPath(chefAuthType) });
   }
 
   await page.goto(url);

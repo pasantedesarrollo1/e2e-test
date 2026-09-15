@@ -13,7 +13,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "fixture": "posPage",
     "clientParams": {
       "testCedula": "0000000001",
@@ -24,7 +24,8 @@
     "subsidiaryName": "Wanqara Comercios",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "SALE-WITH-CLIENT-002",
@@ -40,7 +41,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "restaurant",
+    "authType": "actor1",
     "fixture": "posRestaurantPage",
     "clientParams": {
       "testCedula": "0000000001",
@@ -51,6 +52,7 @@
     "subsidiaryName": "Wanqara",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

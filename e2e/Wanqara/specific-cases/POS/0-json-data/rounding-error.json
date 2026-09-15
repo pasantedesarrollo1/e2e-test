@@ -13,12 +13,11 @@
       "testScope": "release"
     },
     "description": "Retail Reproduction of rounding-error-issue-129-57 @ws-1038",
-    "authType": "retail",
+    "authType": "actor3",
     "subsidiaryName": "Wanqara Comercios",
     "paymentUrl": "\\/pos\\/payments",
     "fixture": "posPage",
     "caseData": {
-      "openingAmount": "10",
       "clientCedula": "0000000001",
       "productName": "General Test Product iva 0",
       "quantity": 35.5,
@@ -31,7 +30,8 @@
       "fallbackPaymentAmount": 129.57
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "openingAmount": "10"
   },
   {
     "id": "SPECIFIC-POS-ROUNDING-002",
@@ -47,12 +47,11 @@
       "testScope": "release"
     },
     "description": "Restaurant Reproduction of rounding-error-issue-129-57 @ws-1038",
-    "authType": "restaurant",
+    "authType": "actor1",
     "subsidiaryName": "Wanqara",
     "paymentUrl": "\\/pos\\/restaurant-payments",
     "fixture": "posRestaurantPage",
     "caseData": {
-      "openingAmount": "10",
       "clientCedula": "0000000001",
       "productName": "General Test Product iva 0",
       "quantity": 35.5,
@@ -65,6 +64,7 @@
       "fallbackPaymentAmount": 129.57
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "openingAmount": "10"
   }
 ]

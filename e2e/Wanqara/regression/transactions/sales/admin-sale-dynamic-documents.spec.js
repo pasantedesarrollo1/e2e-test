@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { ensureAuthenticated } from "../../../harness/helpers/auth/auth.js";
-import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
+import { switchAdminSubsidiary } from "../../../harness/helpers/auth/auth.js";
 import {
   getAvailableDocumentOptions,
   getDocumentTypeLocator,

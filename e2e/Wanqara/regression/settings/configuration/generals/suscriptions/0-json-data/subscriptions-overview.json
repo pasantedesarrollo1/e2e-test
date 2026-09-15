@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "Validación de Tarjetas y Badges de Suscripciones",
-    "authType": "retail",
+    "authType": "actor3",
     "subscriptionData": {
       "modules": [
         {
@@ -144,6 +144,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

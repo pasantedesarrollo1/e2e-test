@@ -13,7 +13,7 @@
       "addedToRegression": "true",
       "testScope": "release"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "shareData": {
       "productName": "Caja de alitas de pollo (100 u)",
       "clientCedula": "0000000001",
@@ -27,6 +27,7 @@
     "cleanupReason": "Limpieza automtica pre-test",
     "productName": "Caja de alitas de pollo (100 u)",
     "clientCedula": "9999999999999",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

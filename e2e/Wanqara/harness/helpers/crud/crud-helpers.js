@@ -102,7 +102,30 @@ export async function clickTableRowAction(page, rowLocator, tooltipText) {
       } catch {
         // Ignore timeout if no tooltip appears
       }
+      
+      // Un-hover to allow the next Vuetify tooltip to trigger cleanly
+      await page.mouse.move(0, 0);
+      await page.waitForTimeout(100);
       continue;
+    }
+  }
+
+  // Fallback: Si el tooltip no aparece o Vuetify falla, buscar por clase de icono o nombre de SVG (ej. fluent:delete)
+  for (const btn of buttons) {
+    const html = await btn.innerHTML();
+    if (tooltipText.toLowerCase().includes("eliminar") && (
+      await btn.locator(".mdi-delete, .mdi-trash-can").count() > 0 ||
+      html.includes("delete") || html.includes("trash")
+    )) {
+      await btn.click({ force: true });
+      return;
+    }
+    if (tooltipText.toLowerCase().includes("ver") && (
+      await btn.locator(".mdi-pencil, .mdi-eye, .mdi-details").count() > 0 ||
+      html.includes("pencil") || html.includes("edit") || html.includes("details")
+    )) {
+      await btn.click({ force: true });
+      return;
     }
   }
 

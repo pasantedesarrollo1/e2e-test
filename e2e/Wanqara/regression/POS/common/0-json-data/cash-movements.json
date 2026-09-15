@@ -14,7 +14,7 @@
       "testScope": "regression"
     },
     "environment": "Retail",
-    "authType": "retail",
+    "authType": "actor3",
     "basePath": "/pos/home",
     "fixture": "posPage",
     "actions": [
@@ -29,7 +29,8 @@
     "subsidiaryName": "Wanqara Comercios",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "CASH-MOVEMENTS-002",
@@ -46,7 +47,7 @@
       "testScope": "regression"
     },
     "environment": "Restaurant",
-    "authType": "restaurant",
+    "authType": "actor1",
     "basePath": "/pos/restaurant-home",
     "fixture": "posRestaurantPage",
     "actions": [
@@ -61,6 +62,7 @@
     "subsidiaryName": "Wanqara",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

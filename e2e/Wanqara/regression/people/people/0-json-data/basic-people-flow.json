@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "Retail - CRUD Completo de Cliente",
-    "authType": "retail",
+    "authType": "actor3",
     "personData": {
       "name": "CRUD Cliente Automatizado",
       "identity": "1283728939",
@@ -22,7 +22,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "PPL-CRUD-002",
@@ -36,7 +37,7 @@
       "testScope": "regression"
     },
     "description": "Retail - CRUD Completo de Empleado",
-    "authType": "retail",
+    "authType": "actor3",
     "personData": {
       "name": "CRUD Empleado Automatizado",
       "identity": "1283728939",
@@ -47,6 +48,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

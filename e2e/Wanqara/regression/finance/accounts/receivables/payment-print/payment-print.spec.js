@@ -10,10 +10,6 @@ test.describe("Finance - Receivables (Payment Print)", () => {
   requirePosCredentials(test);
 
     generateDataDrivenTests(test, scenarios, (scenario) => {
-      // Dinámicamente añadir el ticket si es un test de release o tiene metadata válida
-
-      // Resolvemos el authType dinámicamente
-
 
       test(`ensures payment is sent to printer with correct amount`, async ({ page }) => {
         test.setTimeout(60_000); 

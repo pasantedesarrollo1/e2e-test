@@ -13,7 +13,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "restaurant",
+    "authType": "actor1",
     "deliveryData": {
       "phone": "0999999922",
       "clientName": "Cliente Delivery Test",
@@ -31,6 +31,10 @@
     "productName": "Caja de alitas de pollo (100 u)",
     "clientCedula": "9999999999999",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached",
+    "chefAuthType": "actor1",
+    "chefSubsidiary": "Wanqara",
+    "chefSubsidiaryCode": "001"
   }
 ]

@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "completes a pre-sale with a mixed cart with subsequent dispatch enabled",
-    "authType": "dispatch",
+    "authType": "actor2",
     "saleParams": {
       "documentType": "Recibos",
       "dispatchEnabled": true,
@@ -26,7 +26,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-PRE-SALE-DISPATCH-002",
@@ -40,7 +41,7 @@
       "testScope": "regression"
     },
     "description": "completes a pre-sale with a mixed cart without subsequent dispatch enabled",
-    "authType": "retail",
+    "authType": "actor3",
     "saleParams": {
       "documentType": "Recibos",
       "dispatchEnabled": false,
@@ -55,6 +56,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

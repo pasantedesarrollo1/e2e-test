@@ -2,9 +2,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { clickFinishSale, selectDocumentTypePos } from '../harness/sales/pos-checkout-helpers.js';
@@ -29,24 +28,16 @@ async function removeProductViaTrashIcon(page) {
 }
 
 test.describe.serial("POS Cart Operations and Sale Validations", () => {
-  for (const scenario of scenarios) {
-    test.describe(`Environment: ${scenario.description} @${scenario.metadata.testScope}`, () => {
-      requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount });
+  requirePosCredentials(test);
 
-      if (scenario.metadata && scenario.metadata.ws) {
-        annotateTicket(test, scenario.metadata);
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    const runTest = (title, bodyFn) => {
+      if (scenario.fixture === 'posPage') {
+        test(title, async ({ posPage: page }) => await bodyFn(page));
+      } else {
+        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
       }
-
-      const runTest = (title, bodyFn) => {
-        if (scenario.fixture === 'posPage') {
-          test(title, async ({ posPage: page }) => await bodyFn(page));
-        } else {
-          test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
-        }
-      };
+    };
 
       runTest(`handles product removal and cart clearing in sale mode`, async (page) => {
         test.setTimeout(60_000);
@@ -126,7 +117,6 @@ test.describe.serial("POS Cart Operations and Sale Validations", () => {
           await clickFinishSale(page);
           await completePayment(page, { paymentMethod: scenario.paymentMethod });
         });
-      }
-    });
-  }
+    }
+  });
 });

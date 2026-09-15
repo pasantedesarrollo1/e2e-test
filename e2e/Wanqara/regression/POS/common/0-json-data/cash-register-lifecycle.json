@@ -14,13 +14,14 @@
       "testScope": "regression"
     },
     "environment": "Retail",
-    "authType": "retail",
+    "authType": "actor3",
     "basePath": "/pos/home",
     "openingAmount": "10",
     "subsidiaryName": "Wanqara Comercios",
     "productName": "Caja de alitas de pollo (100 u)",
     "clientCedula": "0000000001",
     "paymentMethod": "EFECTIVO",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

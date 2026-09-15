@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "Retail - completa una venta aplicando un descuento general",
-    "authType": "retail",
+    "authType": "actor3",
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -23,7 +23,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-SALE-MODIFIER-002",
@@ -37,7 +38,7 @@
       "testScope": "regression"
     },
     "description": "Retail - completa una venta aplicando un recargo manual",
-    "authType": "retail",
+    "authType": "actor3",
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -49,7 +50,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-SALE-MODIFIER-003",
@@ -63,7 +65,7 @@
       "testScope": "regression"
     },
     "description": "Dispatch - completa una venta aplicando un descuento general",
-    "authType": "dispatch",
+    "authType": "actor2",
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -75,7 +77,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   },
   {
     "id": "ADMIN-SALE-MODIFIER-004",
@@ -89,7 +92,7 @@
       "testScope": "regression"
     },
     "description": "Dispatch - completa una venta aplicando un recargo manual",
-    "authType": "dispatch",
+    "authType": "actor2",
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -101,6 +104,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   }
 ]

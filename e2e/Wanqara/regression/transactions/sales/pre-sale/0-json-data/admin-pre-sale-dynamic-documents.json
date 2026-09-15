@@ -13,7 +13,7 @@
       "testScope": "regression"
     },
     "description": "validates dynamic document type restrictions when switching subsidiaries in Pre-sales",
-    "authType": "restaurant",
+    "authType": "actor1",
     "targetPath": "/admin/pre-sale/add",
     "steps": [
       {
@@ -33,6 +33,7 @@
     ],
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

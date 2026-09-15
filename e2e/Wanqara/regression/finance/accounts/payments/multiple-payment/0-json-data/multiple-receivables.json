@@ -12,7 +12,7 @@
       "testScope": "regression"
     },
     "description": "Retail - Flujo completo de multicobros (Pago, PDF, Eliminación)",
-    "authType": "restaurant",
+    "authType": "actor1",
     "paymentData": {
       "cedula": "0000000001",
       "paymentAmount": "0.01",
@@ -22,6 +22,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

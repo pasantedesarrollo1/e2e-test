@@ -1,3 +1,4 @@
+import { getChefSessionPath } from "../../../harness/helpers/auth/chef-auth.js";
 import { expect, test } from "@playwright/test";
 import fs from "fs";
 import path from "path";
@@ -32,7 +33,8 @@ import {
 async function withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, orderOptions, posOptions, actionCallback) {
   await closeAllActiveOrders(page, tenantBaseUrl, posOptions.subsidiaryName, posOptions.cleanupReason || "Limpieza pre-test");
   
-  const chefContext = await browser.newContext({ storageState: getSessionPath("chef") });
+  const chefAuthType = orderOptions.chefAuthType;
+  const chefContext = await browser.newContext({ storageState: getChefSessionPath(chefAuthType) });
   const chefPage = await chefContext.newPage();
   const activeTableName = await createChefOrder(chefPage, orderOptions);
   await chefContext.close();
@@ -47,7 +49,7 @@ for (const scenario of scenarios) {
     requirePosCredentials(test);
     requireChefCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
+    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -57,7 +59,7 @@ for (const scenario of scenarios) {
       test.setTimeout(180_000);
       const tenantBaseUrl = getTenantBaseUrl();
 
-      await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
+      await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary, chefAuthType: scenario.chefAuthType }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
         await test.step("Navigate to separate order screen", async () => {
           await navigateToSeparateOrder(page);
         });

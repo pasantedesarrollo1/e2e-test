@@ -13,7 +13,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "actions": [
       {
         "type": "searchByCode",
@@ -37,7 +37,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "CART-DUPLICATION-002",
@@ -53,7 +54,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "actions": [
       {
         "type": "clickCard",
@@ -78,7 +79,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "CART-DUPLICATION-003",
@@ -94,7 +96,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "actions": [
       {
         "type": "clickCard",
@@ -123,7 +125,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "CART-DUPLICATION-004",
@@ -139,7 +142,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "actions": [
       {
         "type": "searchByCode",
@@ -163,7 +166,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "CART-DUPLICATION-005",
@@ -179,7 +183,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "actions": [
       {
         "type": "searchByCode",
@@ -202,7 +206,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "CART-DUPLICATION-006",
@@ -218,7 +223,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "actions": [
       {
         "type": "clickCard",
@@ -239,7 +244,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "CART-DUPLICATION-007",
@@ -255,7 +261,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "actions": [
       {
         "type": "clickCard",
@@ -273,7 +279,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "CART-DUPLICATION-008",
@@ -289,7 +296,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "actions": [
       {
         "type": "clickCard",
@@ -309,7 +316,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "CART-DUPLICATION-009",
@@ -325,7 +333,7 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "retail",
+    "authType": "actor3",
     "actions": [
       {
         "type": "searchByCode",
@@ -351,6 +359,7 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

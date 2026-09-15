@@ -76,7 +76,7 @@ test.describe.serial("Financial Calculation Accuracy", () => {
       requirePosCredentials(test);
       test.use({ storageState: getSessionPath(scenario.authType),
         subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount });
+      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
       
       if (scenario.metadata && scenario.metadata.ws) {
         annotateTicket(test, scenario.metadata);
@@ -102,7 +102,7 @@ test.describe.serial("Financial Calculation Accuracy", () => {
       requirePosCredentials(test);
       test.use({ storageState: getSessionPath(scenario.authType),
         subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount });
+      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
       if (scenario.metadata && scenario.metadata.ws) {
         annotateTicket(test, scenario.metadata);

@@ -1,3 +1,4 @@
+import { getChefSessionPath } from "../../../harness/helpers/auth/chef-auth.js";
 import { expect, test } from "../harness/setup/pos-fixtures.js";
 import fs from "fs";
 import path from "path";
@@ -17,7 +18,8 @@ const scenarios = JSON.parse(
 async function withActiveRestaurantOrderSafe(browser, page, orderOptions, posOptions, actionCallback) {
   await closeAllActiveOrders(page, posOptions.subsidiaryName, posOptions.cleanupReason || "Limpieza pre-test");
   
-  const chefContext = await browser.newContext({ storageState: getSessionPath("chef") });
+  const chefAuthType = orderOptions.chefAuthType;
+  const chefContext = await browser.newContext({ storageState: getChefSessionPath(chefAuthType) });
   const chefPage = await chefContext.newPage();
   const activeTableName = await createChefOrder(chefPage, orderOptions);
   await chefContext.close();
@@ -53,9 +55,9 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
   requirePosCredentials(test);
   requireChefCredentials(test);
 
-  test.use({ storageState: getSessionPath("restaurant"),
+  test.use({ storageState: getSessionPath(scenario.authType),
     subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount });
+      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
   test("Case 1: Direct Sale with Mix (Standard + Combo + Service) and Tip", async ({ posRestaurantPage: page }) => {
     test.setTimeout(150_000);
@@ -115,7 +117,7 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
     test.setTimeout(180_000);
     const precision = scenario.case3;
 
-    await withActiveRestaurantOrderSafe(browser, page, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
+    await withActiveRestaurantOrderSafe(browser, page, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary, chefAuthType: scenario.chefAuthType }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
       await test.step("Add recipe products (Elaborated and PreElaborated)", async () => {
         await addProductToExistingOrder(page, scenario.products.elaborado);
       });
@@ -156,7 +158,7 @@ test.describe.serial(`POS ${scenario.description} - Sale with Tips Combinations 
     test.setTimeout(180_000);
     const precision = scenario.case4;
 
-    await withActiveRestaurantOrderSafe(browser, page, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
+    await withActiveRestaurantOrderSafe(browser, page, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary, chefAuthType: scenario.chefAuthType }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
       await test.step("Navigate to separate order screen", async () => {
         await navigateToSeparateOrder(page);
       });

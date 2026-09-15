@@ -10,14 +10,35 @@
       "summary": "Flujo Basico de Colores",
       "testScope": "regression"
     },
-    "description": "Retail - Flujo Base de Color (Pre-clean, Create, Search, Delete)",
-    "authType": "retail",
+    "description": "Retail - Flujo Base de Color (Pre-clean, Create, Search, Delete) - Wanqara Comercios",
+    "authType": "actor3",
+    "loginMode": "cached",
     "colorData": {
       "name": "Color E2E Base Flow",
       "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100"
+  },
+  {
+    "id": "CLR-BASE-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo Basico de Colores",
+      "testScope": "regression"
+    },
+    "description": "Retail - Flujo Base de Color (Pre-clean, Create, Search, Delete) - Wanqara Comercios Dispatch",
+    "authType": "actor3",
+    "loginMode": "cached",
+    "colorData": {
+      "name": "Color E2E Base Flow",
+      "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
+    },
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101"
   }
 ]

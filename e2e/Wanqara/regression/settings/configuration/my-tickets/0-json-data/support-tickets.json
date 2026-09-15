@@ -13,7 +13,7 @@
       "addedToRegression": "true"
     },
     "description": "Retail - Buscar Ticket de Soporte y Llenar Formulario",
-    "authType": "retail",
+    "authType": "actor3",
     "ticketData": {
       "searchId": "17902",
       "whatsapp": "999999999",
@@ -21,6 +21,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   }
 ]

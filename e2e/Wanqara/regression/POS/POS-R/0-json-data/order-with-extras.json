@@ -13,7 +13,7 @@
       "addedToRegression": "true",
       "testScope": "release"
     },
-    "authType": "chef",
+    "authType": "actor1",
     "extrasData": {
       "baseProduct": "Caja de alitas de pollo",
       "sinStockExtra": "extra alitas sin stock",
@@ -27,6 +27,9 @@
     "cleanupReason": "Limpieza automtica pre-test",
     "productName": "Caja de alitas de pollo (100 u)",
     "clientCedula": "9999999999999",
-    "openingAmount": "100.00"
+    "openingAmount": "100.00",
+    "chefAuthType": "actor1",
+    "chefSubsidiary": "Wanqara",
+    "chefSubsidiaryCode": "001"
   }
 ]

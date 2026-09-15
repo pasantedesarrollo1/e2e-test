@@ -11,7 +11,7 @@
       "testScope": "regression"
     },
     "description": "Crea una guía de remisión interna validando transportistas",
-    "authType": "dispatch",
+    "authType": "actor2",
     "waybillData": {
       "warehouseName": "",
       "checkoutName": "",
@@ -32,7 +32,8 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   },
   {
     "id": "WAYBILL-INT-002",
@@ -46,7 +47,7 @@
       "testScope": "regression"
     },
     "description": "Crea una guía interna con producto de nombre largo",
-    "authType": "dispatch",
+    "authType": "actor2",
     "waybillData": {
       "warehouseName": "",
       "checkoutName": "",
@@ -67,6 +68,7 @@
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   }
 ]

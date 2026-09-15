@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { requireChefCredentials, requirePosCredentials } from "../../../harness/config/settings.js";
 import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { getChefSessionPath } from "../../../harness/helpers/auth/chef-auth.js";
 import { PosSaleBuilder } from "../../../harness/helpers/builders/pos-sale-builder.js";
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import { expect } from "@playwright/test";
@@ -38,7 +39,7 @@ test.describe("POS Cross Sales", () => {
             .withDocumentType(scenario.saleParams.documentType)
             .withProduct(scenario.saleParams.productName)
             .withPaymentMethod(scenario.saleParams.paymentMethod)
-            .withPrintedTicket(scenario.saleParams.openDrawer)
+            .withDocumentOptions({ printTicket: true, openDrawer: scenario.saleParams.openDrawer })
             .andThen(async (p) => {
                 await p.getByRole("button", { name: /Terminar Venta/i });
             });
@@ -64,8 +65,7 @@ test.describe("POS Cross Sales", () => {
         test(scenario.description, async ({ page, browser }) => {
           test.setTimeout(180_000);
           
-          // Abrir una ventana separada para Chef para no destruir la sesión de POS
-          const chefContext = await browser.newContext({ storageState: getSessionPath('chef') });
+          const chefContext = await browser.newContext({ storageState: getChefSessionPath(scenario.chefAuthType) });
           const chefPage = await chefContext.newPage();
           
           const activeTableName = await createChefOrder(chefPage, { productName: scenario.chefOrderParams.productName });
@@ -104,3 +104,4 @@ test.describe("POS Cross Sales", () => {
     }
   }
 });
+

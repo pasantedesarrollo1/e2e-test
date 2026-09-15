@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { selectDropdownOption, formatPosSubsidiary } from "../../../../harness/helpers/ui/ui-helpers.js";
+import { selectDropdownOption } from "../../../../harness/helpers/ui/ui-helpers.js";
 
 export async function selectDocumentType(page, documentType) {
   if (!documentType) return;
@@ -33,38 +33,5 @@ export async function selectDocumentType(page, documentType) {
 
   // Cierra cualquier overlay que haya quedado residual
   await page.keyboard.press("Escape");
-}
-
-export async function switchAdminSubsidiary(page, targetSubsidiaryName, targetSubsidiaryCode) {
-  const targetSubsidiary = formatPosSubsidiary(targetSubsidiaryName, targetSubsidiaryCode);
-  const shortName = targetSubsidiary.split("-").pop().trim();
-
-  const headerText = await page.locator("header").first().innerText();
-  if (headerText.includes(shortName)) {
-    return; 
-  }
-
-  const profileBtn = page.locator("header").first().locator("button").filter({ hasText: /Wanqara/i }).first();
-  await profileBtn.click();
-
-  const profileModal = page.locator(".v-overlay__content").filter({ hasText: /Mi Perfil/i }).first();
-  await expect(profileModal).toBeVisible({ timeout: 5000 });
-
-  const branchSelect = profileModal.locator(".v-select").first();
-  
-  await selectDropdownOption(page, {
-    triggerLocator: branchSelect,
-    optionText: targetSubsidiary
-  });
-
-  // Click outside to close the menu
-  await page.mouse.click(0, 0);
-  await page.keyboard.press("Escape");
-  await expect(profileModal).not.toBeVisible({ timeout: 5000 });
-
-  await page.waitForLoadState("networkidle");
-  await expect(
-    page.locator("header").first().locator("button").filter({ hasText: new RegExp(shortName, "i") }).first()
-  ).toBeVisible({ timeout: 15000 });
 }
 

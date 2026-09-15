@@ -21,9 +21,9 @@ for (const scenario of scenarios) {
     requirePosCredentials(test);
     test.use({ storageState: getSessionPath(scenario.authType),
         subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount });
+      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
-    test.use({ permissions: ['clipboard-read', 'clipboard-write'], openingAmount: scenario.openingAmount });
+    test.use({ permissions: ['clipboard-read', 'clipboard-write'], openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
@@ -38,7 +38,7 @@ for (const scenario of scenarios) {
       await test.step("Navigate to POS and setup", async () => {
         const targetPath = scenario.authType === 'restaurant' ? '/pos/restaurant-home' : '/pos/home';
         await ensureAuthenticated(page, { targetPath, authType: scenario.authType });
-        await ensureCashRegisterOpen(page, scenario.openingAmount, scenario.subsidiaryName, scenario.subsidiaryCode, scenario.authType);
+        await ensureCashRegisterOpen(page, scenario.openingAmount, scenario.subsidiaryName, scenario.subsidiaryCode, targetPath);
       });
 
       await test.step("Search and select product", async () => {

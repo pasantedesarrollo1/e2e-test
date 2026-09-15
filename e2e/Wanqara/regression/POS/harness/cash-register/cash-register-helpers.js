@@ -2,12 +2,9 @@ import { expect } from "@playwright/test";
 import { openDrawer } from '../sales/pos-drawer-helpers.js';
 import { formatPosSubsidiary } from '../../../../harness/helpers/ui/ui-helpers.js';
 
-export async function ensureCashRegisterOpen(page, amount, subsidiaryName, subsidiaryCode, authType = 'retail') {
+export async function ensureCashRegisterOpen(page, amount, subsidiaryName, subsidiaryCode, homePath = '/pos/home') {
   if (!subsidiaryName) throw new Error("subsidiaryName is required");
   if (!amount) throw new Error("amount is required (e.g. from JSON or settings)");
-  if (!authType) throw new Error("authType is required");
-
-  const homePath = authType === 'restaurant' ? '/pos/restaurant-home' : '/pos/home';
 
   await page.goto(homePath);
 

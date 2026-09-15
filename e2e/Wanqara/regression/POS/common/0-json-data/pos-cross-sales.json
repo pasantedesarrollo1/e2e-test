@@ -15,7 +15,7 @@
     },
     "type": "retail-sale",
     "environment": "Commerce 100",
-    "authType": "retail",
+    "authType": "actor3",
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -30,7 +30,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100"
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
   },
   {
     "id": "POS-CROSS-SALES-002",
@@ -48,7 +49,7 @@
     },
     "type": "retail-sale",
     "environment": "Commerce Dispatch 101",
-    "authType": "dispatch",
+    "authType": "actor2",
     "saleParams": {
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
@@ -63,7 +64,8 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
     "openingAmount": "100.00",
-    "subsidiaryCode": "101"
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
   },
   {
     "id": "POS-CROSS-SALES-003",
@@ -81,7 +83,7 @@
     },
     "type": "restaurant-flow",
     "environment": "POS Restaurant",
-    "authType": "restaurant",
+    "authType": "actor1",
     "chefOrderParams": {
       "productName": "Caja de alitas de pollo (100 u)",
       "printTicket": false,
@@ -92,6 +94,7 @@
     "subsidiaryName": "Wanqara",
     "cleanupReason": "Limpieza automática previa de tests de ventas cruzadas",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

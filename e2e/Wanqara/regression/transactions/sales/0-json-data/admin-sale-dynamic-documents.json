@@ -40,9 +40,10 @@
         "subsidiaryName": "Wanqara"
       }
     ],
-    "authType": "restaurant",
+    "authType": "actor1",
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
   }
 ]

@@ -9,7 +9,7 @@ import {
 } from "./harness/admin-cross-sale-flow.js";
 // Note: selectClientByCedula was moved out of admin-cross-sale-flow directly to client-helpers, we use the exported one.
 import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
-import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
+import { switchAdminSubsidiary } from "../../../harness/helpers/auth/auth.js";
 
 import scenarios from "./0-json-data/admin-cross-sales.json" with { type: "json" };
 

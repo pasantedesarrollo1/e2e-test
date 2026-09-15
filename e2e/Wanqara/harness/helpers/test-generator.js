@@ -37,12 +37,22 @@ export function generateDataDrivenTests(test, scenarios, testFn) {
       }
       
       const useConfig = {};
-      if (scenario.authType) {
+      const scope = scenario.metadata.testScope || "regression";
+      const loginMode = scenario.loginMode || (scope === "release" ? "fresh" : "cached");
+      
+      if (scenario.authType && loginMode === "cached") {
         useConfig.storageState = getSessionPath(scenario.authType);
+      } else if (loginMode === "fresh") {
+        useConfig.storageState = { cookies: [], origins: [] };
       }
+      
       if (scenario.subsidiaryName) {
         useConfig.subsidiaryName = scenario.subsidiaryName;
       }
+      if (scenario.subsidiaryCode) useConfig.subsidiaryCode = scenario.subsidiaryCode;
+      if (scenario.openingAmount) useConfig.openingAmount = scenario.openingAmount;
+      if (scenario.authType) useConfig.authType = scenario.authType;
+      if (loginMode) useConfig.loginMode = loginMode;
       
       if (Object.keys(useConfig).length > 0) {
         test.use(useConfig);

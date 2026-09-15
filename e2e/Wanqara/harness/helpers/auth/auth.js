@@ -15,7 +15,7 @@ export async function loginWithEmailPassword(page, { email, password }) {
   await expect(page).not.toHaveURL(/\/login(\/|$)/);
 }
 
-import { formatPosSubsidiary } from "../ui/ui-helpers.js";
+import { formatPosSubsidiary, selectDropdownOption } from "../ui/ui-helpers.js";
 
 export async function loginAndSelectSubsidiary(page, { login, subsidiaryName, subsidiaryCode }) {
   await page.goto("/login");
@@ -72,7 +72,7 @@ const LOGIN_URL_PATTERN = /\/login(\/|$)/;
 
 const isOnLogin = (page) => LOGIN_URL_PATTERN.test(new URL(page.url()).pathname);
 
-export async function withSessionWatchdog(page, body, authType = "retail") {
+export async function withSessionWatchdog(page, body, authType = "actor3") {
   const redirectedToLogin = (async () => {
     try {
       await page.waitForURL(LOGIN_URL_PATTERN);
@@ -145,15 +145,11 @@ async function repairSharedSession(page, { authType }) {
     fs.readFileSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../config/default-branches.json"), "utf-8")
   );
 
-  const fallbackSubsidiaries = {
-    retail: { name: defaultBranches.retail.name, code: defaultBranches.retail.code },
-    dispatch: { name: defaultBranches.dispatch.name, code: defaultBranches.dispatch.code },
-    restaurant: { name: defaultBranches.restaurant.name, code: defaultBranches.restaurant.code },
-    admin: { name: defaultBranches.retail.name, code: defaultBranches.retail.code },
-    chef: { name: defaultBranches.restaurant.name, code: defaultBranches.restaurant.code }
-  };
-  const subsidiaryName = fallbackSubsidiaries[authType].name;
-  const subsidiaryCode = fallbackSubsidiaries[authType].code;
+  const subsidiaryConfig = defaultBranches[authType];
+  if (!subsidiaryConfig) throw new Error(`No default branch configured for authType "${authType}".`);
+  
+  const subsidiaryName = subsidiaryConfig.name;
+  const subsidiaryCode = subsidiaryConfig.code;
 
   await loginAndSelectSubsidiary(page, {
     login,
@@ -165,16 +161,29 @@ async function repairSharedSession(page, { authType }) {
   return true;
 }
 
-export async function ensureAuthenticated(page, { targetPath, authType = "retail" }) {
+export async function ensureAuthenticated(page, { targetPath, authType = "actor3" }) {
   const url = targetPath;
   if (isSharedSessionSuspect(authType)) {
     await recoverSharedSession(page, { reason: "a previous attempt", authType });
   }
 
   await page.goto(url);
+  
+  // Wait a short moment for the SPA to make initial API calls and redirect to /login if 401
+  try {
+    await page.waitForURL(LOGIN_URL_PATTERN, { timeout: 2000 });
+  } catch {
+    // If no redirect happens within 2s, we assume the page loaded successfully
+  }
+
   if (isOnLogin(page)) {
     await recoverSharedSession(page, { reason: targetPath, authType });
     await page.goto(url);
+
+    try {
+      await page.waitForURL(LOGIN_URL_PATTERN, { timeout: 2000 });
+    } catch {//
+      }
 
     if (isOnLogin(page)) {
       throw new Error(
@@ -208,3 +217,36 @@ async function recoverSharedSession(page, { reason, authType }) {
 }
 
 
+
+export async function switchAdminSubsidiary(page, targetSubsidiaryName, targetSubsidiaryCode) {
+  const targetSubsidiary = formatPosSubsidiary(targetSubsidiaryName, targetSubsidiaryCode);
+  const shortName = targetSubsidiary.split(" - ").pop().trim();
+
+  const headerText = await page.locator("header").first().innerText();
+  if (headerText.includes(shortName)) {
+    return; 
+  }
+
+  const profileBtn = page.locator("header").first().locator("button").filter({ hasText: /Wanqara/i }).first();
+  await profileBtn.click();
+
+  const profileModal = page.locator(".v-overlay__content").filter({ hasText: /Mi Perfil/i }).first();
+  await expect(profileModal).toBeVisible({ timeout: 5000 });
+
+  const branchSelect = profileModal.locator(".v-select").first();
+  
+  await selectDropdownOption(page, {
+    triggerLocator: branchSelect,
+    optionText: targetSubsidiary
+  });
+
+  // Click outside to close the menu
+  await page.mouse.click(0, 0);
+  await page.keyboard.press("Escape");
+  await expect(profileModal).not.toBeVisible({ timeout: 5000 });
+
+  await page.waitForLoadState("networkidle");
+  await expect(
+    page.locator("header").first().locator("button").filter({ hasText: new RegExp(shortName, "i") }).first()
+  ).toBeVisible({ timeout: 15000 });
+}

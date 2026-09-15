@@ -73,7 +73,7 @@ test.describe("POS - Cash Register Income and Expense Transactions", () => {
       requirePosCredentials(test);
       test.use({ storageState: getSessionPath(scenario.authType),
         subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount });
+      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
       const runTest = (title, bodyFn) => {
         if (scenario.fixture === 'posPage') {
