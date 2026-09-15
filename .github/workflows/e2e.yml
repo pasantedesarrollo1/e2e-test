@@ -5,28 +5,28 @@ on:
 
 env:
   FRONTEND_PORT: 5175
+  PLAYWRIGHT_WANQARA_PORT: 5175
   PLAYWRIGHT_TENANT_RUC: ${{ secrets.PLAYWRIGHT_TENANT_RUC }}
   PLAYWRIGHT_BASE_URL: http://${{ secrets.PLAYWRIGHT_TENANT_RUC }}.localhost:5175
 
-  PLAYWRIGHT_RETAIL_EMAIL: ${{ secrets.PLAYWRIGHT_RETAIL_EMAIL }}
-  PLAYWRIGHT_RETAIL_PASSWORD: ${{ secrets.PLAYWRIGHT_RETAIL_PASSWORD }}
-  PLAYWRIGHT_DISPATCH_EMAIL: ${{ secrets.PLAYWRIGHT_DISPATCH_EMAIL }}
-  PLAYWRIGHT_DISPATCH_PASSWORD: ${{ secrets.PLAYWRIGHT_DISPATCH_PASSWORD }}
+  PLAYWRIGHT_ACTOR_3_EMAIL: ${{ secrets.PLAYWRIGHT_ACTOR_3_EMAIL }}
+  PLAYWRIGHT_ACTOR_3_PASSWORD: ${{ secrets.PLAYWRIGHT_ACTOR_3_PASSWORD }}
+  PLAYWRIGHT_ACTOR_2_EMAIL: ${{ secrets.PLAYWRIGHT_ACTOR_2_EMAIL }}
+  PLAYWRIGHT_ACTOR_2_PASSWORD: ${{ secrets.PLAYWRIGHT_ACTOR_2_PASSWORD }}
   
-  PLAYWRIGHT_RESTAURANT_EMAIL: ${{ secrets.PLAYWRIGHT_RESTAURANT_EMAIL }}
-  PLAYWRIGHT_RESTAURANT_PASSWORD: ${{ secrets.PLAYWRIGHT_RESTAURANT_PASSWORD }}
-  PLAYWRIGHT_RESTAURANT_SUBSIDIARY: ${{ secrets.PLAYWRIGHT_RESTAURANT_SUBSIDIARY }}
-  PLAYWRIGHT_SUBSIDIARY: ${{ secrets.PLAYWRIGHT_RESTAURANT_SUBSIDIARY }}
+  PLAYWRIGHT_ACTOR_1_EMAIL: ${{ secrets.PLAYWRIGHT_ACTOR_1_EMAIL }}
+  PLAYWRIGHT_ACTOR_1_PASSWORD: ${{ secrets.PLAYWRIGHT_ACTOR_1_PASSWORD }}
+  PLAYWRIGHT_SUBSIDIARY: ${{ secrets.PLAYWRIGHT_SUBSIDIARY }}
 
   PLAYWRIGHT_CHEF_URL: ${{ secrets.PLAYWRIGHT_CHEF_URL }}
-  PLAYWRIGHT_CHEF_RUC: ${{ secrets.PLAYWRIGHT_CHEF_RUC }}
-  PLAYWRIGHT_CHEF_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
-  PLAYWRIGHT_CHEF_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
-  PLAYWRIGHT_CHEF_WORKSTATION_CODE: ${{ secrets.PLAYWRIGHT_CHEF_WORKSTATION_CODE }}
+  PLAYWRIGHT_CHEF_ACTOR_1_RUC: ${{ secrets.PLAYWRIGHT_CHEF_ACTOR_1_RUC }}
+  PLAYWRIGHT_CHEF_ACTOR_1_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_ACTOR_1_EMAIL }}
+  PLAYWRIGHT_CHEF_ACTOR_1_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_ACTOR_1_PASSWORD }}
+  PLAYWRIGHT_CHEF_ACTOR_1_WORKSTATION_CODE: ${{ secrets.PLAYWRIGHT_CHEF_ACTOR_1_WORKSTATION_CODE }}
   
-  PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_CHEF_EMAIL }}
-  PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_CHEF_PASSWORD }}
-  PLAYWRIGHT_WORKSTATION_CODE: ${{ secrets.PLAYWRIGHT_CHEF_WORKSTATION_CODE }}
+  PLAYWRIGHT_LOGIN_EMAIL: ${{ secrets.PLAYWRIGHT_LOGIN_EMAIL }}
+  PLAYWRIGHT_LOGIN_PASSWORD: ${{ secrets.PLAYWRIGHT_LOGIN_PASSWORD }}
+  PLAYWRIGHT_WORKSTATION_CODE: ${{ secrets.PLAYWRIGHT_WORKSTATION_CODE }}
 
   CI: true
 
@@ -77,10 +77,23 @@ jobs:
 
       - name: Run Smoke Suite
         id: run_smoke
+        env:
+          PLAYWRIGHT_HTML_REPORT: playwright-report-smoke
         run: |
           set +e
           npx playwright test --project=Smoke --workers=1 2>&1 | tee test-output-smoke.log
           exit "${PIPESTATUS[0]}"
+
+      - name: Notify Telegram (Pipeline Error)
+        if: always() && steps.run_smoke.outcome == 'skipped'
+        continue-on-error: true
+        uses: ./.github/actions/notify-telegram
+        with:
+          suite: "Pipeline"
+          scope: "Error crítico de infraestructura — los tests no llegaron a ejecutarse."
+          status: failure
+          bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
 
       - name: Notify Telegram (Smoke)
         if: always() && steps.run_smoke.outcome != 'skipped'
@@ -98,12 +111,14 @@ jobs:
         if: always()
         with:
           name: report-smoke-${{ github.run_id }}
-          path: playwright-report/
+          path: playwright-report-smoke/
           retention-days: 7
 
       - name: Run Release Suite
         id: run_release
         if: steps.run_smoke.outcome == 'success'
+        env:
+          PLAYWRIGHT_HTML_REPORT: playwright-report-release
         run: |
           set +e
           npx playwright test --project=Release --workers=1 2>&1 | tee test-output-release.log
@@ -122,8 +137,8 @@ jobs:
           log_file: test-output-release.log
 
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.run_release.outcome != 'skipped'
         with:
           name: report-release-${{ github.run_id }}
-          path: playwright-report/
+          path: playwright-report-release/
           retention-days: 7
