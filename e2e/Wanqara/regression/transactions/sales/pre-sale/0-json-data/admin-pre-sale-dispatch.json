@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ADMIN-PRE-SALE-DISPATCH-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Pre-Sales - Mixed Cart WITH Subsequent Dispatch",
+      "testScope": "regression"
+    },
+    "description": "completes a pre-sale with a mixed cart with subsequent dispatch enabled",
+    "authType": "actor2",
+    "saleParams": {
+      "documentType": "Recibos",
+      "dispatchEnabled": true,
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "mixedCart": {
+        "estandarName": "Caja de alitas de pollo (100 u)",
+        "serieName": "series test",
+        "tallaColorName": "test talla color"
+      }
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-PRE-SALE-DISPATCH-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Pre-Sales - Mixed Cart WITHOUT Subsequent Dispatch",
+      "testScope": "regression"
+    },
+    "description": "completes a pre-sale with a mixed cart without subsequent dispatch enabled",
+    "authType": "actor3",
+    "saleParams": {
+      "documentType": "Recibos",
+      "dispatchEnabled": false,
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "mixedCart": {
+        "estandarName": "Caja de alitas de pollo (100 u)",
+        "serieName": "series test",
+        "tallaColorName": "test talla color"
+      }
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  }
+]

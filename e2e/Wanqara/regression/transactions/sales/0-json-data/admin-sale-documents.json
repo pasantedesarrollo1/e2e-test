@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ADMIN-SALE-DOCS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Electronic Invoice",
+      "testScope": "regression"
+    },
+    "description": "Completa exitosamente una venta desde el panel admin usando Factura Electrónica",
+    "authType": "actor1",
+    "saleParams": {
+      "documentType": "Factura electrónica",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-SALE-DOCS-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Receipts (without dispatch)",
+      "testScope": "regression"
+    },
+    "description": "Completa exitosamente una venta desde el panel admin usando Recibos",
+    "authType": "actor3",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  }
+]

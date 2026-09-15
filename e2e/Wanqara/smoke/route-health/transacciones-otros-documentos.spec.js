@@ -1,14 +1,13 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../harness/settings.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
+import { assertPageTitle, assertTextContains, assertTextVisible } from "./harness/smoke-assertions.js";
 import { generateSmokeTests } from "./harness/smoke-nav.js";
-import { assertPageTitle, assertTextVisible, assertTextContains } from "./harness/smoke-assertions.js";
 
 test.describe("Smoke — Transacciones > Otros Documentos", { tag: "@smoke" }, () => {
   requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
 
-  generateSmokeTests(tenantBaseUrl, [
+  generateSmokeTests([
     { path: "/admin/quotes/list",                                    assert: (p) => assertPageTitle(p, "Cotizaciones") },
     { path: "/admin/quotes/add",                                     assert: (p) => assertTextVisible(p, "Agregar Cotización") },
     { path: "/admin/waybills/list",                                  assert: (p) => assertPageTitle(p, "Guías de Remisión") },

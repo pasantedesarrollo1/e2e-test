@@ -1,0 +1,60 @@
+[
+  {
+    "id": "SALE-PRODUCT-OPTIONS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-1006",
+      "tes": "TES-215",
+      "release": "v7.9.1",
+      "summary": "POS Sale Product Options - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "actor3",
+    "fixture": "posPage",
+    "paymentUrlPattern": "/pos/payments",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productOptionsParams": {
+      "quantity": "3.3337373372323",
+      "unitPrice": "3.3337373372323",
+      "discountRate": "3.3337373372323"
+    },
+    "subsidiaryName": "Wanqara Comercios",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  },
+  {
+    "id": "SALE-PRODUCT-OPTIONS-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1006",
+      "tes": "TES-215",
+      "release": "v7.9.1",
+      "summary": "POS Sale Product Options - Restaurant",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "actor1",
+    "fixture": "posRestaurantPage",
+    "paymentUrlPattern": "/pos/restaurant-payments",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "productOptionsParams": {
+      "quantity": "3.3337373372323",
+      "unitPrice": "3.3337373372323",
+      "discountRate": "3.3337373372323"
+    },
+    "subsidiaryName": "Wanqara",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
+  }
+]

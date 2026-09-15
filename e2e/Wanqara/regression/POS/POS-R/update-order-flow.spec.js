@@ -1,42 +1,83 @@
-import { test, expect } from "@playwright/test";
+import { getChefSessionPath } from "../../../harness/helpers/auth/chef-auth.js";
+import { expect, test } from "@playwright/test";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import {
-  requirePosCredentials,
-  requireChefCredentials,
   getTenantBaseUrl,
-} from "../../../harness/settings.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { SEED } from "../../../harness/seed.js";
+  requireChefCredentials,
+  requirePosCredentials,
+} from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "update-order-flow.json"), "utf-8")
+);
+
+import { completePayment } from "../harness/payments/pos-payment.js";
 import {
   addProductToExistingOrder,
+  closeAllActiveOrders,
   collectOrder,
-  withActiveRestaurantOrder,
+  createChefOrder,
+  navigateToRestaurantPOS,
+  openAndSelectOrder,
 } from "./harness/pos-orders-common.js";
-import { completePayment } from "../harness/pos-payment.js";
 
-test.describe("POS Restaurant — Update Order Flow @regression", () => {
-  requirePosCredentials(test);
-  requireChefCredentials(test);
+async function withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, orderOptions, posOptions, actionCallback) {
+  await closeAllActiveOrders(page, tenantBaseUrl, posOptions.subsidiaryName, posOptions.cleanupReason || "Limpieza pre-test");
+  
+  const chefAuthType = orderOptions.chefAuthType;
+  const chefContext = await browser.newContext({ storageState: getChefSessionPath(chefAuthType) });
+  const chefPage = await chefContext.newPage();
+  const activeTableName = await createChefOrder(chefPage, orderOptions);
+  await chefContext.close();
 
-  test.use({ storageState: getSessionPath("restaurant") });
+  await navigateToRestaurantPOS(page, tenantBaseUrl, posOptions.subsidiaryName);
+  await openAndSelectOrder(page, activeTableName);
+  await actionCallback(page, activeTableName);
+}
 
-  test("adds a product to an existing order and completes the sale", async ({ page }) => {
-    test.setTimeout(180_000);
-    const tenantBaseUrl = getTenantBaseUrl();
+for (const scenario of scenarios) {
+  test.describe.serial(`POS ${scenario.description} - Update Order Flow @${scenario.metadata?.testScope || 'regression'}`, () => {
+    requirePosCredentials(test);
+    requireChefCredentials(test);
 
-    await withActiveRestaurantOrder(page, tenantBaseUrl, async (page, activeTableName) => {
-      await test.step("Add a product to the existing order", async () => {
-        await addProductToExistingOrder(page, SEED.products.estandar.name);
-      });
+    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
-      await test.step("Collect order and verify payments screen", async () => {
-        await collectOrder(page);
-        await page.waitForURL(/\/pos\/restaurant-payments/);
-        await expect(page.getByText(/Cliente:/i)).toBeVisible();
-      });
+    if (scenario.metadata && scenario.metadata.ws) {
+      annotateTicket(test, scenario.metadata);
+    }
 
-      await test.step("Complete the payment process", async () => {
-        await completePayment(page);
-      });
+    test("adds a product to an existing order and completes the sale", async ({ page, browser }) => {
+      test.setTimeout(180_000);
+      const tenantBaseUrl = getTenantBaseUrl();
+
+      await withActiveRestaurantOrderSafe(
+        browser, 
+        page, 
+        tenantBaseUrl, 
+        { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary, chefAuthType: scenario.chefAuthType }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
+          await test.step("Add a product to the existing order", async () => {
+            await addProductToExistingOrder(page, scenario.updateData.productName);
+          });
+
+          await test.step("Collect order and verify payments screen", async () => {
+            await collectOrder(page);
+            await page.waitForURL(/\/pos\/restaurant-payments/);
+            await expect(page.getByText(/Cliente:/i)).toBeVisible();
+          });
+
+          await test.step("Complete the payment process", async () => {
+            await completePayment(page, { paymentMethod: scenario.paymentMethod });
+          });
+        },
+        {}, 
+        scenario.posOptions
+      );
     });
   });
-});
+}

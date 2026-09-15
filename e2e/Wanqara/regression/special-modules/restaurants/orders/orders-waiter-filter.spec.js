@@ -1,41 +1,32 @@
 import { test } from "@playwright/test";
-import { annotateTicket } from "../../../../harness/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../../harness/auth.js";
-import { filterByWaiter } from "../harness/waiter-filter-flow.js";
+import { requirePosCredentials } from "../../../../harness/config/settings.js";
+import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
+import { filterByWaiter } from "../harness/restaurant-helpers.js";
 
-const TICKET = {
-  ws: 'WS-1000',
-  tes: 'TES-209',
-  release: 'v7.9.1',
-  summary: 'Orders Waiter Filter',
-  addedToRegression: 'true',
-};
+import scenarios from "./0-json-data/orders-waiter-filter.json" with { type: "json" };
 
-test.describe("Orders — Waiter Filter @regression", () => {
-  annotateTicket(test, TICKET);
-  requirePosCredentials(test);
+import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";
 
-  test.use({ storageState: getSessionPath("restaurant") });
+test.describe("Orders - Waiter Filter", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
 
-  test("filters orders by waiter using advanced search", async ({ page }) => {
-    test.setTimeout(120_000);
-    const tenantBaseUrl = getTenantBaseUrl();
+    test(
+      scenario.only ? "Filters orders by waiter using advanced search (focus)" : "Filters orders by waiter using advanced search",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ page }) => {
+        test.setTimeout(120_000);
 
-    await test.step("Navigate to orders list", async () => {
-      await ensureAuthenticated(page, {
-        tenantBaseUrl,
-        targetPath: "/admin/orders/list",
-        authType: "restaurant",
-      });
-    });
+        await test.step("Navigate to orders list", async () => {
+          await ensureAuthenticated(page, {
+            targetPath: "/admin/orders/list",
+            authType: scenario.authType});
+        });
 
-    await test.step("Filter by waiter and validate results", async () => {
-      await filterByWaiter(page, {
-        waiterName: "QA developer 1",
-        searchKeyword: "QA",
-        apiEndpointPattern: "/api/v1/restaurant/orders",
-      });
-    });
+        await test.step("Filter by waiter and validate results", async () => {
+          await filterByWaiter(page, scenario.filterData);
+        });
+      }
+    );
   });
 });

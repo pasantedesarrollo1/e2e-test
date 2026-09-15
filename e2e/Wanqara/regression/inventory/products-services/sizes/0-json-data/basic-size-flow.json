@@ -1,0 +1,24 @@
+[
+  {
+    "id": "SIZ-BASE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo Básico de Tallas",
+      "testScope": "regression"
+    },
+    "description": "Retail - Flujo Base de Talla (Pre-clean, Create, Search, Delete)",
+    "authType": "actor3",
+    "sizeData": {
+      "name": "Talla E2E Base Flow",
+      "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  }
+]

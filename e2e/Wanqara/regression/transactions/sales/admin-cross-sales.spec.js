@@ -1,87 +1,60 @@
 import { test } from "@playwright/test";
-import { annotateTicket } from "../../../harness/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { SEED } from "../../../harness/seed.js";
-import { RELEASE_SEED } from "../../../harness/seeds/cross-sales-seed.js";
-import { 
-  selectCustomCheckout, 
-  submitValidatedAdminTransaction, 
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import {
+  searchAndSelectProduct,
+  selectCustomCheckout,
   selectCustomDocumentType,
-  selectClientByCedula, 
-  searchAndSelectProduct, 
-  selectPaymentMethod 
+  selectPaymentMethod,
+  submitValidatedAdminTransaction
 } from "./harness/admin-cross-sale-flow.js";
-import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
+// Note: selectClientByCedula was moved out of admin-cross-sale-flow directly to client-helpers, we use the exported one.
+import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
+import { switchAdminSubsidiary } from "../../../harness/helpers/auth/auth.js";
 
-const TICKET = {
-  ws: 'WS-1004',
-  tes: 'TES-213',
-  release: 'v7.9.1',
-  summary: 'Admin Cross Sales Anti-Cross Validation',
-  addedToRegression: 'true',
-};
+import scenarios from "./0-json-data/admin-cross-sales.json" with { type: "json" };
 
-const tenantBaseUrl = getTenantBaseUrl();
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 
-test.describe("Admin Sales — Anti-Cross Validation @regression", () => {
-  annotateTicket(test, TICKET);
-  requirePosCredentials(test);
-  test.use({ storageState: getSessionPath("retail") });
+test.describe("Admin Sales - Anti-Cross Validation", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
 
-  test("Dynamically switches branches and validates warehouses/checkouts in SALES", async ({ page }) => {
-    test.setTimeout(300_000); 
-    
-    await page.goto(`${tenantBaseUrl}/admin/home`);
-    await page.waitForURL(/\/admin\/home/);
+    test(
+      scenario.only ? "Dynamically switches branches and validates checkouts (focus)" : "Dynamically switches branches and validates checkouts",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ page }) => {
+        test.setTimeout(300_000); 
+        
+        await test.step("Navigate to admin home", async () => {
+          await page.goto('/admin/home');
+          await page.waitForURL(/\/admin\/home/);
+        });
 
-    for (const sucursal of RELEASE_SEED.sucursales) {
-      await test.step(`Switching UI context to branch: ${sucursal.name}`, async () => {
-        await switchAdminSubsidiary(page, sucursal.name);
-      });
+        for (const sucursal of scenario.sucursales) {
+          await test.step(`Switching UI context to branch: ${sucursal.name}`, async () => {
+            await switchAdminSubsidiary(page, sucursal.name, sucursal.code);
+          });
 
-      for (const combo of sucursal.combinations) {
-        await test.step(`Administrative Sale in: ${combo.bodega} / ${combo.caja}`, async () => {
-          await page.goto(`${tenantBaseUrl}/admin/ventas/add`);
-          await page.waitForURL(/\/admin\/ventas\/add/);
+          for (const combo of sucursal.combinations) {
+            await test.step(`Administrative Transaction in: ${combo.bodega} / ${combo.caja}`, async () => {
+              await page.goto(scenario.transaction.path);
+              await page.waitForURL(new RegExp(scenario.transaction.path.replace(/\//g, '\\/')));
 
-          await selectCustomCheckout(page, combo.bodega, combo.caja);
-          await selectCustomDocumentType(page, SEED.documentTypes.recibos);
-          await selectClientByCedula(page, SEED.clients.consumidorFinal.cedula);
-          await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
-          await selectPaymentMethod(page, SEED.paymentMethods.efectivo.label);
+              await selectCustomCheckout(page, combo.bodega, combo.caja);
+              await selectCustomDocumentType(page, "Recibos");
+              await selectClientByCedula(page, scenario.transaction.clientCedula);
+              await searchAndSelectProduct(page, { name: scenario.transaction.productName });
+              await selectPaymentMethod(page, scenario.transaction.paymentMethod);
 
-          await submitValidatedAdminTransaction(page, "/api/v2/billing/sales");
+              await submitValidatedAdminTransaction(page, scenario.transaction.endpoint);
+            });
+          }
+        }
+
+        await test.step(`Teardown: Restore original UI context to branch: ${scenario.subsidiaryName}`, async () => {
+          await switchAdminSubsidiary(page, scenario.subsidiaryName, scenario.subsidiaryCode);
         });
       }
-    }
-  });
-
-  test("Dynamically switches branches and validates warehouses/checkouts in PRESALES", async ({ page }) => {
-    test.setTimeout(300_000);
-    
-    await page.goto(`${tenantBaseUrl}/admin/home`);
-    await page.waitForURL(/\/admin\/home/);
-
-    for (const sucursal of RELEASE_SEED.sucursales) {
-      await test.step(`Switching UI context to branch: ${sucursal.name}`, async () => {
-        await switchAdminSubsidiary(page, sucursal.name);
-      });
-
-      for (const combo of sucursal.combinations) {
-        await test.step(`Presale in: ${combo.bodega} / ${combo.caja}`, async () => {
-          await page.goto(`${tenantBaseUrl}/admin/pre-sale/add`);
-          await page.waitForURL(/\/admin\/pre-sale\/add/);
-
-          await selectCustomCheckout(page, combo.bodega, combo.caja);
-          await selectCustomDocumentType(page, SEED.documentTypes.recibos);
-          await selectClientByCedula(page, SEED.clients.consumidorFinal.cedula);
-          await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
-          await selectPaymentMethod(page, SEED.paymentMethods.efectivo.label);
-
-          await submitValidatedAdminTransaction(page, "/api/v2/billing/pre-sales");
-        });
-      }
-    }
+    );
   });
 });

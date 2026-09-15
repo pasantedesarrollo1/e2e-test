@@ -1,14 +1,13 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../harness/settings.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
+import { assertMainContains, assertPageTitle, assertTextContains } from "./harness/smoke-assertions.js";
 import { generateSmokeTests } from "./harness/smoke-nav.js";
-import { assertPageTitle, assertTextContains, assertMainContains } from "./harness/smoke-assertions.js";
 
 test.describe("Smoke — Admin Personas", { tag: "@smoke" }, () => {
   requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
 
-  generateSmokeTests(tenantBaseUrl, [
+  generateSmokeTests([
     { path: "/admin/people/list",       assert: (p) => assertPageTitle(p, "Personas") },
     { path: "/admin/people/add",        assert: (p) => assertTextContains(p, "Nueva Persona") },
     { path: "/admin/rates/list",        assert: (p) => assertPageTitle(p, "Tarifas") },

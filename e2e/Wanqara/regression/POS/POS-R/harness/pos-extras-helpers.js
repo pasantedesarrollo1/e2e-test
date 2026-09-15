@@ -1,6 +1,4 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../harness/ui-helpers.js";
-import { SEED } from "../../../../harness/seed.js";
 
 /**
  * Selects a product from the POS list.
@@ -23,7 +21,7 @@ export async function selectPosProduct(page, productName) {
  * Opens the Extras Selection Sheet from the Product Modifiers view.
  * @param {import('@playwright/test').Page} page 
  */
-export async function openExtrasSelection(page) {
+export async function openExtrasSelection(page, categoryName) {
   const addModifiersBtn = page.getByRole('button', { name: /Agregar informaci/i });
   await expect(addModifiersBtn).toBeVisible();
   await addModifiersBtn.click();
@@ -34,7 +32,6 @@ export async function openExtrasSelection(page) {
   await addExtraBtn.click();
   
   // Verify sheet opened
-  const categoryName = SEED.extrasManager.category.name;
   const sheetTitle = page.getByText(new RegExp(categoryName, "i")).first();
   await expect(sheetTitle).toBeVisible();
 }
@@ -44,12 +41,12 @@ export async function openExtrasSelection(page) {
  * @param {import('@playwright/test').Page} page 
  * @param {string} extraName 
  */
-export async function validateOutOfStockExtra(page, extraName) {
+export async function validateOutOfStockExtra(page, extraName, outOfStockLabelText) {
   // Find the specific extra option row
   const extraRow = page.getByTestId('product-extra-option').filter({ hasText: new RegExp(extraName, "i") }).first();
   
   // Verify label
-  const outOfStockLabel = extraRow.getByText(SEED.extrasManager.messages.outOfStockLabel);
+  const outOfStockLabel = extraRow.getByText(outOfStockLabelText);
   await expect(outOfStockLabel).toBeVisible();
   
   // Click the increment wrapper which has the @click event

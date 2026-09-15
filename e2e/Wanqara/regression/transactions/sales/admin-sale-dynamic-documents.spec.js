@@ -1,82 +1,78 @@
-import { test, expect } from "@playwright/test";
-import { annotateTicket } from "../../../harness/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../harness/auth.js";
-import { getElectronicInvoicingAuthType } from "../../../harness/seed.js";
+import { expect, test } from "@playwright/test";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { ensureAuthenticated } from "../../../harness/helpers/auth/auth.js";
+import { switchAdminSubsidiary } from "../../../harness/helpers/auth/auth.js";
 import {
-  readSelectedDocumentType,
   getAvailableDocumentOptions,
-  waitForFormDefaults,
-  getDocumentTypeLocator
+  getDocumentTypeLocator,
+  waitForFormDefaults
 } from "./harness/admin-dynamic-documents-helpers.js";
-import { switchAdminSubsidiary } from "./harness/admin-document-helpers.js";
 
-const TICKET = {
-  ws: 'WS-981',
-  tes: 'TES-206',
-  release: 'v7.9.1',
-  summary: 'Reactive Document Type by Subsidiary - Sales',
-  addedToRegression: '2026-09-04',
-};
+import scenarios from "./0-json-data/admin-sale-dynamic-documents.json" with { type: "json" };
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 
-const tenantBaseUrl = getTenantBaseUrl();
 
 async function ensureUIReady(page) {
-  const profileOverlay = page.locator(".v-overlay--active").filter({ hasText: /Cerrar Sesión/i });
+  const profileOverlay = page.locator(".v-overlay--active").filter({ hasText: /Cerrar Sesi.n/i });
   if (await profileOverlay.isVisible().catch(() => false)) {
     await page.keyboard.press('Escape');
   }
 }
 
-test.describe("Admin Sales — Dynamic Document Types (WS-981) @regression", () => {
-  annotateTicket(test, TICKET);
-  requirePosCredentials(test);
-  
-  test.use({ storageState: getSessionPath(getElectronicInvoicingAuthType()) });
+test.describe("Admin Sales - Dynamic Document Types (WS-981)", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
 
-  test("validates dynamic document type restrictions when switching subsidiaries in Sales", async ({ page }) => {
-    test.setTimeout(120_000);
-    
-    await test.step("Access the sales module with an electronic invoicing-enabled subsidiary (001)", async () => {
-      await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/admin/ventas/add", authType: getElectronicInvoicingAuthType() });
-      await ensureUIReady(page);
-      
-      await waitForFormDefaults(page);
-      
-      const docInput = await getDocumentTypeLocator(page);
-      await expect(docInput).toContainText(/Factura electrónica/i);
-      
-      const options = await getAvailableDocumentOptions(page);
-      const hasElectronic = options.some(o => o.includes("Factura"));
-      expect(hasElectronic).toBeTruthy();
-    });
+    test(
+      scenario.only ? "Validates dynamic document type restrictions (focus)" : "Validates dynamic document type restrictions",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ page }) => {
+        test.setTimeout(120_000);
+        
+        const initialStep = scenario.steps[0];
+        await test.step(initialStep.description, async () => {
+          await ensureAuthenticated(page, { 
+            targetPath: scenario.targetPath, 
+            authType: scenario.authType 
+          });
+          await ensureUIReady(page);
+          
+          await waitForFormDefaults(page);
+          
+          const docInput = await getDocumentTypeLocator(page);
+          // Tolerant regex for accents
+          const expectedRegex = new RegExp(initialStep.expectedDefault.replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.'), 'i');
+          await expect(docInput).toContainText(expectedRegex);
+          
+          const options = await getAvailableDocumentOptions(page);
+          const hasElectronic = options.some(o => o.includes(initialStep.electronicKeyword));
+          expect(hasElectronic).toBe(initialStep.expectElectronicOption);
+        });
 
-    await test.step("Switch dynamically to a subsidiary without electronic invoicing (100)", async () => {
-      await switchAdminSubsidiary(page, "100");
-      await ensureUIReady(page);
-      
-      await waitForFormDefaults(page);
-      
-      const docInput = await getDocumentTypeLocator(page);
-      await expect(docInput).toContainText(/Recibos/i);
-      
-      const options = await getAvailableDocumentOptions(page);
-      const hasElectronic = options.some(o => o.includes("Factura"));
-      expect(hasElectronic).toBeFalsy();
-    });
+        // Execute remaining steps
+        for (let i = 1; i < scenario.steps.length; i++) {
+          const step = scenario.steps[i];
+          await test.step(step.description, async () => {
+            await switchAdminSubsidiary(page, step.subsidiaryName, step.subsidiaryCode);
+            await ensureUIReady(page);
+            
+            await waitForFormDefaults(page);
+            
+            const docInput = await getDocumentTypeLocator(page);
+            // Tolerant regex for accents
+            const expectedRegex = new RegExp(step.expectedDefault.replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.'), 'i');
+            await expect(docInput).toContainText(expectedRegex);
+            
+            const options = await getAvailableDocumentOptions(page);
+            const hasElectronic = options.some(o => o.includes(step.electronicKeyword));
+            expect(hasElectronic).toBe(step.expectElectronicOption);
+          });
+        }
 
-    await test.step("Switch back to the electronic invoicing-enabled subsidiary (001)", async () => {
-      await switchAdminSubsidiary(page, "001");
-      await ensureUIReady(page);
-      
-      await waitForFormDefaults(page);
-      
-      const docInput = await getDocumentTypeLocator(page);
-      await expect(docInput).toContainText(/Factura electrónica/i);
-
-      const options = await getAvailableDocumentOptions(page);
-      const hasElectronic = options.some(o => o.includes("Factura"));
-      expect(hasElectronic).toBeTruthy();
-    });
+        await test.step(`Teardown: Restore original UI context to branch: ${scenario.subsidiaryName}`, async () => {
+          await switchAdminSubsidiary(page, scenario.subsidiaryName, scenario.subsidiaryCode);
+        });
+      }
+    );
   });
 });

@@ -1,7 +1,4 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../../harness/seed.js";
-import { ensureAuthenticated } from "../../../../harness/auth.js";
-import { selectClientByCedula } from '../../../../harness/client-helpers.js';
 
 export async function selectCustomCheckout(page, bodegaName, cajaName) {
   const bodegaLabel = page.locator("main").getByText(/Bodega/i).first();
@@ -70,7 +67,7 @@ export async function selectCustomDocumentType(page, documentType) {
 
   const alreadySelected =
     currentText.includes(normalizedTarget) ||
-    (documentType === SEED.documentTypes.facturaElectronica && FACTURA_CODES.some((code) => currentText.includes(code)));
+    (documentType === "Factura electrónica" && FACTURA_CODES.some((code) => currentText.includes(code)));
 
   if (alreadySelected) {
     return; 
@@ -88,12 +85,12 @@ export async function selectCustomDocumentType(page, documentType) {
   await page.keyboard.press("Escape");
 }
 
-export { selectClientByCedula } from '../../../../harness/client-helpers.js';
-
-import { searchAndSelectProduct, selectCheckout, submitAdminSale } from './admin-sale-flow.js';
+export { selectClientByCedula } from '../../../../harness/helpers/people/client-helpers.js';
 export { searchAndSelectProduct, selectCheckout, submitAdminSale };
 
-export { applyGeneralDiscount, applyManualSurcharge } from '../../harness/admin-modifier-helpers.js';
+  import { searchAndSelectProduct, selectCheckout, submitAdminSale } from './admin-checkout-helpers.js';
+
+  
 
 export async function selectPaymentMethod(page, methodName) {
   const methodItem = page.getByText(methodName, { exact: true }).first();
@@ -101,40 +98,3 @@ export async function selectPaymentMethod(page, methodName) {
   await methodItem.click({ force: true });
 }
 
-export async function runAdminSaleFlow(page, {
-  tenantBaseUrl,
-  authType,
-  documentType,
-  clientCedula,
-  productName,
-  searchTerm,
-  beforeFinish,
-  paymentMethod,
-  skipNavigation = false,
-}) {
-  if (!skipNavigation) {
-    await ensureAuthenticated(page, { tenantBaseUrl, targetPath: "/admin/ventas/add", authType });
-    await page.waitForURL(/\/admin\/ventas\/add/);
-  }
-
-  await selectCheckout(page);
-  await selectCustomDocumentType(page, documentType);
-  
-  if (clientCedula) {
-    await selectClientByCedula(page, clientCedula);
-  }
-
-  if (productName) {
-    await searchAndSelectProduct(page, { name: productName, searchTerm });
-  }
-
-  if (beforeFinish) {
-    await beforeFinish(page);
-  }
-
-  if (paymentMethod) {
-    await selectPaymentMethod(page, paymentMethod);
-  }
-  
-  await submitAdminSale(page);
-}

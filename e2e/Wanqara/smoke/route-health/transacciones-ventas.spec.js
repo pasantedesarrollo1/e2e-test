@@ -1,14 +1,13 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../harness/settings.js";
-import { generateSmokeTests } from "./harness/smoke-nav.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
 import { assertPageTitle, assertTextVisible } from "./harness/smoke-assertions.js";
+import { generateSmokeTests } from "./harness/smoke-nav.js";
 
 test.describe("Smoke — Transacciones > Ventas", { tag: "@smoke" }, () => {
   requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
 
-  generateSmokeTests(tenantBaseUrl, [
+  generateSmokeTests([
     { path: "/admin/sales/list?per_page=10",   assert: (p) => assertPageTitle(p, "Historial de Ventas") },
     { path: "/admin/ventas/add",               assert: (p) => assertTextVisible(p, "Datos de Venta") },
     { path: "/admin/pre-sale/add",             assert: (p) => assertTextVisible(p, "Agregar Preventa") },

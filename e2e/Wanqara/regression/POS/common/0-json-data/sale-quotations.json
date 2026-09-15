@@ -1,0 +1,62 @@
+[
+  {
+    "id": "SALE-QUOTATIONS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-1007",
+      "tes": "TES-216",
+      "release": "v7.9.1",
+      "summary": "POS Sale Quotations - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "actor3",
+    "fixture": "posPage",
+    "homePath": "/pos/home",
+    "paymentUrlPattern": "/pos/payments",
+    "quoteParams": {
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "observation": "Observación de prueba automatizada",
+      "paymentTerms": "Términos de pago de prueba automatizada"
+    },
+    "subsidiaryName": "Wanqara Comercios",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  },
+  {
+    "id": "SALE-QUOTATIONS-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1007",
+      "tes": "TES-216",
+      "release": "v7.9.1",
+      "summary": "POS Sale Quotations - Restaurant",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "actor1",
+    "fixture": "posRestaurantPage",
+    "homePath": "/pos/restaurant-home",
+    "paymentUrlPattern": "/pos/restaurant-payments",
+    "quoteParams": {
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "observation": "Observación de prueba automatizada",
+      "paymentTerms": "Términos de pago de prueba automatizada"
+    },
+    "subsidiaryName": "Wanqara",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
+  }
+]

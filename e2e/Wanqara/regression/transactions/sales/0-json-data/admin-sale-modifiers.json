@@ -1,0 +1,110 @@
+[
+  {
+    "id": "ADMIN-SALE-MODIFIER-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Modifiers - General Discount (retail)",
+      "testScope": "regression"
+    },
+    "description": "Retail - completa una venta aplicando un descuento general",
+    "authType": "actor3",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "modifierType": "discount",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "modifierRate": "3.3337373372323"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-SALE-MODIFIER-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Modifiers - Manual Surcharge (retail)",
+      "testScope": "regression"
+    },
+    "description": "Retail - completa una venta aplicando un recargo manual",
+    "authType": "actor3",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "modifierType": "surcharge",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "modifierRate": "3.3337373372323"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-SALE-MODIFIER-003",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Modifiers - General Discount (dispatch)",
+      "testScope": "regression"
+    },
+    "description": "Dispatch - completa una venta aplicando un descuento general",
+    "authType": "actor2",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "modifierType": "discount",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "modifierRate": "3.3337373372323"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-SALE-MODIFIER-004",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Sales - Modifiers - Manual Surcharge (dispatch)",
+      "testScope": "regression"
+    },
+    "description": "Dispatch - completa una venta aplicando un recargo manual",
+    "authType": "actor2",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "modifierType": "surcharge",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001",
+      "modifierRate": "3.3337373372323"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
+  }
+]

@@ -6,7 +6,7 @@ playwright-report/
 test-results/
 
 # Estados de autenticación de las aplicaciones
-e2e/Wanqara/.auth/
+e2e/Wanqara/harness/.auth/
 e2e/WanqaraChef/.auth/
 
 # Variables de entorno y scripts locales
@@ -21,3 +21,5 @@ export-seeds.js
 
 PLANTILLA-AGY.md
 extracted-financial-seeds.json
+
+.vscode/

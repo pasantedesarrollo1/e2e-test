@@ -1,0 +1,268 @@
+[
+  {
+    "id": "ADMIN-CROSS-SALES-001-1",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "Admin Cross Sales Anti-Cross Validation",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Admin Sales Anti-Cross Validation for Wanqara 001 (Ventas)",
+    "authType": "actor1",
+    "transaction": {
+      "path": "/admin/ventas/add",
+      "endpoint": "/api/v2/billing/sales",
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": "EFECTIVO"
+    },
+    "sucursales": [
+      {
+        "name": "Wanqara",
+        "combinations": [
+          {
+            "bodega": "Bodega de Garantias",
+            "caja": "Caja 020"
+          },
+          {
+            "bodega": "Bodega de Showroom",
+            "caja": "021"
+          },
+          {
+            "bodega": "Bodega de Backup",
+            "caja": "Caja 020"
+          }
+        ],
+        "code": "001"
+      }
+    ],
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-CROSS-SALES-001-2",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "Admin Cross Sales Anti-Cross Validation",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios 100 (Ventas)",
+    "authType": "actor3",
+    "transaction": {
+      "path": "/admin/ventas/add",
+      "endpoint": "/api/v2/billing/sales",
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": "EFECTIVO"
+    },
+    "sucursales": [
+      {
+        "name": "Wanqara Comercios",
+        "combinations": [
+          {
+            "bodega": "Bodega Wanqara Comercios 01",
+            "caja": "Caja Wanqara Comercios 01"
+          },
+          {
+            "bodega": "Bodega Wanqara Comercios 02",
+            "caja": "Caja Wanqara Comercios 02"
+          }
+        ],
+        "code": "100"
+      }
+    ],
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-CROSS-SALES-001-3",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "Admin Cross Sales Anti-Cross Validation",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios Dispatch 101 (Ventas)",
+    "authType": "actor2",
+    "transaction": {
+      "path": "/admin/ventas/add",
+      "endpoint": "/api/v2/billing/sales",
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": "EFECTIVO"
+    },
+    "sucursales": [
+      {
+        "name": "Wanqara Comercios Dispatch",
+        "combinations": [
+          {
+            "bodega": "Bodega Wanqara Comercios Dispatch 01",
+            "caja": "Caja Wanqara Comercios Dispatch 01"
+          },
+          {
+            "bodega": "Bodega Wanqara Comercios Dispatch 02",
+            "caja": "Caja Wanqara Comercios Dispatch 02"
+          }
+        ],
+        "code": "101"
+      }
+    ],
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-CROSS-SALES-002-1",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "Admin Cross Sales Anti-Cross Validation",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Admin Sales Anti-Cross Validation for Wanqara 001 (Pre-Ventas)",
+    "authType": "actor1",
+    "transaction": {
+      "path": "/admin/pre-sale/add",
+      "endpoint": "/api/v2/billing/pre-sales",
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": "EFECTIVO"
+    },
+    "sucursales": [
+      {
+        "name": "Wanqara",
+        "combinations": [
+          {
+            "bodega": "Bodega de Garantias",
+            "caja": "Caja 020"
+          },
+          {
+            "bodega": "Bodega de Showroom",
+            "caja": "021"
+          },
+          {
+            "bodega": "Bodega de Backup",
+            "caja": "Caja 020"
+          }
+        ],
+        "code": "001"
+      }
+    ],
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-CROSS-SALES-002-2",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "Admin Cross Sales Anti-Cross Validation",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios 100 (Pre-Ventas)",
+    "authType": "actor3",
+    "transaction": {
+      "path": "/admin/pre-sale/add",
+      "endpoint": "/api/v2/billing/pre-sales",
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": "EFECTIVO"
+    },
+    "sucursales": [
+      {
+        "name": "Wanqara Comercios",
+        "combinations": [
+          {
+            "bodega": "Bodega Wanqara Comercios 01",
+            "caja": "Caja Wanqara Comercios 01"
+          },
+          {
+            "bodega": "Bodega Wanqara Comercios 02",
+            "caja": "Caja Wanqara Comercios 02"
+          }
+        ],
+        "code": "100"
+      }
+    ],
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-CROSS-SALES-002-3",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "Admin Cross Sales Anti-Cross Validation",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios Dispatch 101 (Pre-Ventas)",
+    "authType": "actor2",
+    "transaction": {
+      "path": "/admin/pre-sale/add",
+      "endpoint": "/api/v2/billing/pre-sales",
+      "clientCedula": "0000000001",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": "EFECTIVO"
+    },
+    "sucursales": [
+      {
+        "name": "Wanqara Comercios Dispatch",
+        "combinations": [
+          {
+            "bodega": "Bodega Wanqara Comercios Dispatch 01",
+            "caja": "Caja Wanqara Comercios Dispatch 01"
+          },
+          {
+            "bodega": "Bodega Wanqara Comercios Dispatch 02",
+            "caja": "Caja Wanqara Comercios Dispatch 02"
+          }
+        ],
+        "code": "101"
+      }
+    ],
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
+  }
+]

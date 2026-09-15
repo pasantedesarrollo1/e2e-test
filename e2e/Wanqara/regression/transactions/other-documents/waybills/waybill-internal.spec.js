@@ -1,116 +1,84 @@
-import { test, expect } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
-import { SEED, getElectronicInvoicingAuthType } from "../../../../harness/seed.js";
-import { getSessionPath } from "../../../../harness/auth.js";
+import { expect, test } from "@playwright/test";
+import { requirePosCredentials } from "../../../../harness/config/settings.js";
 import {
   CARRIER_CASES,
   assignCarrier,
-  fillInternalWaybillForm,
-  fillVehiclePlate,
   fillAddressDetails,
-  searchAndSelectShipmentProduct,
+  fillInternalWaybillForm,
   fillShipmentAmount,
-  submitWaybillAndVerify,
-} from "./harness/waybill-flow.js";
+  fillVehiclePlate,
+  searchAndSelectShipmentProduct,
+  submitWaybillAndVerify} from "./harness/waybill-helpers.js";
 
-test.describe.serial("Waybills — Internal Waybill @regression", () => {
-  requirePosCredentials(test);
+import scenarios from "./0-json-data/waybill-internal.json" with { type: "json" };
+import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";
 
-  test.use({ storageState: getSessionPath(getElectronicInvoicingAuthType()) });
+test.describe.serial("Waybills - Internal Waybill", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
+    test(
+      scenario.only ? "Creates an internal waybill (focus)" : "Creates an internal waybill",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ page }) => {
+        test.setTimeout(180_000);
 
-  test("creates an internal waybill validating all carrier assignment methods", async ({ page }) => {
-    test.setTimeout(180_000);
+        await test.step("Fill in the waybill information (dates, warehouse, and checkout)", async () => {
+          await fillInternalWaybillForm(page, {
+            authType: scenario.authType,
+            warehouseName: scenario.waybillData.warehouseName,
+            checkoutName: scenario.waybillData.checkoutName});
+        });
 
-    await test.step("Fill in the waybill information (dates, warehouse, and checkout)", async () => {
-      await fillInternalWaybillForm(page, {
-        tenantBaseUrl,
-        warehouseName: SEED.pos.warehouse,
-        checkoutName: SEED.pos.checkout,
-      });
-    });
+        await test.step("Enter the vehicle license plate", async () => {
+          await fillVehiclePlate(page, scenario.waybillData.vehiclePlate);
+        });
 
-    await test.step("Enter the vehicle license plate", async () => {
-      await fillVehiclePlate(page, SEED.waybills.vehiclePlate);
-    });
+        if (!scenario.waybillData.isLongProductSale) {
+          for (const { label, carrier } of CARRIER_CASES) {
+            const isLast = carrier === CARRIER_CASES[CARRIER_CASES.length - 1].carrier;
 
-    for (const { label, carrier } of CARRIER_CASES) {
-      const isLast = carrier === CARRIER_CASES[CARRIER_CASES.length - 1].carrier;
+            await test.step(`Assign the carrier using ${label}`, async () => {
+              await assignCarrier(page, carrier, scenario.waybillData.carrierParams);
+              await expect(page.getByText(/Empleado Test 1.*Identificaci.n:/i)).toBeVisible();
+            });
 
-      await test.step(`Assign the carrier using ${label}`, async () => {
-        await assignCarrier(page, carrier);
-        await expect(page.getByText(/Empleado Test 1.*Identificación:/i)).toBeVisible();
-      });
+            if (!isLast) {
+              await test.step(`Clear carrier assignment after ${label}`, async () => {
+                const clearBtn = page.locator(".tw-flex > .tw-flex.tw-gap-1")
+                  .getByRole("button")
+                  .last();
+                await clearBtn.click();
+                await expect(page.getByText(/Empleado Test 1.*Identificaci.n:/i)).not.toBeVisible();
+              });
+            }
+          }
+        } else {
+           await test.step("Assign carrier", async () => {
+             await assignCarrier(page, "cedula", scenario.waybillData.carrierParams);
+           });
+        }
 
-      if (!isLast) {
-        await test.step(`Clear carrier assignment after ${label}`, async () => {
-          const clearBtn = page.locator(".tw-flex > .tw-flex.tw-gap-1")
-            .getByRole("button")
-            .last();
-          await clearBtn.click();
-          await expect(page.getByText(/Empleado Test 1.*Identificación:/i)).not.toBeVisible();
+        await test.step("Enter the delivery information", async () => {
+          await fillAddressDetails(page, {
+            address: scenario.waybillData.address,
+            reason: scenario.waybillData.reason,
+            route: scenario.waybillData.route,
+            destinationSubsidiary: scenario.waybillData.destinationSubsidiary});
+        });
+
+        await test.step("Search for and select the shipment product", async () => {
+          await searchAndSelectShipmentProduct(page, scenario.waybillData.productName);
+        });
+
+        await test.step("Enter the shipment quantity", async () => {
+          await fillShipmentAmount(page, scenario.waybillData.shipmentAmountInternal);
+        });
+
+        await test.step("Save the waybill and verify the redirect", async () => {
+          await submitWaybillAndVerify(page, );
         });
       }
-    }
-
-    await test.step("Enter the delivery information", async () => {
-      await fillAddressDetails(page, {
-        address: SEED.waybills.address,
-        reason: SEED.waybills.reason,
-        route: SEED.waybills.route,
-        destinationSubsidiary: SEED.waybills.destinationSubsidiary,
-      });
-    });
-
-    await test.step("Search for and select the shipment product", async () => {
-      await searchAndSelectShipmentProduct(page, SEED.products.estandar.name);
-    });
-
-    await test.step("Enter the shipment quantity", async () => {
-      await fillShipmentAmount(page, SEED.waybills.shipmentAmountInternal);
-    });
-
-    await test.step("Save the waybill and verify the redirect", async () => {
-      await submitWaybillAndVerify(page, { tenantBaseUrl });
-    });
-  });
-
-  test("creates an internal waybill with a long product name", async ({ page }) => {
-    test.setTimeout(180_000);
-
-    await test.step("Fill internal waybill form", async () => {
-      await fillInternalWaybillForm(page, {
-        tenantBaseUrl,
-        warehouseName: SEED.pos.warehouse,
-        checkoutName: SEED.pos.checkout,
-      });
-    });
-
-    await test.step("Enter vehicle plate and carrier", async () => {
-      await fillVehiclePlate(page, SEED.waybills.vehiclePlate);
-      await assignCarrier(page, "cedula");
-    });
-
-    await test.step("Enter delivery information", async () => {
-      await fillAddressDetails(page, {
-        address: SEED.waybills.address,
-        reason: SEED.waybills.reason,
-        route: SEED.waybills.route,
-        destinationSubsidiary: SEED.waybills.destinationSubsidiary,
-      });
-    });
-
-    await test.step("Search and select the long product name", async () => {
-      await searchAndSelectShipmentProduct(page, SEED.products.estandarLargo.name);
-    });
-
-    await test.step("Enter shipment quantity", async () => {
-      await fillShipmentAmount(page, SEED.waybills.shipmentAmountInternal);
-    });
-
-    await test.step("Save internal waybill and verify", async () => {
-      await submitWaybillAndVerify(page, { tenantBaseUrl });
-    });
+    );
   });
 });

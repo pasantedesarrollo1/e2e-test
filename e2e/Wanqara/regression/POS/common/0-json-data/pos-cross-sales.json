@@ -1,0 +1,100 @@
+[
+  {
+    "id": "POS-CROSS-SALES-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "POS sale in branch 100 with receipts",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "POS Sales with Sequential Validation - Commerce 100",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "type": "retail-sale",
+    "environment": "Commerce 100",
+    "authType": "actor3",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": {
+        "label": "EFECTIVO"
+      },
+      "printTicket": false,
+      "openDrawer": false,
+      "clientCedula": "0000000001",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  },
+  {
+    "id": "POS-CROSS-SALES-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "POS sale in branch 101 with receipts",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "POS Sales with Sequential Validation - Commerce 101",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "type": "retail-sale",
+    "environment": "Commerce Dispatch 101",
+    "authType": "actor2",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": {
+        "label": "EFECTIVO"
+      },
+      "printTicket": false,
+      "openDrawer": false,
+      "clientCedula": "0000000001",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
+  },
+  {
+    "id": "POS-CROSS-SALES-003",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Creates order in Chef and charges it verifying access_key",
+    "metadata": {
+      "ws": "WS-1004",
+      "tes": "TES-213",
+      "release": "v7.9.1",
+      "summary": "POS Restaurant - Sale with Electronic Invoice",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "type": "restaurant-flow",
+    "environment": "POS Restaurant",
+    "authType": "actor1",
+    "chefOrderParams": {
+      "productName": "Caja de alitas de pollo (100 u)",
+      "printTicket": false,
+      "openDrawer": false,
+      "clientCedula": "0000000001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "cleanupReason": "Limpieza automática previa de tests de ventas cruzadas",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
+  }
+]

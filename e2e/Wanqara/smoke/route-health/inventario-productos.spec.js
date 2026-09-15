@@ -1,14 +1,13 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../harness/settings.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
+import { assertMainContains, assertPageTitle, assertTextContains, assertTextVisible } from "./harness/smoke-assertions.js";
 import { generateSmokeTests } from "./harness/smoke-nav.js";
-import { assertPageTitle, assertTextVisible, assertTextContains, assertMainContains } from "./harness/smoke-assertions.js";
 
 test.describe("Smoke — Inventario > Productos y Servicios", { tag: "@smoke" }, () => {
   requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
 
-  generateSmokeTests(tenantBaseUrl, [
+  generateSmokeTests([
     { path: "/admin/products/list",       assert: (p) => assertPageTitle(p, "Gestión de Productos") },
     { path: "/admin/services/list",       assert: (p) => assertPageTitle(p, "Gestión de Servicios") },
     { path: "/admin/productPriceList",    assert: (p) => assertTextContains(p, "Gestión de Precios de productos") },

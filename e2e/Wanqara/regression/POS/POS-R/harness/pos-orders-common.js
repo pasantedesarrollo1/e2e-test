@@ -1,22 +1,22 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../harness/ui-helpers.js";
-import { processOrderClosure } from "./pos-close-order.js";
-import { ensureAuthenticated, loginAndSelectSubsidiary } from "../../../../harness/auth.js";
-import { ensureChefAuthenticated } from "../../../../harness/chef-auth.js";
-import { chefHarness, playwrightHarness } from "../../../../harness/settings.js";
-import { SEED } from "../../../../harness/seed.js";
+import { chefHarness, playwrightHarness } from "../../../../harness/config/settings.js";
+import { ensureAuthenticated, loginAndSelectSubsidiary } from "../../../../harness/helpers/auth/auth.js";
+import { ensureChefAuthenticated } from "../../../../harness/helpers/auth/chef-auth.js";
+import { selectClientByCedula } from '../../../../harness/helpers/people/client-helpers.js';
+import { expectSnackbar } from "../../../../harness/helpers/ui/ui-helpers.js";
+import { completePayment } from "../../harness/payments/pos-payment.js";
+import { openDrawer } from '../../harness/sales/pos-drawer-helpers.js';
 import {
-  selectTable,
-  searchAndSelectProduct,
   addProductToCart,
+  searchAndSelectProduct,
+  selectTable,
   submitOrder,
 } from "./chef-orders-flow.js";
-import { selectClientByCedula, openDrawer } from "../../harness/pos-sale-flow.js";
-import { completePayment } from "../../harness/pos-payment.js";
+import { processOrderClosure } from "./pos-close-order.js";
 
-export async function navigateToRestaurantPOS(page, tenantBaseUrl) {
+export async function navigateToRestaurantPOS(page, subsidiaryName) {
+  if (!subsidiaryName) throw new Error("navigateToRestaurantPOS requires subsidiaryName parameter");
   await ensureAuthenticated(page, {
-      tenantBaseUrl,
       targetPath: "/pos/restaurant-home",
       authType: "restaurant" 
     });
@@ -28,26 +28,32 @@ export async function navigateToRestaurantPOS(page, tenantBaseUrl) {
 
   if (await loginBtn.isVisible()) {
     await loginAndSelectSubsidiary(page, {
-      tenantBaseUrl,
       login: playwrightHarness.users.restaurant,
-      subsidiaryName: SEED.subsidiaries.restaurant.name,
+      subsidiaryName,
     });
-    await page.goto(`${tenantBaseUrl}/pos/restaurant-home`);
+    await page.goto("/pos/restaurant-home");
     await expect(clienteLabel).toBeVisible({ timeout: 60_000 });
   }
 }
 
 export async function createChefOrder(page, {
-  productName = SEED.products.estandar.name,
-  quantity    = 1,
+  productName,
+  quantity = 1,
+  chefLogin,
+  chefSubsidiary,
+  chefSubsidiaryCode
 } = {}) {
+  if (!productName) throw new Error("createChefOrder requires productName in options");
   await ensureChefAuthenticated(page, {
     chefBaseUrl: chefHarness.baseUrl,
     targetPath: "/tables",
+    login: chefLogin,
+    subsidiary: chefSubsidiary,
+    subsidiaryCode: chefSubsidiaryCode
   });
 
   await expect(page).toHaveURL(/\/tables/);
-  await expect(page.getByText(chefHarness.login.ruc).first()).toBeAttached();
+
   await expect(
     page.locator("ion-segment-button").filter({ hasText: "Todos" })
   ).toBeVisible();
@@ -60,14 +66,16 @@ export async function createChefOrder(page, {
   return tableName;
 }
 
-export async function finalizeSaleWithPayment(page) {
-  await selectClientByCedula(page, SEED.clients.consumidorFinal.cedula);
+export async function finalizeSaleWithPayment(page, cedula, paymentMethod) {
+  if (!cedula) throw new Error("finalizeSaleWithPayment requires cedula parameter");
+  if (!paymentMethod) throw new Error("finalizeSaleWithPayment requires paymentMethod parameter");
+  await selectClientByCedula(page, cedula);
 
   const finishSaleButton = page.getByRole("button", { name: /Terminar Venta/i });
   await finishSaleButton.click();
   await page.waitForURL(/\/pos\/restaurant-payments/);
 
-  await completePayment(page);
+  await completePayment(page, { paymentMethod });
 }
 
 export async function addProductToExistingOrder(page, productName) {
@@ -121,7 +129,7 @@ export async function addProductToExistingOrder(page, productName) {
 export async function collectOrder(page) {
   const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar Pago/i }).first();
   // Fallback in case the exact accessible name doesn't include both, we can just use the button that has 'Cobrar' but not 'pedidos'
-  const fallbackBtn = page.getByRole("button", { name: /^Cobrar$/i });
+  const fallbackBtn = page.getByRole("button", { name: /^Cobrar( Orden)?$/i });
   
   await expect(cobrarBtn.or(fallbackBtn)).toBeVisible();
   if (await cobrarBtn.isVisible()) {
@@ -175,7 +183,7 @@ export async function navigateToChangeOrderStatusFromOptions(page) {
   for (let i = 0; i < 5; i++) {
     if (await changeStatusOption.isVisible()) break;
     await page.mouse.wheel(0, 600); 
-    try { await changeStatusOption.waitFor({ state: "visible", timeout: 500 }); break; } catch {}
+    try { await changeStatusOption.waitFor({ state: "visible", timeout: 500 }); break; } catch { /* Ignore timeout, try scrolling again */ }
   }
 
   await expect(changeStatusOption).toBeVisible();
@@ -184,8 +192,9 @@ export async function navigateToChangeOrderStatusFromOptions(page) {
   await page.waitForURL(/\/pos\/change-order-status/);
 }
 
-export async function closeAllActiveOrders(page, tenantBaseUrl) {
-  await navigateToRestaurantPOS(page, tenantBaseUrl);
+export async function closeAllActiveOrders(page, subsidiaryName, reason) {
+  if (!reason) throw new Error("closeAllActiveOrders requires a reason parameter");
+  await navigateToRestaurantPOS(page, subsidiaryName);
 
   while (true) {
     await navigateToCloseOrderFromOptions(page);
@@ -196,21 +205,21 @@ export async function closeAllActiveOrders(page, tenantBaseUrl) {
     await expect(emptyMessage.or(orderCard)).toBeVisible({ timeout: 15000 });
 
     if (await emptyMessage.isVisible()) {
-      await page.goto(`${tenantBaseUrl}/pos/restaurant-home`);
+      await page.goto("/pos/restaurant-home");
       break;
     }
 
     await orderCard.click();
-    await processOrderClosure(page, SEED.restaurant.cleanupReason);
+    await processOrderClosure(page, reason);
 
-    await page.goto(`${tenantBaseUrl}/pos/restaurant-home`);
+    await page.goto("/pos/restaurant-home");
   }
 }
 
-export async function withActiveRestaurantOrder(page, tenantBaseUrl, actionCallback, orderOptions = {}) {
-  await closeAllActiveOrders(page, tenantBaseUrl);
+export async function withActiveRestaurantOrder(page, actionCallback, orderOptions = {}, posOptions = {}) {
+  await closeAllActiveOrders(page, posOptions.subsidiaryName, posOptions.cleanupReason);
   const activeTableName = await createChefOrder(page, orderOptions);
-  await navigateToRestaurantPOS(page, tenantBaseUrl);
+  await navigateToRestaurantPOS(page, posOptions.subsidiaryName);
   await openAndSelectOrder(page, activeTableName);
   await actionCallback(page, activeTableName);
 }

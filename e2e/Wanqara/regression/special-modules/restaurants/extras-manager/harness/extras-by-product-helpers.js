@@ -1,6 +1,9 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../../harness/ui-helpers.js";
-import { SEED } from "../../../../../harness/seed.js";
+import { expectSnackbar } from "../../../../../harness/helpers/ui/ui-helpers.js";
+
+const relationDeletedMsg = "Relaci.n eliminada";
+const noCategoriesMsg = "A.n no hay categor.as relacionadas";
+const loadingProductsMsg = "Cargando";
 
 /**
  * Tests the "Por producto" flow: relates products to a category and cleans them up.
@@ -18,20 +21,20 @@ export async function testByProductFlow(page, categoryName, productSearchTerm) {
     await expect(sidebarSearchInput).toBeVisible();
     await sidebarSearchInput.clear();
     await sidebarSearchInput.fill(productSearchTerm);
-    await page.waitForTimeout(500); // frontend debounce
+    await page.waitForTimeout(1500); // frontend debounce + network latency
 
-    const sidebarListItems = page.locator('aside').getByRole('listitem');
+    const sidebarListItems = page.locator('aside').locator('.v-list-item');
     const sidebarCount = await sidebarListItems.count();
 
     for (let i = 0; i < sidebarCount; i++) {
       await sidebarListItems.nth(i).click();
       await page.waitForTimeout(500); // wait for detail panel to load
 
-      const deleteRelationBtn = page.getByRole('button', { name: /Eliminar relación/i }).first();
+      const deleteRelationBtn = page.getByRole('button', { name: /Eliminar relaci.n/i }).first();
       while (await deleteRelationBtn.isVisible()) {
         await deleteRelationBtn.click();
 
-        const confirmDeleteBtn = page.getByRole('dialog').getByRole('button', { name: /Eliminar relación/i }).last();
+        const confirmDeleteBtn = page.getByRole('dialog').getByRole('button', { name: /Eliminar relaci.n/i }).last();
         await expect(confirmDeleteBtn).toBeVisible();
 
         const deleteResponsePromise = page.waitForResponse(
@@ -40,11 +43,11 @@ export async function testByProductFlow(page, categoryName, productSearchTerm) {
         await confirmDeleteBtn.click();
         await deleteResponsePromise;
 
-        await expectSnackbar(page, new RegExp(SEED.extrasManager.messages.relationDeleted, "i"));
+        await expectSnackbar(page, new RegExp(relationDeletedMsg, "i"));
         await page.waitForTimeout(500); // let UI update before checking again
       }
       
-      const emptyMsg = page.getByText(new RegExp(SEED.extrasManager.messages.noCategories, "i"));
+      const emptyMsg = page.getByText(new RegExp(noCategoriesMsg, "i"));
       await expect(emptyMsg).toBeVisible();
     }
   };
@@ -57,7 +60,7 @@ export async function testByProductFlow(page, categoryName, productSearchTerm) {
     const dialog = page.getByRole('dialog');
     await expect(dialog).toBeVisible();
 
-    const categorySearchInput = dialog.getByRole('textbox', { name: /Buscar categoría extra/i });
+    const categorySearchInput = dialog.getByRole('textbox', { name: /Buscar categor.a extra/i });
     await expect(categorySearchInput).toBeVisible();
     
     const categorySearchResponse = page.waitForResponse(
@@ -73,18 +76,20 @@ export async function testByProductFlow(page, categoryName, productSearchTerm) {
     const productSearchInput = dialog.getByRole('textbox', { name: /Buscar producto/i, exact: true });
     await expect(productSearchInput).toBeVisible();
     
-    const loadingIndicator = dialog.getByText(new RegExp(SEED.extrasManager.messages.loadingProducts, "i"));
+    const loadingIndicator = dialog.getByText(new RegExp(loadingProductsMsg, "i"));
     await expect(loadingIndicator).toBeHidden({ timeout: 15000 }).catch(() => {});
 
-    const productSearchResponse = page.waitForResponse(
-      (res) => res.url().includes("/inventory/products-list") && res.request().method() === "GET" && res.status() === 200
-    );
     await productSearchInput.fill(productSearchTerm);
-    await productSearchResponse;
+    await page.waitForTimeout(1500); // frontend debounce + network latency
 
-    const productItems = dialog.getByRole('listitem').filter({ hasText: /\$/ }); 
+    const productItems = dialog.locator('.v-list-item').filter({ hasText: /\$/ });
+    await expect(productItems.first()).toBeVisible({ timeout: 5000 });
     const productCount = await productItems.count();
     
+    if (productCount === 0) {
+      throw new Error("No products found to associate. Check the search term or locator.");
+    }
+
     for (let i = 0; i < productCount; i++) {
       await productItems.nth(i).click();
     }

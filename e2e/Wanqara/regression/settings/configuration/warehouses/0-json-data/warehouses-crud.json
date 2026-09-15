@@ -1,0 +1,74 @@
+[
+  {
+    "id": "WAREHOUSE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Warehouse Management CRUD - Retail",
+      "testScope": "regression"
+    },
+    "description": "Crear, buscar y eliminar Bodega (Retail)",
+    "authType": "actor3",
+    "warehouseData": {
+      "name": "Bodega Test Ret",
+      "code": "1111",
+      "address": "Automated Test Address Ret",
+      "description": "Automated Test Desc Ret"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  },
+  {
+    "id": "WAREHOUSE-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Warehouse Management CRUD - Dispatch",
+      "testScope": "regression"
+    },
+    "description": "Crear, buscar y eliminar Bodega (Dispatch)",
+    "authType": "actor2",
+    "warehouseData": {
+      "name": "Bodega Test Dis",
+      "code": "1112",
+      "address": "Automated Test Address Dis",
+      "description": "Automated Test Desc Dis"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
+  },
+  {
+    "id": "WAREHOUSE-003",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Warehouse Management CRUD - Restaurant",
+      "testScope": "regression"
+    },
+    "description": "Crear, buscar y eliminar Bodega (Restaurant)",
+    "authType": "actor1",
+    "warehouseData": {
+      "name": "Bodega Test Res",
+      "code": "1113",
+      "address": "Automated Test Address Res",
+      "description": "Automated Test Desc Res"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
+  }
+]

@@ -1,71 +1,52 @@
-import { test } from "../harness/pos-fixtures.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { SEED } from "../../../harness/seed.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { runPosSaleFlow } from "../harness/pos-sale-flow.js";
-import { selectFirstVariant, selectFirstSerie } from "../harness/pos-products.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 
-function buildProbeProducts({ dispatchEnabled }) {
-  return [
-    {
-      ...SEED.products.estandar,
-      searchTerm: null,
-      afterProductSelect: null,
-    },
-    {
-      ...SEED.products.serie,
-      searchTerm: null,
-      type: "Serie-por-nombre",
-      afterProductSelect: dispatchEnabled ? null : selectFirstSerie,
-    },
-    {
-      ...SEED.products.tallaColor,
-      searchTerm: null,
-      type: "TallaColor-por-nombre",
-      afterProductSelect: selectFirstVariant,
-    },
-  ];
-}
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-inventory-dispatch.json"), "utf-8")
+);
 
-async function executeSales(page, { tenantBaseUrl, dispatchEnabled }) {
-  const products = buildProbeProducts({ dispatchEnabled });
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { selectFirstSerie, selectFirstVariant } from "../harness/products/pos-products.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
 
-  for (const { name, type, searchTerm, afterProductSelect } of products) {
-    await test.step(`Sale [${type}] — ${name}`, async () => {
-      await runPosSaleFlow(page, {
-        tenantBaseUrl,
-        productName: name,
-        searchTerm,
-        afterProductSelect,
-      });
+const CALLBACK_MAP = {
+  selectFirstVariant,
+  selectFirstSerie
+};
+
+async function executeSales(page, { products, paymentMethod }) {
+  for (const product of products) {
+    const afterProductSelect = product.afterSelectCallback ? CALLBACK_MAP[product.afterSelectCallback] : null;
+    await test.step(`Sale [${product.type}] - ${product.name}`, async () => {
+      await expect(page).toHaveURL(/\/pos\/(home|restaurant-home)/);
+      await searchAndSelectProduct(page, { name: product.name, searchTerm: null });
+      if (afterProductSelect) {
+        await afterProductSelect(page);
+      }
+      await clickFinishSale(page);
+      await completePayment(page, { paymentMethod });
     });
   }
 }
 
-test.describe("POS Retail — Sales WITH Post-Sale Inventory Dispatch @regression", () => {
+test.describe.serial("POS Retail - Sale Inventory Dispatch", () => {
   requirePosCredentials(test);
 
-  test.use({ storageState: getSessionPath("dispatch") });
-
-  test("completes multiple sales seamlessly with dispatch enabled", async ({ posPage: page }) => {
-    test.setTimeout(180_000);
-    await executeSales(page, {
-      tenantBaseUrl: getTenantBaseUrl(),
-      dispatchEnabled: true,
-    });
-  });
-});
-
-test.describe("POS Retail — Sales WITHOUT Post-Sale Inventory Dispatch @regression", () => {
-  requirePosCredentials(test);
-
-  test.use({ storageState: getSessionPath("retail") });
-
-  test("completes multiple sales seamlessly with dispatch disabled", async ({ posPage: page }) => {
-    test.setTimeout(180_000);
-    await executeSales(page, {
-      tenantBaseUrl: getTenantBaseUrl(),
-      dispatchEnabled: false,
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    test(`completes multiple sales seamlessly with dispatch ${scenario.dispatchEnabled ? 'enabled' : 'disabled'}`, async ({ posPage: page }) => {
+      test.setTimeout(180_000);
+      
+      await executeSales(page, {
+        products: scenario.products,
+        paymentMethod: scenario.paymentMethod
+      });
     });
   });
 });

@@ -1,6 +1,10 @@
 import { expect } from "@playwright/test";
-import { expectSnackbar } from "../../../../../harness/ui-helpers.js";
-import { SEED } from "../../../../../harness/seed.js";
+import { expectSnackbar } from "../../../../../harness/helpers/ui/ui-helpers.js";
+
+const categoryCreatedMsg = /Categor.a( extra)? creada/i;
+const changesSavedMsg = /Cambios de productos extra guardados/i;
+const cannotDeleteMsg = /No se puede eliminar una categor.a con productos relacionados/i;
+const categoryDeletedMsg = /Categor.a extra eliminada/i;
 
 /**
  * Creates an extra category using the UI.
@@ -8,12 +12,12 @@ import { SEED } from "../../../../../harness/seed.js";
  * @param {string} categoryName 
  */
 export async function createExtraCategory(page, categoryName) {
-  const categoriesTab = page.getByRole('button', { name: /Categorías/i });
+  const categoriesTab = page.getByRole('button', { name: /Categor.as/i });
   if (await categoriesTab.isVisible()) {
     await categoriesTab.click();
   }
 
-  const createCategoryBtn = page.getByRole('button', { name: /Nueva categoría extra/i });
+  const createCategoryBtn = page.getByRole('button', { name: /Nueva categor.a extra/i });
   await expect(createCategoryBtn).toBeVisible();
   await createCategoryBtn.click();
 
@@ -36,7 +40,7 @@ export async function createExtraCategory(page, categoryName) {
   await saveButton.click();
   await responsePromise;
 
-  await expectSnackbar(page, SEED.extrasManager.messages.categoryCreated);
+  await expectSnackbar(page, categoryCreatedMsg);
 }
 
 /**
@@ -47,7 +51,7 @@ export async function createExtraCategory(page, categoryName) {
  * @param {string[]} productNamesToSelect
  */
 export async function assignProductsToExtraCategory(page, categoryName, productSearchTerm, productNamesToSelect) {
-  const categorySearchInput = page.getByPlaceholder(/Buscar categoría/i);
+  const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
   await expect(categorySearchInput).toBeVisible();
   await categorySearchInput.fill(categoryName);
 
@@ -85,7 +89,7 @@ export async function assignProductsToExtraCategory(page, categoryName, productS
   await saveChangesBtn.click();
   await responsePromise;
   
-  await expectSnackbar(page, SEED.extrasManager.messages.changesSaved);
+  await expectSnackbar(page, changesSavedMsg);
 }
 
 /**
@@ -94,11 +98,11 @@ export async function assignProductsToExtraCategory(page, categoryName, productS
  * @param {import('@playwright/test').Page} page 
  */
 export async function verifyDeletionConstraintsAndRemoveProducts(page) {
-  const deleteCategoryBtn = page.getByRole("button", { name: "Eliminar categoría" });
+  const deleteCategoryBtn = page.getByRole("button", { name: /Eliminar categor.a/i });
   await expect(deleteCategoryBtn).toBeVisible();
   await deleteCategoryBtn.click();
 
-  const cannotDeleteWarning = page.getByText(SEED.extrasManager.messages.cannotDelete);
+  const cannotDeleteWarning = page.getByText(cannotDeleteMsg);
   await expect(cannotDeleteWarning).toBeVisible();
 
   const closeBtn = page.getByRole("button", { name: "Cerrar" });
@@ -124,7 +128,7 @@ export async function verifyDeletionConstraintsAndRemoveProducts(page) {
   await saveChangesBtn.click();
   await responsePromise;
 
-  await expectSnackbar(page, SEED.extrasManager.messages.changesSaved);
+  await expectSnackbar(page, changesSavedMsg);
 }
 
 /**
@@ -132,7 +136,7 @@ export async function verifyDeletionConstraintsAndRemoveProducts(page) {
  * @param {import('@playwright/test').Page} page 
  */
 export async function deleteExtraCategory(page) {
-  const deleteCategoryBtn = page.getByRole("button", { name: "Eliminar categoría" });
+  const deleteCategoryBtn = page.getByRole("button", { name: /Eliminar categor.a/i });
   await expect(deleteCategoryBtn).toBeVisible();
   await deleteCategoryBtn.click();
 
@@ -148,5 +152,5 @@ export async function deleteExtraCategory(page) {
   await confirmDeleteBtn.click();
   await responsePromise;
 
-  await expectSnackbar(page, SEED.extrasManager.messages.categoryDeleted);
+  await expectSnackbar(page, categoryDeletedMsg);
 }

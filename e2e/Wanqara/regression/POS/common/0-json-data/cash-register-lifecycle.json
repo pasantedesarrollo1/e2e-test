@@ -1,0 +1,27 @@
+[
+  {
+    "id": "CASH-REGISTER-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "validates conditional cash register open and final close",
+    "metadata": {
+      "ws": "WS-1032",
+      "tes": "TES-230",
+      "release": "v7.9.2",
+      "summary": "Cash Register Lifecycle - Retail",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "environment": "Retail",
+    "authType": "actor3",
+    "basePath": "/pos/home",
+    "openingAmount": "10",
+    "subsidiaryName": "Wanqara Comercios",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "0000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  }
+]

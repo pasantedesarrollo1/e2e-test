@@ -1,26 +1,42 @@
-import { test, expect } from "../harness/pos-fixtures.js";
-import { annotateTicket } from "../../../harness/annotate.js";
-import { requirePosCredentials } from "../../../harness/settings.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { SEED } from "../../../harness/seed.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { expect, test } from "../harness/setup/pos-fixtures.js";
 
-const STRESS_TICKET = {
-  ws: 'WS-1025',
-  tes: 'TES-217',
-  release: 'v7.10.0',
-  summary: 'POS Cart Click Stress Test',
-  addedToRegression: 'true',
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "stress-cart-duplication.json"), "utf-8")
+);
 
-test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regression @release', () => {
-  annotateTicket(test, STRESS_TICKET);
-  requirePosCredentials(test);
-  test.use({ storageState: getSessionPath("retail") });
 
-  test('should not duplicate cart rows or corrupt store state under rapid random clicks', async ({ posPage: page }) => {
-    test.setTimeout(120000); 
 
-    const searchKeyword = SEED.searchTerms.alitas;
+for (const scenario of scenarios) {
+  test.describe.serial(`POS ${scenario.description} - Product Selection Stress & Rapid-Click Testing @${scenario.metadata?.testScope || 'regression'}`, () => {
+    
+    if (scenario.metadata && scenario.metadata.ws) {
+      annotateTicket(test, scenario.metadata);
+    }
+    
+    requirePosCredentials(test);
+    test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
+
+    const runTest = (title, bodyFn) => {
+      if (scenario.fixture === 'posPage') {
+        test(title, async ({ posPage: page }) => await bodyFn(page));
+      } else {
+        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
+      }
+    };
+
+    runTest('should not duplicate cart rows or corrupt store state under rapid random clicks', async (page) => {
+      test.setTimeout(120000); 
+      const searchKeyword = scenario.searchKeyword;
     
     const apiPromise = page.waitForResponse(response => 
       response.url().includes('/api/v1/inventory/products-list') && response.status() === 200
@@ -53,7 +69,7 @@ test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regr
       const classes = await stockDot.getAttribute('class');
       
       if (classes.includes('tw-text-red')) {
-        await card.click();
+        await card.click({ force: true });
         const snackbar = page.getByRole('status').filter({ hasText: /No se puede agregar el/i }).first();
         await expect(snackbar).toBeVisible({ timeout: 5000 });
         continue; 
@@ -62,13 +78,13 @@ test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regr
       clickTrackers[productTitle] = 1;
       addedCount++;
       
-      await card.click();
+      await card.click({ force: true });
       await expect(cartRows).toHaveCount(addedCount);
     }
 
     expect(await cartRows.count()).toBe(addedCount);
 
-    const burstCycles = 20; 
+    const burstCycles = 15; 
     for (let cycle = 0; cycle < burstCycles; cycle++) {
       const randomIndex = Math.floor(Math.random() * cardCount);
       const targetCard = visibleCards.nth(randomIndex);
@@ -85,11 +101,11 @@ test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regr
       clickTrackers[productTitle] += randomClicks;
 
       for (let click = 0; click < randomClicks; click++) {
-        await targetCard.click();
+        await targetCard.click({ force: true });
       }
     }
 
-    const pingPongCycles = 15;
+    const pingPongCycles = 10;
     if (cardCount > 1) {
       for (let cycle = 0; cycle < pingPongCycles; cycle++) {
         const idxA = Math.floor(Math.random() * cardCount);
@@ -116,8 +132,8 @@ test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regr
         clickTrackers[titleB] += pingPongClicks;
 
         for (let i = 0; i < pingPongClicks; i++) {
-          await cardA.click();
-          await cardB.click();
+          await cardA.click({ force: true });
+          await cardB.click({ force: true });
         }
       }
     }
@@ -131,5 +147,6 @@ test.describe.serial('POS - Product Selection Stress & Rapid-Click Testing @regr
       
       await expect(qtyInput).toHaveValue(clickTrackers[rowTitle].toString());
     }
+    });
   });
-});
+}

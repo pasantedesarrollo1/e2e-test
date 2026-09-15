@@ -1,0 +1,29 @@
+[
+  {
+    "id": "CHANGE-ORDER-STATUS-FLOW-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1033",
+      "tes": "TES-228",
+      "release": "v7.10.0",
+      "summary": "POS Change Order Status Flow",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "actor1",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "cleanupReason": "Limpieza automtica pre-test",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "9999999999999",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001",
+    "loginMode": "cached",
+    "chefAuthType": "actor1",
+    "chefSubsidiary": "Wanqara",
+    "chefSubsidiaryCode": "001"
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "DSC-BASE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo Básico de Descuentos",
+      "testScope": "regression"
+    },
+    "description": "Retail - Flujo Base de Descuento (Pre-clean, Create, Search, Delete)",
+    "authType": "actor3",
+    "discountData": {
+      "name": "Descuento E2E Base Flow",
+      "description": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)",
+      "applicationMethod": "always",
+      "type": "fijo",
+      "discount": 10
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  }
+]

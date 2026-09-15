@@ -1,55 +1,33 @@
-import { test, expect } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
-import { getSessionPath } from "../../../../harness/auth.js";
-import { SEED, getDynamicDocumentType } from "../../../../harness/seed.js";
-import { runAdminPreSaleFlow, searchAndSelectProduct } from "../harness/admin-pre-sale-flow.js";
-import { selectFirstVariant } from "../../../POS/harness/pos-products.js";
+import { test } from "@playwright/test";
+import { requirePosCredentials } from "../../../../harness/config/settings.js";
+import { buildPreSaleMixedCart } from "../harness/admin-cart-helpers.js";
+import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
 
-const tenantBaseUrl = getTenantBaseUrl();
+import scenarios from "./0-json-data/admin-pre-sale-dispatch.json" with { type: "json" };
 
-async function buildMixedCart(page, dispatchEnabled = false) {
-  await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
-  await expect(page.locator("main").getByText(SEED.products.estandar.name, { exact: false }).first()).toBeVisible();
+import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";
 
-  await searchAndSelectProduct(page, { name: SEED.products.serie.name });
-  await expect(page.locator("main").getByText(SEED.products.serie.name, { exact: false }).first()).toBeVisible();
+test.describe("Admin Pre-Sales - Mixed Cart / Dispatch Logic", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
 
-  await searchAndSelectProduct(page, { name: SEED.products.tallaColor.name });
-  await selectFirstVariant(page);
-}
+    test(
+      scenario.only ? "Completes an admin pre-sale with mixed cart (focus)" : "Completes an admin pre-sale with mixed cart",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ page }) => {
+        test.setTimeout(120_000);
 
-test.describe("Admin Pre-Sales — Mixed Cart WITH Subsequent Dispatch @regression", () => {
-  requirePosCredentials(test);
-
-  test.use({ storageState: getSessionPath("dispatch") });
-
-  test("completes a pre-sale with a mixed cart with subsequent dispatch enabled", async ({ page }) => {
-    test.setTimeout(120_000);
-
-    await runAdminPreSaleFlow(page, {
-      tenantBaseUrl,
-      authType: "dispatch",
-      documentType: getDynamicDocumentType("dispatch"),
-      productName: null,
-      beforeFinish: async (p) => await buildMixedCart(p, true),
-    });
-  });
-});
-
-test.describe("Admin Pre-Sales — Mixed Cart WITHOUT Subsequent Dispatch @regression", () => {
-  requirePosCredentials(test);
-
-  test.use({ storageState: getSessionPath("retail") });
-
-  test("completes a pre-sale with a mixed cart without subsequent dispatch enabled", async ({ page }) => {
-    test.setTimeout(120_000);
-
-    await runAdminPreSaleFlow(page, {
-      tenantBaseUrl,
-      authType: "retail",
-      documentType: getDynamicDocumentType("retail"),
-      productName: null,
-      beforeFinish: async (p) => await buildMixedCart(p, false),
-    });
+        await test.step("Create Admin Pre-Sale with Mixed Cart", async () => {
+          await runAdminPreSaleFlow(page, {
+            authType: scenario.authType,
+            documentType: scenario.saleParams.documentType,
+              clientCedula: scenario.saleParams.clientCedula,
+              paymentMethod: scenario.saleParams.paymentMethod,
+            // Intentionally null so `runAdminPreSaleFlow` doesn't auto-add a default product
+            productName: null, 
+            beforeFinish: async (p) => await buildPreSaleMixedCart(p, scenario.saleParams.mixedCart)});
+        });
+      }
+    );
   });
 });

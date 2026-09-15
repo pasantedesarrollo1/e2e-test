@@ -1,0 +1,121 @@
+[
+  {
+    "id": "SALES-WITH-TIPS-COMBINATIONS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1040",
+      "tes": "TES-235",
+      "release": "v7.10.0",
+      "summary": "POS Sale with Tips Combinations",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "actor1",
+    "subsidiaryName": "Wanqara",
+    "tipToType": "3.3337373372323",
+    "products": {
+      "estandar": "Caja de alitas de pollo (100 u)",
+      "combo": "Combo alitas",
+      "servicio": "servicio alita",
+      "elaborado": "Porción de Alitas Marinadas"
+    },
+    "clients": {
+      "testCedula": "0000000001",
+      "consumidorFinalCedula": "9999999999999"
+    },
+    "case1": {
+      "ui": {
+        "subtotal": "$36.47",
+        "impuestos": "$5.47",
+        "total": "$41.94",
+        "propina": "$3.33"
+      },
+      "summary": {
+        "discount": "0",
+        "subtotal": "36.4724643877764",
+        "total": "41.94"
+      },
+      "root": {
+        "additional_tip": "3.33"
+      }
+    },
+    "case2": {
+      "ui": {
+        "descuentos": "$1.15",
+        "subtotal": "$33.21",
+        "impuestos": "$4.98",
+        "total": "$38.19",
+        "propina": "$3.33"
+      },
+      "summary": {
+        "discount": "1.145150198920518",
+        "subtotal": "33.205192466984682",
+        "total": "38.19"
+      },
+      "root": {
+        "additional_tip": "3.33"
+      }
+    },
+    "case3": {
+      "ui": {
+        "subtotal": "$11.15",
+        "impuestos": "$1.67",
+        "total": "$12.82",
+        "propina": "$3.33"
+      },
+      "summary": {
+        "discount": "0",
+        "subtotal": "11.1506616619979",
+        "total": "12.82"
+      },
+      "root": {
+        "additional_tip": "3.33"
+      }
+    },
+    "case4": {
+      "ui": {
+        "subtotal": "$3.38",
+        "impuestos": "$0.51",
+        "total": "$3.88",
+        "propina": "$3.33"
+      },
+      "summary": {
+        "discount": "0",
+        "subtotal": "3.3773263982716",
+        "total": "3.88"
+      },
+      "root": {
+        "additional_tip": "3.33"
+      }
+    },
+    "case5": {
+      "ui": {
+        "subtotal": "$35.50",
+        "impuestos": "$5.32",
+        "total": "$40.82",
+        "propina": "$3.33"
+      },
+      "summary": {
+        "discount": "0",
+        "subtotal": "35.495492864825718",
+        "total": "40.82"
+      },
+      "root": {
+        "additional_tip": "3.33"
+      }
+    },
+    "paymentMethod": "EFECTIVO",
+    "cleanupReason": "Limpieza automtica pre-test",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "9999999999999",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001",
+    "loginMode": "cached",
+    "chefAuthType": "actor1",
+    "chefSubsidiary": "Wanqara",
+    "chefSubsidiaryCode": "001"
+  }
+]

@@ -1,73 +1,44 @@
 import { test } from "@playwright/test";
-import { annotateTicket } from "../../../../harness/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
-import { getSessionPath } from "../../../../harness/auth.js";
-import { SEED, getDynamicDocumentType } from "../../../../harness/seed.js";
+import { requirePosCredentials } from "../../../../harness/config/settings.js";
+import { getSessionPath } from "../../../../harness/helpers/auth/auth.js";
 import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
-import { cancelFirstSaleAndVerify } from "../harness/cancel-sale-flow.js";
+import { cancelFirstSaleAndVerify } from "../harness/cancel-sale-helpers.js";
 
-const TICKET = {
-  ws: 'WS-840',
-  tes: 'TES-198',
-  release: 'v7.9.1',
-  summary: 'Cancel Pre-Sales — Admin',
-  splitFrom: 'cancel-sales.spec.js',
-  addedToRegression: null,
-};
+import scenarios from "./0-json-data/admin-pre-sale-cancellation.json" with { type: "json" };
+import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";
 
-const tenantBaseUrl = getTenantBaseUrl();
+test.describe.serial("Cancel Pre-Sales (Admin)", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
 
-test.describe.serial("Cancel Pre-Sales (Admin) @regression", () => {
-  annotateTicket(test, TICKET);
-  requirePosCredentials(test);
+    test(
+      scenario.only ? "Creates a pre-sale and cancels it (focus)" : "Creates a pre-sale and cancels it",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ browser }) => {
+        test.setTimeout(180_000);
+        
+        // Using fresh contexts across serial runs to guarantee state isolation
+        const context = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
+        const page = await context.newPage();
 
-  test("Restaurant (No Dispatch) - Creates a pre-sale and cancels it, verifying that the message is displayed without the switch", async ({ browser }) => {
-    test.setTimeout(180_000);
-    const context = await browser.newContext({ storageState: getSessionPath("restaurant") });
-    const page = await context.newPage();
+        await test.step("Create Pre-Sale", async () => {
+          await runAdminPreSaleFlow(page, {
+            authType: scenario.authType,
+            documentType: scenario.saleParams.documentType,
+              clientCedula: scenario.saleParams.clientCedula,
+              paymentMethod: scenario.saleParams.paymentMethod,
+            productName: scenario.saleParams.productName});
+        });
 
-    await test.step("Create Pre-Sale", async () => {
-      await runAdminPreSaleFlow(page, {
-        tenantBaseUrl,
-        authType: "restaurant",
-        documentType: getDynamicDocumentType("restaurant"),
-        productName: SEED.products.estandar.name,
-      });
-    });
+        await test.step("Cancel Pre-Sale and Verify Modal", async () => {
+          await cancelFirstSaleAndVerify(page, {
+            expectSwitch: scenario.cancelParams.expectSwitch,
+            expectMessage: scenario.cancelParams.expectMessage});
+        });
 
-    await test.step("Cancel Pre-Sale and Verify Modal", async () => {
-      await cancelFirstSaleAndVerify(page, {
-        tenantBaseUrl,
-        expectSwitch: false,
-        expectMessage: true,
-      });
-    });
-
-    await page.close();
-  });
-
-  test("Business (With Dispatch) - Creates a pre-sale and cancels it, verifying that the message is displayed without the switch", async ({ browser }) => {
-    test.setTimeout(180_000);
-    const context = await browser.newContext({ storageState: getSessionPath("dispatch") });
-    const page = await context.newPage();
-
-    await test.step("Create Pre-Sale", async () => {
-      await runAdminPreSaleFlow(page, {
-        tenantBaseUrl,
-        authType: "dispatch",
-        documentType: getDynamicDocumentType("dispatch"),
-        productName: SEED.products.estandar.name,
-      });
-    });
-
-    await test.step("Cancel Pre-Sale and Verify Modal", async () => {
-      await cancelFirstSaleAndVerify(page, {
-        tenantBaseUrl,
-        expectSwitch: false,
-        expectMessage: true,
-      });
-    });
-
-    await page.close();
+        await page.close();
+        await context.close();
+      }
+    );
   });
 });

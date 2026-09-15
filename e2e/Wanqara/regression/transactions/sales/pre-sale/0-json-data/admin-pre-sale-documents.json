@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ADMIN-PRE-SALE-DOCS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Pre-Sales - Electronic Invoice",
+      "testScope": "regression"
+    },
+    "description": "successfully completes a pre-sale using an Electronic Invoice",
+    "authType": "actor1",
+    "saleParams": {
+      "documentType": "Factura electrónica",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-PRE-SALE-DOCS-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "release": "v7.9.1",
+      "summary": "Admin Pre-Sales - Receipts (without dispatch)",
+      "testScope": "regression"
+    },
+    "description": "successfully completes a pre-sale using Receipts",
+    "authType": "actor3",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  }
+]

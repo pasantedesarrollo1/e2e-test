@@ -1,14 +1,13 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../harness/settings.js";
-import { generateSmokeTests } from "./harness/smoke-nav.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
 import { assertAdminHomeWelcome, assertTextVisible } from "./harness/smoke-assertions.js";
+import { generateSmokeTests } from "./harness/smoke-nav.js";
 
 test.describe("Smoke — Admin Principal", { tag: "@smoke" }, () => {
   requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
 
-  generateSmokeTests(tenantBaseUrl, [
+  generateSmokeTests([
     { path: "/admin/home",                                                                      assert: assertAdminHomeWelcome },
     { path: "/admin/reports/create",                                                            assert: (p) => assertTextVisible(p, "Generación de Reportes") },
     { path: "/admin/reports/create?reportId=reporte-de-ventas",                                assert: (p) => assertTextVisible(p, "Reportes de Ventas") },

@@ -1,14 +1,13 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../harness/settings.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
+import { assertMainContains, assertPageTitle, assertTextContains, assertTextVisible } from "./harness/smoke-assertions.js";
 import { generateSmokeTests } from "./harness/smoke-nav.js";
-import { assertPageTitle, assertTextVisible, assertTextContains, assertMainContains } from "./harness/smoke-assertions.js";
 
 test.describe("Smoke — Finanzas > Cuentas", { tag: "@smoke" }, () => {
   requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
 
-  generateSmokeTests(tenantBaseUrl, [
+  generateSmokeTests([
     { path: "/admin/receivables/list",                                                                                    assert: (p) => assertPageTitle(p, "Cuentas por Cobrar") },
     { path: "/admin/payments/list",                                                                                       assert: (p) => assertPageTitle(p, "Cuentas por Pagar") },
     { path: "/admin/payment-drafts/list?filter_status[0]=pending&filter_status[1]=validating",                           assert: (p) => assertPageTitle(p, "Borradores de Pago") },

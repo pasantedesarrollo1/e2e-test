@@ -1,67 +1,107 @@
 import { test } from "@playwright/test";
-import { annotateTicket } from "../../../harness/annotate.js";
-import { requirePosCredentials, requireChefCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import { SEED } from "../../../harness/seed.js";
-import { runReleasePosSaleFlow, finalizeValidatedRestaurantSale } from "../harness/pos-cross-sale-flow.js";
-import { createChefOrder, navigateToRestaurantPOS, openAndSelectOrder, closeAllActiveOrders } from "../POS-R/harness/pos-orders-common.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { requireChefCredentials, requirePosCredentials } from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { getChefSessionPath } from "../../../harness/helpers/auth/chef-auth.js";
+import { PosSaleBuilder } from "../../../harness/helpers/builders/pos-sale-builder.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { expect } from "@playwright/test";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { ensureCashRegisterOpen } from "../harness/cash-register/cash-register-helpers.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
+import { closeAllActiveOrders, createChefOrder, navigateToRestaurantPOS, openAndSelectOrder } from "../POS-R/harness/pos-orders-common.js";
 
-const TICKET = {
-  ws: 'WS-1004',
-  tes: 'TES-213',
-  release: 'v7.9.1',
-  summary: 'POS Sales with Sequential Validation',
-  addedToRegression: 'true',
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "pos-cross-sales.json"), "utf-8")
+);
 
-const tenantBaseUrl = getTenantBaseUrl();
+test.describe("POS Cross Sales", () => {
+  test.describe.configure({ mode: 'default' });
 
-test.describe("POS Sales — Sequential Validation @regression", () => {
-  annotateTicket(test, TICKET);
-  requirePosCredentials(test);
+  for (const scenario of scenarios) {
+    if (scenario.type === 'retail-sale') {
+      test.describe(`Environment: ${scenario.environment} @${scenario.metadata.testScope}`, () => {
+        requirePosCredentials(test);
+        test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
+        annotateTicket(test, scenario.metadata);
 
-  test.describe("Commerce 100", () => {
-    test.use({ storageState: getSessionPath("retail") });
+        test(scenario.description, async ({ page }) => {
+          test.setTimeout(120_000);
+          
+          const deps = { ensureCashRegisterOpen, completePayment, searchAndSelectProduct };
+          const venta = new PosSaleBuilder(page, scenario.subsidiaryName, scenario.subsidiaryCode, deps)
+            .withOpeningAmount(scenario.openingAmount)
+            .withDocumentType(scenario.saleParams.documentType)
+            .withProduct(scenario.saleParams.productName)
+            .withPaymentMethod(scenario.saleParams.paymentMethod)
+            .withDocumentOptions({ printTicket: true, openDrawer: scenario.saleParams.openDrawer })
+            .andThen(async (p) => {
+                await p.getByRole("button", { name: /Terminar Venta/i });
+            });
+            
+          await venta.execute();
+        });
+      });
+    } else if (scenario.type === 'restaurant-flow') {
+      test.describe.serial(`Environment: ${scenario.environment} @${scenario.metadata.testScope}`, () => {
+        requirePosCredentials(test);
+        requireChefCredentials(test);
+        test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
 
-    test("POS sale in branch 100 with receipts", async ({ page }) => {
-      test.setTimeout(120_000);
-      await runReleasePosSaleFlow(page, tenantBaseUrl, SEED.documentTypes.recibos);
-    });
-  });
+        annotateTicket(test, scenario.metadata);
 
-  test.describe("Commerce Dispatch 101", () => {
-    test.use({ storageState: getSessionPath("dispatch") });
+        test.beforeAll(async ({ browser }) => {
+          const context = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
+          const cleanupPage = await context.newPage();
+          await closeAllActiveOrders(cleanupPage, scenario.subsidiaryName, scenario.cleanupReason);
+          await context.close();
+        });
 
-    test("POS sale in branch 101 with receipts", async ({ page }) => {
-      test.setTimeout(120_000);
-      await runReleasePosSaleFlow(page, tenantBaseUrl, SEED.documentTypes.recibos);
-    });
-  });
+        test(scenario.description, async ({ page, browser }) => {
+          test.setTimeout(180_000);
+          
+          const chefContext = await browser.newContext({ storageState: getChefSessionPath(scenario.chefAuthType) });
+          const chefPage = await chefContext.newPage();
+          
+          const activeTableName = await createChefOrder(chefPage, { productName: scenario.chefOrderParams.productName });
+          
+          // Cerramos la ventana de Chef para volver al flujo de POS limpio
+          await chefContext.close();
+
+          await navigateToRestaurantPOS(page, scenario.subsidiaryName);
+          await openAndSelectOrder(page, activeTableName);
+          
+          const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar pago/i }).first();
+          await cobrarBtn.click();
+          
+          await selectClientByCedula(page, scenario.chefOrderParams.clientCedula);
+          
+          await page.getByRole("button", { name: /Terminar Venta/i }).click();
+          await page.waitForURL(/\/pos\/restaurant-payments/);
+
+          const response = await completePayment(page, {
+            paymentMethod: scenario.paymentMethod,
+            printTicket: scenario.chefOrderParams.printTicket ?? false,
+            openDrawer: scenario.chefOrderParams.openDrawer ?? false
+          });
+
+          const payload = response.request().postDataJSON();
+          expect(payload.subsidiary).toBeDefined();
+          
+          if (payload.subsidiary?.open_cash_register?.checkout?.subsidiary_id) {
+            expect(
+              payload.subsidiary.id,
+              `CROSSMATCH DETECTED IN POS: Subsidiary (${payload.subsidiary.id}) vs Cash Register (${payload.subsidiary.open_cash_register.checkout.subsidiary_id})`
+            ).toBe(payload.subsidiary.open_cash_register.checkout.subsidiary_id);
+          }
+        });
+      });
+    }
+  }
 });
 
-test.describe.serial("POS Restaurant — Sale with Electronic Invoice @regression", () => {
-  annotateTicket(test, TICKET);
-  requirePosCredentials(test);
-  requireChefCredentials(test);
-
-  test.use({ storageState: getSessionPath("restaurant") });
-
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext({ storageState: getSessionPath("restaurant") });
-    const cleanupPage = await context.newPage();
-    await closeAllActiveOrders(cleanupPage, tenantBaseUrl);
-    await context.close();
-  });
-
-  test("Creates order in Chef and charges it verifying access_key", async ({ page }) => {
-    test.setTimeout(180_000);
-    const activeTableName = await createChefOrder(page);
-    await navigateToRestaurantPOS(page, tenantBaseUrl);
-    await openAndSelectOrder(page, activeTableName);
-    
-    const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar pago/i }).first();
-    await cobrarBtn.click();
-    
-    await finalizeValidatedRestaurantSale(page);
-  });
-});

@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test';
-import { posCleanupConfig, playwrightHarness } from './settings.js';
+import { playwrightHarness, posCleanupConfig } from './settings.js';
 
 export async function independentPosCleanup(page: Page) {
   const { url, email, password } = posCleanupConfig;

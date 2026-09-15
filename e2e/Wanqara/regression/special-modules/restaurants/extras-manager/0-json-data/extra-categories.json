@@ -1,0 +1,30 @@
+[
+  {
+    "id": "EXTRAS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": null,
+      "tes": "TES-214",
+      "release": "v7.10.0",
+      "summary": "Implementar test de creacion de categoria extra",
+      "testScope": "release",
+      "addedToRegression": "true"
+    },
+    "description": "Extras Manager - Extra Categories Flujo Completo",
+    "authType": "actor1",
+    "extrasData": {
+      "categoryName": "Extras Alitas",
+      "searchTerm": "alitas",
+      "productsToAssign": [
+        "extra alitas sin stock",
+        "extra alitas stock"
+      ]
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
+  }
+]

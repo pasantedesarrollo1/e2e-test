@@ -1,0 +1,66 @@
+[
+  {
+    "id": "ADMIN-SALE-CANCEL-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-840",
+      "tes": "TES-198",
+      "release": "v7.9.1",
+      "summary": "Cancel Normal Sales - Admin",
+      "splitFrom": "cancel-sales.spec.js",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Restaurant (No Dispatch) - Crea una venta normal y la cancela verificando el switch de inventario",
+    "authType": "actor1",
+    "saleParams": {
+      "documentType": "Factura electrónica",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "cancellationParams": {
+      "expectSwitch": true,
+      "expectMessage": false
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "loginMode": "cached"
+  },
+  {
+    "id": "ADMIN-SALE-CANCEL-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "WS-840",
+      "tes": "TES-198",
+      "release": "v7.9.1",
+      "summary": "Cancel Normal Sales - Admin",
+      "splitFrom": "cancel-sales.spec.js",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "description": "Business (With Dispatch) - Crea una venta normal y la cancela verificando el mensaje sin el switch",
+    "authType": "actor2",
+    "saleParams": {
+      "documentType": "Recibos",
+      "productName": "Caja de alitas de pollo (100 u)",
+      "clientCedula": "0000000001",
+      "paymentMethod": "EFECTIVO",
+      "warehouseName": "Bodega de Ventas W001"
+    },
+    "cancellationParams": {
+      "expectSwitch": false,
+      "expectMessage": true
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
+    "loginMode": "cached"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "SEPARATE-ORDER-FLOW-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Restaurant",
+    "metadata": {
+      "ws": "WS-1041",
+      "tes": "TES-236",
+      "release": "v7.10.0",
+      "summary": "POS Separate Order Flow",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "authType": "actor1",
+    "separateData": {
+      "productName": "Caja de alitas de pollo (100 u)"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "cleanupReason": "Limpieza automtica pre-test",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "9999999999999",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001",
+    "loginMode": "cached",
+    "chefAuthType": "actor1",
+    "chefSubsidiary": "Wanqara",
+    "chefSubsidiaryCode": "001"
+  }
+]

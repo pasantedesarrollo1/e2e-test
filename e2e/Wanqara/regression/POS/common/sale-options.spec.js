@@ -1,19 +1,25 @@
-import { test, expect } from "../harness/pos-fixtures.js";
-import { requirePosCredentials } from "../../../harness/settings.js";
-import { SEED } from "../../../harness/seed.js";
-import { searchAndSelectProduct } from "../harness/pos-search.js";
-import { completePayment } from "../harness/pos-payment.js";
-import { getSessionPath } from "../../../harness/auth.js";
-import {
-  openDrawer,
-  closeDrawer,
-  navigateToSavedSales,
-  expandAndRecoverFirstSavedSale,
-} from "../harness/pos-sale-flow.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { expect, test } from "../harness/setup/pos-fixtures.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-options.json"), "utf-8")
+);
+
+import { closeDrawer, expandAndRecoverFirstSavedSale, navigateToSavedSales, openDrawer } from '../harness/sales/pos-drawer-helpers.js';
 
 async function openObservationDialog(page, drawer) {
   const option = drawer.locator(".v-btn, .v-card").filter({ hasText: /Agregar Observación/i }).first();
-  await option.click();
+  await option.scrollIntoViewIfNeeded().catch(() => {});
+  await option.click({ force: true });
 }
 
 async function fillAndSaveObservation(page, text) {
@@ -31,7 +37,8 @@ async function fillAndSaveObservation(page, text) {
 
 async function openSaveSaleDialog(page, drawer) {
   const option = drawer.locator(".v-btn, .v-card").filter({ hasText: /Guardar Esta Venta/i }).first();
-  await option.click();
+  await option.scrollIntoViewIfNeeded().catch(() => {});
+  await option.click({ force: true });
 }
 
 async function fillAliasAndSave(page, alias) {
@@ -56,18 +63,19 @@ async function fillAliasAndSave(page, alias) {
   ).toBeVisible();
 }
 
-const environments = [
-  { name: 'Retail',     authType: 'retail',     fixture: 'posPage',           paymentUrl: /\/pos\/payments/ },
-  { name: 'Restaurant', authType: 'restaurant', fixture: 'posRestaurantPage', paymentUrl: /\/pos\/restaurant-payments/ }
-];
-
-for (const env of environments) {
-  test.describe(`POS ${env.name} — Sale Options @regression`, () => {
+for (const scenario of scenarios) {
+  test.describe(`POS ${scenario.description} - Sale Options @${scenario.metadata?.testScope || 'regression'}`, () => {
     requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(env.authType) });
+    test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
+    
+    if (scenario.metadata && scenario.metadata.ws) {
+      annotateTicket(test, scenario.metadata);
+    }
 
     const runTest = (title, bodyFn) => {
-      if (env.fixture === 'posPage') {
+      if (scenario.fixture === 'posPage') {
         test(title, async ({ posPage: page }) => await bodyFn(page));
       } else {
         test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
@@ -78,7 +86,7 @@ for (const env of environments) {
       test.setTimeout(120_000);
 
       await test.step("Add a standard product", async () => {
-        await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
+        await searchAndSelectProduct(page, { name: scenario.optionsParams.productName });
       });
 
       await test.step("Add a sale note from the Sale Options panel", async () => {
@@ -87,15 +95,15 @@ for (const env of environments) {
 
         const drawer = await openDrawer(page, triggerLocator, drawerFilter);
         await openObservationDialog(page, drawer);
-        await fillAndSaveObservation(page, SEED.sale.observationText);
+        await fillAndSaveObservation(page, scenario.optionsParams.observationText);
         await closeDrawer(page, drawerFilter);
       });
 
       await test.step("Complete the sale and print ticket", async () => {
         const finishBtn = page.getByRole("button", { name: /Terminar Venta/i });
         await finishBtn.click();
-        await page.waitForURL(env.paymentUrl);
-        await completePayment(page, { printTicket: true });
+        await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
+        await completePayment(page, { paymentMethod: scenario.paymentMethod,  printTicket: true });
       });
 
       await test.step("Verify 'Comprobante Impreso' notification", async () => {
@@ -109,7 +117,7 @@ for (const env of environments) {
       test.setTimeout(240_000);
 
       await test.step("Add a standard product", async () => {
-        await searchAndSelectProduct(page, { name: SEED.products.estandar.name });
+        await searchAndSelectProduct(page, { name: scenario.optionsParams.productName });
       });
 
       await test.step("Save the sale with an alias from the Sale Options panel", async () => {
@@ -118,7 +126,7 @@ for (const env of environments) {
 
         const drawer = await openDrawer(page, triggerLocator, drawerFilter);
         await openSaveSaleDialog(page, drawer);
-        await fillAliasAndSave(page, SEED.sale.savedSaleAlias);
+        await fillAliasAndSave(page, scenario.optionsParams.savedSaleAlias);
       });
 
       await test.step("Navigate to Saved Sales from the More Options menu", async () => {
@@ -135,8 +143,8 @@ for (const env of environments) {
       await test.step("Complete the recovered sale and print ticket", async () => {
         const finishBtn = page.getByRole("button", { name: /Terminar Venta/i });
         await finishBtn.click();
-        await page.waitForURL(env.paymentUrl);
-        await completePayment(page, { printTicket: true });
+        await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
+        await completePayment(page, { paymentMethod: scenario.paymentMethod,  printTicket: true });
       });
 
       await test.step("Verify 'Comprobante Impreso' notification", async () => {

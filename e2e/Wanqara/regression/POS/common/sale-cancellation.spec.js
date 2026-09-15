@@ -1,80 +1,52 @@
-import { test } from "@playwright/test";
-import { annotateTicket } from "../../../harness/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../harness/settings.js";
-import { getSessionPath, ensureAuthenticated } from "../../../harness/auth.js";
-import { SEED } from "../../../harness/seed.js";
-import { runPosSaleFlow, selectClientByCedula } from "../harness/pos-sale-flow.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
+import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
 import { cancelFirstSaleAndVerify } from "../../transactions/sales/harness/cancel-sale-flow.js";
+import { completePayment } from "../harness/payments/pos-payment.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
+import { test } from "../harness/setup/pos-fixtures.js";
 
-const TICKET = {
-  ws: 'WS-840',
-  tes: 'TES-198',
-  release: 'v7.9.1',
-  summary: 'Cancel Sales — POS',
-  splitFrom: 'cancel-sales.spec.js',
-  addedToRegression: null,
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-cancellation.json"), "utf-8")
+);
 
-const tenantBaseUrl = getTenantBaseUrl();
-
-const TEST_CASES = [
-  {
-    name: "Retail (100) - Creates a POS sale and cancels it, verifying that the inventory switch is displayed",
-    authType: "retail",
-    targetPath: "/pos/home",
-    expectSwitch: true,
-    expectMessage: false,
-  },
-  {
-    name: "Dispatch (101) - Creates a POS sale and cancels it, verifying that the message is displayed without the switch",
-    authType: "dispatch",
-    targetPath: "/pos/home",
-    expectSwitch: false,
-    expectMessage: true,
-  },
-  {
-    name: "Restaurant (102) - Creates a POS sale and cancels it, verifying that the message is displayed without the switch",
-    authType: "restaurant",
-    targetPath: "/pos/restaurant-home",
-    expectSwitch: false,
-    expectMessage: true,
-  },
-];
-
-test.describe.serial("Cancel Sales (POS) @regression", () => {
-  annotateTicket(test, TICKET);
+test.describe.serial("Cancel Sales (POS)", () => {
   requirePosCredentials(test);
 
-  for (const { name, authType, targetPath, expectSwitch, expectMessage } of TEST_CASES) {
-    test(name, async ({ browser }) => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    
+    const runTest = (title, bodyFn) => {
+      // Determine correct fixture based on targetPath to prevent crossing routes (Restaurant vs Retail)
+      if (scenario.targetPath && scenario.targetPath.includes('restaurant-home')) {
+        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
+      } else {
+        test(title, async ({ posPage: page }) => await bodyFn(page));
+      }
+    };
+
+    runTest(scenario.description, async (page) => {
       test.setTimeout(180_000);
-      const context = await browser.newContext({ storageState: getSessionPath(authType) });
-      const page = await context.newPage();
 
       await test.step("Create POS Sale", async () => {
-        await ensureAuthenticated(page, { 
-          tenantBaseUrl, 
-          targetPath, 
-          authType 
-        });
-        
-        await runPosSaleFlow(page, {
-          tenantBaseUrl,
-          productName: SEED.products.estandar.name,
-          skipNavigation: true,
-          beforeFinish: async (p) => await selectClientByCedula(p, SEED.clients.consumidorFinal.cedula),
-        });
+        // posPage and posRestaurantPage fixtures already handle ensureCashRegisterOpen and auth
+        await searchAndSelectProduct(page, { name: scenario.saleParams.productName });
+        await selectClientByCedula(page, scenario.saleParams.clientCedula);
+        await clickFinishSale(page);
+        await completePayment(page, { paymentMethod: scenario.paymentMethod });
       });
 
       await test.step("Cancel POS Sale and Verify Modal", async () => {
         await cancelFirstSaleAndVerify(page, {
-          tenantBaseUrl,
-          expectSwitch,
-          expectMessage,
+          expectSwitch: scenario.expectSwitch,
+          expectMessage: scenario.expectMessage,
         });
       });
-
-      await page.close();
     });
-  }
+  });
 });

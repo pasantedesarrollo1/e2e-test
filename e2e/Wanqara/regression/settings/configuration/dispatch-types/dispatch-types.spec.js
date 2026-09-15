@@ -1,98 +1,44 @@
-import { test, expect } from "@playwright/test";
-import { annotateTicket } from "../../../../harness/annotate.js";
-import { requirePosCredentials, getTenantBaseUrl } from "../../../../harness/settings.js";
-import { getSessionPath } from "../../../../harness/auth.js";
-import { SEED } from "../../../../harness/seed.js";
-import { withPath } from "../../../../harness/urls.js";
-import { clickTableRowAction } from "../../../../harness/crud-helpers.js";
-import { ACTION_TOOLTIPS } from "../../../../harness/action-tooltips.js";
+import { test } from "@playwright/test";
+import { requirePosCredentials } from "../../../../harness/config/settings.js";
+import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
+import { createDispatchType, toggleDispatchTypeState } from "./harness/dispatch-types-helpers.js";
 
-const TICKET = {
-  ws: 'WS-983',
-  tes: 'TES-208',
-  release: 'v7.9.1',
-  summary: 'Dispatch Types',
-  addedToRegression: null,
-};
+import scenarios from "./0-json-data/dispatch-types-crud.json" with { type: "json" };
 
-test.describe("Settings — Dispatch Types @regression", () => {
-  annotateTicket(test, TICKET);
-  requirePosCredentials(test);
+import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";
 
-  test.use({ storageState: getSessionPath("retail") });
+test.describe("Settings - Dispatch Types CRUD", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    requirePosCredentials(test);
 
-  test("completes the full lifecycle of a dispatch type", async ({ page }) => {
-    test.setTimeout(120_000);
-    const tenantBaseUrl = getTenantBaseUrl();
+    test(
+      scenario.only ? "completes the full lifecycle of a dispatch type (focus)" : "completes the full lifecycle of a dispatch type",
+      { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined },
+      async ({ page }) => {
+        test.setTimeout(120_000);
 
-    await test.step("Create dispatch type", async () => {
-      await page.goto(withPath(tenantBaseUrl, "/admin/dispatch-types/list"));
-      await page.waitForURL(/\/admin\/dispatch-types\/list/);
+        await test.step('Ensure Authenticated', async () => {
+          await ensureAuthenticated(page, { targetPath: "/admin/dispatch-types/list", authType: scenario.authType });
+        });
 
-      await page.getByRole("link", { name: /Agregar Tipo de Despacho/i }).click();
-      await page.waitForURL(/\/admin\/dispatch-types\/add/);
+        await test.step("Crear Tipo de Despacho", async () => {
+          await createDispatchType(page, { ...scenario.dispatchData });
+        });
 
-      await page.getByPlaceholder("Ingrese el nombre del tipo de despacho").fill(SEED.dispatchTypes.crud.name);
-      
-      await page.getByPlaceholder("Seleccione un tipo de despacho").click();
-      await page.getByRole("option", { name: new RegExp(`^${SEED.dispatchTypes.crud.type}$`, "i") }).click();
-      
-      await page.getByPlaceholder("Ingrese una descripción").fill(SEED.dispatchTypes.crud.description);
+        await test.step("Desactivar Tipo de Despacho", async () => {
+          await toggleDispatchTypeState(page, { 
+            name: scenario.dispatchData.name, 
+            expectedSnackbarText: /Tipo de Despacho actualizado con .xito/i 
+          });
+        });
 
-      const saveBtn = page.getByRole("button", { name: /^Guardar$/i });
-      
-      await Promise.all([
-        page.waitForResponse(res => res.url().includes("/api/v1/general/dispatch-types") && res.request().method() === "POST" && res.status() === 201),
-        saveBtn.click()
-      ]);
-
-      await expect(page.locator(".v-snackbar").filter({ hasText: /Tipo de Despacho creado con éxito/i })).toBeVisible();
-    });
-
-    await test.step("Deactivate dispatch type", async () => {
-      await page.goto(withPath(tenantBaseUrl, "/admin/dispatch-types/list"));
-      await page.waitForURL(/\/admin\/dispatch-types\/list/);
-
-      const row = page.locator(".v-data-table__tr").filter({ hasText: SEED.dispatchTypes.crud.name }).first();
-      await expect(row).toBeVisible();
-      
-      await clickTableRowAction(page, row, ACTION_TOOLTIPS.dispatchTypes.view);
-      
-      await page.getByRole("button", { name: /^Editar$/i }).click();
-
-      await page.locator(".v-switch").first().click();
-
-      const saveBtn = page.getByRole("button", { name: /^Guardar$/i });
-
-      await Promise.all([
-        page.waitForResponse(res => res.url().includes("/api/v1/general/dispatch-types/") && res.request().method() === "PATCH" && res.status() === 200),
-        saveBtn.click()
-      ]);
-
-      await expect(page.locator(".v-snackbar").filter({ hasText: /Tipo de Despacho actualizado con éxito/i })).toBeVisible();
-    });
-
-    await test.step("Activate dispatch type", async () => {
-      await page.goto(withPath(tenantBaseUrl, "/admin/dispatch-types/list"));
-      await page.waitForURL(/\/admin\/dispatch-types\/list/);
-
-      const row = page.locator(".v-data-table__tr").filter({ hasText: SEED.dispatchTypes.crud.name }).first();
-      await expect(row).toBeVisible();
-
-      await clickTableRowAction(page, row, ACTION_TOOLTIPS.dispatchTypes.view);
-
-      await page.getByRole("button", { name: /^Editar$/i }).click();
-
-      await page.locator(".v-switch").first().click();
-
-      const saveBtn = page.getByRole("button", { name: /^Guardar$/i });
-
-      await Promise.all([
-        page.waitForResponse(res => res.url().includes("/api/v1/general/dispatch-types/") && res.request().method() === "PATCH" && res.status() === 200),
-        saveBtn.click()
-      ]);
-
-      await expect(page.locator(".v-snackbar").filter({ hasText: /Tipo de Despacho actualizado con éxito/i })).toBeVisible();
-    });
+        await test.step("Activar Tipo de Despacho", async () => {
+          await toggleDispatchTypeState(page, { 
+            name: scenario.dispatchData.name, 
+            expectedSnackbarText: /Tipo de Despacho actualizado con .xito/i 
+          });
+        });
+      }
+    );
   });
 });

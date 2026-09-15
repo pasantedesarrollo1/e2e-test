@@ -1,0 +1,24 @@
+[
+  {
+    "id": "SUR-BASE-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "metadata": {
+      "ws": "",
+      "release": "",
+      "summary": "Flujo Básico de Recargos",
+      "testScope": "regression"
+    },
+    "description": "Retail - Flujo Base de Recargo (Pre-clean, Create, Search, Delete)",
+    "authType": "actor3",
+    "surchargeData": {
+      "name": "Recargo E2E Base Flow",
+      "percentage": "12"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "loginMode": "cached"
+  }
+]

@@ -1,20 +1,33 @@
-import { test } from "../harness/pos-fixtures.js";
-import { requirePosCredentials } from "../../../harness/settings.js";
-import { SEED } from "../../../harness/seed.js";
-import { selectClientByCedula } from "../harness/pos-sale-flow.js";
-import { searchAndSelectProduct } from "../harness/pos-search.js";
-import { selectFirstVariant, selectFirstSerie } from "../harness/pos-products.js";
-import { getSessionPath } from "../../../harness/auth.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { requirePosCredentials } from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { selectClientByCedula } from '../../../harness/helpers/people/client-helpers.js';
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import {
-  PRECISION_CASES,
   applyGeneralDiscount,
   applyManualSurcharge,
   assertSalePanelUI,
   finalizeSaleAndAssert,
   runFinancialPrecisionFlow,
-} from "../harness/pos-financial-assertions.js";
+} from "../harness/financials/pos-financial-assertions.js";
+import { selectFirstSerie, selectFirstVariant } from "../harness/products/pos-products.js";
+import { searchAndSelectProduct } from "../harness/products/pos-search.js";
+import { test } from "../harness/setup/pos-fixtures.js";
 
-async function runAllProductsSurchargeFlow(page, { productsToAdd, precision, precisionHoliday, requiresClient }) {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-financial-precision.json"), "utf-8")
+);
+
+const functionMap = {
+  selectFirstVariant,
+  selectFirstSerie
+};
+
+async function runAllProductsSurchargeFlow(page, { productsToAdd, precision, precisionHoliday, requiresClient, surchargeName, paymentMethod }) {
   await test.step(`Assign customer [${requiresClient}]`, async () => {
     await selectClientByCedula(page, requiresClient);
   });
@@ -26,8 +39,8 @@ async function runAllProductsSurchargeFlow(page, { productsToAdd, precision, pre
     });
   }
 
-  await test.step(`Apply ${SEED.surcharge.name}`, async () => {
-    await applyManualSurcharge(page);
+  await test.step(`Apply ${surchargeName}`, async () => {
+    await applyManualSurcharge(page, '3.3337373372323');
   });
 
   let activePrecision = precision;
@@ -43,88 +56,76 @@ async function runAllProductsSurchargeFlow(page, { productsToAdd, precision, pre
   });
 
   await test.step("Complete the sale and validate financial calculations", async () => {
-    await finalizeSaleAndAssert(page, { precision: activePrecision, multiProduct: true });
+    await finalizeSaleAndAssert(page, { precision: activePrecision, multiProduct: true, paymentMethod });
   });
 }
 
-const environments = [
-  { 
-    name: 'Retail', 
-    authType: 'retail', 
-    fixture: 'posPage',
-    surchargeProducts: [
-      { product: SEED.products.tallaColor,   afterSelect: selectFirstVariant },
-      { product: SEED.products.serie,        afterSelect: selectFirstSerie   },
-      { product: SEED.products.servicio,     afterSelect: null               },
-      { product: SEED.products.elaborado,    afterSelect: null               },
-      { product: SEED.products.combo,        afterSelect: null               },
-      { product: SEED.products.estandar,     afterSelect: null               },
-      { product: SEED.products.preElaborado, afterSelect: null               },
-      { product: SEED.products.subproducto,  afterSelect: null               },
-    ],
-    surchargePrecision: SEED.surcharge.precision.allProducts,
-    surchargePrecisionHoliday: SEED.surcharge.precisionHoliday?.allProducts
-  },
-  { 
-    name: 'Restaurant', 
-    authType: 'restaurant', 
-    fixture: 'posRestaurantPage',
-    surchargeProducts: [
-      { product: SEED.products.servicio,     afterSelect: null },
-      { product: SEED.products.elaborado,    afterSelect: null },
-      { product: SEED.products.combo,        afterSelect: null },
-      { product: SEED.products.estandar,     afterSelect: null },
-      { product: SEED.products.preElaborado, afterSelect: null },
-      { product: SEED.products.subproducto,  afterSelect: null },
-    ],
-    surchargePrecision: SEED.surcharge.precision.restaurantProducts,
-    surchargePrecisionHoliday: SEED.surcharge.precisionHoliday?.restaurantProducts
-  }
-];
+test.describe.serial("Financial Calculation Accuracy", () => {
+  for (const scenario of scenarios) {
+    
 
-for (const env of environments) {
-  const runTest = (title, bodyFn) => {
-    if (env.fixture === 'posPage') {
-      test(title, async ({ posPage: page }) => await bodyFn(page));
-    } else {
-      test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
-    }
-  };
+    const runTest = (title, bodyFn) => {
+      if (scenario.fixture === 'posPage') {
+        test(title, async ({ posPage: page }) => await bodyFn(page));
+      } else {
+        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
+      }
+    };
 
-  test.describe(`POS ${env.name} — Financial Calculation Accuracy with ${SEED.discount.name} @regression`, () => {
-    requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(env.authType) });
+    test.describe(`POS ${scenario.description} - Financial Calculation Accuracy with ${scenario.discountName} @${scenario.metadata.testScope}`, () => {
+      requirePosCredentials(test);
+      test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
+      
+      if (scenario.metadata && scenario.metadata.ws) {
+        annotateTicket(test, scenario.metadata);
+      }
 
-    for (const { key, product, afterProductSelect } of PRECISION_CASES) {
-      runTest(`validates financial calculations for [${product.type}] with a general discount`, async (page) => {
-        test.setTimeout(120_000);
+      for (const { product, afterProductSelect, precision, precisionHoliday } of scenario.discountCases) {
+        runTest(`validates financial calculations for [${product.type}] with a general discount`, async (page) => {
+          test.setTimeout(120_000);
 
-        await runFinancialPrecisionFlow(page, {
-          product,
-          afterProductSelect,
-          applyModifier: applyGeneralDiscount,
-          precision: SEED.discount.precision[key],
-          precisionHoliday: SEED.discount.precisionHoliday
-            ? SEED.discount.precisionHoliday[key]
-            : undefined,
+          await runFinancialPrecisionFlow(page, {
+            product,
+            afterProductSelect,
+            applyModifier: (page) => applyGeneralDiscount(page, "3.3337373372323"),
+            precision,
+            precisionHoliday,
+            paymentMethod: scenario.paymentMethod
+          });
+        });
+      }
+    });
+
+    test.describe(`POS ${scenario.description} - Financial Calculation Accuracy with ${scenario.surchargeName} @${scenario.metadata.testScope}`, () => {
+      requirePosCredentials(test);
+      test.use({ storageState: getSessionPath(scenario.authType),
+        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
+
+      if (scenario.metadata && scenario.metadata.ws) {
+        annotateTicket(test, scenario.metadata);
+      }
+
+      runTest("validates financial calculations for a manual surcharge across compatible product types in a single sale", async (page) => {
+        test.setTimeout(180_000);
+
+        
+        const mappedSurchargeProducts = scenario.surchargeProducts.map(sp => ({
+          product: { type: sp.productType, name: sp.productName },
+          afterSelect: sp.afterSelectFn ? functionMap[sp.afterSelectFn] : null
+        }));
+
+        await runAllProductsSurchargeFlow(page, {
+          productsToAdd: mappedSurchargeProducts,
+          precision: scenario.surchargePrecision,
+          precisionHoliday: scenario.surchargePrecisionHoliday,
+          requiresClient: scenario.surchargeClientCedula,
+          surchargeName: scenario.surchargeName,
+          paymentMethod: scenario.paymentMethod
         });
       });
-    }
-  });
-
-  test.describe(`POS ${env.name} — Financial Calculation Accuracy with ${SEED.surcharge.name} @regression`, () => {
-    requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(env.authType) });
-
-    runTest("validates financial calculations for a manual surcharge across compatible product types in a single sale", async (page) => {
-      test.setTimeout(180_000);
-
-      await runAllProductsSurchargeFlow(page, {
-        productsToAdd: env.surchargeProducts,
-        precision: env.surchargePrecision,
-        precisionHoliday: env.surchargePrecisionHoliday,
-        requiresClient: SEED.clients.consumidorFinal.cedula,
-      });
     });
-  });
-}
+  }
+});

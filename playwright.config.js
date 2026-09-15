@@ -7,9 +7,17 @@ const envPath = path.resolve(rootDir, '.env');
 
 try {
   process.loadEnvFile(envPath);
-} catch {}
+} catch {
+  //
+}
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:5175';
+const tenantRuc = process.env.PLAYWRIGHT_TENANT_RUC;
+const wanqaraPort = process.env.PLAYWRIGHT_WANQARA_PORT;
+
+if (!tenantRuc) throw new Error("❌ PLAYWRIGHT_TENANT_RUC no está definido en el .env (o secrets).");
+if (!wanqaraPort) throw new Error("❌ PLAYWRIGHT_WANQARA_PORT no está definido en el .env (o secrets).");
+
+const baseURL = `http://${tenantRuc}.localhost:${wanqaraPort}`;
 const chefURL = process.env.PLAYWRIGHT_CHEF_URL ?? 'https://localhost:8100';
 const localChefURL = process.env.PLAYWRIGHT_LOCAL_CHEF_URL ?? 'http://localhost:8100';
 
@@ -19,16 +27,16 @@ const isLocalTarget =
   targetHostname === '127.0.0.1' ||
   targetHostname.endsWith('.localhost');
 
-const AUTH_DIR = path.join(rootDir, 'e2e', 'Wanqara', '.auth');
+const AUTH_DIR = path.join(rootDir, 'e2e', 'Wanqara', 'harness', '.auth');
 const CHEF_AUTH_DIR = path.join(rootDir, 'e2e', 'WanqaraChef', '.auth');
 
 export default defineConfig({
   testDir: './e2e', 
   
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  workers: 1, 
 
   maxFailures: process.env.CI ? 10 : 0,
   timeout: process.env.CI ? 120 * 1000 : 45 * 1000,
@@ -54,64 +62,70 @@ export default defineConfig({
     // WANQARA (POS / Admin) PROJECTS
     // ==========================================
     {
-      name: 'setup',
-      testMatch: /Wanqara\/.*\.setup\.js/,
+      name: 'setup-actors',
+      testMatch: /Wanqara\/harness\/setups\/actors\.setup\.js/,
       use: { baseURL }
+    },
+    {
+      name: 'setup-chef',
+      testMatch: /Wanqara\/harness\/setups\/chef-auth\.setup\.js/,
+      use: { baseURL: chefURL }
     },
     
     {
       name: 'POS-Retail',
-      dependencies: ['setup'],
+      dependencies: ['setup-actors', 'setup-chef'],
       testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-C|common|sales)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'retail-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
       },
     },
     {
       name: 'POS-Restaurant',
-      dependencies: ['setup'],
+      dependencies: ['setup-actors', 'setup-chef'],
       testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-R|sales)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'restaurant-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
       },
     },
     {
       name: 'Admin-Inventory',
-      dependencies: ['setup'],
+      dependencies: ['setup-actors', 'setup-chef'],
       testMatch: /Wanqara\/regression\/(inventory|transactions|settings|people|finance|main|special-modules)\/.*\.spec\.js/,
       grep: /@regression/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'retail-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
       },
     },
 
     {
       name: 'Smoke',
-      dependencies: ['setup'],
+      dependencies: ['setup-actors'],
       testMatch: /Wanqara\/smoke\/.*\.spec\.js/,
+      fullyParallel: false,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'retail-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
       },
     },
     {
       name: 'Release',
-      dependencies: ['setup'],
+      dependencies: ['setup-actors', 'setup-chef'],
       testMatch: /Wanqara\/(regression|specific-cases)\/.*\.spec\.js/,
       grep: /@release/,                               
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'retail-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
       },
     },
 

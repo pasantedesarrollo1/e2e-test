@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import { SEED } from "../../../harness/seed.js";
 
-export async function applyGeneralDiscount(page, rate = SEED.discount.rate) {
+export async function applyGeneralDiscount(page, rate) {
+  if (!rate) throw new Error("applyGeneralDiscount requires a rate parameter");
   const discountBtn = page.getByRole("button", { name: /Descuento General/i }).first();
   const dialog = page.locator(".v-overlay__content").filter({ hasText: /Descuento/i }).first();
 
@@ -16,7 +16,8 @@ export async function applyGeneralDiscount(page, rate = SEED.discount.rate) {
   await expect(dialog).not.toBeVisible({ timeout: 5000 });
 }
 
-export async function applyManualSurcharge(page, rate = SEED.surcharge.rate) {
+export async function applyManualSurcharge(page, rate) {
+  if (!rate) throw new Error("applyManualSurcharge requires a rate parameter");
   const optionsBtn = page.getByRole("button", { name: /Más opciones de porcentaje/i }).first();
   await optionsBtn.click();
 

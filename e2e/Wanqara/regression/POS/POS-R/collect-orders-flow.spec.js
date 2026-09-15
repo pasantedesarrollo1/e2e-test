@@ -1,39 +1,74 @@
-import { test, expect } from "@playwright/test";
+import { getChefSessionPath } from "../../../harness/helpers/auth/chef-auth.js";
+import { expect, test } from "@playwright/test";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import {
-  requirePosCredentials,
-  requireChefCredentials,
   getTenantBaseUrl,
-} from "../../../harness/settings.js";
-import { getSessionPath } from "../../../harness/auth.js";
+  requireChefCredentials,
+  requirePosCredentials,
+} from "../../../harness/config/settings.js";
+import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "collect-orders-flow.json"), "utf-8")
+);
+
 import {
+  closeAllActiveOrders,
+  createChefOrder,
   finalizeSaleWithPayment,
-  withActiveRestaurantOrder,
+  navigateToRestaurantPOS,
+  openAndSelectOrder,
 } from "./harness/pos-orders-common.js";
 
-test.describe("POS Restaurant — Collect Orders @regression", () => {
-  requirePosCredentials(test);
-  requireChefCredentials(test);
+async function withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, orderOptions, posOptions, actionCallback) {
+  await closeAllActiveOrders(page, tenantBaseUrl, posOptions.subsidiaryName, posOptions.cleanupReason || "Limpieza pre-test");
+  
+  const chefAuthType = orderOptions.chefAuthType;
+  const chefContext = await browser.newContext({ storageState: getChefSessionPath(chefAuthType) });
+  const chefPage = await chefContext.newPage();
+  const activeTableName = await createChefOrder(chefPage, orderOptions);
+  await chefContext.close();
 
-  test.use({ storageState: getSessionPath("restaurant") });
+  await navigateToRestaurantPOS(page, tenantBaseUrl, posOptions.subsidiaryName);
+  await openAndSelectOrder(page, activeTableName);
+  await actionCallback(page, activeTableName);
+}
 
-  test("collects an existing order, assigns a client and completes the sale", async ({ page }) => {
-    test.setTimeout(180_000);
-    const tenantBaseUrl = getTenantBaseUrl();
+for (const scenario of scenarios) {
+  test.describe(`POS ${scenario.description} - Collect Orders @${scenario.metadata?.testScope || 'regression'}`, () => {
+    requirePosCredentials(test);
+    requireChefCredentials(test);
 
-    await withActiveRestaurantOrder(page, tenantBaseUrl, async (page, activeTableName) => {
-      await test.step("Load order into POS via Procesar pago", async () => {
-        const cobrarBtn = page
-          .getByRole("button", { name: /Cobrar/i })
-          .filter({ hasText: /Procesar pago/i })
-          .first();
-        await expect(cobrarBtn).toBeVisible();
-        await cobrarBtn.click();
-        await expect(page.getByText(/Cliente:/i)).toBeVisible();
-      });
+    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
 
-      await test.step("Assign customer, finish sale and complete payment", async () => {
-        await finalizeSaleWithPayment(page);
+    if (scenario.metadata && scenario.metadata.ws) {
+      annotateTicket(test, scenario.metadata);
+    }
+
+    test("collects an existing order, assigns a client and completes the sale", async ({ page, browser }) => {
+      test.setTimeout(180_000);
+      const tenantBaseUrl = getTenantBaseUrl();
+
+      await withActiveRestaurantOrderSafe(browser, page, tenantBaseUrl, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary, chefAuthType: scenario.chefAuthType }, { subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode, cleanupReason: scenario.cleanupReason }, async (page) => {
+        await test.step("Load order into POS via Procesar pago", async () => {
+          const cobrarBtn = page
+            .getByRole("button", { name: /Cobrar/i })
+            .filter({ hasText: /Procesar pago/i })
+            .first();
+          await expect(cobrarBtn).toBeVisible();
+          await cobrarBtn.click();
+          await expect(page.getByText(/Cliente:/i)).toBeVisible();
+        });
+
+        await test.step("Assign customer, finish sale and complete payment", async () => {
+          await finalizeSaleWithPayment(page, scenario.clientCedula, scenario.paymentMethod);
+        });
       });
     });
   });
-});
+}

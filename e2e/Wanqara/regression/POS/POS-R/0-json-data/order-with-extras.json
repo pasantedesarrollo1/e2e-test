@@ -1,0 +1,35 @@
+[
+  {
+    "id": "ORDER-WITH-EXTRAS-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Order with Extras",
+    "metadata": {
+      "ws": "WS-1038",
+      "tes": "TES-214",
+      "release": "v7.10.0",
+      "summary": "Implementar test de creacion de categoria extra",
+      "addedToRegression": "true",
+      "testScope": "release"
+    },
+    "authType": "actor1",
+    "extrasData": {
+      "baseProduct": "Caja de alitas de pollo",
+      "sinStockExtra": "extra alitas sin stock",
+      "conStockExtra": "extra alitas stock",
+      "categoryName": "Extras Alitas",
+      "outOfStockLabelText": "Sin stock disponible"
+    },
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "cleanupReason": "Limpieza automtica pre-test",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "9999999999999",
+    "openingAmount": "100.00",
+    "chefAuthType": "actor1",
+    "chefSubsidiary": "Wanqara",
+    "chefSubsidiaryCode": "001"
+  }
+]

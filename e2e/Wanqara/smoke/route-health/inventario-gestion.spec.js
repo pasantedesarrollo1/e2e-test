@@ -1,14 +1,13 @@
 import { test } from "@playwright/test";
-import { requirePosCredentials, getTenantBaseUrl } from "../../harness/settings.js";
+import { requirePosCredentials } from "../../harness/config/settings.js";
+import { assertMainContains, assertPageTitle, assertTextContains } from "./harness/smoke-assertions.js";
 import { generateSmokeTests } from "./harness/smoke-nav.js";
-import { assertPageTitle, assertTextContains, assertMainContains } from "./harness/smoke-assertions.js";
 
 test.describe("Smoke — Inventario > Gestión de Inventario", { tag: "@smoke" }, () => {
   requirePosCredentials(test);
 
-  const tenantBaseUrl = getTenantBaseUrl();
 
-  generateSmokeTests(tenantBaseUrl, [
+  generateSmokeTests([
     { path: "/admin/kardex/list",                                                                              assert: (p) => assertPageTitle(p, "Kardex") },
     { path: "/admin/adjustments/list",                                                                         assert: (p) => assertPageTitle(p, "Ajustes de Inventario") },
     { path: "/admin/adjustments/add?name=Manual",                                                             assert: (p) => assertTextContains(p, "Crear un Ajuste") },
