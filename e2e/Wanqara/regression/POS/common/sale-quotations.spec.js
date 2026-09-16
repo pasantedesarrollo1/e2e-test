@@ -1,10 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { selectClientByCedula } from '../../../harness/helpers/people/client-helpers.js';
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { openDrawer } from '../harness/sales/pos-drawer-helpers.js';
@@ -16,8 +14,10 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sale-quotations.json"), "utf-8")
 );
 
-
-async function runQuoteFlow(page, { homePath, quoteParams, pdfChoice }) {
+async function runQuoteFlow(page, { businessType, quoteParams, pdfChoice }) {
+  const homePath = businessType === "Restaurante" ? "/pos/restaurant-home" : "/pos/home";
+  
+  // We navigate to home explicitly because this flow is run multiple times in the same test
   await page.goto(homePath);
   await page.waitForURL(new RegExp(homePath));
 
@@ -85,31 +85,15 @@ async function selectFirstQuoteAndBill(page) {
   await expect(page.locator(".v-snackbar").filter({ hasText: /Se ha convertido la cotización/i })).toBeVisible();
 }
 
-for (const scenario of scenarios) {
-  test.describe.serial(`POS ${scenario.description} - Quotation Workflow @${scenario.metadata?.testScope || 'regression'}`, () => {
-    requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
-
-    if (scenario.metadata && scenario.metadata.ws) {
-      annotateTicket(test, scenario.metadata);
-    }
-
-    const runTest = (title, bodyFn) => {
-      if (scenario.fixture === 'posPage') {
-        test(title, async ({ posPage: page }) => await bodyFn(page));
-      } else {
-        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
-      }
-    };
-
-    runTest("creates quotations with and without PDF generation", async (page) => {
+test.describe("Quotation Workflow", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    
+    test("creates quotations with and without PDF generation", async ({ posPage: page }) => {
       test.setTimeout(180_000);
 
       await test.step("Create a quotation with PDF", async () => {
         await runQuoteFlow(page, {
-          homePath: scenario.homePath,
+          businessType: scenario.businessType,
           quoteParams: scenario.quoteParams,
           pdfChoice: null,
         });
@@ -117,14 +101,14 @@ for (const scenario of scenarios) {
 
       await test.step("Create a quotation without generating a PDF", async () => {
         await runQuoteFlow(page, {
-          homePath: scenario.homePath,
+          businessType: scenario.businessType,
           quoteParams: scenario.quoteParams,
           pdfChoice: "No mostrar PDF",
         });
       });
     });
 
-    runTest("retrieves a pending quotation and completes the sale", async (page) => {
+    test("retrieves a pending quotation and completes the sale", async ({ posPage: page }) => {
       test.setTimeout(180_000);
 
       await test.step("Open the More Options menu and navigate to Retrieve Quotations", async () => {
@@ -140,9 +124,10 @@ for (const scenario of scenarios) {
       await test.step("Complete the sales workflow", async () => {
         const finishSaleButton = page.getByRole("button", { name: /Terminar Venta/i });
         await finishSaleButton.click();
-        await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
-        await completePayment(page, { paymentMethod: scenario.paymentMethod });
+        await page.waitForURL(/\/pos\/(restaurant-)?payments/);
+        await completePayment(page, { paymentMethod: scenario.quoteParams.paymentMethod });
       });
     });
+
   });
-}
+});

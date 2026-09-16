@@ -81,13 +81,14 @@ export const test = base.extend({
 
       // Auto-preparación de orden si el test lo pide
       if (stageSetupOptions?.createOrder) {
+        const orderOpts = stageSetupOptions.createOrder === true ? stageSetupOptions : stageSetupOptions.createOrder;
         const activeTableName = await createChefOrder(chefPage, {
-           productName: stageSetupOptions.productName,
-           quantity: stageSetupOptions.quantity || 1,
+           productName: orderOpts.productName,
+           quantity: orderOpts.quantity || 1,
            chefLogin,
            chefSubsidiary,
            chefSubsidiaryCode,
-           extras: stageSetupOptions.extras
+           extras: orderOpts.extras
         });
         
         // Regresamos al POS y abrimos la orden recién creada para dejarla en bandeja de plata al test

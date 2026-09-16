@@ -1,18 +1,14 @@
-import { test } from "@playwright/test";
+import { test as posTest } from "../../../harness/builders/pos.builder.js";
+import { test as stageTest } from "../../../harness/builders/stage.builder.js";
+import { expect } from "@playwright/test";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { requireChefCredentials, requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { getChefSessionPath } from "../../../harness/helpers/auth/chef-auth.js";
-import { PosSaleBuilder } from "../../../harness/helpers/builders/pos-sale-builder.js";
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
-import { expect } from "@playwright/test";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
-import { ensureCashRegisterOpen } from "../harness/cash-register/cash-register-helpers.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
-import { closeAllActiveOrders, createChefOrder, navigateToRestaurantPOS, openAndSelectOrder } from "../POS-R/harness/pos-orders-common.js";
+import { openAndSelectOrder } from "../POS-R/harness/pos-orders-common.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,88 +16,65 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "pos-cross-sales.json"), "utf-8")
 );
 
-test.describe("POS Cross Sales", () => {
-  test.describe.configure({ mode: 'default' });
+const retailScenarios = scenarios.filter(s => s.type === 'retail-sale');
+const restaurantScenarios = scenarios.filter(s => s.type === 'restaurant-flow');
 
-  for (const scenario of scenarios) {
-    if (scenario.type === 'retail-sale') {
-      test.describe(`Environment: ${scenario.environment} @${scenario.metadata.testScope}`, () => {
-        requirePosCredentials(test);
-        test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
-        annotateTicket(test, scenario.metadata);
+posTest.describe("POS Retail Cross Sales", () => {
+  generateDataDrivenTests(posTest, retailScenarios, (scenario) => {
+    posTest(scenario.description, async ({ posPage: page }) => {
+      posTest.setTimeout(120_000);
+      
+      await posTest.step("Realizar venta retail cruzada", async () => {
+        await selectClientByCedula(page, scenario.saleParams.clientCedula);
+        await searchAndSelectProduct(page, { name: scenario.saleParams.productName, searchTerm: null });
+        
+        await page.getByRole("button", { name: /Terminar Venta/i }).click();
 
-        test(scenario.description, async ({ page }) => {
-          test.setTimeout(120_000);
-          
-          const deps = { ensureCashRegisterOpen, completePayment, searchAndSelectProduct };
-          const venta = new PosSaleBuilder(page, scenario.subsidiaryName, scenario.subsidiaryCode, deps)
-            .withOpeningAmount(scenario.openingAmount)
-            .withDocumentType(scenario.saleParams.documentType)
-            .withProduct(scenario.saleParams.productName)
-            .withPaymentMethod(scenario.saleParams.paymentMethod)
-            .withDocumentOptions({ printTicket: true, openDrawer: scenario.saleParams.openDrawer })
-            .andThen(async (p) => {
-                await p.getByRole("button", { name: /Terminar Venta/i });
-            });
-            
-          await venta.execute();
+        // Completar pago
+        await completePayment(page, {
+          paymentMethod: scenario.saleParams.paymentMethod?.label || scenario.paymentMethod,
+          printTicket: scenario.saleParams.printTicket ?? false,
+          openDrawer: scenario.saleParams.openDrawer ?? false
         });
       });
-    } else if (scenario.type === 'restaurant-flow') {
-      test.describe.serial(`Environment: ${scenario.environment} @${scenario.metadata.testScope}`, () => {
-        requirePosCredentials(test);
-        requireChefCredentials(test);
-        test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount });
-
-        annotateTicket(test, scenario.metadata);
-
-        test.beforeAll(async ({ browser }) => {
-          const context = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
-          const cleanupPage = await context.newPage();
-          await closeAllActiveOrders(cleanupPage, scenario.subsidiaryName, scenario.cleanupReason);
-          await context.close();
-        });
-
-        test(scenario.description, async ({ page, browser }) => {
-          test.setTimeout(180_000);
-          
-          const chefContext = await browser.newContext({ storageState: getChefSessionPath(scenario.chefAuthType) });
-          const chefPage = await chefContext.newPage();
-          
-          const activeTableName = await createChefOrder(chefPage, { productName: scenario.chefOrderParams.productName });
-          
-          // Cerramos la ventana de Chef para volver al flujo de POS limpio
-          await chefContext.close();
-
-          await navigateToRestaurantPOS(page, scenario.subsidiaryName);
-          await openAndSelectOrder(page, activeTableName);
-          
-          const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar pago/i }).first();
-          await cobrarBtn.click();
-          
-          await selectClientByCedula(page, scenario.chefOrderParams.clientCedula);
-          
-          await page.getByRole("button", { name: /Terminar Venta/i }).click();
-          await page.waitForURL(/\/pos\/restaurant-payments/);
-
-          const response = await completePayment(page, {
-            paymentMethod: scenario.paymentMethod,
-            printTicket: scenario.chefOrderParams.printTicket ?? false,
-            openDrawer: scenario.chefOrderParams.openDrawer ?? false
-          });
-
-          const payload = response.request().postDataJSON();
-          expect(payload.subsidiary).toBeDefined();
-          
-          if (payload.subsidiary?.open_cash_register?.checkout?.subsidiary_id) {
-            expect(
-              payload.subsidiary.id,
-              `CROSSMATCH DETECTED IN POS: Subsidiary (${payload.subsidiary.id}) vs Cash Register (${payload.subsidiary.open_cash_register.checkout.subsidiary_id})`
-            ).toBe(payload.subsidiary.open_cash_register.checkout.subsidiary_id);
-          }
-        });
-      });
-    }
-  }
+    });
+  });
 });
 
+stageTest.describe("POS Restaurant Cross Sales", () => {
+  generateDataDrivenTests(stageTest, restaurantScenarios, (scenario) => {
+    stageTest(scenario.description, async ({ stageSetup }) => {
+      stageTest.setTimeout(180_000);
+      const { posPage: page, stageContext } = stageSetup;
+      
+      await stageTest.step("Cobrar orden generada por el chef", async () => {
+        // El builder stageSetup ya creó la orden en la cocina (stageContext.activeTableName),
+        // regresó al POS y la abrió automáticamente.
+        
+        const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar pago/i }).first();
+        await cobrarBtn.click();
+        
+        await selectClientByCedula(page, scenario.saleParams.clientCedula);
+        
+        await page.getByRole("button", { name: /Terminar Venta/i }).click();
+        await page.waitForURL(/\/pos\/restaurant-payments/);
+
+        const response = await completePayment(page, {
+          paymentMethod: scenario.paymentMethod,
+          printTicket: scenario.saleParams.printTicket ?? false,
+          openDrawer: scenario.saleParams.openDrawer ?? false
+        });
+
+        const payload = response.request().postDataJSON();
+        expect(payload.subsidiary).toBeDefined();
+        
+        if (payload.subsidiary?.open_cash_register?.checkout?.subsidiary_id) {
+          expect(
+            payload.subsidiary.id,
+            `CROSSMATCH DETECTED IN POS: Subsidiary (${payload.subsidiary.id}) vs Cash Register (${payload.subsidiary.open_cash_register.checkout.subsidiary_id})`
+          ).toBe(payload.subsidiary.open_cash_register.checkout.subsidiary_id);
+        }
+      });
+    });
+  });
+});

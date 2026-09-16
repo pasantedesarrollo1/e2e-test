@@ -31,7 +31,9 @@
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
     "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Comercios"
   },
   {
     "id": "POS-CROSS-SALES-002",
@@ -65,7 +67,10 @@
     "subsidiaryName": "Wanqara Comercios Dispatch",
     "openingAmount": "100.00",
     "subsidiaryCode": "101",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Comercios",
+    "dispatchEnabled": true
   },
   {
     "id": "POS-CROSS-SALES-003",
@@ -84,17 +89,25 @@
     "type": "restaurant-flow",
     "environment": "POS Restaurant",
     "authType": "actor1",
-    "chefOrderParams": {
-      "productName": "Caja de alitas de pollo (100 u)",
-      "printTicket": false,
-      "openDrawer": false,
-      "clientCedula": "0000000001"
-    },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
     "cleanupReason": "Limpieza automática previa de tests de ventas cruzadas",
     "openingAmount": "100.00",
     "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Restaurante",
+    "chefAuthType": "actor1",
+    "stageSetupOptions": {
+      "createOrder": {
+        "productName": "Caja de alitas de pollo (100 u)"
+      }
+    },
+    "saleParams": {
+      "productName": "Caja de alitas de pollo (100 u)",
+      "printTicket": false,
+      "openDrawer": false,
+      "clientCedula": "0000000001"
+    }
   }
 ]

@@ -14,19 +14,19 @@
       "testScope": "regression"
     },
     "authType": "actor3",
-    "fixture": "posPage",
-    "paymentUrlPattern": "/pos/payments",
-    "productName": "Caja de alitas de pollo (100 u)",
     "productOptionsParams": {
       "quantity": "3.3337373372323",
       "unitPrice": "3.3337373372323",
-      "discountRate": "3.3337373372323"
+      "discountRate": "3.3337373372323",
+      "paymentMethod": "EFECTIVO",
+      "productName": "Caja de alitas de pollo (100 u)"
     },
     "subsidiaryName": "Wanqara Comercios",
-    "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Comercios"
   },
   {
     "id": "SALE-PRODUCT-OPTIONS-002",
@@ -43,18 +43,18 @@
       "testScope": "regression"
     },
     "authType": "actor1",
-    "fixture": "posRestaurantPage",
-    "paymentUrlPattern": "/pos/restaurant-payments",
-    "productName": "Caja de alitas de pollo (100 u)",
     "productOptionsParams": {
       "quantity": "3.3337373372323",
       "unitPrice": "3.3337373372323",
-      "discountRate": "3.3337373372323"
+      "discountRate": "3.3337373372323",
+      "paymentMethod": "EFECTIVO",
+      "productName": "Caja de alitas de pollo (100 u)"
     },
     "subsidiaryName": "Wanqara",
-    "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Restaurante"
   }
 ]

@@ -23,11 +23,10 @@
     },
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "10",
-    "paymentMethod": "EFECTIVO",
     "cleanupReason": "Limpieza automtica pre-test",
-    "productName": "Caja de alitas de pollo (100 u)",
-    "clientCedula": "0000000001",
     "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Comercios"
   }
 ]

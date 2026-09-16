@@ -14,7 +14,6 @@
       "testScope": "regression"
     },
     "authType": "actor3",
-    "fixture": "posPage",
     "surchargeProducts": [
       {
         "productKey": "tallaColor",
@@ -65,7 +64,6 @@
         "productType": "Subproducto"
       }
     ],
-    "surchargePrecisionKey": "allProducts",
     "discountName": "Descuento General",
     "discountCases": [
       {
@@ -256,7 +254,9 @@
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Comercios"
   },
   {
     "id": "SALE-FINANCIAL-PRECISION-002",
@@ -273,7 +273,6 @@
       "testScope": "regression"
     },
     "authType": "actor1",
-    "fixture": "posRestaurantPage",
     "surchargeProducts": [
       {
         "productKey": "servicio",
@@ -312,7 +311,6 @@
         "productType": "Subproducto"
       }
     ],
-    "surchargePrecisionKey": "restaurantProducts",
     "discountName": "Descuento General",
     "discountCases": [
       {
@@ -489,6 +487,8 @@
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Restaurante"
   }
 ]

@@ -1,9 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import {
   openProductOptions,
@@ -22,7 +20,6 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sale-product-options.json"), "utf-8")
 );
 
-
 async function applyProductOptions(page, { priceLabel, discountType, optionsParams }) {
   const dialog = await openProductOptions(page);
   await setQuantityInOptions(page, dialog, optionsParams.quantity);
@@ -38,31 +35,14 @@ async function assertCartHasProduct(page) {
   ).toBeVisible();
 }
 
-for (const scenario of scenarios) {
-  test.describe(`POS ${scenario.description} - Product Options @${scenario.metadata?.testScope || 'regression'}`, () => {
-    requirePosCredentials(test);
-
-    test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
-
-    if (scenario.metadata && scenario.metadata.ws) {
-      annotateTicket(test, scenario.metadata);
-    }
-
-    const runTest = (title, bodyFn) => {
-      if (scenario.fixture === 'posPage') {
-        test(title, async ({ posPage: page }) => await bodyFn(page));
-      } else {
-        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
-      }
-    };
-
-    runTest("validates product options modal for all price type and discount type combinations", async (page) => {
+test.describe("Product Options", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    
+    test("validates product options modal for all price type and discount type combinations", async ({ posPage: page }) => {
       test.setTimeout(120_000);
 
       await test.step("Add product to the cart", async () => {
-        await searchAndSelectProduct(page, { name: scenario.productName, searchTerm: null });
+        await searchAndSelectProduct(page, { name: scenario.productOptionsParams.productName, searchTerm: null });
       });
 
       await test.step("Apply options: Precio A with Porcentaje discount", async () => {
@@ -86,9 +66,10 @@ for (const scenario of scenarios) {
         const finishButton = page.getByRole("button", { name: /Terminar Venta/i });
         await finishButton.click();
 
-        await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
-        await completePayment(page, { paymentMethod: scenario.paymentMethod });
+        await page.waitForURL(/\/pos\/(restaurant-)?payments/);
+        await completePayment(page, { paymentMethod: scenario.productOptionsParams.paymentMethod });
       });
     });
+
   });
-}
+});

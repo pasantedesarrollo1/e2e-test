@@ -18,9 +18,9 @@
     "searchKeyword": "alitas",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
-    "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "loginMode": "cached",
-    "dispatchEnabled": false
+    "dispatchEnabled": false,
+    "cashRegisterMode": "fresh"
   }
 ]

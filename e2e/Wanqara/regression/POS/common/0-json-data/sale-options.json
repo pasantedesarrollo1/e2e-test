@@ -14,18 +14,18 @@
       "testScope": "regression"
     },
     "authType": "actor3",
-    "fixture": "posPage",
-    "paymentUrlPattern": "/pos/payments",
     "optionsParams": {
       "productName": "Caja de alitas de pollo (100 u)",
       "observationText": "Observación de prueba automatizada",
-      "savedSaleAlias": "Venta de prueba automatizada"
+      "savedSaleAlias": "Venta de prueba automatizada",
+      "paymentMethod": "EFECTIVO"
     },
     "subsidiaryName": "Wanqara Comercios",
-    "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Comercios"
   },
   {
     "id": "SALE-OPTIONS-002",
@@ -42,17 +42,17 @@
       "testScope": "regression"
     },
     "authType": "actor1",
-    "fixture": "posRestaurantPage",
-    "paymentUrlPattern": "/pos/restaurant-payments",
     "optionsParams": {
       "productName": "Caja de alitas de pollo (100 u)",
       "observationText": "Observación de prueba automatizada",
-      "savedSaleAlias": "Venta de prueba automatizada"
+      "savedSaleAlias": "Venta de prueba automatizada",
+      "paymentMethod": "EFECTIVO"
     },
     "subsidiaryName": "Wanqara",
-    "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Restaurante"
   }
 ]

@@ -1,5 +1,5 @@
 import { expect, test } from "../../../harness/builders/pos.builder.js";
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 
 import fs from "fs";
 import path from "path";
@@ -11,26 +11,11 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "cart-duplication.json"), "utf-8")
 );
 
-test.describe("POS Retail — Cart Duplication @regression", () => {
-  test.describe.configure({ mode: 'default' });
-
-  if (scenarios.length > 0) {
-    annotateTicket(test, scenarios[0].metadata);
-  }
-
-  for (const scenario of scenarios) {
-    test.describe(scenario.description, () => {
-      test.use({ 
-        openingAmount: scenario.openingAmount, 
-        authType: scenario.authType, 
-        loginMode: scenario.loginMode,
-        subsidiaryName: scenario.subsidiaryName,
-        subsidiaryCode: scenario.subsidiaryCode,
-        businessType: scenario.businessType || "Comercios" 
-      });
-
-      test("Execute Flow", async ({ posPage: page }) => {
-        test.setTimeout(120_000);
+test.describe("Cart Duplication", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    
+    test("Execute Flow", async ({ posPage: page }) => {
+      test.setTimeout(120_000);
 
       let warnings = [];
       page.on("console", (msg) => {
@@ -162,6 +147,6 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
       
       await clearCart(page);
     });
+
   });
-}
 });

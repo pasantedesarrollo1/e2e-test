@@ -1,20 +1,17 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { closeDrawer, expandAndRecoverFirstSavedSale, navigateToSavedSales, openDrawer } from '../harness/sales/pos-drawer-helpers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sale-options.json"), "utf-8")
 );
-
-import { closeDrawer, expandAndRecoverFirstSavedSale, navigateToSavedSales, openDrawer } from '../harness/sales/pos-drawer-helpers.js';
 
 async function openObservationDialog(page, drawer) {
   const option = drawer.locator(".v-btn, .v-card").filter({ hasText: /Agregar Observación/i }).first();
@@ -63,26 +60,10 @@ async function fillAliasAndSave(page, alias) {
   ).toBeVisible();
 }
 
-for (const scenario of scenarios) {
-  test.describe(`POS ${scenario.description} - Sale Options @${scenario.metadata?.testScope || 'regression'}`, () => {
-    requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
+test.describe("Sale Options", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
     
-    if (scenario.metadata && scenario.metadata.ws) {
-      annotateTicket(test, scenario.metadata);
-    }
-
-    const runTest = (title, bodyFn) => {
-      if (scenario.fixture === 'posPage') {
-        test(title, async ({ posPage: page }) => await bodyFn(page));
-      } else {
-        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
-      }
-    };
-
-    runTest("validates adding a note and completing a sale from the Sale Options panel", async (page) => {
+    test("validates adding a note and completing a sale from the Sale Options panel", async ({ posPage: page }) => {
       test.setTimeout(120_000);
 
       await test.step("Add a standard product", async () => {
@@ -102,8 +83,8 @@ for (const scenario of scenarios) {
       await test.step("Complete the sale and print ticket", async () => {
         const finishBtn = page.getByRole("button", { name: /Terminar Venta/i });
         await finishBtn.click();
-        await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
-        await completePayment(page, { paymentMethod: scenario.paymentMethod,  printTicket: true });
+        await page.waitForURL(/\/pos\/(restaurant-)?payments/);
+        await completePayment(page, { paymentMethod: scenario.optionsParams.paymentMethod, printTicket: true });
       });
 
       await test.step("Verify 'Comprobante Impreso' notification", async () => {
@@ -113,7 +94,7 @@ for (const scenario of scenarios) {
       });
     });
 
-    runTest("saves a sale with an alias and then recovers it from the Saved Sales screen", async (page) => {
+    test("saves a sale with an alias and then recovers it from the Saved Sales screen", async ({ posPage: page }) => {
       test.setTimeout(240_000);
 
       await test.step("Add a standard product", async () => {
@@ -143,8 +124,8 @@ for (const scenario of scenarios) {
       await test.step("Complete the recovered sale and print ticket", async () => {
         const finishBtn = page.getByRole("button", { name: /Terminar Venta/i });
         await finishBtn.click();
-        await page.waitForURL(new RegExp(scenario.paymentUrlPattern));
-        await completePayment(page, { paymentMethod: scenario.paymentMethod,  printTicket: true });
+        await page.waitForURL(/\/pos\/(restaurant-)?payments/);
+        await completePayment(page, { paymentMethod: scenario.optionsParams.paymentMethod, printTicket: true });
       });
 
       await test.step("Verify 'Comprobante Impreso' notification", async () => {
@@ -153,5 +134,6 @@ for (const scenario of scenarios) {
         ).toBeVisible({ timeout: 15000 });
       });
     });
+
   });
-}
+});

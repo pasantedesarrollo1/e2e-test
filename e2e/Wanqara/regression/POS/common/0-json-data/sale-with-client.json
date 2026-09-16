@@ -14,18 +14,19 @@
       "testScope": "regression"
     },
     "authType": "actor3",
-    "fixture": "posPage",
     "clientParams": {
       "testCedula": "0000000001",
       "testName": "Usuario Test",
       "consumidorFinalCedula": "0000000001",
-      "productName": "Caja de alitas de pollo (100 u)"
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": "EFECTIVO"
     },
     "subsidiaryName": "Wanqara Comercios",
-    "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Comercios"
   },
   {
     "id": "SALE-WITH-CLIENT-002",
@@ -42,17 +43,18 @@
       "testScope": "regression"
     },
     "authType": "actor1",
-    "fixture": "posRestaurantPage",
     "clientParams": {
       "testCedula": "0000000001",
       "testName": "Usuario Test",
       "consumidorFinalCedula": "0000000001",
-      "productName": "Caja de alitas de pollo (100 u)"
+      "productName": "Caja de alitas de pollo (100 u)",
+      "paymentMethod": "EFECTIVO"
     },
     "subsidiaryName": "Wanqara",
-    "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Restaurante"
   }
 ]

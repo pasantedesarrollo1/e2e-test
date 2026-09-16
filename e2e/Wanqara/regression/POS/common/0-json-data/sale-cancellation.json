@@ -15,20 +15,19 @@
       "testScope": "regression"
     },
     "authType": "actor3",
-    "targetPath": "/pos/home",
     "expectSwitch": true,
     "expectMessage": false,
     "saleParams": {
       "productName": "Caja de alitas de pollo (100 u)",
       "clientCedula": "0000000001",
-      "paymentMethod": "EFECTIVO",
-      "warehouseName": "Bodega de Ventas W001"
+      "paymentMethod": "EFECTIVO"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
     "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Comercios"
   },
   {
     "id": "SALE-CANCELLATION-002",
@@ -46,20 +45,20 @@
       "testScope": "regression"
     },
     "authType": "actor2",
-    "targetPath": "/pos/home",
     "expectSwitch": false,
     "expectMessage": true,
     "saleParams": {
       "productName": "Caja de alitas de pollo (100 u)",
       "clientCedula": "0000000001",
-      "paymentMethod": "EFECTIVO",
-      "warehouseName": "Bodega de Ventas W001"
+      "paymentMethod": "EFECTIVO"
     },
-    "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
     "subsidiaryName": "Wanqara Comercios Dispatch",
     "subsidiaryCode": "101",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Comercios",
+    "dispatchEnabled": true
   },
   {
     "id": "SALE-CANCELLATION-003",
@@ -77,19 +76,18 @@
       "testScope": "regression"
     },
     "authType": "actor1",
-    "targetPath": "/pos/restaurant-home",
     "expectSwitch": false,
     "expectMessage": true,
     "saleParams": {
       "productName": "Caja de alitas de pollo (100 u)",
       "clientCedula": "0000000001",
-      "paymentMethod": "EFECTIVO",
-      "warehouseName": "Bodega de Ventas W001"
+      "paymentMethod": "EFECTIVO"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
     "openingAmount": "100.00",
     "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "cashRegisterMode": "fresh",
+    "businessType": "Restaurante"
   }
 ]

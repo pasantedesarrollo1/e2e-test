@@ -1,14 +1,11 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { ensureCashRegisterOpen } from "../harness/cash-register/cash-register-helpers.js";
 import { selectClientByCedula } from '../../../harness/helpers/people/client-helpers.js';
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,30 +13,16 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "public-document-share.json"), "utf-8")
 );
 
-for (const scenario of scenarios) {
-  test.describe(`POS ${scenario.description} - Public Document Share @${scenario.metadata?.testScope || 'regression'}`, () => {
-    requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
+test.describe("POS Public Document Share", () => {
+  // Configurar permisos globales para esta suite
+  test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
 
-    test.use({ permissions: ['clipboard-read', 'clipboard-write'], openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
-
-    if (scenario.metadata && scenario.metadata.ws) {
-      annotateTicket(test, scenario.metadata);
-    }
-
-    test("validates tokenization via share-token API, clipboard flow, public view and error state", async ({ page, browser }) => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    test(scenario.description, async ({ posPage: page, browser }) => {
       test.setTimeout(180_000);
 
       let publicToken = null;
       let shareUrl = null;
-
-      await test.step("Navigate to POS and setup", async () => {
-        const targetPath = scenario.authType === 'restaurant' ? '/pos/restaurant-home' : '/pos/home';
-        await ensureAuthenticated(page, { targetPath, authType: scenario.authType });
-        await ensureCashRegisterOpen(page, scenario.openingAmount, scenario.subsidiaryName, scenario.subsidiaryCode, targetPath);
-      });
 
       await test.step("Search and select product", async () => {
         await searchAndSelectProduct(page, { name: scenario.shareData.productName });
@@ -54,7 +37,7 @@ for (const scenario of scenarios) {
         await page.waitForURL(/\/pos\/(restaurant-)?payments/);
 
         await completePayment(page, { 
-          paymentMethod: scenario.shareData.paymentMethod, 
+          paymentMethod: scenario.shareData.paymentMethod?.label || scenario.paymentMethod, 
           printTicket: false,
           viewPdf: true,
           openDrawer: false 
@@ -107,4 +90,4 @@ for (const scenario of scenarios) {
       });
     });
   });
-}
+});

@@ -1,21 +1,18 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
 import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { selectClientFromSearchModal } from "../../../harness/helpers/people/client-helpers.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sale-with-client.json"), "utf-8")
 );
-
-import { selectClientFromSearchModal } from "../../../harness/helpers/people/client-helpers.js";
 
 async function confirmClientModal(page) {
   const clientModal = page
@@ -33,27 +30,10 @@ async function confirmClientModal(page) {
   ).toBeVisible({ timeout: 20000 });
 }
 
-for (const scenario of scenarios) {
-  test.describe(`POS ${scenario.description} - Sales with Customer Assignment @${scenario.metadata?.testScope || 'regression'}`, () => {
-    requirePosCredentials(test);
-
-    test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
-
-    if (scenario.metadata && scenario.metadata.ws) {
-      annotateTicket(test, scenario.metadata);
-    }
-
-    const runTest = (title, bodyFn) => {
-      if (scenario.fixture === 'posPage') {
-        test(title, async ({ posPage: page }) => await bodyFn(page));
-      } else {
-        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
-      }
-    };
-
-    runTest("validates all customer assignment methods and completes the sale", async (page) => {
+test.describe("Sales with Customer Assignment", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    
+    test("validates all customer assignment methods and completes the sale", async ({ posPage: page }) => {
       test.setTimeout(180_000);
 
       await test.step("Assign customer via Personas search modal", async () => {
@@ -143,7 +123,8 @@ for (const scenario of scenarios) {
       await test.step("Complete the sale with the assigned customer and print ticket", async () => {
         await searchAndSelectProduct(page, { name: scenario.clientParams.productName });
         await clickFinishSale(page);
-        await completePayment(page, { paymentMethod: scenario.paymentMethod,  printTicket: true });
+        await page.waitForURL(/\/pos\/(restaurant-)?payments/);
+        await completePayment(page, { paymentMethod: scenario.clientParams.paymentMethod, printTicket: true });
       });
 
       await test.step("Verify 'Comprobante Impreso' notification", async () => {
@@ -152,5 +133,6 @@ for (const scenario of scenarios) {
         ).toBeVisible({ timeout: 15000 });
       });
     });
+
   });
-}
+});

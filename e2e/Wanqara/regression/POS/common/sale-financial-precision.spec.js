@@ -1,10 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { selectClientByCedula } from '../../../harness/helpers/people/client-helpers.js';
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 import {
   applyGeneralDiscount,
   applyManualSurcharge,
@@ -60,72 +58,43 @@ async function runAllProductsSurchargeFlow(page, { productsToAdd, precision, pre
   });
 }
 
-test.describe.serial("Financial Calculation Accuracy", () => {
-  for (const scenario of scenarios) {
+test.describe("Financial Calculation Accuracy", () => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
     
+    // Suite 1: Descuentos Generales (1 test por cada discountCase)
+    for (const { product, afterProductSelect, precision, precisionHoliday } of scenario.discountCases) {
+      test(`validates financial calculations for [${product.type}] with ${scenario.discountName}`, async ({ posPage: page }) => {
+        test.setTimeout(120_000);
 
-    const runTest = (title, bodyFn) => {
-      if (scenario.fixture === 'posPage') {
-        test(title, async ({ posPage: page }) => await bodyFn(page));
-      } else {
-        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
-      }
-    };
-
-    test.describe(`POS ${scenario.description} - Financial Calculation Accuracy with ${scenario.discountName} @${scenario.metadata.testScope}`, () => {
-      requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
-      
-      if (scenario.metadata && scenario.metadata.ws) {
-        annotateTicket(test, scenario.metadata);
-      }
-
-      for (const { product, afterProductSelect, precision, precisionHoliday } of scenario.discountCases) {
-        runTest(`validates financial calculations for [${product.type}] with a general discount`, async (page) => {
-          test.setTimeout(120_000);
-
-          await runFinancialPrecisionFlow(page, {
-            product,
-            afterProductSelect,
-            applyModifier: (page) => applyGeneralDiscount(page, "3.3337373372323"),
-            precision,
-            precisionHoliday,
-            paymentMethod: scenario.paymentMethod
-          });
-        });
-      }
-    });
-
-    test.describe(`POS ${scenario.description} - Financial Calculation Accuracy with ${scenario.surchargeName} @${scenario.metadata.testScope}`, () => {
-      requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
-
-      if (scenario.metadata && scenario.metadata.ws) {
-        annotateTicket(test, scenario.metadata);
-      }
-
-      runTest("validates financial calculations for a manual surcharge across compatible product types in a single sale", async (page) => {
-        test.setTimeout(180_000);
-
-        
-        const mappedSurchargeProducts = scenario.surchargeProducts.map(sp => ({
-          product: { type: sp.productType, name: sp.productName },
-          afterSelect: sp.afterSelectFn ? functionMap[sp.afterSelectFn] : null
-        }));
-
-        await runAllProductsSurchargeFlow(page, {
-          productsToAdd: mappedSurchargeProducts,
-          precision: scenario.surchargePrecision,
-          precisionHoliday: scenario.surchargePrecisionHoliday,
-          requiresClient: scenario.surchargeClientCedula,
-          surchargeName: scenario.surchargeName,
+        await runFinancialPrecisionFlow(page, {
+          product,
+          afterProductSelect,
+          applyModifier: (page) => applyGeneralDiscount(page, "3.3337373372323"),
+          precision,
+          precisionHoliday,
           paymentMethod: scenario.paymentMethod
         });
       });
+    }
+
+    // Suite 2: Recargos Manuales Masivos (1 test con todos los surchargeProducts)
+    test(`validates financial calculations for ${scenario.surchargeName} across compatible product types in a single sale`, async ({ posPage: page }) => {
+      test.setTimeout(180_000);
+
+      const mappedSurchargeProducts = scenario.surchargeProducts.map(sp => ({
+        product: { type: sp.productType, name: sp.productName },
+        afterSelect: sp.afterSelectFn ? functionMap[sp.afterSelectFn] : null
+      }));
+
+      await runAllProductsSurchargeFlow(page, {
+        productsToAdd: mappedSurchargeProducts,
+        precision: scenario.surchargePrecision,
+        precisionHoliday: scenario.surchargePrecisionHoliday,
+        requiresClient: scenario.surchargeClientCedula,
+        surchargeName: scenario.surchargeName,
+        paymentMethod: scenario.paymentMethod
+      });
     });
-  }
+
+  });
 });
