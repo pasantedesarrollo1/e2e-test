@@ -36,12 +36,19 @@ export async function navigateToRestaurantPOS(page, subsidiaryName) {
   }
 }
 
+import {
+  openExtrasSelection,
+  addInStockExtra,
+  confirmExtrasAndAddToCart
+} from "./pos-extras-helpers.js";
+
 export async function createChefOrder(page, {
   productName,
   quantity = 1,
   chefLogin,
   chefSubsidiary,
-  chefSubsidiaryCode
+  chefSubsidiaryCode,
+  extras = null
 } = {}) {
   if (!productName) throw new Error("createChefOrder requires productName in options");
   await ensureChefAuthenticated(page, {
@@ -60,7 +67,17 @@ export async function createChefOrder(page, {
 
   const tableName = await selectTable(page);
   await searchAndSelectProduct(page, productName);
-  await addProductToCart(page, quantity);
+
+  if (extras) {
+    await openExtrasSelection(page, extras.categoryName);
+    for (const extra of extras.items) {
+      await addInStockExtra(page, extra);
+    }
+    await confirmExtrasAndAddToCart(page);
+  } else {
+    await addProductToCart(page, quantity);
+  }
+  
   await submitOrder(page);
 
   return tableName;
@@ -216,10 +233,3 @@ export async function closeAllActiveOrders(page, subsidiaryName, reason) {
   }
 }
 
-export async function withActiveRestaurantOrder(page, actionCallback, orderOptions = {}, posOptions = {}) {
-  await closeAllActiveOrders(page, posOptions.subsidiaryName, posOptions.cleanupReason);
-  const activeTableName = await createChefOrder(page, orderOptions);
-  await navigateToRestaurantPOS(page, posOptions.subsidiaryName);
-  await openAndSelectOrder(page, activeTableName);
-  await actionCallback(page, activeTableName);
-}

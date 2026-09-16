@@ -120,12 +120,22 @@ export default defineConfig({
     {
       name: 'Release',
       dependencies: ['setup-actors', 'setup-chef'],
-      testMatch: /Wanqara\/(regression|specific-cases)\/.*\.spec\.js/,
+      testMatch: /Wanqara\/regression\/.*\.spec\.js/,
       grep: /@release/,                               
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
         storageState: path.join(AUTH_DIR, 'actor3-session.json'),
+      },
+    },
+    {
+      name: 'SpecificCases-Release',
+      dependencies: ['setup-actors'],
+      testMatch: /Wanqara\/specific-cases\/.*\.spec\.js/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL,
+        storageState: { cookies: [], origins: [] },
       },
     },
 

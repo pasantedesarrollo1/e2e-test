@@ -87,11 +87,10 @@ export async function selectClientByCedula(page, cedula, options = {}) {
     }
   }
 
-  if (snackbarRequired) {
-    await expectSnackbar(page, /Cliente asignado correctamente/i);
-  } else {
-    const snackbar = page.locator(".v-snackbar").filter({ hasText: /Cliente asignado correctamente/i }).last();
-    await expect(snackbar).toBeVisible({ timeout: 15000 }).catch(() => {});
+  try {
+    await expectSnackbar(page, /Cliente asignado correctamente/i, 15000);
+  } catch (error) {
+    if (snackbarRequired) throw error;
   }
 
   if (assertCedulaOnMain) {

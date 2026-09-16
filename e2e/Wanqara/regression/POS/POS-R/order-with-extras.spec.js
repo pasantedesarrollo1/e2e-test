@@ -1,10 +1,7 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../../../harness/builders/stage.builder.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { chefHarness, getTenantBaseUrl, requireChefCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { getChefSessionPath, ensureChefAuthenticated } from "../../../harness/helpers/auth/chef-auth.js";
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,19 +18,27 @@ import {
   validateOutOfStockExtra
 } from "./harness/pos-extras-helpers.js";
 import {
-  closeAllActiveOrders,
   collectOrder,
   finalizeSaleWithPayment,
-  navigateToRestaurantPOS,
   openAndSelectOrder
 } from "./harness/pos-orders-common.js";
 
 
 for (const scenario of scenarios) {
   test.describe.serial(`Restaurant POS ${scenario.description} - Order with Extras @${scenario.metadata?.testScope || 'regression'}`, () => {
-    requireChefCredentials(test);
-
-    test.use({ storageState: getChefSessionPath(scenario.chefAuthType || "actor1"), openingAmount: scenario.openingAmount });
+    
+    test.use({ 
+      openingAmount: scenario.openingAmount, 
+      authType: scenario.authType, 
+      loginMode: scenario.loginMode,
+      subsidiaryName: scenario.subsidiaryName,
+      subsidiaryCode: scenario.subsidiaryCode,
+      chefAuthType: scenario.chefAuthType,
+      chefLogin: scenario.chefLogin,
+      chefSubsidiary: scenario.chefSubsidiary,
+      chefSubsidiaryCode: scenario.chefSubsidiaryCode
+      // No usamos createOrder en stageSetupOptions porque queremos hacerlo a mano en chefPage
+    });
 
     let baseProduct = scenario.extrasData.baseProduct;
     let categoryName = scenario.extrasData.categoryName;
@@ -45,65 +50,43 @@ for (const scenario of scenarios) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test.beforeEach(async ({ page }) => {
-      const chefBaseUrl = chefHarness.baseUrl;
-      await ensureChefAuthenticated(page, {
-        chefBaseUrl,
-        targetPath: "/tables",
-        login: scenario.chefLogin,
-        subsidiary: scenario.subsidiaryName,
-        subsidiaryCode: scenario.subsidiaryCode
-      });
-      
-      await expect(page).toHaveURL(/\/tables/);
-
+    test.beforeEach(async ({ chefPage }) => {
+      // El builder ya nos entrega el chefPage logueado y posicionado. 
+      // Solo garantizamos estar en la pestaña correcta.
+      await expect(chefPage).toHaveURL(/\/tables/);
       await expect(
-        page.locator("ion-segment-button").filter({ hasText: "Todos" })
+        chefPage.locator("ion-segment-button").filter({ hasText: "Todos" })
       ).toBeVisible();
     });
 
-    test("selects a product and opens the modifiers sheet", async ({ page }) => {
-      await selectTable(page);
-      await searchAndSelectProduct(page, baseProduct);
-      await openExtrasSelection(page, categoryName);
-    });
+    test("creates an order with extras validating stock and completes the payment", async ({ posPage, chefPage }) => {
+      test.setTimeout(180_000);
+      
+      let tableName;
+      
+      // 1. Acciones del Chef (El builder ya limpió las órdenes previas automáticamente)
+      await test.step("Select table, product and open modifiers sheet", async () => {
+        tableName = await selectTable(chefPage);
+        await searchAndSelectProduct(chefPage, baseProduct);
+        await openExtrasSelection(chefPage, categoryName);
+      });
 
-    test("validates out-of-stock extra shows correct labels and notifications", async ({ page }) => {
-      await selectTable(page);
-      await searchAndSelectProduct(page, baseProduct);
-      await openExtrasSelection(page, categoryName);
-      await validateOutOfStockExtra(page, sinStockExtra, outOfStockLabelText);
-    });
+      await test.step("Validate out-of-stock extra shows correct labels", async () => {
+        await validateOutOfStockExtra(chefPage, sinStockExtra, outOfStockLabelText);
+      });
 
-    test("adds an in-stock extra, completes the order, and processes payment in POS", async ({ page, browser }) => {
-      test.setTimeout(180000);
-      const tenantBaseUrl = getTenantBaseUrl();
+      await test.step("Add an in-stock extra and confirm order", async () => {
+        await addInStockExtra(chefPage, conStockExtra);
+        await confirmExtrasAndAddToCart(chefPage);
+        await submitOrder(chefPage);
+      });
       
-      // Cleanup using an isolated POS context
-      const cleanupContext = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
-      const cleanupPage = await cleanupContext.newPage();
-      await closeAllActiveOrders(cleanupPage, tenantBaseUrl, scenario.subsidiaryName, scenario.cleanupReason || "Limpieza pre-test");
-      await cleanupContext.close();
-      
-      // Use the chef page for chef actions
-      const tableName = await selectTable(page);
-      await searchAndSelectProduct(page, baseProduct);
-      await openExtrasSelection(page, categoryName);
-      
-      await addInStockExtra(page, conStockExtra);
-      await confirmExtrasAndAddToCart(page);
-      await submitOrder(page);
-      
-      // Create isolated POS context to collect payment
-      const posContext = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
-      const posPage = await posContext.newPage();
-      
-      await navigateToRestaurantPOS(posPage, tenantBaseUrl, scenario.subsidiaryName);
-      await openAndSelectOrder(posPage, tableName);
-      await collectOrder(posPage);
-      await finalizeSaleWithPayment(posPage, scenario.clientCedula, scenario.paymentMethod);
-      
-      await posContext.close();
+      // 2. Acciones del POS
+      await test.step("Open order in POS and process payment", async () => {
+        await openAndSelectOrder(posPage, tableName);
+        await collectOrder(posPage);
+        await finalizeSaleWithPayment(posPage, scenario.clientCedula, scenario.paymentMethod);
+      });
     });
   });
 }

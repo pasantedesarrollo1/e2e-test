@@ -9,7 +9,7 @@
       "tes": "TES-214",
       "release": "v7.10.0",
       "summary": "Implementar test de creacion de categoria extra",
-      "testScope": "release",
+      "testScope": "regression",
       "addedToRegression": "true"
     },
     "description": "Extras Manager - Extra Categories Flujo Completo",

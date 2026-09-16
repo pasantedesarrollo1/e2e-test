@@ -1,14 +1,12 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
-import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
+import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
 import { closeDrawer, openDrawer } from '../harness/sales/pos-drawer-helpers.js';
-import { expect, test } from "../harness/setup/pos-fixtures.js";
+import { expect, test } from "../../../harness/builders/pos.builder.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,42 +56,20 @@ async function fillAndSubmitCashForm(page, type, scenario) {
 }
 
 test.describe("POS - Cash Register Income and Expense Transactions", () => {
-  test.describe.configure({ mode: 'default' });
-
-  if (scenarios.length > 0) {
-    annotateTicket(test, scenarios[0].metadata);
-  }
-
-  for (const scenario of scenarios) {
-    test.describe(`Environment: ${scenario.environment} @${scenario.metadata.testScope}`, () => {
-      if (scenario.skip) {
-        test.skip(true, scenario.skipReason);
-      }
-
-      requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
-
-      const runTest = (title, bodyFn) => {
-        if (scenario.fixture === 'posPage') {
-          test(scenario.only ? `${title} (focus)` : title, { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined }, async ({ posPage: page }) => await bodyFn(page));
-        } else {
-          test(scenario.only ? `${title} (focus)` : title, { annotation: scenario.only ? { type: "focus", description: "Focused execution via JSON" } : undefined }, async ({ posRestaurantPage: page }) => await bodyFn(page));
-        }
-      };
-
-      runTest(scenario.description, async (page) => {
-        test.setTimeout(180_000);
+  generateDataDrivenTests(test, scenarios, (scenario) => {
+    test(scenario.description, async ({ posPage: page }) => {
+      test.setTimeout(180_000);
         await test.step("Venta previa y registro secuencial de ingreso y egreso", async () => {
-          await test.step("Realizar venta simple de alitas", async () => {
-            await searchAndSelectProduct(page, { name: scenario.productName, searchTerm: null });
+          if (!scenario.skipPriorSale) {
+            await test.step("Realizar venta simple de alitas", async () => {
+              await searchAndSelectProduct(page, { name: scenario.productName, searchTerm: null });
               await clickFinishSale(page);
               await completePayment(page, { paymentMethod: scenario.paymentMethod });
-            const basePath = scenario.basePath;
-            await page.goto(basePath);
-            await page.waitForURL(new RegExp(basePath));
-          });
+              const basePath = scenario.basePath;
+              await page.goto(basePath);
+              await page.waitForURL(new RegExp(basePath));
+            });
+          }
 
           const drawerFilter = /Opciones/i;
           const triggerLocator = page.getByRole("button", { name: /Más Opciones/i }).first();
@@ -109,5 +85,4 @@ test.describe("POS - Cash Register Income and Expense Transactions", () => {
         });
       });
     });
-  }
-});
+  });

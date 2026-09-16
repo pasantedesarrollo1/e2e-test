@@ -44,8 +44,8 @@ Every Spec has a strict 1:1 relationship with a JSON file located in the `0-json
 
 ## 4. CI/CD Pipeline Routing (`metadata.testScope`)
 
-*   **`"testScope": "release"`**: Runs in GitHub Actions.
+*   **`"testScope": "regression"`**: Runs in GitHub Actions.
 *   **`"testScope": "regression"`**: Runs locally and Nightly. (Ignored by GitHub Actions).
 
 ### Traceability Rule
-When a release is over, **do not delete** the `release` version string (e.g., `"release": "v7.9.1"`). Change `"testScope": "release"` to `"testScope": "regression"`.
+When a release is over, **do not delete** the `release` version string (e.g., `"release": "v7.9.1"`). Change `"testScope": "regression"` to `"testScope": "regression"`.

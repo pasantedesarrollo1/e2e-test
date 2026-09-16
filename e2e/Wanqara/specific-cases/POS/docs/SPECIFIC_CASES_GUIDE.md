@@ -25,7 +25,7 @@ JSON files are stored in `0-json-data/` within their respective domain folders.
 
 ### `testScope` Metadata Tagging
 Because specific cases often reproduce bugs reported in production, they usually belong to the **Release** verification phase rather than the standard nightly regression. 
-*   Always define `"testScope": "release"` or `"testScope": "specific"` in your JSON metadata.
+*   Always define `"testScope": "regression"` or `"testScope": "specific"` in your JSON metadata.
 *   This allows the CI/CD pipeline to target these specific edge cases via `--grep "@release"` when launching a new version, without bloating the everyday `@regression` suite.
 
 ---

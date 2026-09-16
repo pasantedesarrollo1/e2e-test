@@ -14,7 +14,7 @@ import {
 } from "../harness/financials/pos-financial-assertions.js";
 import { selectFirstSerie, selectFirstVariant } from "../harness/products/pos-products.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
-import { test } from "../harness/setup/pos-fixtures.js";
+import { test } from "../../../harness/builders/pos.builder.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

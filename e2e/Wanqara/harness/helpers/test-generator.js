@@ -53,6 +53,9 @@ export function generateDataDrivenTests(test, scenarios, testFn) {
       if (scenario.openingAmount) useConfig.openingAmount = scenario.openingAmount;
       if (scenario.authType) useConfig.authType = scenario.authType;
       if (loginMode) useConfig.loginMode = loginMode;
+      if (scenario.businessType) useConfig.businessType = scenario.businessType;
+      if (scenario.dispatchEnabled !== undefined) useConfig.dispatchEnabled = scenario.dispatchEnabled;
+      if (scenario.cashRegisterMode) useConfig.cashRegisterMode = scenario.cashRegisterMode;
       
       if (Object.keys(useConfig).length > 0) {
         test.use(useConfig);

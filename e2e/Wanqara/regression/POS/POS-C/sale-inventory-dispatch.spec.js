@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
-import { expect, test } from "../harness/setup/pos-fixtures.js";
+import { expect, test } from "../../../harness/builders/pos.builder.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

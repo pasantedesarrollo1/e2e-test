@@ -14,35 +14,13 @@
       "testScope": "regression"
     },
     "authType": "actor3",
-    "fixture": "posPage",
+    "businessType": "Comercios",
     "searchKeyword": "alitas",
     "subsidiaryName": "Wanqara Comercios",
-    "paymentMethod": "EFECTIVO",
-    "openingAmount": "100.00",
     "subsidiaryCode": "100",
-    "loginMode": "cached"
-  },
-  {
-    "id": "STRESS-CART-DUPLICATION-002",
-    "only": false,
-    "skip": false,
-    "skipReason": "",
-    "description": "Restaurant",
-    "metadata": {
-      "ws": "WS-1025",
-      "tes": "TES-217",
-      "release": "v7.10.0",
-      "summary": "POS Cart Click Stress Test - Restaurant",
-      "addedToRegression": "true",
-      "testScope": "regression"
-    },
-    "authType": "actor1",
-    "fixture": "posRestaurantPage",
-    "searchKeyword": "alitas",
-    "subsidiaryName": "Wanqara",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "loginMode": "cached",
+    "dispatchEnabled": false
   }
 ]

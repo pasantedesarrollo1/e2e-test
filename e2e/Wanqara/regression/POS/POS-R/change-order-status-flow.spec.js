@@ -1,14 +1,7 @@
-import { getChefSessionPath } from "../../../harness/helpers/auth/chef-auth.js";
-import { test } from "@playwright/test";
+import { expect, test } from "../../../harness/builders/stage.builder.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import {
-  getTenantBaseUrl,
-  requireChefCredentials,
-  requirePosCredentials,
-} from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,54 +18,44 @@ import {
   selectOrderToChangeStatus,
 } from "./harness/pos-change-order-status.js";
 import {
-  closeAllActiveOrders,
   createChefOrder,
   navigateToChangeOrderStatusFromOptions,
-  navigateToRestaurantPOS,
 } from "./harness/pos-orders-common.js";
 
 for (const scenario of scenarios) {
   test.describe.serial(`POS ${scenario.description} - Change Order Status Flow @${scenario.metadata?.testScope || 'regression'}`, () => {
-    requirePosCredentials(test);
-    requireChefCredentials(test);
 
-    test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
+    test.use({ 
+      openingAmount: scenario.openingAmount, 
+      authType: scenario.authType, 
+      loginMode: scenario.loginMode,
+      subsidiaryName: scenario.subsidiaryName,
+      subsidiaryCode: scenario.subsidiaryCode,
+      chefAuthType: scenario.chefAuthType,
+      chefLogin: scenario.chefLogin,
+      chefSubsidiary: scenario.chefSubsidiary,
+      chefSubsidiaryCode: scenario.chefSubsidiaryCode
+    });
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test.beforeAll(async ({ browser }) => {
-      const context = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
-      const cleanupPage = await context.newPage();
-      
-      await closeAllActiveOrders(cleanupPage, getTenantBaseUrl(), scenario.subsidiaryName, scenario.cleanupReason || "Limpieza pre-test");
-      
-      await context.close();
-    });
-
-    test("creates an order in Chef, prints preticket, and changes status back to pending in POS", async ({ page, browser }) => {
+    test("creates an order in Chef, prints preticket, and changes status back to pending in POS", async ({ posPage: page, chefPage }) => {
       test.setTimeout(180_000);
 
-      const tenantBaseUrl = getTenantBaseUrl();
-
       await test.step("Create order and print preticket from Chef", async () => {
-        // Fix cross-app session invalidation by using an independent Chef context
-        const chefAuthType = scenario.chefAuthType;
-        const chefContext = await browser.newContext({ storageState: getChefSessionPath(chefAuthType) });
-        const chefPage = await chefContext.newPage();
-        
-        await createChefOrder(chefPage, { productName: scenario.productName, chefLogin: scenario.chefLogin, chefSubsidiary: scenario.chefSubsidiary, chefAuthType: scenario.chefAuthType });
+        await createChefOrder(chefPage, { 
+            productName: scenario.productName, 
+            chefLogin: scenario.chefLogin, 
+            chefSubsidiary: scenario.chefSubsidiary, 
+            chefSubsidiaryCode: scenario.chefSubsidiaryCode 
+        });
         await printPreticket(chefPage);
-        
-        await chefContext.close();
-      });
-
-      await test.step("Navigate to restaurant POS", async () => {
-        await navigateToRestaurantPOS(page, tenantBaseUrl, scenario.subsidiaryName);
       });
 
       await test.step("Open More Options menu and navigate to Change Order Status", async () => {
+        // En lugar de navigateToRestaurantPOS, solo vamos directo porque el posPage ya está en el home
         await navigateToChangeOrderStatusFromOptions(page);
       });
 

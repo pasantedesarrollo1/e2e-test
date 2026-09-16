@@ -4,7 +4,7 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "validates conditional cash register open and final close",
+    "description": "validates conditional cash register open and final close (Retail)",
     "metadata": {
       "ws": "WS-1032",
       "tes": "TES-230",
@@ -16,12 +16,41 @@
     "environment": "Retail",
     "authType": "actor3",
     "basePath": "/pos/home",
+    "businessType": "Comercios",
+    "cashRegisterMode": "ensure-closed",
     "openingAmount": "10",
     "subsidiaryName": "Wanqara Comercios",
     "productName": "Caja de alitas de pollo (100 u)",
     "clientCedula": "0000000001",
     "paymentMethod": "EFECTIVO",
     "subsidiaryCode": "100",
+    "loginMode": "cached"
+  },
+  {
+    "id": "CASH-REGISTER-002",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "validates conditional cash register open and final close (Restaurant)",
+    "metadata": {
+      "ws": "WS-1032",
+      "tes": "TES-230",
+      "release": "v7.9.2",
+      "summary": "Cash Register Lifecycle - Restaurant",
+      "addedToRegression": "true",
+      "testScope": "regression"
+    },
+    "environment": "Restaurant",
+    "authType": "actor1",
+    "basePath": "/pos/restaurant-home",
+    "businessType": "Restaurante",
+    "cashRegisterMode": "ensure-closed",
+    "openingAmount": "10",
+    "subsidiaryName": "Wanqara",
+    "productName": "Caja de alitas de pollo (100 u)",
+    "clientCedula": "0000000001",
+    "paymentMethod": "EFECTIVO",
+    "subsidiaryCode": "001",
     "loginMode": "cached"
   }
 ]

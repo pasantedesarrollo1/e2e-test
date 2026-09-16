@@ -9,7 +9,7 @@
       "tes": "TES-215",
       "release": "v7.10.0",
       "summary": "Admin Payments Receivables Amount Print Issue",
-      "testScope": "release",
+      "testScope": "regression",
       "addedToRegression": "true"
     },
     "description": "Validar envío correcto de montos a la impresora en cuentas por cobrar",

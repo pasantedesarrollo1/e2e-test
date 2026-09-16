@@ -4,7 +4,7 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Sales WITH Post-Sale Inventory Dispatch",
+    "description": "Sales WITH Post-Sale Inventory Dispatch (Actor 3)",
     "metadata": {
       "ws": "WS-1009",
       "tes": "TES-218",
@@ -13,47 +13,9 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "authType": "actor2",
-    "dispatchEnabled": true,
-    "products": [
-      {
-        "name": "Caja de alitas de pollo (100 u)",
-        "type": "Estandar",
-        "afterSelectCallback": null
-      },
-      {
-        "name": "series test",
-        "type": "Serie-por-nombre",
-        "afterSelectCallback": null
-      },
-      {
-        "name": "test talla color",
-        "type": "TallaColor-por-nombre",
-        "afterSelectCallback": "selectFirstVariant"
-      }
-    ],
-    "subsidiaryName": "Wanqara Comercios Dispatch",
-    "paymentMethod": "EFECTIVO",
-    "openingAmount": "10",
-    "subsidiaryCode": "101",
-    "loginMode": "cached"
-  },
-  {
-    "id": "SALE-INVENTORY-DISPATCH-002",
-    "only": false,
-    "skip": false,
-    "skipReason": "",
-    "description": "Sales WITHOUT Post-Sale Inventory Dispatch",
-    "metadata": {
-      "ws": "WS-1009",
-      "tes": "TES-218",
-      "release": "v7.9.1",
-      "summary": "POS Sale Inventory Dispatch - Disabled",
-      "addedToRegression": "true",
-      "testScope": "regression"
-    },
     "authType": "actor3",
-    "dispatchEnabled": false,
+    "loginMode": "cached",
+    "dispatchEnabled": true,
     "products": [
       {
         "name": "Caja de alitas de pollo (100 u)",
@@ -72,9 +34,8 @@
       }
     ],
     "subsidiaryName": "Wanqara Comercios",
-    "paymentMethod": "EFECTIVO",
-    "openingAmount": "100.00",
     "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00"
   }
 ]

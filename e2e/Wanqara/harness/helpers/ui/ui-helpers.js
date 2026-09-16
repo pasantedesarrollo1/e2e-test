@@ -43,6 +43,13 @@ export async function expectSnackbar(page, messageRegex, timeout = 15000) {
     : page.locator(".v-snackbar").last();
     
   await expect(snackbar).toBeVisible({ timeout });
+  
+  // Cerrar manualmente el snackbar para que no bloquee los siguientes
+  const closeBtn = snackbar.locator('.v-btn.v-btn--flat.v-btn--icon.v-btn--slim').first();
+  if (await closeBtn.isVisible().catch(() => false)) {
+    await closeBtn.click({ force: true }).catch(() => {});
+    await expect(snackbar).toBeHidden({ timeout: 5000 }).catch(() => {});
+  }
 }
 
 /**

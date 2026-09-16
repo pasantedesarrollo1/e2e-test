@@ -55,7 +55,7 @@ Control execution directly from the JSON to avoid modifying the `.spec.js`:
 
 We rely on dynamic tagging driven by the JSON to route tests to the correct pipeline.
 
-*   **`"testScope": "release"`**
+*   **`"testScope": "regression"`**
     *   Playwright dynamically appends the `@release` tag to the test block.
     *   **Where it runs:** GitHub Actions (Release Pipeline).
     *   *Use case:* Running specific scenarios as a smoke/release gate for a new feature.
@@ -65,4 +65,4 @@ We rely on dynamic tagging driven by the JSON to route tests to the correct pipe
     *   *Use case:* Stabilized tests protecting the codebase over time.
 
 ### Traceability Rule
-When a release is over, **do not delete** the `release` version string (e.g., `"release": "v7.9.1"`). Instead, change `"testScope": "release"` to `"testScope": "regression"`. This keeps the historical origin of the test intact while moving its execution scope to the daily regression suite.
+When a release is over, **do not delete** the `release` version string (e.g., `"release": "v7.9.1"`). Instead, change `"testScope": "regression"` to `"testScope": "regression"`. This keeps the historical origin of the test intact while moving its execution scope to the daily regression suite.

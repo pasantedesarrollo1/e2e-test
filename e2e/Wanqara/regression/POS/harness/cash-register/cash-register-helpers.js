@@ -6,7 +6,16 @@ export async function ensureCashRegisterOpen(page, amount, subsidiaryName, subsi
   if (!subsidiaryName) throw new Error("subsidiaryName is required");
   if (!amount) throw new Error("amount is required (e.g. from JSON or settings)");
 
-  await page.goto(homePath);
+  // Evitamos page.goto directo para asegurar que la app limpia el estado del POS
+  const posButton = page.getByRole('button', { name: 'Punto De Venta' }).first();
+  if (await posButton.isVisible({ timeout: 3000 })) {
+    await posButton.click();
+  } else {
+    // Fallback si no está el botón (ej. ya está en el POS)
+    if (!page.url().includes('/pos/')) {
+      await page.goto(homePath);
+    }
+  }
 
   const posHomeIndicator = page.getByText(/Cliente:/i).first();
   const openRegisterIndicator = page.getByRole("button", { name: /Abrir Caja/i }).first();
@@ -101,5 +110,43 @@ export async function closeCashRegister(page, options = {}) {
   const cancelTicketBtn = page.getByRole("button", { name: /Cancelar/i }).first();
   if (await cancelTicketBtn.isVisible({ timeout: 3000 })) {
      await cancelTicketBtn.click();
+  }
+}
+
+export async function ensureCashRegisterClosed(page, homePath = '/pos/home') {
+  if (!page.url().includes('/pos/')) {
+    await page.goto(homePath);
+  }
+
+  const openRegisterIndicator = page.getByRole("button", { name: /Abrir Caja/i }).first();
+  const selectSubsidiaryIndicator = page.getByText(/Seleccione una sucursal para abrir la caja/i).first();
+  const posHomeIndicator = page.getByText(/Cliente:/i).first();
+
+  await expect(
+    posHomeIndicator
+      .or(openRegisterIndicator)
+      .or(selectSubsidiaryIndicator)
+      .first()
+  ).toBeVisible({ timeout: 20_000 });
+
+  if (await openRegisterIndicator.isVisible() || await selectSubsidiaryIndicator.isVisible()) {
+    return; // Ya está cerrada
+  }
+
+  if (await posHomeIndicator.isVisible()) {
+    await closeCashRegister(page);
+    await expect(openRegisterIndicator.or(selectSubsidiaryIndicator).first()).toBeVisible({ timeout: 15_000 });
+  }
+}
+
+export async function handleCashRegisterState(page, mode, amount, subsidiaryName, subsidiaryCode, targetUrl) {
+  if (mode === "ensure-closed") {
+    await ensureCashRegisterClosed(page, targetUrl);
+  } else if (mode === "fresh") {
+    await ensureCashRegisterClosed(page, targetUrl);
+    await ensureCashRegisterOpen(page, amount, subsidiaryName, subsidiaryCode, targetUrl);
+  } else {
+    // Default: "ensure-open"
+    await ensureCashRegisterOpen(page, amount, subsidiaryName, subsidiaryCode, targetUrl);
   }
 }

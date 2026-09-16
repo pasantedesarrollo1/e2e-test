@@ -10,7 +10,7 @@ import {
 import { searchAndSelectProduct } from "../../regression/POS/harness/products/pos-search.js";
 
 import { generateDataDrivenTests } from "../../harness/helpers/test-generator.js";
-import { expect, test } from "../../regression/POS/harness/setup/pos-fixtures.js";
+import { expect, test } from "../../harness/builders/pos.builder.js";
 
 import scenarios from "./0-json-data/rounding-error.json" with { type: "json" };
 

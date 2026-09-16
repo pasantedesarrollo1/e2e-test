@@ -11,7 +11,7 @@
       "release": "v7.10.0",
       "summary": "Implementar test de creacion de categoria extra",
       "addedToRegression": "true",
-      "testScope": "release"
+      "testScope": "regression"
     },
     "authType": "actor1",
     "extrasData": {
@@ -24,12 +24,13 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
     "subsidiaryCode": "001",
-    "cleanupReason": "Limpieza automtica pre-test",
     "productName": "Caja de alitas de pollo (100 u)",
-    "clientCedula": "9999999999999",
+    "clientCedula": "0000000001",
     "openingAmount": "100.00",
     "chefAuthType": "actor1",
     "chefSubsidiary": "Wanqara",
-    "chefSubsidiaryCode": "001"
+    "chefSubsidiaryCode": "001",
+    "loginMode": "cached",
+    "businessType": "Restaurante"
   }
 ]

@@ -1,10 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { requirePosCredentials } from "../../../harness/config/settings.js";
-import { getSessionPath } from "../../../harness/helpers/auth/auth.js";
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
-import { expect, test } from "../harness/setup/pos-fixtures.js";
+import { expect, test } from "../../../harness/builders/pos.builder.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,20 +19,17 @@ for (const scenario of scenarios) {
       annotateTicket(test, scenario.metadata);
     }
     
-    requirePosCredentials(test);
-    test.use({ storageState: getSessionPath(scenario.authType),
-        subsidiaryName: scenario.subsidiaryName, subsidiaryCode: scenario.subsidiaryCode,
-      openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
+    test.use({ 
+      subsidiaryName: scenario.subsidiaryName, 
+      subsidiaryCode: scenario.subsidiaryCode,
+      openingAmount: scenario.openingAmount, 
+      authType: scenario.authType, 
+      loginMode: scenario.loginMode,
+      businessType: scenario.businessType || "Comercios",
+      dispatchEnabled: scenario.dispatchEnabled
+    });
 
-    const runTest = (title, bodyFn) => {
-      if (scenario.fixture === 'posPage') {
-        test(title, async ({ posPage: page }) => await bodyFn(page));
-      } else {
-        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
-      }
-    };
-
-    runTest('should not duplicate cart rows or corrupt store state under rapid random clicks', async (page) => {
+    test('should not duplicate cart rows or corrupt store state under rapid random clicks', async ({ posPage: page }) => {
       test.setTimeout(120000); 
       const searchKeyword = scenario.searchKeyword;
     

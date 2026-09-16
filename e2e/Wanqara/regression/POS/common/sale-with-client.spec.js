@@ -7,7 +7,7 @@ import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
-import { expect, test } from "../harness/setup/pos-fixtures.js";
+import { expect, test } from "../../../harness/builders/pos.builder.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

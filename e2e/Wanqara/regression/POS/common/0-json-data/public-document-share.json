@@ -11,7 +11,7 @@
       "release": "v7.9.0",
       "summary": "Compartición de Facturas y Cotizaciones vía WhatsApp en POS",
       "addedToRegression": "true",
-      "testScope": "release"
+      "testScope": "regression"
     },
     "authType": "actor3",
     "shareData": {
@@ -26,7 +26,7 @@
     "paymentMethod": "EFECTIVO",
     "cleanupReason": "Limpieza automtica pre-test",
     "productName": "Caja de alitas de pollo (100 u)",
-    "clientCedula": "9999999999999",
+    "clientCedula": "0000000001",
     "subsidiaryCode": "100",
     "loginMode": "cached"
   }

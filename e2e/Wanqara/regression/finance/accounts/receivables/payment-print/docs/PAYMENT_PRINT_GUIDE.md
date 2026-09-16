@@ -36,8 +36,8 @@ Located in `harness/payment-print-helpers.js`.
 
 ## 4. CI/CD Pipeline Routing (`metadata.testScope`)
 
-*   **`"testScope": "release"`**: Runs in GitHub Actions.
+*   **`"testScope": "regression"`**: Runs in GitHub Actions.
 *   **`"testScope": "regression"`**: Runs locally and Nightly. (Ignored by GitHub Actions).
 
 ### Traceability Rule
-When a release is over, **do not delete** the `release` version string (e.g., `"release": "v7.10.0"`). Instead, change `"testScope": "release"` to `"testScope": "regression"`. This preserves the historical ticket traceability (`TES-215`) while moving the test out of the critical release path.
+When a release is over, **do not delete** the `release` version string (e.g., `"release": "v7.10.0"`). Instead, change `"testScope": "regression"` to `"testScope": "regression"`. This preserves the historical ticket traceability (`TES-215`) while moving the test out of the critical release path.

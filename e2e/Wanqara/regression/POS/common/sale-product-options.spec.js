@@ -14,7 +14,7 @@ import {
   setUnitPriceInOptions,
 } from "../harness/products/pos-product-options.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
-import { expect, test } from "../harness/setup/pos-fixtures.js";
+import { expect, test } from "../../../harness/builders/pos.builder.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

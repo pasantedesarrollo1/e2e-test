@@ -16,7 +16,8 @@
     "environment": "Retail",
     "authType": "actor3",
     "basePath": "/pos/home",
-    "fixture": "posPage",
+    "businessType": "Comercios",
+    "cashRegisterMode": "fresh",
     "actions": [
       "in",
       "out"
@@ -49,7 +50,8 @@
     "environment": "Restaurant",
     "authType": "actor1",
     "basePath": "/pos/restaurant-home",
-    "fixture": "posRestaurantPage",
+    "businessType": "Restaurante",
+    "cashRegisterMode": "fresh",
     "actions": [
       "in",
       "out"
@@ -64,5 +66,71 @@
     "openingAmount": "100.00",
     "subsidiaryCode": "001",
     "loginMode": "cached"
+  },
+  {
+    "id": "CASH-MOVEMENTS-003",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Direct Income/Expense on Fresh Register (Retail)",
+    "metadata": {
+      "ws": "WS-1114",
+      "tes": "TES-222",
+      "release": "v7.10.0",
+      "summary": "Direct Cash Movements Regression - Retail",
+      "addedToRegression": "false",
+      "testScope": "release"
+    },
+    "environment": "Retail",
+    "authType": "actor1",
+    "basePath": "/pos/home",
+    "businessType": "Comercios",
+    "cashRegisterMode": "fresh",
+    "skipPriorSale": true,
+    "actions": [
+      "in",
+      "out"
+    ],
+    "cashMovement": {
+      "monto": "1",
+      "descripcion": "test automatizado directo"
+    },
+    "subsidiaryName": "Wanqara",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001",
+    "loginMode": "fresh"
+  },
+  {
+    "id": "CASH-MOVEMENTS-004",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Direct Income/Expense on Fresh Register (Restaurant)",
+    "metadata": {
+      "ws": "WS-1114",
+      "tes": "TES-222",
+      "release": "v7.10.0",
+      "summary": "Direct Cash Movements Regression - Restaurant",
+      "addedToRegression": "false",
+      "testScope": "release"
+    },
+    "environment": "Restaurant",
+    "authType": "actor1",
+    "basePath": "/pos/restaurant-home",
+    "businessType": "Restaurante",
+    "cashRegisterMode": "fresh",
+    "skipPriorSale": true,
+    "actions": [
+      "in",
+      "out"
+    ],
+    "cashMovement": {
+      "monto": "1",
+      "descripcion": "test automatizado directo"
+    },
+    "subsidiaryName": "Wanqara",
+    "openingAmount": "100.00",
+    "subsidiaryCode": "001",
+    "loginMode": "fresh"
   }
 ]

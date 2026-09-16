@@ -1,6 +1,4 @@
-import { expect, test } from "@playwright/test";
-import { getTenantBaseUrl, requirePosCredentials } from "../../../harness/config/settings.js";
-import { ensureAuthenticated, getSessionPath } from "../../../harness/helpers/auth/auth.js";
+import { expect, test } from "../../../harness/builders/pos.builder.js";
 import { annotateTicket } from "../../../harness/helpers/reporting/annotate.js";
 
 import fs from "fs";
@@ -22,20 +20,17 @@ test.describe("POS Retail — Cart Duplication @regression", () => {
 
   for (const scenario of scenarios) {
     test.describe(scenario.description, () => {
-      requirePosCredentials(test);
-      test.use({ storageState: getSessionPath(scenario.authType), openingAmount: scenario.openingAmount, authType: scenario.authType, loginMode: scenario.loginMode});
+      test.use({ 
+        openingAmount: scenario.openingAmount, 
+        authType: scenario.authType, 
+        loginMode: scenario.loginMode,
+        subsidiaryName: scenario.subsidiaryName,
+        subsidiaryCode: scenario.subsidiaryCode,
+        businessType: scenario.businessType || "Comercios" 
+      });
 
-      test("Execute Flow", async ({ page }) => {
+      test("Execute Flow", async ({ posPage: page }) => {
         test.setTimeout(120_000);
-
-        const tenantBaseUrl = getTenantBaseUrl();
-        const targetPath = "/pos/home";
-        
-        await ensureAuthenticated(page, {
-          tenantBaseUrl,
-          targetPath,
-          authType: scenario.authType,
-        });
 
       let warnings = [];
       page.on("console", (msg) => {
