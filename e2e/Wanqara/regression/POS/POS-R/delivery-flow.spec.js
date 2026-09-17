@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
-import { test } from "../../../harness/builders/pos.builder.js";
+import { test } from "../../../harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,7 +25,8 @@ import {
 
 test.describe.serial("POS Restaurant - Delivery Flow", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
-    test("creates or selects a delivery address depending on prior state", async ({ posPage: page }) => {
+    test("creates or selects a delivery address depending on prior state", async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.info().annotations.push({
         type: "issue",
         description: "https://wanqara-team.atlassian.net/browse/WS-871",

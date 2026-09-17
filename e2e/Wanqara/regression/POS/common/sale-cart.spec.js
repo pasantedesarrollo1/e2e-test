@@ -6,7 +6,7 @@ import { generateDataDrivenTests } from "../../../harness/helpers/test-generator
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { clickFinishSale, selectDocumentTypePos } from '../harness/sales/pos-checkout-helpers.js';
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,7 +29,8 @@ async function removeProductViaTrashIcon(page) {
 test.describe("POS Cart Operations and Sale Validations", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
     
-    test(`handles product removal and cart clearing in sale mode`, async ({ posPage: page }) => {
+    test(`handles product removal and cart clearing in sale mode`, async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(60_000);
 
       await test.step("Add a product and remove it via the trash icon", async () => {
@@ -45,7 +46,8 @@ test.describe("POS Cart Operations and Sale Validations", () => {
       });
     });
 
-    test(`handles product removal and cart clearing in quote mode`, async ({ posPage: page }) => {
+    test(`handles product removal and cart clearing in quote mode`, async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(60_000);
 
       await test.step("Add a product, switch to quote mode, and remove it via the trash icon", async () => {
@@ -69,7 +71,8 @@ test.describe("POS Cart Operations and Sale Validations", () => {
       });
     });
 
-    test(`assigns a real client when sale total exceeds $50`, async ({ posPage: page }) => {
+    test(`assigns a real client when sale total exceeds $50`, async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       await test.step("Add product and set quantity above $50", async () => {
         await addStandardProduct(page, scenario.cartParams.productName);
         const amountInput = page.locator("input[inputmode='decimal']").first();
@@ -100,7 +103,8 @@ test.describe("POS Cart Operations and Sale Validations", () => {
     });
 
     if (scenario.includeDynamicDocumentTest) {
-      test(`completes a sale using a dynamic document type for a standard product`, async ({ posPage: page }) => {
+      test(`completes a sale using a dynamic document type for a standard product`, async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
         test.setTimeout(120_000);
         await selectDocumentTypePos(page, scenario.cartParams.dynamicDocumentType);
         await searchAndSelectProduct(page, { name: scenario.cartParams.productName, searchTerm: null });

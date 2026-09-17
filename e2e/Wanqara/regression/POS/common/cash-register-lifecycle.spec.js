@@ -7,7 +7,7 @@ import { closeCashRegister } from "../harness/cash-register/cash-register-helper
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,13 +17,14 @@ const scenarios = JSON.parse(
 
 test.describe("POS - Cash Register Lifecycle @regression", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
-    test(scenario.description, async ({ posPage: page }) => {
+    test(scenario.description, async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(180_000);
       
       const subsidiaryName = scenario.subsidiaryName;
 
       await test.step("Abrir la caja (Punto de emisión y monto)", async () => {
-        // En este punto, el builder con cashRegisterMode='ensure-closed' ya nos entregó la UI
+        // En este punto, el workflow con cashRegisterMode='ensure-closed' ya nos entregó la UI
         // lista en la pantalla de "Abrir Caja" (o de seleccionar sucursal si hay varias).
         const subsidiaryCards = page.locator('.v-card').filter({ hasText: subsidiaryName });
         if (await subsidiaryCards.first().isVisible({ timeout: 4000 })) {

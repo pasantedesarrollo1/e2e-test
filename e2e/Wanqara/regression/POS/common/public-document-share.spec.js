@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import { selectClientByCedula } from '../../../harness/helpers/people/client-helpers.js';
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -18,7 +18,8 @@ test.describe("POS Public Document Share", () => {
   test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
 
   generateDataDrivenTests(test, scenarios, (scenario) => {
-    test(scenario.description, async ({ posPage: page, browser }) => {
+    test(scenario.description, async ({ posEnvironment, browser  }) => {
+      const { page } = posEnvironment;
       test.setTimeout(180_000);
 
       let publicToken = null;

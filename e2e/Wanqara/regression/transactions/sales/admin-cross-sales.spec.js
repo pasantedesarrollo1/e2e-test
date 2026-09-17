@@ -1,12 +1,7 @@
 import { test } from "@playwright/test";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
-import {
-  searchAndSelectProduct,
-  selectCustomCheckout,
-  selectCustomDocumentType,
-  selectPaymentMethod,
-  submitValidatedAdminTransaction
-} from "./harness/admin-cross-sale-flow.js";
+import { selectCheckout, selectPaymentMethod, searchAndSelectProduct, submitAdminSale } from "./harness/admin-checkout-helpers.js";
+import { selectDocumentType } from "./harness/admin-document-helpers.js";
 // Note: selectClientByCedula was moved out of admin-cross-sale-flow directly to client-helpers, we use the exported one.
 import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
 import { switchAdminSubsidiary } from "../../../harness/helpers/auth/auth.js";
@@ -40,13 +35,16 @@ test.describe("Admin Sales - Anti-Cross Validation", () => {
               await page.goto(scenario.transaction.path);
               await page.waitForURL(new RegExp(scenario.transaction.path.replace(/\//g, '\\/')));
 
-              await selectCustomCheckout(page, combo.bodega, combo.caja);
-              await selectCustomDocumentType(page, "Recibos");
+              await selectCheckout(page, { 
+                warehouseName: combo.bodega,
+                urlPattern: new RegExp(scenario.transaction.path.replace(/\//g, '\\/'))
+              });
+              await selectDocumentType(page, "Recibos");
               await selectClientByCedula(page, scenario.transaction.clientCedula);
               await searchAndSelectProduct(page, { name: scenario.transaction.productName });
               await selectPaymentMethod(page, scenario.transaction.paymentMethod);
 
-              await submitValidatedAdminTransaction(page, scenario.transaction.endpoint);
+              await submitAdminSale(page, scenario.transaction.endpoint);
             });
           }
         }

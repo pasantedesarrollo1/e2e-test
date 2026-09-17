@@ -1,4 +1,4 @@
-import { expect, test } from "../../../harness/builders/stage.builder.js";
+import { test } from "../../../harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -38,7 +38,8 @@ for (const scenario of scenarios) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test("closes an existing order from the POS", async ({ posPage: page }) => {
+    test("closes an existing order from the POS", async ({ stageEnvironment }) => {
+      const { page } = stageEnvironment;
       test.setTimeout(180_000);
       
       await test.step("Navigate to close order screen", async () => {

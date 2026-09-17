@@ -6,7 +6,7 @@ import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
 import { closeDrawer, openDrawer } from '../harness/sales/pos-drawer-helpers.js';
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -57,7 +57,8 @@ async function fillAndSubmitCashForm(page, type, scenario) {
 
 test.describe("POS - Cash Register Income and Expense Transactions", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
-    test(scenario.description, async ({ posPage: page }) => {
+    test(scenario.description, async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(180_000);
         await test.step("Venta previa y registro secuencial de ingreso y egreso", async () => {
           if (!scenario.skipPriorSale) {

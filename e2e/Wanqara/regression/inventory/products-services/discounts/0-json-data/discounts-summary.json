@@ -19,7 +19,6 @@
       "type": "porcentaje",
       "discount": 10
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
     "loginMode": "cached"
@@ -45,7 +44,6 @@
       "discount": 5,
       "quantity": 2
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
     "loginMode": "cached"
@@ -71,7 +69,6 @@
       "discount": 15,
       "quantity": 3
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
     "loginMode": "cached"

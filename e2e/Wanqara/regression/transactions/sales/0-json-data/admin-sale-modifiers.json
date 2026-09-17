@@ -21,7 +21,6 @@
       "warehouseName": "Bodega de Ventas W001",
       "modifierRate": "3.3337373372323"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
     "loginMode": "cached"
@@ -48,7 +47,6 @@
       "warehouseName": "Bodega de Ventas W001",
       "modifierRate": "3.3337373372323"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
     "loginMode": "cached"
@@ -75,7 +73,6 @@
       "warehouseName": "Bodega de Ventas W001",
       "modifierRate": "3.3337373372323"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
     "subsidiaryCode": "101",
     "loginMode": "cached"
@@ -102,7 +99,6 @@
       "warehouseName": "Bodega de Ventas W001",
       "modifierRate": "3.3337373372323"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
     "subsidiaryCode": "101",
     "loginMode": "cached"

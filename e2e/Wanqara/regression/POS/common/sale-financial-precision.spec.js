@@ -12,7 +12,7 @@ import {
 } from "../harness/financials/pos-financial-assertions.js";
 import { selectFirstSerie, selectFirstVariant } from "../harness/products/pos-products.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
-import { test } from "../../../harness/builders/pos.builder.js";
+import { test } from "../../../harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,7 +63,8 @@ test.describe("Financial Calculation Accuracy", () => {
     
     // Suite 1: Descuentos Generales (1 test por cada discountCase)
     for (const { product, afterProductSelect, precision, precisionHoliday } of scenario.discountCases) {
-      test(`validates financial calculations for [${product.type}] with ${scenario.discountName}`, async ({ posPage: page }) => {
+      test(`validates financial calculations for [${product.type}] with ${scenario.discountName}`, async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
         test.setTimeout(120_000);
 
         await runFinancialPrecisionFlow(page, {
@@ -78,7 +79,8 @@ test.describe("Financial Calculation Accuracy", () => {
     }
 
     // Suite 2: Recargos Manuales Masivos (1 test con todos los surchargeProducts)
-    test(`validates financial calculations for ${scenario.surchargeName} across compatible product types in a single sale`, async ({ posPage: page }) => {
+    test(`validates financial calculations for ${scenario.surchargeName} across compatible product types in a single sale`, async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(180_000);
 
       const mappedSurchargeProducts = scenario.surchargeProducts.map(sp => ({

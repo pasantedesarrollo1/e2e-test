@@ -12,7 +12,7 @@ import {
   setUnitPriceInOptions,
 } from "../harness/products/pos-product-options.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,7 +38,8 @@ async function assertCartHasProduct(page) {
 test.describe("Product Options", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
     
-    test("validates product options modal for all price type and discount type combinations", async ({ posPage: page }) => {
+    test("validates product options modal for all price type and discount type combinations", async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(120_000);
 
       await test.step("Add product to the cart", async () => {

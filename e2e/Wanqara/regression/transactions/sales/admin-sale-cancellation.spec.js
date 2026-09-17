@@ -1,12 +1,14 @@
 import { test } from "@playwright/test";
+import { selectCheckout, selectPaymentMethod, searchAndSelectProduct, submitAdminSale } from "./harness/admin-checkout-helpers.js";
+import { selectDocumentType } from "./harness/admin-document-helpers.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { ensureAuthenticated } from "../../../harness/helpers/auth/auth.js";
 import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
-import { searchAndSelectProduct, selectCheckout, selectPaymentMethod, submitAdminSale } from "./harness/admin-checkout-helpers.js";
-import { selectDocumentType } from "./harness/admin-document-helpers.js";
+
+
 import { cancelFirstSaleAndVerify } from "./harness/cancel-sale-helpers.js";
 
 const __filename = fileURLToPath(import.meta.url);

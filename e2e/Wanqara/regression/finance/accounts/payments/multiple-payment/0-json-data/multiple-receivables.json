@@ -20,7 +20,6 @@
       "initialDeleteReason": "test",
       "finalDeleteReason": "test deletion reason"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
     "subsidiaryCode": "001",
     "loginMode": "cached"

@@ -1,4 +1,4 @@
-import { expect, test } from "../../../harness/builders/stage.builder.js";
+import { expect, test } from "../../../harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -35,11 +35,12 @@ for (const scenario of scenarios) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test("navigates to close orders screen and closes an order", async ({ posPage: page, chefPage }) => {
+    test("navigates to close orders screen and closes an order", async ({ stageEnvironment, chefContext  }) => {
+      const { page } = stageEnvironment;
       test.setTimeout(180_000);
 
       await test.step("Create order in Chef manually", async () => {
-        await createChefOrder(chefPage, {
+        await createChefOrder(chefContext, {
           productName: scenario.productName,
           chefLogin: scenario.chefLogin,
           chefSubsidiary: scenario.chefSubsidiary,

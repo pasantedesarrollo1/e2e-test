@@ -1,4 +1,4 @@
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 
 import fs from "fs";
@@ -14,7 +14,8 @@ const scenarios = JSON.parse(
 test.describe("Cart Duplication", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
     
-    test("Execute Flow", async ({ posPage: page }) => {
+    test("Execute Flow", async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(120_000);
 
       let warnings = [];

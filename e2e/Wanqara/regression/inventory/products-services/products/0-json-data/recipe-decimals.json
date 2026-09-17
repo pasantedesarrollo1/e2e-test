@@ -18,7 +18,6 @@
       "exactAmount": "0.74626865671642",
       "roundedAmount": "0.75"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
     "loginMode": "cached"
@@ -42,7 +41,6 @@
       "exactAmount": "0.30000300003",
       "roundedAmount": "0.3"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
     "loginMode": "cached"

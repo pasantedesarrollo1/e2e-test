@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -13,7 +13,8 @@ const scenarios = JSON.parse(
 test.describe("Product Selection Stress & Rapid-Click Testing", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
     
-    test('should not duplicate cart rows or corrupt store state under rapid random clicks', async ({ posPage: page }) => {
+    test('should not duplicate cart rows or corrupt store state under rapid random clicks', async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(120_000); 
       const searchKeyword = scenario.searchKeyword;
     

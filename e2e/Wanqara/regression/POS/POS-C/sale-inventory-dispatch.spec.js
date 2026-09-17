@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,7 +40,8 @@ test.describe.serial("POS Retail - Sale Inventory Dispatch", () => {
   requirePosCredentials(test);
 
   generateDataDrivenTests(test, scenarios, (scenario) => {
-    test(`completes multiple sales seamlessly with dispatch ${scenario.dispatchEnabled ? 'enabled' : 'disabled'}`, async ({ posPage: page }) => {
+    test(`completes multiple sales seamlessly with dispatch ${scenario.dispatchEnabled ? 'enabled' : 'disabled'}`, async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(180_000);
       
       await executeSales(page, {

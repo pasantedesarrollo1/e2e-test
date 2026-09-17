@@ -1,5 +1,5 @@
-import { test as posTest } from "../../../harness/builders/pos.builder.js";
-import { test as stageTest } from "../../../harness/builders/stage.builder.js";
+import { test as posTest } from "../../../harness/fixtures/pos.fixture.js";
+import { test as stageTest } from "../../../harness/fixtures/stage.fixture.js";
 import { expect } from "@playwright/test";
 import fs from "fs";
 import path from "path";
@@ -8,7 +8,6 @@ import { generateDataDrivenTests } from "../../../harness/helpers/test-generator
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
-import { openAndSelectOrder } from "../POS-R/harness/pos-orders-common.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,7 +20,8 @@ const restaurantScenarios = scenarios.filter(s => s.type === 'restaurant-flow');
 
 posTest.describe("POS Retail Cross Sales", () => {
   generateDataDrivenTests(posTest, retailScenarios, (scenario) => {
-    posTest(scenario.description, async ({ posPage: page }) => {
+    posTest(scenario.description, async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       posTest.setTimeout(120_000);
       
       await posTest.step("Realizar venta retail cruzada", async () => {
@@ -43,12 +43,12 @@ posTest.describe("POS Retail Cross Sales", () => {
 
 stageTest.describe("POS Restaurant Cross Sales", () => {
   generateDataDrivenTests(stageTest, restaurantScenarios, (scenario) => {
-    stageTest(scenario.description, async ({ stageSetup }) => {
+    stageTest(scenario.description, async ({ stageEnvironment }) => {
       stageTest.setTimeout(180_000);
-      const { posPage: page, stageContext } = stageSetup;
+      const { page } = stageEnvironment;
       
       await stageTest.step("Cobrar orden generada por el chef", async () => {
-        // El builder stageSetup ya creó la orden en la cocina (stageContext.activeTableName),
+        // El workflow stageEnvironment ya creó la orden en la cocina (stageContext.activeTableName),
         // regresó al POS y la abrió automáticamente.
         
         const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar pago/i }).first();

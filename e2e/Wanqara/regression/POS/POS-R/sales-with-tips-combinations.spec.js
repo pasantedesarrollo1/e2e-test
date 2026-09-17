@@ -1,4 +1,4 @@
-import { expect, test } from "../../../harness/builders/stage.builder.js";
+import { expect, test } from "../../../harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -37,7 +37,8 @@ for (const scenario of scenarios) {
       subsidiaryCode: scenario.subsidiaryCode
     });
 
-    test("Case 1: Direct Sale with Mix (Standard + Combo + Service) and Tip", async ({ posPage: page }) => {
+    test("Case 1: Direct Sale with Mix (Standard + Combo + Service) and Tip", async ({ stageEnvironment }) => {
+      const { page } = stageEnvironment;
       test.setTimeout(150_000);
       const precision = scenario.case1;
 
@@ -64,7 +65,8 @@ for (const scenario of scenarios) {
       assertPaymentPayloadPrecision(body, precision);
     });
 
-    test("Case 2: Direct Sale with General Discount and Tip", async ({ posPage: page }) => {
+    test("Case 2: Direct Sale with General Discount and Tip", async ({ stageEnvironment }) => {
+      const { page } = stageEnvironment;
       test.setTimeout(120_000);
       const precision = scenario.case2;
 
@@ -91,7 +93,8 @@ for (const scenario of scenarios) {
       assertPaymentPayloadPrecision(body, precision);
     });
 
-    test("Case 5: Direct Sale with Surcharge and Tip", async ({ posPage: page }) => {
+    test("Case 5: Direct Sale with Surcharge and Tip", async ({ stageEnvironment }) => {
+      const { page } = stageEnvironment;
       test.setTimeout(120_000);
       const precision = scenario.case5;
 
@@ -137,7 +140,8 @@ for (const scenario of scenarios) {
       }
     });
 
-    test("Case 3: Full Table Payment with Composite Inventory and Tip", async ({ posPage: page }) => {
+    test("Case 3: Full Table Payment with Composite Inventory and Tip", async ({ stageEnvironment }) => {
+      const { page } = stageEnvironment;
       test.setTimeout(180_000);
       const precision = scenario.case3;
 
@@ -176,7 +180,8 @@ for (const scenario of scenarios) {
       });
     });
 
-    test("Case 4: Separate Check Payment with Tip", async ({ posPage: page }) => {
+    test("Case 4: Separate Check Payment with Tip", async ({ stageEnvironment }) => {
+      const { page } = stageEnvironment;
       test.setTimeout(180_000);
       const precision = scenario.case4;
 

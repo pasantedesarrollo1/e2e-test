@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
 import { requirePosCredentials } from "../../../../harness/config/settings.js";
-import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
+import { AdminSaleWorkflow, PreSaleStrategy } from "../../../../harness/helpers/workflows/admin-sale-workflow.js";
 
 import scenarios from "./0-json-data/admin-pre-sale-documents.json" with { type: "json" };
 
@@ -17,12 +17,13 @@ test.describe("Admin Pre-Sales - Different Document Types", () => {
         test.setTimeout(120_000);
 
         await test.step(`Create Admin Pre-Sale with document: ${scenario.saleParams.documentType}`, async () => {
-          await runAdminPreSaleFlow(page, {
-            authType: scenario.authType,
-            documentType: scenario.saleParams.documentType,
-              clientCedula: scenario.saleParams.clientCedula,
-              paymentMethod: scenario.saleParams.paymentMethod,
-            productName: scenario.saleParams.productName});
+          await new AdminSaleWorkflow(page, new PreSaleStrategy())
+            .withAuth(scenario.authType)
+            .withDocumentType(scenario.saleParams.documentType)
+            .withClient(scenario.saleParams.clientCedula)
+            .addPreSaleItem(scenario.saleParams.productName)
+            .withPaymentMethod(scenario.saleParams.paymentMethod)
+            .execute();
         });
       }
     );

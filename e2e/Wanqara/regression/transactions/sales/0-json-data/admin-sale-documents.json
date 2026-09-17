@@ -19,7 +19,6 @@
       "paymentMethod": "EFECTIVO",
       "warehouseName": "Bodega de Ventas W001"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
     "subsidiaryCode": "001",
     "loginMode": "cached"
@@ -44,7 +43,6 @@
       "paymentMethod": "EFECTIVO",
       "warehouseName": "Bodega de Ventas W001"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
     "loginMode": "cached"

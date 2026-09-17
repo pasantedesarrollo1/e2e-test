@@ -31,7 +31,6 @@
       "expectSwitch": false,
       "expectMessage": true
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
     "subsidiaryCode": "001",
     "loginMode": "cached"
@@ -68,7 +67,6 @@
       "expectSwitch": false,
       "expectMessage": true
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
     "subsidiaryCode": "101",
     "loginMode": "cached"

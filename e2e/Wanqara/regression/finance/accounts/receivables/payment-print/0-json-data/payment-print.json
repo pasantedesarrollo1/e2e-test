@@ -20,7 +20,6 @@
       "description": "Automated test payment",
       "paymentMethodRegex": "^Efectivo$"
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
     "subsidiaryCode": "001",
     "loginMode": "cached"

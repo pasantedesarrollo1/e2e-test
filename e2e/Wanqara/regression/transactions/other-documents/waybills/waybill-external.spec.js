@@ -4,15 +4,11 @@ import { selectClientByCedula } from "../../../../harness/helpers/people/client-
 import { selectCheckout, searchAndSelectProduct, selectPaymentMethod, submitAdminSale } from "../../sales/harness/admin-checkout-helpers.js";
 import { waitForFormDefaults } from "../../sales/harness/admin-dynamic-documents-helpers.js";
 import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
-import {
-  CARRIER_CASES,
-  assignCarrier,
-  fillAddressDetails,
-  fillExternalWaybillForm,
-  fillShipmentAmount,
-  fillVehiclePlate,
-  selectFirstAvailableShipmentProductFromSale,
-  submitWaybillAndVerify} from "./harness/waybill-helpers.js";
+import { 
+  fillExternalWaybillForm, CARRIER_CASES, assignCarrier, fillVehiclePlate, 
+  fillAddressDetails, selectFirstAvailableShipmentProductFromSale, 
+  fillShipmentAmount, submitWaybillAndVerify 
+} from "./harness/waybill-helpers.js";
 
 import scenarios from "./0-json-data/waybill-external.json" with { type: "json" };
 import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";

@@ -1,14 +1,10 @@
-import { expect, test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { requirePosCredentials } from "../../../../harness/config/settings.js";
-import {
-  CARRIER_CASES,
-  assignCarrier,
-  fillAddressDetails,
-  fillInternalWaybillForm,
-  fillShipmentAmount,
-  fillVehiclePlate,
-  searchAndSelectShipmentProduct,
-  submitWaybillAndVerify} from "./harness/waybill-helpers.js";
+import { 
+  fillInternalWaybillForm, fillVehiclePlate, CARRIER_CASES, assignCarrier, 
+  fillAddressDetails, searchAndSelectShipmentProduct, fillShipmentAmount, 
+  submitWaybillAndVerify 
+} from "./harness/waybill-helpers.js";
 
 import scenarios from "./0-json-data/waybill-internal.json" with { type: "json" };
 import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";

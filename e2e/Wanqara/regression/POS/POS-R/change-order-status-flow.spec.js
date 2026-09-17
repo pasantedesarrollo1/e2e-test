@@ -1,4 +1,4 @@
-import { expect, test } from "../../../harness/builders/stage.builder.js";
+import { test } from "../../../harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -41,21 +41,22 @@ for (const scenario of scenarios) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test("creates an order in Chef, prints preticket, and changes status back to pending in POS", async ({ posPage: page, chefPage }) => {
+    test("creates an order in Chef, prints preticket, and changes status back to pending in POS", async ({ stageEnvironment, chefContext  }) => {
+      const { page } = stageEnvironment;
       test.setTimeout(180_000);
 
       await test.step("Create order and print preticket from Chef", async () => {
-        await createChefOrder(chefPage, { 
+        await createChefOrder(chefContext, { 
             productName: scenario.productName, 
             chefLogin: scenario.chefLogin, 
             chefSubsidiary: scenario.chefSubsidiary, 
             chefSubsidiaryCode: scenario.chefSubsidiaryCode 
         });
-        await printPreticket(chefPage);
+        await printPreticket(chefContext);
       });
 
       await test.step("Open More Options menu and navigate to Change Order Status", async () => {
-        // En lugar de navigateToRestaurantPOS, solo vamos directo porque el posPage ya está en el home
+        // En lugar de navigateToRestaurantPOS, solo vamos directo porque el posContext ya está en el home
         await navigateToChangeOrderStatusFromOptions(page);
       });
 

@@ -110,11 +110,11 @@ export default defineConfig({
       name: 'Smoke',
       dependencies: ['setup-actors'],
       testMatch: /Wanqara\/smoke\/.*\.spec\.js/,
-      fullyParallel: false,
+      fullyParallel: true,
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
       },
     },
     {

@@ -10,7 +10,7 @@ import {
 import { searchAndSelectProduct } from "../../regression/POS/harness/products/pos-search.js";
 
 import { generateDataDrivenTests } from "../../harness/helpers/test-generator.js";
-import { expect, test } from "../../harness/builders/pos.builder.js";
+import { expect, test } from "../../harness/fixtures/pos.fixture.js";
 
 import scenarios from "./0-json-data/rounding-error.json" with { type: "json" };
 
@@ -19,11 +19,7 @@ test.describe.serial("POS Specific Cases - Rounding Errors", () => {
 
   generateDataDrivenTests(test, scenarios, (scenario) => {
     const runTest = (title, bodyFn) => {
-      if (scenario.fixture === "posRestaurantPage") {
-        test(title, async ({ posRestaurantPage: page }) => await bodyFn(page));
-      } else {
-        test(title, async ({ posPage: page }) => await bodyFn(page));
-      }
+      test(title, async ({ posEnvironment }) => await bodyFn(posEnvironment.page));
     };
 
     const testTitle = scenario.only ? "Executes specific rounding error case (focus)" : "Executes specific rounding error case";

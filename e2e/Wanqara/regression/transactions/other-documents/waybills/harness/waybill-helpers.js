@@ -285,3 +285,13 @@ export async function selectFirstAvailableShipmentProductFromSale(page) {
     throw new Error("The dropdown opened, but it is empty. The selected sale has no remaining quantity available for shipment.", { cause: error });
   }
 }
+export async function clearAssignedCarrierAndVerify(page) {
+    const clearBtn = page.locator(".tw-flex > .tw-flex.tw-gap-1").getByRole("button").last();
+    await clearBtn.click();
+    await page.getByText(/Empleado Test 1.*Identificaci.n:/i).waitFor({ state: "hidden" });
+}
+
+export async function expectCarrierAssigned(page) {
+    const { expect } = require("@playwright/test");
+    await expect(page.getByText(/Empleado Test 1.*Identificaci.n:/i)).toBeVisible();
+}

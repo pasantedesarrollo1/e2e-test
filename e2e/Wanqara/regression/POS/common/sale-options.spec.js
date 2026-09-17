@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import { generateDataDrivenTests } from "../../../harness/helpers/test-generator.js";
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 import { closeDrawer, expandAndRecoverFirstSavedSale, navigateToSavedSales, openDrawer } from '../harness/sales/pos-drawer-helpers.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -63,7 +63,8 @@ async function fillAliasAndSave(page, alias) {
 test.describe("Sale Options", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
     
-    test("validates adding a note and completing a sale from the Sale Options panel", async ({ posPage: page }) => {
+    test("validates adding a note and completing a sale from the Sale Options panel", async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(120_000);
 
       await test.step("Add a standard product", async () => {
@@ -94,7 +95,8 @@ test.describe("Sale Options", () => {
       });
     });
 
-    test("saves a sale with an alias and then recovers it from the Saved Sales screen", async ({ posPage: page }) => {
+    test("saves a sale with an alias and then recovers it from the Saved Sales screen", async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(240_000);
 
       await test.step("Add a standard product", async () => {

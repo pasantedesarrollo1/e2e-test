@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "playwright test",
-    "test:smoke": "playwright test --grep @smoke",
+    "test:smoke": "playwright test --project=Smoke --workers=2",
     "test:release": "playwright test --grep @release",
     "lint": "eslint e2e/",
     "lint:fix": "eslint e2e/ --fix"

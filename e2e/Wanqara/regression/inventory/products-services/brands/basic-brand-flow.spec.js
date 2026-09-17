@@ -1,43 +1,58 @@
-import { test } from "@playwright/test";
+import { test } from "../../../../harness/fixtures/admin.fixture.js";
 import { requirePosCredentials } from "../../../../harness/config/settings.js";
-import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
 import { createBrand, deleteBrand, searchBrand } from "./harness/brand-helpers.js";
-
-import scenarios from "./0-json-data/basic-brand-flow.json" with { type: "json" };
 import { generateDataDrivenTests } from "../../../../harness/helpers/test-generator.js";
+
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const scenarios = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "basic-brand-flow.json"), "utf-8")
+);
 
 test.describe("Inventory - Brands (Basic Flow)", () => {
   requirePosCredentials(test);
 
-    generateDataDrivenTests(test, scenarios, (scenario) => {
+  generateDataDrivenTests(test, scenarios, (scenario) => {
 
+    test.use({ 
+      targetPath: "/admin/brands/list",
+      subsidiaryName: scenario.subsidiaryName, 
+      subsidiaryCode: scenario.subsidiaryCode,
+      authType: scenario.authType, 
+      loginMode: scenario.loginMode
+    });
 
-      test(`ensures full basic lifecycle for brand '${scenario.brandData.name}'`, async ({ page }) => {
-        test.setTimeout(120_000); 
-        
-        await test.step('Paso 1: Pre-Limpieza (Garantizar entorno limpio)', async () => {
-          await ensureAuthenticated(page, { targetPath: "/admin/brands/list", authType: scenario.authType });
-          await deleteBrand(page, { name: scenario.brandData.name });
+    test(`ensures full basic lifecycle for brand '${scenario.brandData.name}'`, async ({ adminApp }) => {
+      const { page } = adminApp;
+      test.setTimeout(120_000); 
+      
+      await test.step('Paso 1: Pre-Limpieza (Garantizar entorno limpio)', async () => {
+        // La navegación y autenticación hacia /admin/brands/list ya fueron manejadas por adminContext
+        await deleteBrand(page, { name: scenario.brandData.name });
+      });
+
+      await test.step('Paso 2: Creación de la Marca', async () => {
+        await createBrand(page, {
+          ...scenario.brandData
         });
+      });
 
-        await test.step('Paso 2: Creación de la Marca', async () => {
-          await createBrand(page, {
-            ...scenario.brandData
-          });
+      await test.step('Paso 3: Búsqueda y Validación', async () => {
+        await searchBrand(page, {
+          name: scenario.brandData.name
         });
+      });
 
-        await test.step('Paso 3: Búsqueda y Validación', async () => {
-          await searchBrand(page, {
-            name: scenario.brandData.name
-          });
-        });
-
-        await test.step('Paso 4: Limpieza post-prueba (Eliminar Marca)', async () => {
-          await deleteBrand(page, {
-            name: scenario.brandData.name
-          });
+      await test.step('Paso 4: Limpieza post-prueba (Eliminar Marca)', async () => {
+        await deleteBrand(page, {
+          name: scenario.brandData.name
         });
       });
     });
+  });
   
 });

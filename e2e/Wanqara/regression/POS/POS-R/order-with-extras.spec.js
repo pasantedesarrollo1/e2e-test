@@ -1,4 +1,4 @@
-import { expect, test } from "../../../harness/builders/stage.builder.js";
+import { expect, test } from "../../../harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -50,16 +50,18 @@ for (const scenario of scenarios) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test.beforeEach(async ({ chefPage }) => {
+    test.beforeEach(async ({ chefContext }) => {
       // El builder ya nos entrega el chefPage logueado y posicionado. 
       // Solo garantizamos estar en la pestaña correcta.
-      await expect(chefPage).toHaveURL(/\/tables/);
+      await expect(chefContext).toHaveURL(/\/tables/);
       await expect(
-        chefPage.locator("ion-segment-button").filter({ hasText: "Todos" })
+        chefContext.locator("ion-segment-button").filter({ hasText: "Todos" })
       ).toBeVisible();
     });
 
-    test("creates an order with extras validating stock and completes the payment", async ({ posPage, chefPage }) => {
+    test("creates an order with extras validating stock and completes the payment", async ({ stageEnvironment, chefContext }) => {
+      const posPage = stageEnvironment.page;
+      const chefPage = chefContext;
       test.setTimeout(180_000);
       
       let tableName;

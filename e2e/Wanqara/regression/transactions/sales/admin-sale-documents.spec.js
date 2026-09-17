@@ -1,9 +1,11 @@
 import { test } from "@playwright/test";
+import { selectCheckout, selectPaymentMethod, searchAndSelectProduct, submitAdminSale } from "./harness/admin-checkout-helpers.js";
+import { selectDocumentType } from "./harness/admin-document-helpers.js";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { ensureAuthenticated } from "../../../harness/helpers/auth/auth.js";
 import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
-import { searchAndSelectProduct, selectCheckout, selectPaymentMethod, submitAdminSale } from "./harness/admin-checkout-helpers.js";
-import { selectDocumentType } from "./harness/admin-document-helpers.js";
+
+
 
 import scenarios from "./0-json-data/admin-sale-documents.json" with { type: "json" };
 

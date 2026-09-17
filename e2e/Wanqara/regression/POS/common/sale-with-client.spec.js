@@ -5,7 +5,7 @@ import { generateDataDrivenTests } from "../../../harness/helpers/test-generator
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { clickFinishSale } from '../harness/sales/pos-checkout-helpers.js';
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 import { selectClientFromSearchModal } from "../../../harness/helpers/people/client-helpers.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,7 +33,8 @@ async function confirmClientModal(page) {
 test.describe("Sales with Customer Assignment", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
     
-    test("validates all customer assignment methods and completes the sale", async ({ posPage: page }) => {
+    test("validates all customer assignment methods and completes the sale", async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(180_000);
 
       await test.step("Assign customer via Personas search modal", async () => {

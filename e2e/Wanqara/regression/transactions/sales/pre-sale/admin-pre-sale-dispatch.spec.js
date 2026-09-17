@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 import { requirePosCredentials } from "../../../../harness/config/settings.js";
-import { buildPreSaleMixedCart } from "../harness/admin-cart-helpers.js";
-import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
+
+import { AdminSaleWorkflow, PreSaleStrategy } from "../../../../harness/helpers/workflows/admin-sale-workflow.js";
 
 import scenarios from "./0-json-data/admin-pre-sale-dispatch.json" with { type: "json" };
 
@@ -18,14 +18,13 @@ test.describe("Admin Pre-Sales - Mixed Cart / Dispatch Logic", () => {
         test.setTimeout(120_000);
 
         await test.step("Create Admin Pre-Sale with Mixed Cart", async () => {
-          await runAdminPreSaleFlow(page, {
-            authType: scenario.authType,
-            documentType: scenario.saleParams.documentType,
-              clientCedula: scenario.saleParams.clientCedula,
-              paymentMethod: scenario.saleParams.paymentMethod,
-            // Intentionally null so `runAdminPreSaleFlow` doesn't auto-add a default product
-            productName: null, 
-            beforeFinish: async (p) => await buildPreSaleMixedCart(p, scenario.saleParams.mixedCart)});
+          await new AdminSaleWorkflow(page, new PreSaleStrategy())
+            .withAuth(scenario.authType)
+            .withDocumentType(scenario.saleParams.documentType)
+            .withClient(scenario.saleParams.clientCedula)
+            .withMixedCart(scenario.saleParams.mixedCart, { isPreSale: true })
+            .withPaymentMethod(scenario.saleParams.paymentMethod)
+            .execute();
         });
       }
     );

@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 import { requirePosCredentials } from "../../../../harness/config/settings.js";
 import { getSessionPath } from "../../../../harness/helpers/auth/auth.js";
-import { runAdminPreSaleFlow } from "../harness/admin-pre-sale-flow.js";
+import { AdminSaleWorkflow, PreSaleStrategy } from "../../../../harness/helpers/workflows/admin-sale-workflow.js";
 import { cancelFirstSaleAndVerify } from "../harness/cancel-sale-helpers.js";
 
 import scenarios from "./0-json-data/admin-pre-sale-cancellation.json" with { type: "json" };
@@ -22,12 +22,13 @@ test.describe.serial("Cancel Pre-Sales (Admin)", () => {
         const page = await context.newPage();
 
         await test.step("Create Pre-Sale", async () => {
-          await runAdminPreSaleFlow(page, {
-            authType: scenario.authType,
-            documentType: scenario.saleParams.documentType,
-              clientCedula: scenario.saleParams.clientCedula,
-              paymentMethod: scenario.saleParams.paymentMethod,
-            productName: scenario.saleParams.productName});
+          await new AdminSaleWorkflow(page, new PreSaleStrategy())
+            .withAuth(scenario.authType)
+            .withDocumentType(scenario.saleParams.documentType)
+            .withClient(scenario.saleParams.clientCedula)
+            .addPreSaleItem(scenario.saleParams.productName)
+            .withPaymentMethod(scenario.saleParams.paymentMethod)
+            .execute();
         });
 
         await test.step("Cancel Pre-Sale and Verify Modal", async () => {

@@ -19,7 +19,6 @@
       "type": "fijo",
       "discount": 10
     },
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
     "loginMode": "cached"

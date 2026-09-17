@@ -6,7 +6,7 @@ import { generateDataDrivenTests } from "../../../harness/helpers/test-generator
 import { completePayment } from "../harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "../harness/products/pos-search.js";
 import { openDrawer } from '../harness/sales/pos-drawer-helpers.js';
-import { expect, test } from "../../../harness/builders/pos.builder.js";
+import { expect, test } from "../../../harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -88,7 +88,8 @@ async function selectFirstQuoteAndBill(page) {
 test.describe("Quotation Workflow", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
     
-    test("creates quotations with and without PDF generation", async ({ posPage: page }) => {
+    test("creates quotations with and without PDF generation", async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(180_000);
 
       await test.step("Create a quotation with PDF", async () => {
@@ -108,7 +109,8 @@ test.describe("Quotation Workflow", () => {
       });
     });
 
-    test("retrieves a pending quotation and completes the sale", async ({ posPage: page }) => {
+    test("retrieves a pending quotation and completes the sale", async ({ posEnvironment }) => {
+      const { page } = posEnvironment;
       test.setTimeout(180_000);
 
       await test.step("Open the More Options menu and navigate to Retrieve Quotations", async () => {

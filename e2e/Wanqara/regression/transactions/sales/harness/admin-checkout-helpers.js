@@ -117,7 +117,7 @@ export async function selectPaymentMethod(page, methodName) {
   await methodItem.click({ force: true });
 }
 
-export async function submitAdminSale(page) {
+export async function submitAdminSale(page, endpoint = "/api/v2/billing/sales") {
   const saveBtn = page.getByRole("button", { name: "Guardar", exact: true }).first();
 
   await expect(saveBtn).toBeVisible({ timeout: 10000 });
@@ -125,7 +125,7 @@ export async function submitAdminSale(page) {
 
   await Promise.all([
     page.waitForResponse(
-      (res) => res.url().includes("/api/v2/billing/sales") && res.request().method() === "POST",
+      (res) => res.url().includes(endpoint) && res.request().method() === "POST",
       { timeout: 30000 }
     ),
     saveBtn.click({ force: true }),

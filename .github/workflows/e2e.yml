@@ -81,7 +81,7 @@ jobs:
           PLAYWRIGHT_HTML_REPORT: playwright-report-smoke
         run: |
           set +e
-          npx playwright test --project=Smoke --workers=1 2>&1 | tee test-output-smoke.log
+          npx playwright test --project=Smoke --workers=2 2>&1 | tee test-output-smoke.log
           exit "${PIPESTATUS[0]}"
 
       - name: Notify Telegram (Pipeline Error)
