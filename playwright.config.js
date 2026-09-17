@@ -120,7 +120,7 @@ export default defineConfig({
     {
       name: 'Release',
       dependencies: ['setup-actors', 'setup-chef'],
-      testMatch: /Wanqara\/regression\/.*\.spec\.js/,
+      testMatch: /Wanqara\/(regression|specific-cases)\/.*\.spec\.js/,
       grep: /@release/,                               
       use: {
         ...devices['Desktop Chrome'],
