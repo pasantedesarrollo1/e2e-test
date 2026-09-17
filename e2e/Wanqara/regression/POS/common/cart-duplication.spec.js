@@ -129,9 +129,16 @@ test.describe("Cart Duplication", () => {
               
             const badgeContainer = cardWrapper.locator(".tw-absolute.tw-z-30").first();
             
-            await badgeContainer.locator("button").first().click();
-            await expect(badgeContainer.locator("button")).toHaveCount(2, { timeout: 5000 });
-            await badgeContainer.locator("button").last().click();
+            await expect(badgeContainer.locator(".amount-digit")).toHaveCount(1, { timeout: 5000 });
+            
+            const buttons = badgeContainer.locator("button");
+            const btnCount = await buttons.count();
+            if (btnCount === 1) {
+               await buttons.first().click();
+               await expect(buttons).toHaveCount(2, { timeout: 5000 });
+            }
+                        await badgeContainer.locator("button").last().click();
+                        await expect(badgeContainer.locator(".amount-digit")).toHaveCount(1, { timeout: 5000 });
           }
       };
 
