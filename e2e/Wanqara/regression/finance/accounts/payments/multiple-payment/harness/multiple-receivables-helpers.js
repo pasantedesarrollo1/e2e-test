@@ -175,7 +175,6 @@ export async function printPaymentTicket(page, { paymentAmount }) {
   await printBtn.click();
   const printerRequest = await printerPromise;
   const postData = printerRequest.postDataJSON();
-  console.log("PRINTER POST DATA:", JSON.stringify(postData, null, 2));
 
   const amounts = [];
   function extractAmounts(obj) {
@@ -191,15 +190,15 @@ export async function printPaymentTicket(page, { paymentAmount }) {
   }
   extractAmounts(postData);
 
-  if (amounts.length > 0) {
-    const targetAmount = parseFloat(paymentAmount).toFixed(2);
-    for (let i = 0; i < amounts.length; i++) {
-      const val = parseFloat(amounts[i]).toFixed(2);
-      if (val === targetAmount) {
-         expect.soft(val).toBe(targetAmount);
-      }
-    }
-  }
+  const formattedAmounts = amounts.map(a => parseFloat(a).toFixed(2));
+  const targetAmount = parseFloat(paymentAmount).toFixed(2);
+  
+  console.log("Montos encontrados en la petición a la impresora:", formattedAmounts);
+  
+  expect.soft(
+    formattedAmounts, 
+    `El payload enviado a la impresora no incluye el monto esperado de ${targetAmount}`
+  ).toContain(targetAmount);
 
   const successToast = page.getByRole('status').locator('div').filter({ hasText: /Impresión exitosa/i }).first();
   await expect(successToast).toBeVisible({ timeout: 15_000 });
