@@ -16,6 +16,7 @@ export const test = base.extend({
   authType: ["", { option: true }],
   loginMode: ["", { option: true }],
   dispatchEnabled: [false, { option: true }],
+  ebillingEnabled: [undefined, { option: true }],
   cashRegisterMode: ["", { option: true }],
 
   chefAuthType: ["", { option: true }],
@@ -25,7 +26,7 @@ export const test = base.extend({
 
   stageSetupOptions: [null, { option: true }],
 
-  stageEnvironment: async ({ page, subsidiaryName, subsidiaryCode, openingAmount, authType, loginMode, dispatchEnabled, cashRegisterMode }, use, testInfo) => {
+  stageEnvironment: async ({ page, subsidiaryName, subsidiaryCode, openingAmount, authType, loginMode, dispatchEnabled, ebillingEnabled, cashRegisterMode }, use, testInfo) => {
     grantSetupHeadroom(testInfo, 120_000);
 
     if (!subsidiaryName) throw new Error("page fixture requires subsidiaryName option");
@@ -35,7 +36,7 @@ export const test = base.extend({
     const posScenario = { authType, loginMode, subsidiaryName, subsidiaryCode };
     await SessionInitializer.setup(page, posScenario, { targetPath: "/admin/home" });
 
-    await runEnvSetupFlow(page, { authType, businessType: "Restaurante", dispatchEnabled, subsidiaryName, subsidiaryCode });
+    await runEnvSetupFlow(page, { authType, businessType: "Restaurante", dispatchEnabled, ebillingEnabled, subsidiaryName, subsidiaryCode });
     await handleCashRegisterState(page, cashRegisterMode, openingAmount, subsidiaryName, subsidiaryCode, "/pos/restaurant-home");
 
     const homeIndicator = page.getByText(/Cliente:/i).first();
