@@ -81,7 +81,8 @@ export function generateDataDrivenTests(test, scenarios, testFn) {
 
                 // Use description from JSON if present, otherwise just Escenario.
                 // Some specs use custom describe blocks, but the standardized one starts with Escenario:
-                describeBlock(`Escenario: ${scenario.description} ${executionTag}`, () => {
+                const wsPrefix = scenario.metadata.ws ? `[${scenario.metadata.ws}] ` : '';
+                describeBlock(`Escenario: ${wsPrefix}${scenario.description} ${executionTag}`, () => {
                     if (scenario.metadata.ws) {
                         annotateTicket(test, scenario.metadata);
                     }

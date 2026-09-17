@@ -119,6 +119,16 @@ runs:
           headline="The ${SUITE} suite failed — see the failing tests below."
         fi
 
+        # --- Extract Executed Tickets (Release Only) -------------------------
+        executed_ids_block=""
+        if [ "$SUITE" = "Release" ] && [ -f "$LOG_FILE" ]; then
+          executed_ids="$(printf '%s\n' "$clean_output" | grep -oE '\[(WS|TES)-[0-9]+\]' | sort | uniq | tr -d '[]' | html_escape || true)"
+          if [ -n "$executed_ids" ]; then
+            ids_bullets="$(printf '%s\n' "$executed_ids" | sed 's/^/• /')"
+            executed_ids_block="$(printf '\n\n<b>🎫 Tickets Ejecutados</b>\n%s' "$ids_bullets")"
+          fi
+        fi
+
         # --- Optional sections ----------------------------------------------
         scope_block=""
         if [ -n "$SCOPE" ]; then
@@ -147,7 +157,7 @@ runs:
         • ✅ Passed: ${passed_n}
         • ❌ Failed: ${failed_n}
         • ⚠️ Flaky: ${flaky_n}
-        • ⏭️ Skipped: ${skipped_n}${failures_block}
+        • ⏭️ Skipped: ${skipped_n}${failures_block}${executed_ids_block}
 
         <b>📝 Commit</b>
         • <code>${safe_short_sha}</code> by ${safe_actor}${commit_block}
