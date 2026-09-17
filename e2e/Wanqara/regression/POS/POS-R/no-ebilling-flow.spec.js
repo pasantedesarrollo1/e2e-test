@@ -12,7 +12,7 @@ const scenarios = JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "no-ebilling-flow.json"), "utf-8")
 );
 
-import { ensureAuthenticated, logoutFromSession } from "../../../harness/helpers/auth/auth.js";
+import { ensureAuthenticated, logoutFromSession, withSessionRetry } from "../../../harness/helpers/auth/auth.js";
 import { ensureSubsidiaryConfig, navigateToSubsidiaryDetail } from "../../../harness/helpers/env/env-setup-flow.js";
 
 for (const scenario of scenarios) {
@@ -60,11 +60,13 @@ for (const scenario of scenarios) {
       });
 
       await test.step("5. Activar Facturación Electrónica y cerrar sesión", async () => {
-        await ensureAuthenticated(page, { targetPath: "/admin/home", authType: scenario.authType });
-        await navigateToSubsidiaryDetail(page, scenario.subsidiaryName, scenario.subsidiaryCode);
-        await ensureSubsidiaryConfig(page, scenario.businessType, scenario.dispatchEnabled, true);
-        
-        await logoutFromSession(page);
+        await withSessionRetry(page, scenario.authType, async () => {
+          await ensureAuthenticated(page, { targetPath: "/admin/home", authType: scenario.authType });
+          await navigateToSubsidiaryDetail(page, scenario.subsidiaryName, scenario.subsidiaryCode);
+          await ensureSubsidiaryConfig(page, scenario.businessType, scenario.dispatchEnabled, true);
+          
+          await logoutFromSession(page);
+        });
       });
     });
   });

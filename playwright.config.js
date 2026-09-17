@@ -80,7 +80,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
       },
     },
     {
@@ -102,7 +102,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
       },
     },
 
@@ -125,7 +125,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         baseURL,
-        storageState: path.join(AUTH_DIR, 'actor3-session.json'),
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
       },
     },
     {

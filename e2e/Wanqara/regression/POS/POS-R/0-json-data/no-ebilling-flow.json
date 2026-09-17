@@ -17,7 +17,7 @@
     "subsidiaryName": "Wanqara",
     "subsidiaryCode": "001",
     "openingAmount": "100.00",
-    "loginMode": "cached",
+    "loginMode": "fresh",
     "ebillingEnabled": false,
     "businessType": "Restaurante",
     "productName": "Caja de alitas de pollo (100 u)",

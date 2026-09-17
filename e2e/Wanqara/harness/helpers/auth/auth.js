@@ -248,3 +248,30 @@ export async function switchAdminSubsidiary(page, targetSubsidiaryName, targetSu
     page.locator("header").first().locator("button").filter({ hasText: new RegExp(shortName, "i") }).first()
   ).toBeVisible({ timeout: 15000 });
 }
+
+export async function withSessionRetry(page, authType, actionFn, maxRetries = 3) {
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    try {
+      return await actionFn();
+    } catch (error) {
+      const isLoginUrl = isOnLogin(page);
+      const isExpiredSnackbarVisible = await page
+        .locator(".v-snackbar")
+        .filter({ hasText: /Sesión expirada/i })
+        .isVisible({ timeout: 1000 })
+        .catch(() => false);
+
+      if (isLoginUrl || isExpiredSnackbarVisible) {
+        attempt++;
+        if (attempt >= maxRetries) {
+          throw new Error(`Sesión expirada y no se pudo recuperar tras ${maxRetries} intentos. Error original: ${error.message}`);
+        }
+        
+        await recoverSharedSession(page, { reason: "session expired mid-action", authType });
+      } else {
+        throw error;
+      }
+    }
+  }
+}
