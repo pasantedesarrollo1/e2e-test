@@ -1,18 +1,10 @@
 
 import { buildMixedCart, buildPreSaleMixedCart } from "../../../regression/transactions/sales/harness/admin-cart-helpers.js";
-
-/**
- * Patrón Strategy para ejecución de ventas
- */
 import { NormalSaleStrategy } from "./strategies/normal-sale-strategy.js";
 import { PreSaleStrategy } from "./strategies/pre-sale-strategy.js";
 import { ValidatedTransactionStrategy } from "./strategies/validated-transaction-strategy.js";
 
 export { NormalSaleStrategy, PreSaleStrategy, ValidatedTransactionStrategy };
-
-/**
- * Patrón Workflow contextual. Utiliza Strategy para la ejecución final.
- */
 export class AdminSaleWorkflow {
     constructor(page, strategy = new NormalSaleStrategy()) {
         this.page = page;

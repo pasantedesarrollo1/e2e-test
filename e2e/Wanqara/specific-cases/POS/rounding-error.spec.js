@@ -79,22 +79,18 @@ test.describe.serial("POS Specific Cases - Rounding Errors", () => {
 
         const finalizarVentaButton = page.getByRole("button", { name: /Finalizar Venta/i });
 
-        // Configuramos los locators de los dos posibles resultados
         const successSnackbar = page.locator(".v-snackbar").filter({ hasText: /Venta Realizada/i }).first();
         const errorSnackbar = page.locator(".v-snackbar").filter({ hasText: /incorrectos|no coinciden/i }).first();
 
         await finalizarVentaButton.click({ force: true });
 
-        // Esperamos hasta que aparezca CUALQUIERA de los dos mensajes (éxito o error)
         await expect(successSnackbar.or(errorSnackbar)).toBeVisible({ timeout: 15000 });
 
-        // Si aparece el error, lanzamos un Error explícito para pintar la consola de Rojo
         if (await errorSnackbar.isVisible()) {
           const errorText = await errorSnackbar.textContent();
           throw new Error(`\n\n❌ ERROR DE REDONDEO (WS-1038): Falló porque no coinciden los valores.\nEl sistema dice: "${errorText.trim()}"\n\n`);
         }
 
-        // Si llegamos aquí, el cobro fue exitoso
         await expect(successSnackbar).toBeVisible();
       });
     });

@@ -24,8 +24,6 @@ test.describe("POS - Cash Register Lifecycle @regression", () => {
       const subsidiaryName = scenario.subsidiaryName;
 
       await test.step("Abrir la caja (Punto de emisión y monto)", async () => {
-        // En este punto, el workflow con cashRegisterMode='ensure-closed' ya nos entregó la UI
-        // lista en la pantalla de "Abrir Caja" (o de seleccionar sucursal si hay varias).
         const subsidiaryCards = page.locator('.v-card').filter({ hasText: subsidiaryName });
         if (await subsidiaryCards.first().isVisible({ timeout: 4000 })) {
           await subsidiaryCards.first().click();

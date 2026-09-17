@@ -18,7 +18,6 @@ test.describe("People Management (Basic Flow)", () => {
 
   generateDataDrivenTests(test, scenarios, (scenario) => {
     
-    // We inject the targetPath directly into the workflow
     test.use({ 
       targetPath: "/admin/people/list",
       subsidiaryName: scenario.subsidiaryName, 
@@ -32,7 +31,6 @@ test.describe("People Management (Basic Flow)", () => {
       test.setTimeout(120_000);
       
       await test.step('Paso 1: Pre-Limpieza (Garantizar entorno limpio)', async () => {
-        // The workflow already navigated to targetPath and ensured authentication
         await ensureCleanPerson(page, { identity: scenario.personData.identity });
       });
 

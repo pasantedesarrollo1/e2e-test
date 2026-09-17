@@ -14,7 +14,6 @@ export async function buildMixedCart(page, { estandarName, serieName, tallaColor
 }
 
 export async function buildPreSaleMixedCart(page, { estandarName, serieName, tallaColorName }) {
-  // En preventas (pre-sales) no se requiere seleccionar la serie, independientemente de si hay despacho o no
   await searchAndSelectProduct(page, { name: estandarName });
   await searchAndSelectProduct(page, { name: serieName });
   await searchAndSelectProduct(page, { name: tallaColorName });

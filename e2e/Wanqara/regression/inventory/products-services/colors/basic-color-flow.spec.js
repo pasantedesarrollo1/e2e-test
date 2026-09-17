@@ -28,10 +28,9 @@ test.describe("Inventory - Colors (Basic Flow)", () => {
 
     test(`ensures full basic lifecycle for color '${scenario.colorData.name}'`, async ({ adminApp }) => {
       const { page } = adminApp;
-      test.setTimeout(120_000); // Dar suficiente tiempo para el flujo completo
+      test.setTimeout(120_000); 
       
       await test.step('Paso 1: Pre-Limpieza (Garantizar entorno limpio)', async () => {
-        // La navegación y autenticación hacia /admin/colors/list ya fueron manejadas por adminContext
         await deleteColor(page, { name: scenario.colorData.name });
       });
 

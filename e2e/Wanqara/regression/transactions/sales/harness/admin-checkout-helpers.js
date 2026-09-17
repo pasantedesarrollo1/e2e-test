@@ -98,14 +98,12 @@ export async function searchAndSelectProduct(page, { name, searchTerm }) {
 
   await searchInput.pressSequentially(term, { delay: 30 });
   
-  // Wait for the debounced API request triggered after typing stops
   await page.waitForResponse(res => res.url().includes('products') && res.request().method() === 'GET', { timeout: 3000 }).catch(() => {});
 
   const productItem = page.getByText(name, { exact: false }).first();
   await expect(productItem).toBeVisible({ timeout: 20000 });
   await productItem.click();
   
-  // Wait for the dropdown overlay to close, ensuring the product was selected
   const overlayContent = page.locator(".v-overlay-container .v-overlay__content").filter({ has: productItem });
   await expect(overlayContent).not.toBeVisible({ timeout: 10000 }).catch(() => {});
 }

@@ -12,12 +12,10 @@ for (const actorKey of Object.keys(chefHarness.users)) {
     const sessionPath = getChefSessionPath(actorKey);
     fs.mkdirSync(path.dirname(sessionPath), { recursive: true });
 
-    // --- INICIO DE CACHÉ INTELIGENTE ---
     if (isSessionFresh(sessionPath)) {
       console.log(`[Setup] Caché activa encontrada para CHEF ${actorKey}. Saltando login ⚡`);
       return;
     }
-    // --- FIN DE CACHÉ INTELIGENTE ---
 
     if (!hasChefCredentials()) {
       fs.writeFileSync(sessionPath, JSON.stringify({ cookies: [], origins: [] }));

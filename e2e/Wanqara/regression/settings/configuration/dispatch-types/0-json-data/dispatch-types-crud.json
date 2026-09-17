@@ -17,10 +17,6 @@
       "name": "Tipo Despacho Test",
       "type": "Local",
       "description": "Test automatizado de tipo de despacho"
-    },
-    "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

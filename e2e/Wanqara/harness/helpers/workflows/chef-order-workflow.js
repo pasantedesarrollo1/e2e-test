@@ -1,9 +1,6 @@
 import { searchAndSelectProduct, selectTable, submitOrder } from "../../../regression/POS/POS-R/harness/chef-orders-flow.js";
 import { addInStockExtra, confirmExtrasAndAddToCart, openExtrasSelection, validateOutOfStockExtra } from "../../../regression/POS/POS-R/harness/pos-extras-helpers.js";
 
-/**
- * Patrón Workflow para Orquestación de Cocina (Chef).
- */
 export class ChefOrderWorkflow {
     constructor(page) {
         this.page = page;
@@ -50,8 +47,6 @@ export class ChefOrderWorkflow {
             await searchAndSelectProduct(page, this.productName);
         }
 
-        // Handle validations and additions for extras
-        // Group by category to avoid opening the same category sheet multiple times
         const allCategories = new Set([
             ...this.extrasToValidate.map(e => e.category),
             ...this.extrasToAdd.map(e => e.category)
@@ -60,13 +55,11 @@ export class ChefOrderWorkflow {
         for (const category of allCategories) {
             await openExtrasSelection(page, category);
             
-            // Validate first
             const toValidate = this.extrasToValidate.filter(e => e.category === category);
             for (const item of toValidate) {
                 await validateOutOfStockExtra(page, item.extra, item.labelText);
             }
 
-            // Add extras
             const toAdd = this.extrasToAdd.filter(e => e.category === category);
             for (const item of toAdd) {
                 await addInStockExtra(page, item.extra);
@@ -79,9 +72,8 @@ export class ChefOrderWorkflow {
             await action(page);
         }
 
-        // (We pretend to print pre-ticket here if true, depending on the app's real flow)
         if (this.shouldPrintPreticket) {
-            // Implementation specific to print pre-ticket
+            //
         }
 
         await submitOrder(page);

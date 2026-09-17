@@ -37,7 +37,6 @@ for (const scenario of scenarios) {
       chefLogin: scenario.chefLogin,
       chefSubsidiary: scenario.chefSubsidiary,
       chefSubsidiaryCode: scenario.chefSubsidiaryCode
-      // No usamos createOrder en stageSetupOptions porque queremos hacerlo a mano en chefPage
     });
 
     let baseProduct = scenario.extrasData.baseProduct;
@@ -51,8 +50,6 @@ for (const scenario of scenarios) {
     }
 
     test.beforeEach(async ({ chefContext }) => {
-      // El builder ya nos entrega el chefPage logueado y posicionado. 
-      // Solo garantizamos estar en la pestaña correcta.
       await expect(chefContext).toHaveURL(/\/tables/);
       await expect(
         chefContext.locator("ion-segment-button").filter({ hasText: "Todos" })
@@ -66,7 +63,6 @@ for (const scenario of scenarios) {
       
       let tableName;
       
-      // 1. Acciones del Chef (El builder ya limpió las órdenes previas automáticamente)
       await test.step("Select table, product and open modifiers sheet", async () => {
         tableName = await selectTable(chefPage);
         await searchAndSelectProduct(chefPage, baseProduct);
@@ -83,7 +79,6 @@ for (const scenario of scenarios) {
         await submitOrder(chefPage);
       });
       
-      // 2. Acciones del POS
       await test.step("Open order in POS and process payment", async () => {
         await openAndSelectOrder(posPage, tableName);
         await collectOrder(posPage);

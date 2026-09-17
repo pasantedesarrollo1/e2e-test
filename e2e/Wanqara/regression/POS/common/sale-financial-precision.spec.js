@@ -61,15 +61,14 @@ async function runAllProductsSurchargeFlow(page, { productsToAdd, precision, pre
 test.describe("Financial Calculation Accuracy", () => {
   generateDataDrivenTests(test, scenarios, (scenario) => {
     
-    // Suite 1: Descuentos Generales (1 test por cada discountCase)
-    for (const { product, afterProductSelect, precision, precisionHoliday } of scenario.discountCases) {
+    for (const { product, requiresClient, precision, precisionHoliday } of scenario.discountCases) {
       test(`validates financial calculations for [${product.type}] with ${scenario.discountName}`, async ({ posEnvironment }) => {
       const { page } = posEnvironment;
         test.setTimeout(120_000);
 
         await runFinancialPrecisionFlow(page, {
           product,
-          afterProductSelect,
+          requiresClient,
           applyModifier: (page) => applyGeneralDiscount(page, "3.3337373372323"),
           precision,
           precisionHoliday,
@@ -78,7 +77,6 @@ test.describe("Financial Calculation Accuracy", () => {
       });
     }
 
-    // Suite 2: Recargos Manuales Masivos (1 test con todos los surchargeProducts)
     test(`validates financial calculations for ${scenario.surchargeName} across compatible product types in a single sale`, async ({ posEnvironment }) => {
       const { page } = posEnvironment;
       test.setTimeout(180_000);

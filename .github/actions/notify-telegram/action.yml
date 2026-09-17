@@ -122,7 +122,7 @@ runs:
         # --- Extract Executed Tickets (Release Only) -------------------------
         executed_ids_block=""
         if [ "$SUITE" = "Release" ] && [ -f "$LOG_FILE" ]; then
-          executed_ids="$(printf '%s\n' "$clean_output" | grep -oE '\[(WS|TES)-[0-9]+( - [^\]]+)?\]' | sort | uniq | tr -d '[]' | html_escape || true)"
+          executed_ids="$(printf '%s\n' "$clean_output" | grep -oE '\[(WS|TES)-[0-9]+( - [^]]+)?\]' | sort | uniq | tr -d '[]' | html_escape || true)"
           if [ -n "$executed_ids" ]; then
             ids_bullets="$(printf '%s\n' "$executed_ids" | sed 's/^/• /')"
             executed_ids_block="$(printf '\n\n<b>🎫 Test Ejecutados</b>\n%s' "$ids_bullets")"

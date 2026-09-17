@@ -84,7 +84,6 @@ export async function fillObservation(page, text) {
 }
 
 export async function acceptTerms(page) {
-  // Manejamos el texto con regex para soportar tíldes u otros caracteres (Términos)
   const checkbox = page.getByRole("checkbox", {
     name: /Acepto los T.rminos y Condiciones/i});
   await expect(checkbox).toBeVisible();

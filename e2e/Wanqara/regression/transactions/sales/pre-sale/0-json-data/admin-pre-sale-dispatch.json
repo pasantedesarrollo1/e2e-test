@@ -14,19 +14,14 @@
     "authType": "actor2",
     "saleParams": {
       "documentType": "Recibos",
-      "dispatchEnabled": true,
       "clientCedula": "0000000001",
       "paymentMethod": "EFECTIVO",
-      "warehouseName": "Bodega de Ventas W001",
       "mixedCart": {
         "estandarName": "Caja de alitas de pollo (100 u)",
         "serieName": "series test",
         "tallaColorName": "test talla color"
       }
-    },
-    "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101",
-    "loginMode": "cached"
+    }
   },
   {
     "id": "ADMIN-PRE-SALE-DISPATCH-002",
@@ -43,18 +38,13 @@
     "authType": "actor3",
     "saleParams": {
       "documentType": "Recibos",
-      "dispatchEnabled": false,
       "clientCedula": "0000000001",
       "paymentMethod": "EFECTIVO",
-      "warehouseName": "Bodega de Ventas W001",
       "mixedCart": {
         "estandarName": "Caja de alitas de pollo (100 u)",
         "serieName": "series test",
         "tallaColorName": "test talla color"
       }
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

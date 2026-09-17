@@ -41,10 +41,8 @@
         "code": "001"
       }
     ],
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "subsidiaryCode": "001"
   },
   {
     "id": "ADMIN-CROSS-SALES-001-2",
@@ -84,10 +82,8 @@
         "code": "100"
       }
     ],
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "subsidiaryCode": "100"
   },
   {
     "id": "ADMIN-CROSS-SALES-001-3",
@@ -127,10 +123,8 @@
         "code": "101"
       }
     ],
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101",
-    "loginMode": "cached"
+    "subsidiaryCode": "101"
   },
   {
     "id": "ADMIN-CROSS-SALES-002-1",
@@ -174,10 +168,8 @@
         "code": "001"
       }
     ],
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "subsidiaryCode": "001"
   },
   {
     "id": "ADMIN-CROSS-SALES-002-2",
@@ -217,10 +209,8 @@
         "code": "100"
       }
     ],
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "subsidiaryCode": "100"
   },
   {
     "id": "ADMIN-CROSS-SALES-002-3",
@@ -260,9 +250,7 @@
         "code": "101"
       }
     ],
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101",
-    "loginMode": "cached"
+    "subsidiaryCode": "101"
   }
 ]

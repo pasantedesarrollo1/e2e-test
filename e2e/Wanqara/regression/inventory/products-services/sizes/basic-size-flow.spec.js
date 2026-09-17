@@ -31,7 +31,6 @@ test.describe("Inventory - Sizes (Basic Flow)", () => {
       test.setTimeout(120_000);
       
       await test.step('Paso 1: Pre-Limpieza (Garantizar entorno limpio)', async () => {
-        // La navegación y autenticación ya fueron manejadas por adminContext
         await deleteSize(page, { name: scenario.sizeData.name });
       });
 

@@ -4,10 +4,8 @@ const normalizeText = (str) => {
 };
 
 export async function validateSubscriptionsOverview(page, subscriptionData) {
-  // We wait for the cards to render
   const codeLocator = page.locator('.tw-min-w-0.tw-flex-1 > div.tw-text-xs:not(.tw-text-textSecondary)');
   
-  // Wait for at least one code to appear if modules exist
   await codeLocator.first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
   
   const count = await codeLocator.count();
@@ -32,7 +30,6 @@ export async function validateSubsidiaryCapabilityBadges(page, { subscriptionDat
   await test.step("Validate capability badges against JSON data", async () => {
     const badges = page.locator('span.tw-bg-primary.tw-text-white.tw-rounded-br-md.tw-rounded-tl-md');
     
-    // Wait for badges to load
     await badges.first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
     
     const count = await badges.count();

@@ -141,10 +141,6 @@
         "Balanzas digitales",
         "Módulo para multinegocio"
       ]
-    },
-    "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

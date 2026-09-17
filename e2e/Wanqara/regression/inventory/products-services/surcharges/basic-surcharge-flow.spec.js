@@ -31,7 +31,6 @@ test.describe("Inventory - Surcharges (Basic Flow)", () => {
       test.setTimeout(120_000);
       
       await test.step('Paso 1: Pre-Limpieza (Garantizar entorno limpio)', async () => {
-        // La navegación y autenticación ya fueron manejadas por adminContext
         await deleteSurcharge(page, { name: scenario.surchargeData.name });
       });
 

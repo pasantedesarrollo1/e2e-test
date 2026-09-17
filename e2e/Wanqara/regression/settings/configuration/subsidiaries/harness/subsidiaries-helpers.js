@@ -15,9 +15,7 @@ export async function createSubsidiary(page, {
 
   await page.getByPlaceholder('Nombre de la Sucursal').fill(name);
   await page.getByPlaceholder('Nombre Comercial de la Sucursal').fill(name);
-  // Reemplazamos los tildes con . para evitar errores de matching por encoding (Código)
   await page.getByPlaceholder(/C.digo de la Sucursal/i).fill(code);
-  // (Dirección)
   await page.getByPlaceholder(/Direcci.n de la Sucursal/i).fill(address);
 
   await selectDropdownOption(page, { triggerLocator: page.getByPlaceholder('Provincia') });
@@ -26,7 +24,6 @@ export async function createSubsidiary(page, {
   await expect(cityInput).toBeEnabled({ timeout: 10000 });
   await selectDropdownOption(page, { triggerLocator: cityInput });
 
-  // (Teléfono)
   await page.getByPlaceholder(/Tel.fono/i).fill(phone);
   await page.getByPlaceholder('Correo').fill(email);
 
@@ -51,7 +48,6 @@ export async function createSubsidiary(page, {
 
   await page.getByRole('button', { name: /^Guardar$/i }).first().click();
 
-  // (Configuración)
   const confirmModal = page.locator('.v-overlay--active').filter({ hasText: /La configuraci.n de la/i });
   await expect(confirmModal).toBeVisible();
   await confirmModal.getByRole('checkbox').check({ force: true });

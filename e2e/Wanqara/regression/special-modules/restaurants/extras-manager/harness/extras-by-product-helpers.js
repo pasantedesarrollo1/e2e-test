@@ -5,12 +5,6 @@ const relationDeletedMsg = "Relaci.n eliminada";
 const noCategoriesMsg = "A.n no hay categor.as relacionadas";
 const loadingProductsMsg = "Cargando";
 
-/**
- * Tests the "Por producto" flow: relates products to a category and cleans them up.
- * @param {import('@playwright/test').Page} page 
- * @param {string} categoryName 
- * @param {string} productSearchTerm
- */
 export async function testByProductFlow(page, categoryName, productSearchTerm) {
   const byProductTab = page.getByRole('button', { name: /Por producto/i });
   await expect(byProductTab).toBeVisible();
@@ -21,14 +15,14 @@ export async function testByProductFlow(page, categoryName, productSearchTerm) {
     await expect(sidebarSearchInput).toBeVisible();
     await sidebarSearchInput.clear();
     await sidebarSearchInput.fill(productSearchTerm);
-    await page.waitForTimeout(1500); // frontend debounce + network latency
+    await page.waitForTimeout(1500); 
 
     const sidebarListItems = page.locator('aside').locator('.v-list-item');
     const sidebarCount = await sidebarListItems.count();
 
     for (let i = 0; i < sidebarCount; i++) {
       await sidebarListItems.nth(i).click();
-      await page.waitForTimeout(500); // wait for detail panel to load
+      await page.waitForTimeout(500); 
 
       const deleteRelationBtn = page.getByRole('button', { name: /Eliminar relaci.n/i }).first();
       while (await deleteRelationBtn.isVisible()) {
@@ -44,7 +38,7 @@ export async function testByProductFlow(page, categoryName, productSearchTerm) {
         await deleteResponsePromise;
 
         await expectSnackbar(page, new RegExp(relationDeletedMsg, "i"));
-        await page.waitForTimeout(500); // let UI update before checking again
+        await page.waitForTimeout(500); 
       }
       
       const emptyMsg = page.getByText(new RegExp(noCategoriesMsg, "i"));
@@ -80,7 +74,7 @@ export async function testByProductFlow(page, categoryName, productSearchTerm) {
     await expect(loadingIndicator).toBeHidden({ timeout: 15000 }).catch(() => {});
 
     await productSearchInput.fill(productSearchTerm);
-    await page.waitForTimeout(1500); // frontend debounce + network latency
+    await page.waitForTimeout(1500); 
 
     const productItems = dialog.locator('.v-list-item').filter({ hasText: /\$/ });
     await expect(productItems.first()).toBeVisible({ timeout: 5000 });

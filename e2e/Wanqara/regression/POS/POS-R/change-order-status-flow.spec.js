@@ -56,7 +56,6 @@ for (const scenario of scenarios) {
       });
 
       await test.step("Open More Options menu and navigate to Change Order Status", async () => {
-        // En lugar de navigateToRestaurantPOS, solo vamos directo porque el posContext ya está en el home
         await navigateToChangeOrderStatusFromOptions(page);
       });
 

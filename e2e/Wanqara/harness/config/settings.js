@@ -1,5 +1,3 @@
-// e2e/harness/config/settings.js
-
 const tenantRuc = process.env.PLAYWRIGHT_TENANT_RUC;
 if (!tenantRuc) throw new Error("❌ PLAYWRIGHT_TENANT_RUC no está definido en el archivo .env.");
 

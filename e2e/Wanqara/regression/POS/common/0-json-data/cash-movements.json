@@ -13,7 +13,6 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "environment": "Retail",
     "authType": "actor3",
     "basePath": "/pos/home",
     "businessType": "Comercios",
@@ -47,7 +46,6 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "environment": "Restaurant",
     "authType": "actor1",
     "basePath": "/pos/restaurant-home",
     "businessType": "Restaurante",
@@ -81,7 +79,6 @@
       "addedToRegression": "false",
       "testScope": "release"
     },
-    "environment": "Retail",
     "authType": "actor1",
     "basePath": "/pos/home",
     "businessType": "Comercios",
@@ -114,7 +111,6 @@
       "addedToRegression": "false",
       "testScope": "release"
     },
-    "environment": "Restaurant",
     "authType": "actor1",
     "basePath": "/pos/restaurant-home",
     "businessType": "Restaurante",

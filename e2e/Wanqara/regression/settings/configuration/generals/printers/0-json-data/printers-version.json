@@ -15,12 +15,7 @@
     "description": "Verificar que la versión sugerida de la impresora exista en GitHub Releases",
     "authType": "actor3",
     "printerData": {
-      "platformPrefix": "Windows ",
       "githubReleasesUrl": "https://github.com/KevinWanqara/Wanqara-device-admin/releases"
-    },
-    "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

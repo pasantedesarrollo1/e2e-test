@@ -26,7 +26,7 @@ export async function ensureSubsidiaryConfig(
   const needsDispatchChange = isDispatchChecked !== dispatchEnabled;
 
   if (!needsTypeChange && !needsDispatchChange) {
-    return false; // Indicamos que no hubo cambios
+    return false;
   }
 
   await page.getByRole("button", { name: /^Editar$/i }).click();
@@ -56,7 +56,7 @@ export async function ensureSubsidiaryConfig(
   await expect(infoModal).toBeVisible();
   await infoModal.getByRole("button", { name: /Entendido/i }).click();
 
-  return true; // Hubo cambios que requieren relogin
+  return true;
 }
 
 export async function navigateToSubsidiaryDetail(page, subsidiaryName, subsidiaryCode) {
@@ -79,13 +79,10 @@ export async function navigateToSubsidiaryDetail(page, subsidiaryName, subsidiar
 }
 
 export async function runEnvSetupFlow(page, { authType, businessType, dispatchEnabled, subsidiaryName, subsidiaryCode }) {
-  // Aseguramos que la sesión básica exista y estemos en home admin
   await ensureAuthenticated(page, { targetPath: "/admin/home", authType });
 
-  // Navegamos al detalle de la sucursal buscando por nombre y código
   await navigateToSubsidiaryDetail(page, subsidiaryName, subsidiaryCode);
 
-  // Verificamos y corregimos el config
   const requiresRelogin = await ensureSubsidiaryConfig(page, businessType, dispatchEnabled);
 
   if (requiresRelogin) {

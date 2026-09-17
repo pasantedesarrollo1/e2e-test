@@ -74,7 +74,6 @@ export async function selectClientByCedula(page, cedula, options = {}) {
         identityType: "CEDULA",
         identityNumber: cedula
       });
-      // The modal might prompt to save, OR it might auto-close if the client exists
       await expect(saveBtn.or(successSnackbar)).toBeVisible({ timeout: 15000 });
     }
 

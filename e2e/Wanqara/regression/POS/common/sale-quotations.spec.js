@@ -17,7 +17,6 @@ const scenarios = JSON.parse(
 async function runQuoteFlow(page, { businessType, quoteParams, pdfChoice }) {
   const homePath = businessType === "Restaurante" ? "/pos/restaurant-home" : "/pos/home";
   
-  // We navigate to home explicitly because this flow is run multiple times in the same test
   await page.goto(homePath);
   await page.waitForURL(new RegExp(homePath));
 

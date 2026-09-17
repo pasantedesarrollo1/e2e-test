@@ -1,8 +1,4 @@
 import { expect } from '@playwright/test';
-/**
- * Navigates to printers settings and extracts the suggested version for a given platform prefix.
- * Example platformPrefix: "Windows "
- */
 export async function getSuggestedPrinterVersion(page, ) {
   await page.goto('/admin/settings/printers');
   await page.waitForLoadState('networkidle');
@@ -18,14 +14,10 @@ export async function getSuggestedPrinterVersion(page, ) {
   return versionMatch[0];
 }
 
-/**
- * Navigates to GitHub and verifies that the extracted version exists as a release link.
- */
 export async function verifyVersionOnGithub(page, { dynamicVersion, githubReleasesUrl }) {
   await page.goto(githubReleasesUrl);
   await page.getByRole('heading', { name: 'Release list' }).waitFor({ state: 'visible', timeout: 15000 });
   
-  // Scape the dots for the Regex
   const versionRegex = new RegExp(`^${dynamicVersion.replace(/\./g, '\\.')}$`);
   const releaseLink = page.locator('a').filter({ hasText: versionRegex }).first();
   

@@ -38,7 +38,6 @@ export const test = base.extend({
     const closedIndicator = page.getByRole("button", { name: /Abrir Caja/i }).first();
     const targetIndicator = cashRegisterMode === "ensure-closed" ? closedIndicator : homeIndicator;
 
-    // Aserciones extraídas de la fixture para no contaminar reportes de setup
     if (loginMode === "cached") {
       await withSessionWatchdog(page, async () => {
         await targetIndicator.waitFor({ state: "visible", timeout: 60_000 });

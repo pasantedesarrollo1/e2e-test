@@ -31,7 +31,6 @@ test.describe("Inventory - Brands (Basic Flow)", () => {
       test.setTimeout(120_000); 
       
       await test.step('Paso 1: Pre-Limpieza (Garantizar entorno limpio)', async () => {
-        // La navegación y autenticación hacia /admin/brands/list ya fueron manejadas por adminContext
         await deleteBrand(page, { name: scenario.brandData.name });
       });
 

@@ -23,7 +23,6 @@
     "loginMode": "cached",
     "chefAuthType": "actor1",
     "chefSubsidiary": "Wanqara",
-    "chefSubsidiaryCode": "001",
-    "businessType": "Restaurante"
+    "chefSubsidiaryCode": "001"
   }
 ]

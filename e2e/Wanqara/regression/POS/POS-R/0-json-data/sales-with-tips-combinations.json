@@ -22,10 +22,6 @@
       "servicio": "servicio alita",
       "elaborado": "Porción de Alitas Marinadas"
     },
-    "clients": {
-      "testCedula": "0000000001",
-      "consumidorFinalCedula": "9999999999999"
-    },
     "case1": {
       "ui": {
         "subtotal": "$36.47",
@@ -109,13 +105,11 @@
     },
     "paymentMethod": "EFECTIVO",
     "productName": "Caja de alitas de pollo (100 u)",
-    "clientCedula": "0000000001",
     "openingAmount": "100.00",
     "subsidiaryCode": "001",
     "loginMode": "cached",
     "chefAuthType": "actor1",
     "chefSubsidiary": "Wanqara",
-    "chefSubsidiaryCode": "001",
-    "businessType": "Restaurante"
+    "chefSubsidiaryCode": "001"
   }
 ]

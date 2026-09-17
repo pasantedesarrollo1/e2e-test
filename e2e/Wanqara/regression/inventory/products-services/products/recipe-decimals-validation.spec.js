@@ -31,7 +31,6 @@ test.describe("Inventory - Products (Recipe Decimals Validation)", () => {
       test.setTimeout(120_000);
       
       await test.step('Verificar comportamiento de decimales en la receta', async () => {
-        // La navegación a la lista de productos ya fue garantizada por el fixture adminContext
         await navigateToProductAndVerifyRecipeDecimals(page, {
           productName: scenario.recipeData.productName,
           ingredientName: scenario.recipeData.ingredientName,

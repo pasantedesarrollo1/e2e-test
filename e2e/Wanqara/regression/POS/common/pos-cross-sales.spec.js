@@ -30,7 +30,6 @@ posTest.describe("POS Retail Cross Sales", () => {
         
         await page.getByRole("button", { name: /Terminar Venta/i }).click();
 
-        // Completar pago
         await completePayment(page, {
           paymentMethod: scenario.saleParams.paymentMethod?.label || scenario.paymentMethod,
           printTicket: scenario.saleParams.printTicket ?? false,
@@ -48,8 +47,6 @@ stageTest.describe("POS Restaurant Cross Sales", () => {
       const { page } = stageEnvironment;
       
       await stageTest.step("Cobrar orden generada por el chef", async () => {
-        // El workflow stageEnvironment ya creó la orden en la cocina (stageContext.activeTableName),
-        // regresó al POS y la abrió automáticamente.
         
         const cobrarBtn = page.getByRole("button", { name: /Cobrar/i }).filter({ hasText: /Procesar pago/i }).first();
         await cobrarBtn.click();

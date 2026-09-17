@@ -1,13 +1,5 @@
 import fs from "node:fs";
 
-/**
- * Validates if a session file is present, fresh (within maxAgeMs), and contains valid auth data.
- * Protected Variations (GRASP): Encapsulates session validation logic to protect against token expiration changes.
- * 
- * @param {string} sessionPath - The absolute path to the session storage JSON file.
- * @param {number} maxAgeMs - Maximum allowed age of the session in milliseconds (default: 1 hour).
- * @returns {boolean} True if the session is valid and fresh, false otherwise.
- */
 export function isSessionFresh(sessionPath, maxAgeMs = 3600_000) {
   if (!fs.existsSync(sessionPath)) {
     return false;

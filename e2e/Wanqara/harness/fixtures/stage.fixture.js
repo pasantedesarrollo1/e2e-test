@@ -10,7 +10,6 @@ import { closeAllActiveOrders, createChefOrder, openAndSelectOrder } from "../..
 const grantSetupHeadroom = (testInfo, ms) => testInfo.setTimeout(testInfo.timeout + ms);
 
 export const test = base.extend({
-  // Opciones para POS
   subsidiaryName: ["", { option: true }],
   subsidiaryCode: ["", { option: true }],
   openingAmount: ["", { option: true }],
@@ -19,13 +18,11 @@ export const test = base.extend({
   dispatchEnabled: [false, { option: true }],
   cashRegisterMode: ["", { option: true }],
 
-  // Opciones para Chef
   chefAuthType: ["", { option: true }],
   chefLogin: ["", { option: true }],
   chefSubsidiary: ["", { option: true }],
   chefSubsidiaryCode: ["", { option: true }],
 
-  // Opción para auto-setup de ordenes
   stageSetupOptions: [null, { option: true }],
 
   stageEnvironment: async ({ page, subsidiaryName, subsidiaryCode, openingAmount, authType, loginMode, dispatchEnabled, cashRegisterMode }, use, testInfo) => {
@@ -35,11 +32,9 @@ export const test = base.extend({
     if (!openingAmount) throw new Error("page fixture requires openingAmount option");
     if (!authType) throw new Error("page fixture requires authType option");
 
-    // 1. Configuración de POS
     const posScenario = { authType, loginMode, subsidiaryName, subsidiaryCode };
     await SessionInitializer.setup(page, posScenario, { targetPath: "/admin/home" });
 
-    // En Stage forzamos que el businessType sea Restaurante
     await runEnvSetupFlow(page, { authType, businessType: "Restaurante", dispatchEnabled, subsidiaryName, subsidiaryCode });
     await handleCashRegisterState(page, cashRegisterMode, openingAmount, subsidiaryName, subsidiaryCode, "/pos/restaurant-home");
 
@@ -47,7 +42,6 @@ export const test = base.extend({
     const closedIndicator = page.getByRole("button", { name: /Abrir Caja/i }).first();
     const targetIndicator = cashRegisterMode === "ensure-closed" ? closedIndicator : homeIndicator;
 
-    // Aserciones extraídas de la fixture para no contaminar reportes de setup
     if (loginMode === "cached") {
       await withSessionWatchdog(page, async () => {
         await targetIndicator.waitFor({ state: "visible", timeout: 60_000 });
@@ -64,7 +58,6 @@ export const test = base.extend({
     let chefContext = null;
 
     if (chefAuthType) {
-      // Limpieza Obligatoria de mesas previas antes de hacer nada con el chef
       await closeAllActiveOrders(page, subsidiaryName, "Limpieza automática workflow");
 
       chefContext = await browser.newContext({ storageState: getChefSessionPath(chefAuthType) });
@@ -79,7 +72,6 @@ export const test = base.extend({
         chefAuthType
       });
 
-      // Auto-preparación de orden si el test lo pide
       if (stageSetupOptions?.createOrder) {
         const orderOpts = stageSetupOptions.createOrder === true ? stageSetupOptions : stageSetupOptions.createOrder;
         const activeTableName = await createChefOrder(chefContext, {
@@ -91,7 +83,6 @@ export const test = base.extend({
            extras: orderOpts.extras
         });
         
-        // Regresamos al POS y abrimos la orden recién creada para dejarla en bandeja de plata al test
         await openAndSelectOrder(page, activeTableName);
       }
       

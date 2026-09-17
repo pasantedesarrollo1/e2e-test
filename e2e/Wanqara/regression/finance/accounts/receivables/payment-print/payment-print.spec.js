@@ -31,7 +31,6 @@ test.describe("Finance - Receivables (Payment Print)", () => {
       test.setTimeout(60_000); 
 
       await test.step("Process payment and intercept printer request", async () => {
-        // La navegación y autenticación ya fueron manejadas por adminContext
         await processPaymentAndVerifyPrinter(page, scenario.paymentData);
       });
     });

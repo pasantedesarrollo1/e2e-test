@@ -1,7 +1,5 @@
 import { expect } from "@playwright/test";
 
-// Constants using SEED removed as part of Data-Driven migration.
-
 export async function selectFirstVariant(page) {
   const tallaColorModal = page.locator(".v-overlay__content").filter({
     hasText: /Variantes encontradas/i,

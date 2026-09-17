@@ -20,13 +20,11 @@
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
     "productName": "Caja de alitas de pollo (100 u)",
-    "clientCedula": "0000000001",
     "openingAmount": "100.00",
     "subsidiaryCode": "001",
     "loginMode": "cached",
     "chefAuthType": "actor1",
     "chefSubsidiary": "Wanqara",
-    "chefSubsidiaryCode": "001",
-    "businessType": "Restaurante"
+    "chefSubsidiaryCode": "001"
   }
 ]

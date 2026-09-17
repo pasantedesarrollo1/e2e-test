@@ -23,10 +23,7 @@
         "serieName": "series test",
         "tallaColorName": "test talla color"
       }
-    },
-    "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101",
-    "loginMode": "cached"
+    }
   },
   {
     "id": "ADMIN-SALE-DISPATCH-002",
@@ -52,9 +49,6 @@
         "serieName": "series test",
         "tallaColorName": "test talla color"
       }
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

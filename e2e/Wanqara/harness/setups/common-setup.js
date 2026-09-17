@@ -14,27 +14,18 @@ import {
 } from "../helpers/auth/auth.js";
 import { isSessionFresh } from "../helpers/auth/session-cache.js";
 
-/**
- * Encapsulates the common authentication and caching setup for Wanqara environments.
- * Returns a Playwright setup callback.
- * 
- * @param {string} authType - The authentication role type (e.g., "retail", "restaurant", "dispatch").
- * @returns {Function} Playwright setup function callback.
- */
 export function authenticateByRole(authType) {
   return async ({ page }, testInfo) => {
     testInfo.setTimeout(120_000);
     const sessionPath = getSessionPath(authType);
     fs.mkdirSync(path.dirname(sessionPath), { recursive: true });
 
-    // --- SMART CACHE START ---
     if (isSessionFresh(sessionPath)) {
       console.log(`[Setup] Caché activa encontrada para ${authType}. Saltando login ⚡`);
       return;
     } else {
       console.log(`[Setup] No se encontró caché válida/fresca para ${authType}, iniciando sesión normalmente...`);
     }
-    // --- SMART CACHE END ---
 
     clearSharedSessionSuspect(authType);
 

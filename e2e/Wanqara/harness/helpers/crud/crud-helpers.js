@@ -100,17 +100,15 @@ export async function clickTableRowAction(page, rowLocator, tooltipText) {
             foundTooltips.push(text.trim());
         }
       } catch {
-        // Ignore timeout if no tooltip appears
+        // 
       }
       
-      // Un-hover to allow the next Vuetify tooltip to trigger cleanly
       await page.mouse.move(0, 0);
       await page.waitForTimeout(100);
       continue;
     }
   }
 
-  // Fallback: Si el tooltip no aparece o Vuetify falla, buscar por clase de icono o nombre de SVG (ej. fluent:delete)
   for (const btn of buttons) {
     const html = await btn.innerHTML();
     if (tooltipText.toLowerCase().includes("eliminar") && (

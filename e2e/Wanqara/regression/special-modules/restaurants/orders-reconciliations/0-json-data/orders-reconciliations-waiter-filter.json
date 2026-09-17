@@ -18,10 +18,6 @@
       "waiterName": "QA developer 1",
       "searchKeyword": "QA",
       "apiEndpointPattern": "/api/v1/inventory/reconciliations/orders"
-    },
-    "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+    }
   }
 ]

@@ -18,10 +18,7 @@
       "clientCedula": "0000000001",
       "paymentMethod": "EFECTIVO",
       "warehouseName": "Bodega de Ventas W001"
-    },
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+    }
   },
   {
     "id": "ADMIN-SALE-DOCS-002",
@@ -42,9 +39,6 @@
       "clientCedula": "0000000001",
       "paymentMethod": "EFECTIVO",
       "warehouseName": "Bodega de Ventas W001"
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

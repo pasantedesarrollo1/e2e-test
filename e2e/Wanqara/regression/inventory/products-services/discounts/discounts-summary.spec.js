@@ -30,7 +30,6 @@ test.describe("Inventory - Discounts (Summary Rendering)", () => {
       const { page } = adminApp;
       
       await test.step("Navigate to the add discount form", async () => {
-        // La navegación y autenticación ya fueron manejadas por adminContext
         await fillDiscountForm(page, {
           ...scenario.discountData
         });

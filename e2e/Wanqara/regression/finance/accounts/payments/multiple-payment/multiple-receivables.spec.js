@@ -41,8 +41,6 @@ test.describe("Finance - Accounts - Multiple Receivables (E2E)", () => {
       const { page } = adminApp;
       test.setTimeout(180_000); 
 
-      // Ya no necesitamos ensureAuthenticated, el workflow adminContext navega a targetPath asegurando sesión.
-
       await test.step("Create the payment with multiple accounts", async () => {
         await selectClientAndAccounts(page, scenario.paymentData);
         await fillPaymentDetailsAndSubmit(page, scenario.paymentData);

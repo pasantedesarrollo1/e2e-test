@@ -9,7 +9,6 @@ export async function selectDocumentType(page, documentType) {
 
   const docInputWrapper = docLabel.locator('xpath=following::div[contains(@class, "v-input")][1]');
 
-  // Defensivo: Reemplaza tildes y caracteres mal codificados () con el wildcard '.' de regex
   const normalize = (s) => s.replace(/[""'']/g, '').replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.').replace(/\s+/g, ' ').trim();
 
   const FACTURA_CODES = ["01"];
@@ -31,7 +30,6 @@ export async function selectDocumentType(page, documentType) {
     optionText: normalize(documentType)
   });
 
-  // Cierra cualquier overlay que haya quedado residual
   await page.keyboard.press("Escape");
 }
 

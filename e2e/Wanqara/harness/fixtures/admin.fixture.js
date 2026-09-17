@@ -18,13 +18,10 @@ export const test = base.extend({
 
     const scenario = { authType, loginMode, subsidiaryName, subsidiaryCode };
 
-    // Construir el contexto de la sesión (cached o fresh) y navegar al targetPath
     await SessionInitializer.setup(page, scenario, { targetPath });
 
-    // En el Admin, el indicador principal suele ser el drawer de módulos o el menú lateral.
     const adminMenuIndicator = page.locator(".v-navigation-drawer, .v-app-bar").first();
 
-    // Aserciones extraídas de la fixture para no contaminar reportes de setup
     if (loginMode === "cached") {
       await withSessionWatchdog(page, async () => {
         await adminMenuIndicator.waitFor({ state: "visible", timeout: 60_000 });

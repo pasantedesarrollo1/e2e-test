@@ -24,7 +24,6 @@ test.describe.serial("Extras Manager - Extra Categories", () => {
         test.setTimeout(180_000);
         const { categoryName, searchTerm, productsToAssign } = scenario.extrasData;
 
-        // Función auxiliar para volver a la lista base
         const goToList = async () => {
           await ensureAuthenticated(page, {
             targetPath: "/admin/categories/extras/list",
@@ -38,7 +37,7 @@ test.describe.serial("Extras Manager - Extra Categories", () => {
           const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
           await expect(categorySearchInput).toBeVisible();
           await categorySearchInput.fill(categoryName);
-          await page.waitForTimeout(1000); // Wait for search debounce
+          await page.waitForTimeout(1000); 
 
           const categoryItem = page.getByText(categoryName, { exact: true }).first();
           if (await categoryItem.isVisible()) {
@@ -97,7 +96,6 @@ test.describe.serial("Extras Manager - Extra Categories", () => {
         });
 
         await test.step("Step 5: validates 'Por producto' relation flow and cleanup", async () => {
-          // El helper testByProductFlow ya hace sus propias navegaciones internas si las necesita.
           await testByProductFlow(page, categoryName, searchTerm);
         });
 

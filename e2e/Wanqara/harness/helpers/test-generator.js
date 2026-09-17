@@ -1,22 +1,7 @@
-/**
- * Patrón Pure Fabrication: Generador centralizado de Data-Driven Tests (DDT).
- * Encapsula el boilerplate repetitivo de:
- * - Manejo de skip/only y sus razones
- * - Construcción de tags de ejecución (@regression, @release, etc.)
- * - Anotación de tickets (annotateTicket)
- * - Configuración del contexto (test.use con storageState y subsidiaryName)
- * 
- * @param {import('@playwright/test').TestType} test - El objeto test de Playwright.
- * @param {Array} scenarios - El array de escenarios JSON.
- * @param {Function} testFn - La función que define los tests iterados. Recibe el (scenario).
- */
+
 import { annotateTicket } from "./reporting/annotate.js";
 import { getSessionPath } from "./auth/auth.js";
 
-/**
- * Construye la clave de agrupación para un escenario.
- * Escenarios con la misma clave comparten Worker y storageState.
- */
 function buildGroupKey(scenario) {
     const scope = scenario.metadata?.testScope ?? "regression";
     const loginMode = scenario.loginMode ?? (scope === "release" ? "fresh" : "cached");
@@ -24,10 +9,7 @@ function buildGroupKey(scenario) {
     return `${loginMode}::${authType}`;
 }
 
-/**
- * Construye el useConfig para un grupo de escenarios.
- * Se aplica una sola vez al describe del grupo.
- */
+
 function buildGroupUseConfig(scenario) {
     const scope = scenario.metadata?.testScope ?? "regression";
     const loginMode = scenario.loginMode ?? (scope === "release" ? "fresh" : "cached");
@@ -43,7 +25,6 @@ function buildGroupUseConfig(scenario) {
 }
 
 export function generateDataDrivenTests(test, scenarios, testFn) {
-    // 1. Separar skips (no necesitan agrupación)
     const active = [];
     for (const scenario of scenarios) {
         if (scenario.skip) {
@@ -57,7 +38,6 @@ export function generateDataDrivenTests(test, scenarios, testFn) {
         active.push(scenario);
     }
 
-    // 2. Agrupar escenarios activos por firma de configuración
     const groups = new Map();
     for (const scenario of active) {
         const key = buildGroupKey(scenario);
@@ -65,7 +45,6 @@ export function generateDataDrivenTests(test, scenarios, testFn) {
         groups.get(key).push(scenario);
     }
 
-    // 3. Por cada grupo: un único test.describe con un único test.use
     for (const [groupKey, groupScenarios] of groups) {
         const representativeScenario = groupScenarios[0];
         const useConfig = buildGroupUseConfig(representativeScenario);
@@ -79,8 +58,6 @@ export function generateDataDrivenTests(test, scenarios, testFn) {
                 const executionTag = `@${scenario.metadata.testScope}`;
                 const describeBlock = scenario.only ? test.describe.only : test.describe;
 
-                // Use description from JSON if present, otherwise just Escenario.
-                // Some specs use custom describe blocks, but the standardized one starts with Escenario:
                 let prefixContent = [];
                 if (scenario.metadata.ws) prefixContent.push(scenario.metadata.ws);
                 if (scenario.id) prefixContent.push(scenario.id);
@@ -91,9 +68,6 @@ export function generateDataDrivenTests(test, scenarios, testFn) {
                         annotateTicket(test, scenario.metadata);
                     }
 
-                    // Propagamos opciones de scenario-level que NO son storageState
-                    // (subsidiaryName, openingAmount, etc.) dentro del test individual
-                    // para compatibilidad con los fixtures
                     const scenarioOptions = {};
                     if (scenario.subsidiaryName) scenarioOptions.subsidiaryName = scenario.subsidiaryName;
                     if (scenario.subsidiaryCode) scenarioOptions.subsidiaryCode = scenario.subsidiaryCode;

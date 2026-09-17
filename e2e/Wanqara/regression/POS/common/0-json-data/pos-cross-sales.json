@@ -14,18 +14,12 @@
       "testScope": "regression"
     },
     "type": "retail-sale",
-    "environment": "Commerce 100",
     "authType": "actor3",
     "saleParams": {
-      "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
-      "paymentMethod": {
-        "label": "EFECTIVO"
-      },
       "printTicket": false,
       "openDrawer": false,
-      "clientCedula": "0000000001",
-      "warehouseName": "Bodega de Ventas W001"
+      "clientCedula": "0000000001"
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios",
@@ -50,18 +44,12 @@
       "testScope": "regression"
     },
     "type": "retail-sale",
-    "environment": "Commerce Dispatch 101",
     "authType": "actor2",
     "saleParams": {
-      "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
-      "paymentMethod": {
-        "label": "EFECTIVO"
-      },
       "printTicket": false,
       "openDrawer": false,
-      "clientCedula": "0000000001",
-      "warehouseName": "Bodega de Ventas W001"
+      "clientCedula": "0000000001"
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara Comercios Dispatch",
@@ -87,11 +75,9 @@
       "testScope": "regression"
     },
     "type": "restaurant-flow",
-    "environment": "POS Restaurant",
     "authType": "actor1",
     "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "cleanupReason": "Limpieza automática previa de tests de ventas cruzadas",
     "openingAmount": "100.00",
     "subsidiaryCode": "001",
     "loginMode": "cached",

@@ -1,11 +1,6 @@
 
 import { PosNormalSaleStrategy } from "./strategies/pos-normal-sale-strategy.js";
 
-/**
- * Patrón Workflow para el Flujo de Ventas POS.
- * Evita tener funciones de configuración gigantes con callbacks.
- * Permite encadenar los pasos de la venta explícitamente.
- */
 export class PosSaleWorkflow {
     constructor(page, subsidiaryName, subsidiaryCode, strategy = new PosNormalSaleStrategy()) {
         if (!subsidiaryName) throw new Error("PosSaleWorkflow requiere subsidiaryName explícito (no default fallback).");
@@ -16,7 +11,6 @@ export class PosSaleWorkflow {
         this.subsidiaryCode = subsidiaryCode;
         this.strategy = strategy;
 
-        // Estado inicial de la venta
         this.productName = null;
         this.searchTerm = null;
         this.documentType = null;
@@ -29,13 +23,9 @@ export class PosSaleWorkflow {
         this.openingAmount = "";
         this.targetPath = null;
 
-        // Custom actions if complex steps are needed between standard ones
         this.customActions = [];
     }
 
-    /**
-     * Construye una instancia del Workflow alimentada por un JSON de Data-Driven Testing.
-     */
     static fromJson(page, scenarioData) {
         const workflow = new PosSaleWorkflow(
             page, 

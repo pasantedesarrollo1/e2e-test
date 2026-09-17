@@ -19,18 +19,11 @@
     "dispatchEnabled": false,
     "subsidiaryName": "Wanqara",
     "paymentUrl": "\\/pos\\/payments",
-    "fixture": "posPage",
     "caseData": {
       "clientCedula": "0000000001",
       "productName": "General Test Product iva 0",
       "quantity": 35.5,
-      "unitPriceWithoutTax": 3.65,
-      "unitPriceWithTax": null,
-      "discountPercentage": 0,
-      "discountFixed": 0,
-      "expectedSubtotal": 129.58,
-      "expectedPaymentError": true,
-      "fallbackPaymentAmount": 129.57
+      "unitPriceWithoutTax": 3.65
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryCode": "001",
@@ -56,18 +49,11 @@
     "dispatchEnabled": true,
     "subsidiaryName": "Wanqara",
     "paymentUrl": "\\/pos\\/payments",
-    "fixture": "posPage",
     "caseData": {
       "clientCedula": "0000000001",
       "productName": "General Test Product iva 0",
       "quantity": 35.5,
-      "unitPriceWithoutTax": 3.65,
-      "unitPriceWithTax": null,
-      "discountPercentage": 0,
-      "discountFixed": 0,
-      "expectedSubtotal": 129.58,
-      "expectedPaymentError": true,
-      "fallbackPaymentAmount": 129.57
+      "unitPriceWithoutTax": 3.65
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryCode": "001",
@@ -93,18 +79,11 @@
     "dispatchEnabled": false,
     "subsidiaryName": "Wanqara",
     "paymentUrl": "\\/pos\\/restaurant-payments",
-    "fixture": "posRestaurantPage",
     "caseData": {
       "clientCedula": "0000000001",
       "productName": "General Test Product iva 0",
       "quantity": 35.5,
-      "unitPriceWithoutTax": 3.65,
-      "unitPriceWithTax": null,
-      "discountPercentage": 0,
-      "discountFixed": 0,
-      "expectedSubtotal": 129.58,
-      "expectedPaymentError": true,
-      "fallbackPaymentAmount": 129.57
+      "unitPriceWithoutTax": 3.65
     },
     "paymentMethod": "EFECTIVO",
     "subsidiaryCode": "001",

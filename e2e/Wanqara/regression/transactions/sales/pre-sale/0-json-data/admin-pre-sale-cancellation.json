@@ -19,21 +19,12 @@
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
       "clientCedula": "0000000001",
-      "paymentMethod": "EFECTIVO",
-      "warehouseName": "Bodega de Ventas W001",
-      "mixedCart": {
-        "estandarName": "Caja de alitas de pollo (100 u)",
-        "serieName": "series test",
-        "tallaColorName": "test talla color"
-      }
+      "paymentMethod": "EFECTIVO"
     },
     "cancelParams": {
       "expectSwitch": false,
       "expectMessage": true
-    },
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+    }
   },
   {
     "id": "ADMIN-PRE-SALE-CANCEL-002",
@@ -55,20 +46,11 @@
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
       "clientCedula": "0000000001",
-      "paymentMethod": "EFECTIVO",
-      "warehouseName": "Bodega de Ventas W001",
-      "mixedCart": {
-        "estandarName": "Caja de alitas de pollo (100 u)",
-        "serieName": "series test",
-        "tallaColorName": "test talla color"
-      }
+      "paymentMethod": "EFECTIVO"
     },
     "cancelParams": {
       "expectSwitch": false,
       "expectMessage": true
-    },
-    "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101",
-    "loginMode": "cached"
+    }
   }
 ]

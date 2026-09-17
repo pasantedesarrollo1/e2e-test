@@ -16,12 +16,8 @@
       "documentType": "Factura electrónica",
       "productName": "Caja de alitas de pollo (100 u)",
       "clientCedula": "0000000001",
-      "paymentMethod": "EFECTIVO",
-      "warehouseName": "Bodega de Ventas W001"
-    },
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+      "paymentMethod": "EFECTIVO"
+    }
   },
   {
     "id": "ADMIN-PRE-SALE-DOCS-002",
@@ -40,11 +36,7 @@
       "documentType": "Recibos",
       "productName": "Caja de alitas de pollo (100 u)",
       "clientCedula": "0000000001",
-      "paymentMethod": "EFECTIVO",
-      "warehouseName": "Bodega de Ventas W001"
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+      "paymentMethod": "EFECTIVO"
+    }
   }
 ]

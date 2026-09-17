@@ -18,7 +18,6 @@ export async function openProductOptions(page) {
 
 export async function setQuantityInOptions(page, dialog, quantity) {
   const quantityInput = dialog.getByText("Cantidad:", { exact: true }).locator("xpath=ancestor::div[1]/following-sibling::div[1]//input").first();
-  // Fallback if not found by strict label
   const input = await quantityInput.count() > 0 ? quantityInput : dialog.locator("input[type='number']").first();
   await input.click();
   await input.fill(String(quantity));
@@ -65,4 +64,4 @@ export async function saveProductOptions(page, dialog) {
   
   await saveButton.click();
   await expect(dialog).not.toBeVisible({ timeout: 10000 });
-}
+}

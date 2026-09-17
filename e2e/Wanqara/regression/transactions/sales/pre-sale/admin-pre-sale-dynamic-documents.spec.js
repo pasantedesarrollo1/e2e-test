@@ -37,7 +37,6 @@ test.describe("Admin Pre-Sales - Dynamic Document Types", () => {
             await waitForFormDefaults(page);
 
             const docInput = await getDocumentTypeLocator(page);
-            // Tolerant regex for accents e.g., "Factura electr.nica" to avoid OS encoding issues
             const expectedRegex = new RegExp(stepData.expectedDefault.replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.'), 'i');
             await expect(docInput).toContainText(expectedRegex);
 

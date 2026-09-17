@@ -29,11 +29,7 @@
         "identity": "1000000001",
         "name": "Empleado Test 1"
       }
-    },
-    "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101",
-    "loginMode": "cached"
+    }
   },
   {
     "id": "WAYBILL-INT-002",
@@ -65,10 +61,6 @@
         "identity": "1000000001",
         "name": "Empleado Test 1"
       }
-    },
-    "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101",
-    "loginMode": "cached"
+    }
   }
 ]

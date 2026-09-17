@@ -6,11 +6,7 @@ const changesSavedMsg = /Cambios de productos extra guardados/i;
 const cannotDeleteMsg = /No se puede eliminar una categor.a con productos relacionados/i;
 const categoryDeletedMsg = /Categor.a extra eliminada/i;
 
-/**
- * Creates an extra category using the UI.
- * @param {import('@playwright/test').Page} page 
- * @param {string} categoryName 
- */
+
 export async function createExtraCategory(page, categoryName) {
   const categoriesTab = page.getByRole('button', { name: /Categor.as/i });
   if (await categoriesTab.isVisible()) {
@@ -43,13 +39,6 @@ export async function createExtraCategory(page, categoryName) {
   await expectSnackbar(page, categoryCreatedMsg);
 }
 
-/**
- * Assigns products to an extra category.
- * @param {import('@playwright/test').Page} page 
- * @param {string} categoryName 
- * @param {string} productSearchTerm
- * @param {string[]} productNamesToSelect
- */
 export async function assignProductsToExtraCategory(page, categoryName, productSearchTerm, productNamesToSelect) {
   const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
   await expect(categorySearchInput).toBeVisible();
@@ -92,11 +81,7 @@ export async function assignProductsToExtraCategory(page, categoryName, productS
   await expectSnackbar(page, changesSavedMsg);
 }
 
-/**
- * Validates that a category with products cannot be deleted,
- * then removes all its products and saves.
- * @param {import('@playwright/test').Page} page 
- */
+
 export async function verifyDeletionConstraintsAndRemoveProducts(page) {
   const deleteCategoryBtn = page.getByRole("button", { name: /Eliminar categor.a/i });
   await expect(deleteCategoryBtn).toBeVisible();
@@ -131,10 +116,6 @@ export async function verifyDeletionConstraintsAndRemoveProducts(page) {
   await expectSnackbar(page, changesSavedMsg);
 }
 
-/**
- * Deletes the extra category and verifies the API and snackbar.
- * @param {import('@playwright/test').Page} page 
- */
 export async function deleteExtraCategory(page) {
   const deleteCategoryBtn = page.getByRole("button", { name: /Eliminar categor.a/i });
   await expect(deleteCategoryBtn).toBeVisible();

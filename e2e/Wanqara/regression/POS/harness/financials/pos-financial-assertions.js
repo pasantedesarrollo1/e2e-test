@@ -208,7 +208,6 @@ export async function assertPaymentModalUI(page, ui) {
     const num = parseFloat(val.replace(/[^0-9.-]+/g, ""));
     const [int, dec] = num.toString().split('.');
     const decPattern = dec ? `\\.${dec}0*` : `(\\.0+)?`;
-    // Supports "$ 1.23", "$1.23", "1.23 $", "1.23$"
     return new RegExp(`(\\$?\\s*${int}${decPattern}\\s*\\$?)\\b`);
   };
 

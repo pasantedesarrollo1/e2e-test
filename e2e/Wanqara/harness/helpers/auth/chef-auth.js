@@ -75,16 +75,13 @@ export async function ensureChefAuthenticated(page, { chefBaseUrl, targetPath, l
   const url = chefBaseUrl ? new URL(targetPath, chefBaseUrl).toString() : targetPath;
   await page.goto(url);
 
-  // Solo intentar re-login si realmente aterrizamos en auth
   const isOnAuth = await page.waitForURL(CHEF_AUTH_PATH, { timeout: 3000 }).then(() => true).catch(() => false);
   
   if (!isOnAuth) {
-    // Ya estamos autenticados, verificar URL destino
     await page.waitForURL((current) => !CHEF_AUTH_PATH.test(current.pathname), { timeout: 5000 });
     return;
   }
 
-  // Re-login real — propagar el error para que no se swallow
   await loginChef(page, {
     chefBaseUrl,
     login: effectiveLogin,

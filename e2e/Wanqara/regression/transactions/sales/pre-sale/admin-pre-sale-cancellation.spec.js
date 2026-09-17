@@ -17,7 +17,6 @@ test.describe.serial("Cancel Pre-Sales (Admin)", () => {
       async ({ browser }) => {
         test.setTimeout(180_000);
         
-        // Using fresh contexts across serial runs to guarantee state isolation
         const context = await browser.newContext({ storageState: getSessionPath(scenario.authType) });
         const page = await context.newPage();
 

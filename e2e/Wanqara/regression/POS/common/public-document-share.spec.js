@@ -14,7 +14,6 @@ const scenarios = JSON.parse(
 );
 
 test.describe("POS Public Document Share", () => {
-  // Configurar permisos globales para esta suite
   test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
 
   generateDataDrivenTests(test, scenarios, (scenario) => {
@@ -73,18 +72,14 @@ test.describe("POS Public Document Share", () => {
       });
 
       await test.step("Validate Public View Rendering (Real Token)", async () => {
-        // Usar un contexto limpio (sin storageState) para probar la vista pública
         const publicContext = await browser.newContext();
         const publicPage = await publicContext.newPage();
 
         await publicPage.goto(shareUrl);
 
-        // Validamos explícitamente que la UI carga (tal cual muestran las capturas: "Visor de PDF")
-        // Sin depender de llamadas backend ya que el token resuelve en el front
         const viewerTitle = publicPage.getByText('Visor de PDF', { exact: false }).first();
         await expect(viewerTitle).toBeVisible({ timeout: 15000 });
         
-        // También podemos validar que NO haya ícono de error
         await expect(publicPage.locator('.mdi-alert-circle').first()).not.toBeVisible();
 
         await publicContext.close();

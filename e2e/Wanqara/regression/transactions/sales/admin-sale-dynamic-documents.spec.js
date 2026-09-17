@@ -40,7 +40,6 @@ test.describe("Admin Sales - Dynamic Document Types (WS-981)", () => {
           await waitForFormDefaults(page);
           
           const docInput = await getDocumentTypeLocator(page);
-          // Tolerant regex for accents
           const expectedRegex = new RegExp(initialStep.expectedDefault.replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.'), 'i');
           await expect(docInput).toContainText(expectedRegex);
           
@@ -49,7 +48,6 @@ test.describe("Admin Sales - Dynamic Document Types (WS-981)", () => {
           expect(hasElectronic).toBe(initialStep.expectElectronicOption);
         });
 
-        // Execute remaining steps
         for (let i = 1; i < scenario.steps.length; i++) {
           const step = scenario.steps[i];
           await test.step(step.description, async () => {
@@ -59,7 +57,6 @@ test.describe("Admin Sales - Dynamic Document Types (WS-981)", () => {
             await waitForFormDefaults(page);
             
             const docInput = await getDocumentTypeLocator(page);
-            // Tolerant regex for accents
             const expectedRegex = new RegExp(step.expectedDefault.replace(/[áéíóúÁÉÍÓÚñÑ]/g, '.'), 'i');
             await expect(docInput).toContainText(expectedRegex);
             

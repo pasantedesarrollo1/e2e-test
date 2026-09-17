@@ -2,7 +2,6 @@ import { test } from "@playwright/test";
 import { requirePosCredentials } from "../../../harness/config/settings.js";
 import { selectCheckout, selectPaymentMethod, searchAndSelectProduct, submitAdminSale } from "./harness/admin-checkout-helpers.js";
 import { selectDocumentType } from "./harness/admin-document-helpers.js";
-// Note: selectClientByCedula was moved out of admin-cross-sale-flow directly to client-helpers, we use the exported one.
 import { selectClientByCedula } from "../../../harness/helpers/people/client-helpers.js";
 import { switchAdminSubsidiary } from "../../../harness/helpers/auth/auth.js";
 

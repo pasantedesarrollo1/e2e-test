@@ -30,7 +30,7 @@ export async function loginAndSelectSubsidiary(page, { login, subsidiaryName, su
     await page.waitForURL((url) => !/\/select-subsidiary(\/|$)/.test(url.pathname), { timeout: 3000 });
     return;
   } catch {
-    // Timeout is expected if not redirected
+    // 
   }
 
   const listContainer = page.locator("div.tw-space-y-3.tw-mb-8.tw-max-h-64.tw-overflow-y-auto");
@@ -103,17 +103,17 @@ const markSharedSessionSuspect = (authType) => {
     fs.mkdirSync(path.dirname(suspectPath), { recursive: true });
     fs.writeFileSync(suspectPath, new Date().toISOString());
   } catch {
-    // Ignore error if unable to mark suspect
+    // 
   }
 };
 
-const isSharedSessionSuspect = (authType) => fs.existsSync(getSuspectPath(authType));
+export const isSharedSessionSuspect = (authType) => fs.existsSync(getSuspectPath(authType));
 
 export const clearSharedSessionSuspect = (authType) => {
   try {
     fs.rmSync(getSuspectPath(authType), { force: true });
   } catch {
-    // Ignore — a stale marker only costs one redundant re-login.
+    // 
   }
 };
 
@@ -121,7 +121,7 @@ const annotate = (type, description) => {
   try {
     test.info().annotations.push({ type, description });
   } catch {
-    // Ignore if outside test context
+    // 
   }
 };
 
@@ -169,11 +169,10 @@ export async function ensureAuthenticated(page, { targetPath, authType = "actor3
 
   await page.goto(url);
   
-  // Wait a short moment for the SPA to make initial API calls and redirect to /login if 401
   try {
     await page.waitForURL(LOGIN_URL_PATTERN, { timeout: 2000 });
   } catch {
-    // If no redirect happens within 2s, we assume the page loaded successfully
+    // 
   }
 
   if (isOnLogin(page)) {
@@ -194,7 +193,7 @@ export async function ensureAuthenticated(page, { targetPath, authType = "actor3
   }
 }
 
-async function recoverSharedSession(page, { reason, authType }) {
+export async function recoverSharedSession(page, { reason, authType }) {
   if (!(await repairSharedSession(page, { authType }))) {
     throw new Error(
       `Shared session died ${MAX_SESSION_REPAIRS} times in this run. ` +
@@ -240,7 +239,6 @@ export async function switchAdminSubsidiary(page, targetSubsidiaryName, targetSu
     optionText: targetSubsidiary
   });
 
-  // Click outside to close the menu
   await page.mouse.click(0, 0);
   await page.keyboard.press("Escape");
   await expect(profileModal).not.toBeVisible({ timeout: 5000 });

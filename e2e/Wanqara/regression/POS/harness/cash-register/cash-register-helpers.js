@@ -6,12 +6,10 @@ export async function ensureCashRegisterOpen(page, amount, subsidiaryName, subsi
   if (!subsidiaryName) throw new Error("subsidiaryName is required");
   if (!amount) throw new Error("amount is required (e.g. from JSON or settings)");
 
-  // Evitamos page.goto directo para asegurar que la app limpia el estado del POS
   const posButton = page.getByRole('button', { name: 'Punto De Venta' }).first();
   if (await posButton.isVisible({ timeout: 3000 })) {
     await posButton.click();
   } else {
-    // Fallback si no está el botón (ej. ya está en el POS)
     if (!page.url().includes('/pos/')) {
       await page.goto(homePath);
     }
@@ -130,7 +128,7 @@ export async function ensureCashRegisterClosed(page, homePath = '/pos/home') {
   ).toBeVisible({ timeout: 20_000 });
 
   if (await openRegisterIndicator.isVisible() || await selectSubsidiaryIndicator.isVisible()) {
-    return; // Ya está cerrada
+    return; 
   }
 
   if (await posHomeIndicator.isVisible()) {
@@ -146,7 +144,7 @@ export async function handleCashRegisterState(page, mode, amount, subsidiaryName
     await ensureCashRegisterClosed(page, targetUrl);
     await ensureCashRegisterOpen(page, amount, subsidiaryName, subsidiaryCode, targetUrl);
   } else {
-    // Default: "ensure-open"
+    //
     await ensureCashRegisterOpen(page, amount, subsidiaryName, subsidiaryCode, targetUrl);
   }
 }

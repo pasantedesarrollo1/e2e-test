@@ -31,9 +31,7 @@
         "subsidiaryName": "Wanqara Comercios"
       }
     ],
-    "paymentMethod": "EFECTIVO",
     "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "subsidiaryCode": "001"
   }
 ]

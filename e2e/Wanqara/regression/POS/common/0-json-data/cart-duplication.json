@@ -191,17 +191,14 @@
     "actions": [
       {
         "type": "searchByCode",
-        "fast": true,
         "expectedQuantity": 1
       },
       {
         "type": "searchByCode",
-        "fast": true,
         "expectedQuantity": 2
       },
       {
         "type": "searchByCode",
-        "fast": true,
         "expectedQuantity": 3
       }
     ],
@@ -235,12 +232,10 @@
         "expectedQuantity": 1
       },
       {
-        "type": "clickCardBadgePlus",
-        "fast": true
+        "type": "clickCardBadgePlus"
       },
       {
         "type": "clickCardBadgePlus",
-        "fast": true,
         "expectedQuantity": 3
       }
     ],
@@ -271,12 +266,10 @@
     "actions": [
       {
         "type": "clickCard",
-        "fast": true,
         "expectedQuantity": 1
       },
       {
         "type": "clickCard",
-        "fast": true,
         "expectedQuantity": 2
       }
     ],
@@ -353,12 +346,10 @@
       },
       {
         "type": "searchByCode",
-        "fast": true,
         "expectedQuantity": 3
       },
       {
         "type": "clickCardBadgePlus",
-        "fast": true,
         "expectedQuantity": 4
       }
     ],

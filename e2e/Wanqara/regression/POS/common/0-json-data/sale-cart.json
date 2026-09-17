@@ -48,9 +48,7 @@
     "cartParams": {
       "productName": "Caja de alitas de pollo (100 u)",
       "restrictedAmount": "14",
-      "testClientCedula": "0000000001",
-      "dynamicDocumentType": "Recibos",
-      "paymentMethod": "EFECTIVO"
+      "testClientCedula": "0000000001"
     },
     "subsidiaryName": "Wanqara",
     "openingAmount": "100.00",
