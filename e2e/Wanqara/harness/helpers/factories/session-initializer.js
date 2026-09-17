@@ -23,16 +23,12 @@ export class SessionInitializer {
         throw new Error(`❌ En loginMode "fresh", debes declarar explícitamente "subsidiaryName" y "subsidiaryCode" en el JSON.`);
       }
 
-      // -- INICIO DE LIMPIEZA TOTAL PARA "FRESH" --
       await page.context().clearCookies();
-      // Navegamos al origen una vez para ganar acceso al contexto de LocalStorage
       await page.goto("/login");
-      // Limpiamos todo el almacenamiento local inyectado por Playwright
       await page.evaluate(() => {
         window.localStorage.clear();
         window.sessionStorage.clear();
       });
-      // -- FIN DE LIMPIEZA --
 
       await loginAndSelectSubsidiary(page, {
         login: loginCredentials,

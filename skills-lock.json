@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "graphify": {
+      "source": "graphify-labs/graphify",
+      "sourceType": "github",
+      "skillPath": "graphify/SKILL.md",
+      "computedHash": "be47fe095b4bbfc4c0ec555e24365088492279e52ab10ad2187fcb39597fe65d"
+    },
     "playwright-skill": {
       "source": "testdino-hq/playwright-skill",
       "sourceType": "github",
