@@ -11,8 +11,8 @@ export function isProductionHost(hostname) {
 }
 
 export function buildSafeTenantUrl(baseDomain, tenantRuc) {
-  if (!baseDomain) throw new Error("❌ PLAYWRIGHT_WANQARA_URL no está definido.");
-  if (!tenantRuc) throw new Error("❌ PLAYWRIGHT_TENANT_RUC no está definido.");
+  if (!baseDomain) throw new Error("❌ PLAYWRIGHT_WANQARA_URL is not defined.");
+  if (!tenantRuc) throw new Error("❌ PLAYWRIGHT_TENANT_RUC is not defined.");
 
   const hasProtocol = /^https?:\/\//.test(baseDomain);
   const rawUrl = hasProtocol ? baseDomain : `https://${baseDomain}`;
@@ -29,8 +29,8 @@ export function buildSafeTenantUrl(baseDomain, tenantRuc) {
 
   if (isProductionHost(url.hostname)) {
     throw new Error(
-      `❌ PELIGRO: Intentando ejecutar pruebas E2E contra un entorno de PRODUCCIÓN ("${url.hostname}"). ` +
-      `Por favor, apunta a un entorno local o de QA/preview en el .env`
+      `❌ DANGER: Attempting to run E2E tests against a PRODUCTION environment ("${url.hostname}"). ` +
+      `Please point to a local or QA/preview environment in the .env file.`
     );
   }
 

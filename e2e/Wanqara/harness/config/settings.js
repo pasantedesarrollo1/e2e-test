@@ -1,7 +1,7 @@
 import { buildSafeTenantUrl } from '../helpers/url-builder.js';
 
 const tenantRuc = process.env.PLAYWRIGHT_TENANT_RUC;
-if (!tenantRuc) throw new Error("❌ PLAYWRIGHT_TENANT_RUC no está definido en el archivo .env.");
+if (!tenantRuc) throw new Error("❌ PLAYWRIGHT_TENANT_RUC is not defined in the .env file.");
 const rawWanqaraUrl = process.env.PLAYWRIGHT_WANQARA_URL;
 const baseUrl = buildSafeTenantUrl(rawWanqaraUrl, tenantRuc);
 

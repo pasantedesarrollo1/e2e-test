@@ -1,4 +1,4 @@
-name: Sync Develop E2E (Smoke & Release)
+name: Sync Develop E2E (Release)
 
 on:
   workflow_dispatch:
@@ -25,7 +25,7 @@ env:
 
 jobs:
   run-wanqara-tests:
-    name: Ejecutar Smoke y Release de Wanqara
+    name: Execute Wanqara Release
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -68,48 +68,8 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium
 
-      - name: Run Smoke Suite
-        id: run_smoke
-        env:
-          PLAYWRIGHT_HTML_REPORT: playwright-report-smoke
-        run: |
-          set +e
-          npx playwright test --project=Smoke --workers=2 2>&1 | tee test-output-smoke.log
-          exit "${PIPESTATUS[0]}"
-
-      - name: Notify Telegram (Pipeline Error)
-        if: always() && steps.run_smoke.outcome == 'skipped'
-        continue-on-error: true
-        uses: ./.github/actions/notify-telegram
-        with:
-          suite: "Pipeline"
-          scope: "Error crítico de infraestructura — los tests no llegaron a ejecutarse."
-          status: failure
-          bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-
-      - name: Notify Telegram (Smoke)
-        if: always() && steps.run_smoke.outcome != 'skipped'
-        continue-on-error: true
-        uses: ./.github/actions/notify-telegram
-        with:
-          suite: Smoke
-          scope: "Verificación rápida de funciones principales."
-          status: ${{ steps.run_smoke.outcome }}
-          bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-          log_file: test-output-smoke.log
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: report-smoke-${{ github.run_id }}
-          path: playwright-report-smoke/
-          retention-days: 7
-
       - name: Run Release Suite
         id: run_release
-        if: steps.run_smoke.outcome == 'success'
         env:
           PLAYWRIGHT_HTML_REPORT: playwright-report-release
         run: |
@@ -117,13 +77,24 @@ jobs:
           npx playwright test --project=Release --workers=1 2>&1 | tee test-output-release.log
           exit "${PIPESTATUS[0]}"
 
+      - name: Notify Telegram (Pipeline Error)
+        if: always() && steps.run_release.outcome == 'skipped'
+        continue-on-error: true
+        uses: ./.github/actions/notify-telegram
+        with:
+          suite: "Pipeline"
+          scope: "Critical infrastructure error — tests were not executed."
+          status: failure
+          bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
+
       - name: Notify Telegram (Release)
         if: always() && steps.run_release.outcome != 'skipped'
         continue-on-error: true
         uses: ./.github/actions/notify-telegram
         with:
           suite: Release
-          scope: "Pruebas completas de release (Happy Path)."
+          scope: "Full release tests."
           status: ${{ steps.run_release.outcome }}
           bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
