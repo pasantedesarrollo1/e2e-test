@@ -12,12 +12,10 @@ try {
 }
 
 const tenantRuc = process.env.PLAYWRIGHT_TENANT_RUC;
-const wanqaraPort = process.env.PLAYWRIGHT_WANQARA_PORT;
+const rawWanqaraUrl = process.env.PLAYWRIGHT_WANQARA_URL;
 
-if (!tenantRuc) throw new Error("❌ PLAYWRIGHT_TENANT_RUC no está definido en el .env (o secrets).");
-if (!wanqaraPort) throw new Error("❌ PLAYWRIGHT_WANQARA_PORT no está definido en el .env (o secrets).");
-
-const baseURL = `http://${tenantRuc}.localhost:${wanqaraPort}`;
+import { buildSafeTenantUrl } from './e2e/Wanqara/harness/helpers/url-builder.js';
+const baseURL = buildSafeTenantUrl(rawWanqaraUrl, tenantRuc);
 const chefURL = process.env.PLAYWRIGHT_CHEF_URL ?? 'https://localhost:8100';
 const localChefURL = process.env.PLAYWRIGHT_LOCAL_CHEF_URL ?? 'http://localhost:8100';
 

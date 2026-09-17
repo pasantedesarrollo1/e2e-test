@@ -1,10 +1,9 @@
+import { buildSafeTenantUrl } from '../helpers/url-builder.js';
+
 const tenantRuc = process.env.PLAYWRIGHT_TENANT_RUC;
 if (!tenantRuc) throw new Error("❌ PLAYWRIGHT_TENANT_RUC no está definido en el archivo .env.");
-
-const port = process.env.PLAYWRIGHT_WANQARA_PORT;
-if (!port) throw new Error("❌ PLAYWRIGHT_WANQARA_PORT no está definido en el archivo .env.");
-
-const baseUrl = `http://${tenantRuc}.localhost:${port}`;
+const rawWanqaraUrl = process.env.PLAYWRIGHT_WANQARA_URL;
+const baseUrl = buildSafeTenantUrl(rawWanqaraUrl, tenantRuc);
 
 export const playwrightHarness = {
   publicBaseUrl: baseUrl,
@@ -30,9 +29,9 @@ export const chefHarness = {
   baseUrl: process.env.PLAYWRIGHT_CHEF_URL ?? "",
   users: {
     actor1: {
-      ruc:      process.env.PLAYWRIGHT_CHEF_ACTOR_1_RUC ?? process.env.PLAYWRIGHT_CHEF_RUC ?? "",
-      email:    process.env.PLAYWRIGHT_CHEF_ACTOR_1_EMAIL ?? process.env.PLAYWRIGHT_CHEF_EMAIL ?? "",
-      password: process.env.PLAYWRIGHT_CHEF_ACTOR_1_PASSWORD ?? process.env.PLAYWRIGHT_CHEF_PASSWORD ?? ""
+      ruc:      process.env.PLAYWRIGHT_TENANT_RUC ?? "",
+      email:    process.env.PLAYWRIGHT_CHEF_ACTOR_1_EMAIL ?? "",
+      password: process.env.PLAYWRIGHT_CHEF_ACTOR_1_PASSWORD ?? ""
     }
   }
 };
