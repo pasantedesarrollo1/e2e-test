@@ -1,0 +1,28 @@
+[
+  {
+    "id": "SALE-COMBO-RECEIPT-001",
+    "only": false,
+    "skip": false,
+    "skipReason": "",
+    "description": "Retail",
+    "metadata": {
+      "ws": "WS-1053,WS-945",
+      "tes": "TES-223",
+      "release": "v7.10.0",
+      "summary": "vender un producto combo en pos comercios con recibos y descuento",
+      "addedToRegression": "true",
+      "testScope": "release"
+    },
+    "authType": "actor1",
+    "subsidiaryCode": "001",
+    "subsidiaryName": "Wanqara",
+    "businessType": "Comercios",
+    "loginMode": "fresh",
+    "cashRegisterMode": "fresh",
+    "openingAmount": "100.00",
+    "productName": "Combo alitas",
+    "discountValue": "3.3337373372323",
+    "documentType": "Recibos",
+    "paymentMethod": "EFECTIVO"
+  }
+]

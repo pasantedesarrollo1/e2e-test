@@ -10,7 +10,7 @@
       "release": "v7.10.0",
       "summary": "Rounding error on POS sales checkout (Retail Sin Despacho)",
       "addedToRegression": "true",
-      "testScope": "release"
+      "testScope": "regression"
     },
     "description": "Retail Reproduction (No Dispatch) of rounding-error-issue-129-57 @ws-1038",
     "authType": "actor1",
@@ -40,7 +40,7 @@
       "release": "v7.10.0",
       "summary": "Rounding error on POS sales checkout (Retail Con Despacho)",
       "addedToRegression": "true",
-      "testScope": "release"
+      "testScope": "regression"
     },
     "description": "Retail Reproduction (With Dispatch) of rounding-error-issue-129-57 @ws-1038",
     "authType": "actor1",
@@ -70,7 +70,7 @@
       "release": "v7.10.0",
       "summary": "Rounding error on POS sales checkout (Restaurant)",
       "addedToRegression": "true",
-      "testScope": "release"
+      "testScope": "regression"
     },
     "description": "Restaurant Reproduction of rounding-error-issue-129-57 @ws-1038",
     "authType": "actor1",
