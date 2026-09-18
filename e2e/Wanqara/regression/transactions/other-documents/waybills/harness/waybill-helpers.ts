@@ -156,7 +156,7 @@ export async function verifyAndSaveCarrierModal(page: Page, {
   await expect(dialog.locator(".v-select").filter({ hasText: expectedIdentityType }).first()).toBeVisible();
   await expect(dialog.locator("#employee-identity-input")).toHaveValue(expectedIdentity);
 
-  const nameInput = dialog.locator(".v-card-text input").first();
+  const nameInput = dialog.locator(".v-card-text input").nth(2);
   await expect(nameInput).toHaveValue(expectedName);
 
   const saveBtn = dialog.getByRole("button", { name: /Guardar Empleado/i });

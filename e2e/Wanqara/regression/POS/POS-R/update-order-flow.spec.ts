@@ -31,7 +31,7 @@ for (const scenario of scenarios) {
       chefSubsidiary: scenario.chefSubsidiary,
       chefSubsidiaryCode: scenario.chefSubsidiaryCode,
       stageSetupOptions: {
-        createOrder: true,
+        createOrder: { productName: scenario.productName },
         
       }
     });
