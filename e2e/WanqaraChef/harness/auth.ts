@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any */
 import { expect, type Locator, type Page } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -44,14 +45,14 @@ async function clickInActiveIonPage(page: Page, testId: string) {
       ...document.querySelectorAll(
         'ion-router-outlet > .ion-page:not(.ion-page-hidden):not(.ion-page-invisible), ion-router-outlet > ion-page:not(.ion-page-hidden):not(.ion-page-invisible)',
       ),
-    ] as HTMLElement[];
+    ];
     const active = pages.at(-1);
     const el = (active?.querySelector(`[data-testid="${id}"]`) ??
       document.querySelector(
         `.ion-page:not(.ion-page-hidden):not(.ion-page-invisible) [data-testid="${id}"]`,
-      )) as HTMLElement | null;
+      ));
     if (!el) return false;
-    el.click();
+    (el as HTMLElement).click();
     return true;
   }, testId);
 
@@ -70,8 +71,8 @@ async function expectOnboardingStep(page: Page, step: 1 | 2 | 3) {
             ...document.querySelectorAll(
               '.ion-page:not(.ion-page-hidden):not(.ion-page-invisible)',
             ),
-          ] as HTMLElement[];
-          return pages.some((p) => p.innerText?.includes(label));
+          ];
+          return pages.some((p: any) => p.innerText?.includes(label));
         }, step),
       { timeout: 15_000 },
     )
@@ -87,7 +88,7 @@ async function clickOnboardingNext(page: Page, nextStep: 2 | 3) {
             ...document.querySelectorAll(
               '.ion-page:not(.ion-page-hidden):not(.ion-page-invisible)',
             ),
-          ] as HTMLElement[];
+          ];
           const active = pages.at(-1);
           const btn = active?.querySelector(
             '[data-testid="onboarding-next"]',
@@ -207,7 +208,7 @@ async function selectSubsidiaryByEnv(page: Page) {
 
         const cards = [
           ...root.querySelectorAll('[data-testid="subsidiary-option"]'),
-        ] as HTMLElement[];
+        ];
         if (!cards.length) return null;
 
         const snapshot = cards.map((el, index) => ({
@@ -233,11 +234,11 @@ async function selectSubsidiaryByEnv(page: Page) {
         }
 
         const selected = cards[match.index];
-        if (!selected?.className?.includes('ring-primary')) {
-          selected?.click();
+        if (!(selected as any)?.className?.includes('ring-primary')) {
+          (selected as any)?.click();
         }
 
-        if (!selected?.className?.includes('ring-primary')) {
+        if (!(selected as any)?.className?.includes('ring-primary')) {
           return null;
         }
 

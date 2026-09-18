@@ -1,9 +1,11 @@
 # Dependencias
 node_modules/
 
-# Reportes y resultados de Playwright
+# Playwright y Testing
 playwright-report/
 test-results/
+blob-report/
+.playwright/
 
 # Estados de autenticación de las aplicaciones
 e2e/Wanqara/harness/.auth/
@@ -11,18 +13,25 @@ e2e/WanqaraChef/.auth/
 
 # Variables de entorno y scripts locales
 .env
+.env.local
+.env.*.local
 export-context.js
 export-seeds.js
-
-# Archivos de configuración de skills de IA
-.agents/
-
-.mcp.json
-
-PLANTILLA-AGY.md
 extracted-financial-seeds.json
 
-.vscode/
+# Archivos de configuración de IA y metadatos locales
+.agents/
+.mcp.json
+PLANTILLA-AGY.md
 
-# Graphify
+# IDEs, Graphify y Sistema
+.vscode/
+.idea/
+.DS_Store
 graphify-out/
+
+# Logs de dependencias
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

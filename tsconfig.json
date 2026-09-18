@@ -1,16 +1,29 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "types": ["node"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "allowJs": true,
-    "strict": false,
-    "noEmit": true
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "types": [
+      "node"
+    ]
   },
   "include": [
-    "e2e/**/*",
-    "playwright.config.js"
+    "e2e/**/*.ts",
+    "playwright.config.ts",
+    "knip.config.ts"
   ]
 }

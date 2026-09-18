@@ -1,0 +1,194 @@
+import { defineConfig, devices } from '@playwright/test';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const rootDir = path.dirname(fileURLToPath(import.meta.url));
+const envPath = path.resolve(rootDir, '.env');
+
+try {
+  process.loadEnvFile(envPath);
+} catch {
+  //
+}
+
+const tenantRuc = process.env.PLAYWRIGHT_TENANT_RUC;
+const rawWanqaraUrl = process.env.PLAYWRIGHT_WANQARA_URL;
+
+import { buildSafeTenantUrl } from './e2e/Wanqara/harness/helpers/url-builder.js';
+const baseURL = buildSafeTenantUrl(rawWanqaraUrl, tenantRuc);
+const chefURL = process.env.PLAYWRIGHT_CHEF_URL ?? 'https://localhost:8100';
+const localChefURL = process.env.PLAYWRIGHT_LOCAL_CHEF_URL ?? 'http://localhost:8100';
+
+const targetHostname = new URL(baseURL).hostname;
+const isLocalTarget =
+  targetHostname === 'localhost' ||
+  targetHostname === '127.0.0.1' ||
+  targetHostname.endsWith('.localhost');
+
+const AUTH_DIR = path.join(rootDir, 'e2e', 'Wanqara', 'harness', '.auth');
+const CHEF_AUTH_DIR = path.join(rootDir, 'e2e', 'WanqaraChef', '.auth');
+
+export default defineConfig({
+  testDir: './e2e', 
+  
+  fullyParallel: false,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: 1, 
+
+  maxFailures: process.env.CI ? 10 : 0,
+  timeout: process.env.CI ? 120 * 1000 : 45 * 1000,
+  expect: { timeout: process.env.CI ? 15 * 1000 : 10 * 1000 },
+
+  reporter: process.env.CI ? [['list'], ['github'], ['html']] : 'html',
+
+  use: {
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    actionTimeout: process.env.CI ? 45 * 1000 : 15 * 1000,
+    navigationTimeout: process.env.CI ? 60 * 1000 : 20 * 1000,
+    bypassCSP: true,
+    contextOptions: { reducedMotion: 'reduce' },
+    launchOptions: isLocalTarget
+      ? { args: ['--host-resolver-rules=MAP *.localhost 127.0.0.1'] }
+      : {},
+  },
+
+  projects: [
+    // ==========================================
+    // WANQARA (POS / Admin) PROJECTS
+    // ==========================================
+    {
+      name: 'setup-actors',
+      testMatch: /Wanqara\/harness\/setups\/actors\.setup\.ts/,
+      use: { baseURL }
+    },
+    {
+      name: 'setup-chef',
+      testMatch: /Wanqara\/harness\/setups\/chef-auth\.setup\.ts/,
+      use: { baseURL: chefURL }
+    },
+    
+    {
+      name: 'POS-Retail',
+      dependencies: ['setup-actors', 'setup-chef'],
+      testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-C|common|sales)\/.*\.spec\.ts/,
+      grep: /@regression/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL,
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
+      },
+    },
+    {
+      name: 'POS-Restaurant',
+      dependencies: ['setup-actors', 'setup-chef'],
+      testMatch: /Wanqara\/(regression|specific-cases)\/POS\/(POS-R|sales)\/.*\.spec\.ts/,
+      grep: /@regression/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL,
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
+      },
+    },
+    {
+      name: 'Admin-Inventory',
+      dependencies: ['setup-actors', 'setup-chef'],
+      testMatch: /Wanqara\/regression\/(inventory|transactions|settings|people|finance|main|special-modules|login)\/.*\.spec\.ts/,
+      grep: /@regression/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL,
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
+      },
+    },
+
+    {
+      name: 'Smoke',
+      dependencies: ['setup-actors'],
+      testMatch: /Wanqara\/smoke\/.*\.spec\.ts/,
+      fullyParallel: true,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL,
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
+      },
+    },
+    {
+      name: 'Release',
+      dependencies: ['setup-actors', 'setup-chef'],
+      testMatch: /Wanqara\/(regression|specific-cases)\/.*\.spec\.ts/,
+      grep: /@release/,                               
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL,
+        storageState: path.join(AUTH_DIR, 'actor1-session.json'),
+      },
+    },
+    {
+      name: 'SpecificCases-Release',
+      dependencies: ['setup-actors'],
+      testMatch: /Wanqara\/specific-cases\/.*\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL,
+        storageState: { cookies: [], origins: [] },
+      },
+    },
+
+    // ==========================================
+    // WANQARA CHEF (Meseros) PROJECTS
+    // ==========================================
+    {
+      name: 'setup-chef-workstation',
+      testMatch: /WanqaraChef.*harness.*auth\.workstation\.setup\.ts/,
+      use: { baseURL: localChefURL } 
+    },
+    {
+      name: 'Chef-Workstation',
+      dependencies: ['setup-chef-workstation'],
+      testMatch: /WanqaraChef.*regression.*\.workstation\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: localChefURL,
+        storageState: path.join(CHEF_AUTH_DIR, 'session-workstation.json'),
+      },
+    },
+    {
+      name: 'setup-chef-personal',
+      testMatch: /WanqaraChef.*harness.*auth\.personal\.setup\.ts/,
+      use: { baseURL: localChefURL }
+    },
+    {
+      name: 'Chef-Personal',
+      dependencies: ['setup-chef-personal'],
+      testMatch: /WanqaraChef.*regression.*\.personal\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: localChefURL, 
+        storageState: path.join(CHEF_AUTH_DIR, 'session-personal.json'),
+      },
+    },
+    {
+      name: 'Smoke-Chef-Workstation',
+      dependencies: ['setup-chef-workstation'],
+      testMatch: /WanqaraChef.*smoke.*\.workstation\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: localChefURL, 
+        storageState: path.join(CHEF_AUTH_DIR, 'session-workstation.json'),
+      },
+    },
+    {
+      name: 'Smoke-Chef-Personal',
+      dependencies: ['setup-chef-personal'],
+      testMatch: /WanqaraChef.*smoke.*\.personal\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: localChefURL,
+        storageState: path.join(CHEF_AUTH_DIR, 'session-personal.json'),
+      },
+    }
+  ],
+});

@@ -1,0 +1,27 @@
+ 
+import { test } from "@/e2e/Wanqara/harness/fixtures/admin.fixture.js";
+import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
+import { assertAdminHomeWelcome, assertTextVisible } from "@/e2e/Wanqara/smoke/route-health/harness/smoke-assertions.js";
+import { generateSmokeTests, type SmokeRoute } from "@/e2e/Wanqara/smoke/route-health/harness/smoke-nav.js";
+
+test.describe("Smoke — Admin Principal", { tag: "@smoke" }, () => {
+  requirePosCredentials(test);
+
+
+  generateSmokeTests(test, [
+    { path: "/admin/home",                                                                      assert: assertAdminHomeWelcome },
+    { path: "/admin/reports/create",                                                            assert: (p) => assertTextVisible(p, "Generación de Reportes") },
+    { path: "/admin/reports/create?reportId=reporte-de-ventas",                                assert: (p) => assertTextVisible(p, "Reportes de Ventas") },
+    { path: "/admin/reports/create?reportId=reporte-de-ventas-por-producto",                   assert: (p) => assertTextVisible(p, "Reportes de Ventas por Producto") },
+    { path: "/admin/reports/create?reportId=reporte-de-ventas-por-producto-de-tipo-combo",     assert: (p) => assertTextVisible(p, "Reportes de Ventas por Producto de tipo Combo") },
+    { path: "/admin/reports/create?reportId=reporte-detallado-de-ventas-por-producto",         assert: (p) => assertTextVisible(p, "Reporte Detallado de Ventas por Producto") },
+    { path: "/admin/reports/create?reportId=reporte-de-ventas-por-metodo-de-pago",             assert: (p) => assertTextVisible(p, "Reportes de Ventas por Método de Pago") },
+    { path: "/admin/reports/create?reportId=reporte-de-cotizaciones",                          assert: (p) => assertTextVisible(p, "Reportes de Cotizaciones") },
+    { path: "/admin/reports/create?reportId=reporte-de-inventarios",                           assert: (p) => assertTextVisible(p, "Reporte General de Inventarios") },
+    { path: "/admin/reports/create?reportId=reporte-de-inventarios-serie",                     assert: (p) => assertTextVisible(p, "Reportes de Inventarios de Producto Serie") },
+    { path: "/admin/reports/create?reportId=reporte-tributario",                               assert: (p) => assertTextVisible(p, "Reporte Tributario") },
+    { path: "/admin/reports/create?reportId=reporte-de-cuentas-por-cobrar",                    assert: (p) => assertTextVisible(p, "Reporte de Cuentas Por Cobrar") },
+    { path: "/admin/reports/create?reportId=reporte-de-cuentas-por-pagar",                     assert: (p) => assertTextVisible(p, "Reporte de Cuentas Por Pagar") },
+    { path: "/admin/reports/create?reportId=reporte-de-cierres-de-caja",                       assert: (p) => assertTextVisible(p, "Reporte de Cierres de Caja") },
+  ] as SmokeRoute[]);
+});
