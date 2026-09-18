@@ -1,7 +1,8 @@
 /* eslint-disable */
 import type { Page, Locator } from "@playwright/test";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 interface CartAction {
   type: string;
@@ -9,7 +10,7 @@ interface CartAction {
   expectedQuantity?: number;
 }
 
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   productName: string;
   productCode: string;
   actions: CartAction[];

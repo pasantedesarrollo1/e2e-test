@@ -1,6 +1,7 @@
 [
   {
     "id": "CASH-MOVEMENTS-001",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -34,6 +35,7 @@
   },
   {
     "id": "CASH-MOVEMENTS-002",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -67,6 +69,7 @@
   },
   {
     "id": "CASH-MOVEMENTS-003",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -99,6 +102,7 @@
   },
   {
     "id": "CASH-MOVEMENTS-004",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",

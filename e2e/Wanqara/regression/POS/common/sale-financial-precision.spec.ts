@@ -1,5 +1,5 @@
-
 /* eslint-disable */
+
 import fs from "fs";
 interface DiscountCase {
   product: any;
@@ -10,7 +10,7 @@ interface DiscountCase {
 interface SurchargeProduct {
   type: string;
 }
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   discountName?: string;
   discountCases?: DiscountCase[];
   paymentMethod: string;
@@ -23,7 +23,8 @@ interface ScenarioData extends ScenarioDefinition, TestMetadata {
 import path from "path";
 import { fileURLToPath } from "url";
 import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import {
   applyGeneralDiscount,
   applyManualSurcharge,
@@ -38,8 +39,9 @@ import { test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scenarios = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-financial-precision.json"), "utf-8")
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-financial-precision.json"), "utf-8"))
 );
 
 const functionMap = {

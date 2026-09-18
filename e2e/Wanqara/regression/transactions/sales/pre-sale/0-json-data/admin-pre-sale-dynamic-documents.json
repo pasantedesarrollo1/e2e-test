@@ -1,6 +1,7 @@
 [
   {
     "id": "ADMIN-PRE-SALE-DYN-DOCS-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

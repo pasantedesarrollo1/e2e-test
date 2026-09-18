@@ -1,6 +1,7 @@
 [
   {
     "id": "DSC-SUM-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -25,6 +26,7 @@
   },
   {
     "id": "DSC-SUM-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -50,6 +52,7 @@
   },
   {
     "id": "DSC-SUM-003",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

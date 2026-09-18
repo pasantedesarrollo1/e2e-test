@@ -4,6 +4,7 @@ export async function selectPosProduct(page: Page, productName: string): Promise
   const productSearch = page.getByPlaceholder(/Buscar/i);
   await expect(productSearch).toBeVisible();
   await productSearch.fill(productName);
+  // eslint-disable-next-line playwright/no-wait-for-timeout
   await page.waitForTimeout(1000); 
   
   const productCard = page.locator('ion-card').filter({ hasText: new RegExp(productName, "i") }).first();
@@ -47,6 +48,7 @@ export async function addInStockExtra(page: Page, extraName: string): Promise<vo
   const incrementBtn = extraRow.getByTestId('product-extra-increment');
   await incrementBtn.click();
   
+  // eslint-disable-next-line playwright/no-wait-for-timeout
   await page.waitForTimeout(500);
   
   const counterUpdated = extraRow.getByText(/^1$/, { exact: true }).first();
@@ -59,6 +61,7 @@ export async function confirmExtrasAndAddToCart(page: Page): Promise<void> {
   await expect(listoBtn).toBeVisible();
   await listoBtn.click();
   
+  // eslint-disable-next-line playwright/no-wait-for-timeout
   await page.waitForTimeout(500);
   
   const addBtn = page.getByTestId('product-modal-confirm');

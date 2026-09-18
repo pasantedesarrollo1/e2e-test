@@ -1,6 +1,7 @@
 [
   {
     "id": "SALE-COMBO-RECEIPT-001",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",

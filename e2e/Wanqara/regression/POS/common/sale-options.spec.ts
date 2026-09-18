@@ -2,7 +2,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 interface OptionsParams {
   productName: string;
@@ -11,7 +12,7 @@ interface OptionsParams {
   savedSaleAlias: string;
 }
 
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   optionsParams: OptionsParams;
 }
 

@@ -1,6 +1,7 @@
 [
   {
     "id": "SUBSIDIARY-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -22,6 +23,7 @@
   },
   {
     "id": "SUBSIDIARY-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -43,6 +45,7 @@
   },
   {
     "id": "SUBSIDIARY-003",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

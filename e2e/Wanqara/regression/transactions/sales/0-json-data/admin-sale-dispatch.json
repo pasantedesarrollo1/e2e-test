@@ -1,6 +1,7 @@
 [
   {
     "id": "ADMIN-SALE-DISPATCH-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -27,6 +28,7 @@
   },
   {
     "id": "ADMIN-SALE-DISPATCH-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

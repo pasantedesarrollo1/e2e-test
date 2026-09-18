@@ -1,6 +1,7 @@
 [
   {
     "id": "PPL-CRUD-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -26,6 +27,7 @@
   },
   {
     "id": "PPL-CRUD-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

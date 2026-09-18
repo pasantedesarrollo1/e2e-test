@@ -2,10 +2,11 @@
 import { test, expect } from "@/e2e/Wanqara/harness/fixtures/admin.fixture.js";
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
 import { processPaymentAndVerifyPrinter } from "./harness/payment-print-helpers.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 import type { PaymentPrintOptions } from '@/e2e/Wanqara/regression/finance/accounts/receivables/payment-print/harness/payment-print-helpers.js';
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   subsidiaryName: string;
   subsidiaryCode: string;
   authType: string;
@@ -20,8 +21,9 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scenarios = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "0-json-data", "payment-print.json"), "utf-8")
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "payment-print.json"), "utf-8"))
 );
 
 test.describe("Finance - Receivables (Payment Print)", () => {

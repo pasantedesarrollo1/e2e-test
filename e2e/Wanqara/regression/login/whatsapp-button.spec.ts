@@ -1,7 +1,8 @@
 /* eslint-disable */
-interface ScenarioData extends ScenarioDefinition, TestMetadata {}
+interface ScenarioData extends FlatScenario {}
 import { test, expect } from "@/e2e/Wanqara/harness/fixtures/admin.fixture.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 import fs from "fs";
 import path from "path";

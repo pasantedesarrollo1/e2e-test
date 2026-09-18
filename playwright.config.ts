@@ -128,6 +128,9 @@ export default defineConfig({
     },
     {
       name: 'SpecificCases-Release',
+      // NOTA: Este proyecto no requiere setup-chef porque sus specs usan
+      // únicamente pos.fixture o admin.fixture. Si se añade un spec con
+      // stage.fixture, agregar 'setup-chef' a dependencies.
       dependencies: ['setup-actors'],
       testMatch: /Wanqara\/specific-cases\/.*\.spec\.ts/,
       use: {

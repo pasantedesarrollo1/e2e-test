@@ -1,6 +1,7 @@
 [
   {
     "id": "ADMIN-SALE-MODIFIER-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -24,6 +25,7 @@
   },
   {
     "id": "ADMIN-SALE-MODIFIER-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -47,6 +49,7 @@
   },
   {
     "id": "ADMIN-SALE-MODIFIER-003",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -70,6 +73,7 @@
   },
   {
     "id": "ADMIN-SALE-MODIFIER-004",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

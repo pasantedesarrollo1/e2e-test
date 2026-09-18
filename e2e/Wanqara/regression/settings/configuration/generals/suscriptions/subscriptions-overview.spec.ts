@@ -7,11 +7,13 @@ import {
   validateSubsidiaryCapabilityBadges
 } from "./harness/subscriptions-helpers.js";
 
-import scenarios from "./0-json-data/subscriptions-overview.json" with { type: "json" };
+import rawScenarios from "./0-json-data/subscriptions-overview.json" with { type: "json" };
+const scenarios = parseScenarios<ScenarioData>(rawScenarios);
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import type { SubscriptionData } from '@/e2e/Wanqara/regression/settings/configuration/generals/suscriptions/harness/subscriptions-helpers.js';
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   authType: string;
   subscriptionData: SubscriptionData;
 }

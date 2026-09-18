@@ -1,4 +1,4 @@
-/* eslint-disable */
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
@@ -9,8 +9,25 @@ import { completePayment } from "@/e2e/Wanqara/regression/POS/harness/payments/p
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scenarios = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "0-json-data", "no-ebilling-flow.json"), "utf-8")
+
+interface ScenarioData {
+  description: string;
+  openingAmount: string;
+  authType: string;
+  loginMode: 'fresh' | 'cached' | '';
+  subsidiaryName: string;
+  subsidiaryCode: string;
+  ebillingEnabled?: boolean;
+  productName: string;
+  paymentMethod: string;
+  businessType: string;
+  dispatchEnabled?: boolean;
+  metadata?: { testScope?: string; ws?: string; [key: string]: unknown };
+}
+
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "no-ebilling-flow.json"), "utf-8"))
 );
 
 import { ensureAuthenticated, logoutFromSession, withSessionRetry } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
@@ -43,7 +60,7 @@ for (const scenario of scenarios) {
         
         await expect(listbox.getByText('Recibos', { exact: true })).toBeVisible();
         
-        await expect(listbox.getByText('Factura electrónica', { exact: true })).not.toBeVisible();
+        await expect(listbox.getByText('Factura electrónica', { exact: true })).toBeHidden();
         
         await page.keyboard.press("Escape");
       });

@@ -9,7 +9,7 @@ import { switchAdminSubsidiary } from "@/e2e/Wanqara/harness/helpers/auth/auth.j
 import scenariosRaw from "./0-json-data/admin-cross-sales.json" with { type: "json" };
 const scenarios = scenariosRaw as unknown as ScenarioData[];
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 
 interface TransactionParams {
   path: string;
@@ -19,7 +19,7 @@ interface TransactionParams {
   endpoint: string;
 }
 
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   sucursales: { name: string; code: string; combinations: any[] }[];
   transaction: TransactionParams;
   subsidiaryName: string;

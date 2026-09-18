@@ -61,6 +61,7 @@ export async function selectClientByCedula(page: Page, cedula: string, options: 
     await cedulaInput.clear();
     await cedulaInput.pressSequentially(cedula, { delay: 50 });
     await expect(cedulaInput).toHaveValue(cedula);
+    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(1000); // Give Vuetify debounce & backend time to populate dropdown
     await cedulaInput.press("Enter");
   } else {

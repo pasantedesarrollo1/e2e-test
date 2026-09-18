@@ -5,7 +5,7 @@ interface SaleParams {
   clientCedula: string;
   paymentMethod: string;
 }
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   subsidiaryName: string;
   subsidiaryCode: string;
   saleParams: SaleParams;
@@ -15,15 +15,17 @@ interface ScenarioData extends ScenarioDefinition, TestMetadata {
 
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { cancelFirstSaleAndVerify } from "@/e2e/Wanqara/regression/transactions/sales/harness/cancel-sale-flow.js";
 import { PosSaleWorkflow } from "@/e2e/Wanqara/harness/helpers/workflows/pos-sale-workflow.js";
 import { test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scenarios = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-cancellation.json"), "utf-8")
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-cancellation.json"), "utf-8"))
 );
 
 test.describe("Cancel Sales (POS)", () => {

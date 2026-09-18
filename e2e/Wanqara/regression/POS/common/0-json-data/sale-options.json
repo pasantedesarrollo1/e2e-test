@@ -1,6 +1,7 @@
 [
   {
     "id": "SALE-OPTIONS-001",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -29,6 +30,7 @@
   },
   {
     "id": "SALE-OPTIONS-002",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",

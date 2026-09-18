@@ -1,4 +1,4 @@
-/* eslint-disable */
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
@@ -7,8 +7,25 @@ import { annotateTicket } from "@/e2e/Wanqara/harness/helpers/reporting/annotate
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scenarios = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "0-json-data", "close-orders-from-options.json"), "utf-8")
+
+interface ScenarioData {
+  description: string;
+  openingAmount: string;
+  authType: string;
+  loginMode: 'fresh' | 'cached' | '';
+  subsidiaryName: string;
+  subsidiaryCode: string;
+  chefAuthType?: string;
+  chefLogin?: Record<string, unknown>;
+  chefSubsidiary?: string;
+  chefSubsidiaryCode?: string;
+  productName: string;
+  metadata?: { testScope?: string; ws?: string; [key: string]: unknown };
+}
+
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "close-orders-from-options.json"), "utf-8"))
 );
 
 import { processOrderClosure } from "./harness/pos-close-order.js";

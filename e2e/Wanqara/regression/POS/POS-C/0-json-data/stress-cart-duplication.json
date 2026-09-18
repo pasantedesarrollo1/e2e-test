@@ -1,6 +1,7 @@
 [
   {
     "id": "STRESS-CART-DUPLICATION-001",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",

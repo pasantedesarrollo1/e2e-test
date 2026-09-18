@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any */
 import { expect, type Locator, type Page } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -364,7 +364,10 @@ async function waitForPostLoginSurface(page: Page) {
  * Workstation requires PIN; Personal does not.
  */
 export async function ensureWorkMode(page: Page, mode: WorkModeName) {
-  await page.waitForLoadState('domcontentloaded');
+  // EXPLICACIÓN: Se requiere 'networkidle' porque el estado de sesión 
+  // depende de peticiones de fondo de hidratación del carrito/estado inicial
+  // que no tienen un endpoint único predecible y fallarían las validaciones iniciales.
+  await page.waitForLoadState('networkidle');
   await waitForPostLoginSurface(page);
 
   const didWizard = await completeOnboardingWizard(page, mode);

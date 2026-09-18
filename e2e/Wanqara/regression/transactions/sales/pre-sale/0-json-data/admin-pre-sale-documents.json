@@ -1,6 +1,7 @@
 [
   {
     "id": "ADMIN-PRE-SALE-DOCS-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -21,6 +22,7 @@
   },
   {
     "id": "ADMIN-PRE-SALE-DOCS-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

@@ -1,6 +1,7 @@
 [
   {
     "id": "SALES-WITH-TIPS-COMBINATIONS-001",
+    "fixture": "stage",
     "only": false,
     "skip": false,
     "skipReason": "",

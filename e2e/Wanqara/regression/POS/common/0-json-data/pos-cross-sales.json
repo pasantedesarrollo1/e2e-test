@@ -1,6 +1,7 @@
 [
   {
     "id": "POS-CROSS-SALES-001",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -31,6 +32,7 @@
   },
   {
     "id": "POS-CROSS-SALES-002",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -62,6 +64,7 @@
   },
   {
     "id": "POS-CROSS-SALES-003",
+    "fixture": "stage",
     "only": false,
     "skip": false,
     "skipReason": "",

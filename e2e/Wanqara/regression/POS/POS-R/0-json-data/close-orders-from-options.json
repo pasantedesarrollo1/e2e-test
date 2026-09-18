@@ -1,6 +1,7 @@
 [
   {
     "id": "CLOSE-ORDERS-FROM-OPTIONS-001",
+    "fixture": "stage",
     "only": false,
     "skip": false,
     "skipReason": "",

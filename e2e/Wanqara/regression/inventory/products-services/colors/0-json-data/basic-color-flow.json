@@ -1,6 +1,7 @@
 [
   {
     "id": "CLR-BASE-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -22,6 +23,7 @@
   },
   {
     "id": "CLR-BASE-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

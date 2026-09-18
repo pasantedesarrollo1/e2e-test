@@ -1,6 +1,7 @@
 [
   {
     "id": "COLLECT-ORDERS-FLOW-001",
+    "fixture": "stage",
     "only": false,
     "skip": false,
     "skipReason": "",

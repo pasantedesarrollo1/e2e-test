@@ -15,6 +15,7 @@ export async function testByProductFlow(page: Page, categoryName: string, produc
     await expect(sidebarSearchInput).toBeVisible();
     await sidebarSearchInput.clear();
     await sidebarSearchInput.fill(productSearchTerm);
+    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(1500); 
 
     const sidebarListItems = page.locator('aside').locator('.v-list-item');
@@ -22,6 +23,7 @@ export async function testByProductFlow(page: Page, categoryName: string, produc
 
     for (let i = 0; i < sidebarCount; i++) {
       await sidebarListItems.nth(i).click();
+      // eslint-disable-next-line playwright/no-wait-for-timeout
       await page.waitForTimeout(500); 
 
       const deleteRelationBtn = page.getByRole('button', { name: /Eliminar relaci.n/i }).first();
@@ -38,6 +40,7 @@ export async function testByProductFlow(page: Page, categoryName: string, produc
         await deleteResponsePromise;
 
         await expectSnackbar(page, new RegExp(relationDeletedMsg, "i"));
+        // eslint-disable-next-line playwright/no-wait-for-timeout
         await page.waitForTimeout(500); 
       }
       
@@ -74,6 +77,7 @@ export async function testByProductFlow(page: Page, categoryName: string, produc
     await expect(loadingIndicator).toBeHidden({ timeout: 15000 }).catch(() => {});
 
     await productSearchInput.fill(productSearchTerm);
+    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(1500); 
 
     const productItems = dialog.locator('.v-list-item').filter({ hasText: /\$/ });

@@ -1,6 +1,7 @@
 [
   {
     "id": "PAY-PRINT-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

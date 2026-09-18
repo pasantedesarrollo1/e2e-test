@@ -1,6 +1,7 @@
 [
   {
     "id": "SALE-INVENTORY-DISPATCH-001",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",

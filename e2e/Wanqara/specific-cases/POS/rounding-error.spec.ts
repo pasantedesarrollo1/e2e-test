@@ -1,6 +1,6 @@
 /* eslint-disable */
 interface CaseData { [key: string]: any; }
-interface ScenarioData extends ScenarioDefinition, TestMetadata { paymentUrl: string; paymentMethod: string; caseData: CaseData; client: string; }
+interface ScenarioData extends FlatScenario { paymentUrl: string; paymentMethod: string; caseData: CaseData; client: string; }
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
 import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
 import {
@@ -12,7 +12,7 @@ import {
 } from "@/e2e/Wanqara/regression/POS/harness/products/pos-product-options.js";
 import { searchAndSelectProduct } from "@/e2e/Wanqara/regression/POS/harness/products/pos-search.js";
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
 
 import scenariosRaw from "./0-json-data/rounding-error.json" with { type: "json" };

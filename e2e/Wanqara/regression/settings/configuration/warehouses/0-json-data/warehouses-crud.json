@@ -1,6 +1,7 @@
 [
   {
     "id": "WAREHOUSE-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -21,6 +22,7 @@
   },
   {
     "id": "WAREHOUSE-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -41,6 +43,7 @@
   },
   {
     "id": "WAREHOUSE-003",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

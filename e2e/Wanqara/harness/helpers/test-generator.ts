@@ -1,15 +1,18 @@
-/* eslint-disable */
 import { annotateTicket } from "@/e2e/Wanqara/harness/helpers/reporting/annotate.js";
 import { getSessionPath } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
 import type { TestType } from "@playwright/test";
 
-export interface TestMetadata {
-  ws?: string | string[];
-  testScope?: string;
-  [key: string]: unknown;
-}
+import type { 
+  ScenarioDefinition, 
+  TestMetadata, 
+  StageSetupOrderOptions, 
+  StageSetupOptions 
+} from "@/e2e/Wanqara/harness/types/scenarios.types.js";
 
-export interface ScenarioDefinition {
+export type { ScenarioDefinition, TestMetadata };
+
+// Tipo auxiliar para specs que usan generateDataDrivenTests sin discriminar por fixture
+export type FlatScenario = {
   id?: string;
   description: string;
   skip?: boolean;
@@ -17,7 +20,7 @@ export interface ScenarioDefinition {
   only?: boolean;
   metadata?: TestMetadata;
   authType?: string;
-  loginMode?: "fresh" | "cached" | "";
+  loginMode?: 'fresh' | 'cached' | '';
   subsidiaryName?: string;
   subsidiaryCode?: string;
   openingAmount?: string;
@@ -25,11 +28,11 @@ export interface ScenarioDefinition {
   dispatchEnabled?: boolean;
   cashRegisterMode?: string;
   chefAuthType?: string;
-  stageSetupOptions?: unknown;
+  stageSetupOptions?: StageSetupOrderOptions | StageSetupOptions | null;
   [key: string]: unknown;
-}
+};
 
-function buildGroupKey(scenario: ScenarioDefinition): string {
+function buildGroupKey(scenario: FlatScenario): string {
     const scope = scenario.metadata?.testScope ?? "regression";
     const loginMode = scenario.loginMode ?? (scope === "release" ? "fresh" : "cached");
     const authType = scenario.authType ?? "anonymous";
@@ -37,7 +40,7 @@ function buildGroupKey(scenario: ScenarioDefinition): string {
 }
 
 
-function buildGroupUseConfig(scenario: ScenarioDefinition): Record<string, unknown> {
+function buildGroupUseConfig(scenario: FlatScenario): Record<string, unknown> {
     const scope = scenario.metadata?.testScope ?? "regression";
     const loginMode = scenario.loginMode ?? (scope === "release" ? "fresh" : "cached");
     const useConfig: Record<string, unknown> = {};
@@ -51,14 +54,16 @@ function buildGroupUseConfig(scenario: ScenarioDefinition): Record<string, unkno
     return useConfig;
 }
 
-export function generateDataDrivenTests<T extends ScenarioDefinition, Fixtures extends Record<string, any>>(test: TestType<Fixtures, any>, scenarios: T[], testFn: (scenario: T) => void): void {
+export function generateDataDrivenTests<T extends FlatScenario, Fixtures extends Record<string, any>>(test: TestType<Fixtures, any>, scenarios: T[], testFn: (scenario: T) => void): void {
     const active: T[] = [];
     for (const scenario of scenarios) {
         if (scenario.skip) {
             const reason = scenario.skipReason ?? "Omitido por configuración en JSON";
+
             test.describe.skip(`Escenario: ${scenario.description}`, () => {
                 test(`Omitido: ${reason}`, async () => {});
             });
+
             continue;
         }
         scenario.metadata = scenario.metadata ?? { testScope: "regression" };
@@ -78,6 +83,7 @@ export function generateDataDrivenTests<T extends ScenarioDefinition, Fixtures e
 
         test.describe(`Grupo [${groupKey}]`, () => {
             if (Object.keys(useConfig).length > 0) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 test.use(useConfig as any);
             }
 
@@ -87,12 +93,13 @@ export function generateDataDrivenTests<T extends ScenarioDefinition, Fixtures e
                 const describeBlock = scenario.only ? test.describe.only : test.describe;
 
                 const prefixContent: string[] = [];
-                if (metadata.ws) prefixContent.push(Array.isArray(metadata.ws) ? metadata.ws.join(", ") : metadata.ws!);
+                if (metadata.ws) prefixContent.push(Array.isArray(metadata.ws) ? metadata.ws.join(", ") : metadata.ws);
                 if (scenario.id) prefixContent.push(scenario.id);
                 const prefix = prefixContent.length > 0 ? `[${prefixContent.join(' - ')}] ` : '';
                 
                 describeBlock(`Escenario: ${prefix}${scenario.description} ${executionTag}`, () => {
                     if (metadata.ws) {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         annotateTicket(test as any, metadata);
                     }
 
@@ -109,6 +116,7 @@ export function generateDataDrivenTests<T extends ScenarioDefinition, Fixtures e
                     if (scenario.stageSetupOptions) scenarioOptions.stageSetupOptions = scenario.stageSetupOptions;
 
                     if (Object.keys(scenarioOptions).length > 0) {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         test.use(scenarioOptions as any);
                     }
 

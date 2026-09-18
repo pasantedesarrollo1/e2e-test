@@ -1,6 +1,7 @@
 [
   {
     "id": "PRINTERS-VERSION-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

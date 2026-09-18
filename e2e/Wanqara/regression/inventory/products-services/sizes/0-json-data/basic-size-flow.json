@@ -1,6 +1,7 @@
 [
   {
     "id": "SIZ-BASE-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

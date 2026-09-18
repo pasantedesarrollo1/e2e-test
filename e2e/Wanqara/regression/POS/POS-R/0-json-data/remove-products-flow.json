@@ -1,6 +1,7 @@
 [
   {
     "id": "REMOVE-PRODUCTS-FLOW-001",
+    "fixture": "stage",
     "only": false,
     "skip": false,
     "skipReason": "",

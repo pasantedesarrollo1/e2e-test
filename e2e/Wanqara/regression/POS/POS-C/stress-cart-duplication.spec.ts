@@ -1,11 +1,10 @@
 
-/* eslint-disable */
 import fs from "fs";
 interface ActionData {
   type: string;
   name: string;
 }
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   searchKeyword: string;
   actions: ActionData[];
 }
@@ -14,12 +13,14 @@ import path from "path";
 import { fileURLToPath } from "url";
 import type { Page, Locator } from "@playwright/test";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scenarios = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "0-json-data", "stress-cart-duplication.json"), "utf-8")
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "stress-cart-duplication.json"), "utf-8"))
 );
 
 test.describe("Product Selection Stress & Rapid-Click Testing", () => {
@@ -74,7 +75,7 @@ test.describe("Product Selection Stress & Rapid-Click Testing", () => {
         await expect(cartRows).toHaveCount(addedCount);
       }
 
-      expect(await cartRows.count()).toBe(addedCount);
+      await expect(cartRows).toHaveCount(addedCount);
 
       const burstCycles = 15; 
       for (let cycle = 0; cycle < burstCycles; cycle++) {
@@ -130,7 +131,7 @@ test.describe("Product Selection Stress & Rapid-Click Testing", () => {
         }
       }
 
-      expect(await cartRows.count()).toBe(addedCount);
+      await expect(cartRows).toHaveCount(addedCount);
 
       for (let i = 0; i < addedCount; i++) {
         const row = cartRows.nth(i);

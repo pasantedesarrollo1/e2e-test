@@ -5,9 +5,9 @@ import type { TestType } from '@playwright/test';
  */
 export interface TicketMetadata {
   /** Workspace ticket ID(s) */
-  ws?: string | string[];
+  ws?: string | string[] | null;
   /** Test execution ticket ID(s) */
-  tes?: string | string[];
+  tes?: string | string[] | null;
   /** Target release version */
   release?: string;
   /** Brief summary of the ticket/test */

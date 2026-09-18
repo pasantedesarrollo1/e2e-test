@@ -121,6 +121,7 @@ export async function clickTableRowAction(page: Page, rowLocator: Locator, toolt
       }
       
       await page.mouse.move(0, 0);
+      // eslint-disable-next-line playwright/no-wait-for-timeout
       await page.waitForTimeout(100);
       continue;
     }

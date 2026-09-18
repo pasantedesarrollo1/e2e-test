@@ -1,6 +1,7 @@
 [
   {
     "id": "WAYBILL-EXT-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -30,6 +31,7 @@
   },
   {
     "id": "WAYBILL-EXT-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

@@ -7,7 +7,7 @@ import { cancelFirstSaleAndVerify } from "@/e2e/Wanqara/regression/transactions/
 
 import scenariosRaw from "./0-json-data/admin-pre-sale-cancellation.json" with { type: "json" };
 const scenarios = scenariosRaw as unknown as ScenarioData[];
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 
 interface SaleParams {
   documentType: string;
@@ -21,7 +21,7 @@ interface CancelParams {
   expectMessage?: boolean;
 }
 
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   authType: string;
   saleParams: SaleParams;
   cancelParams: CancelParams;

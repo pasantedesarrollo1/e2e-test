@@ -1,6 +1,7 @@
 [
   {
     "id": "ADMIN-SALE-DOCS-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -22,6 +23,7 @@
   },
   {
     "id": "ADMIN-SALE-DOCS-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

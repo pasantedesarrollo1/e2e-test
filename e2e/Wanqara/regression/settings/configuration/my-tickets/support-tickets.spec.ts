@@ -15,14 +15,16 @@ import {
   selectFirstService
 } from "./harness/support-tickets-helpers.js";
 
-import scenarios from "./0-json-data/support-tickets.json" with { type: "json" };
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import rawScenarios from "./0-json-data/support-tickets.json" with { type: "json" };
+const scenarios = parseScenarios<ScenarioData>(rawScenarios);
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 interface TicketData {
   whatsapp: string;
   observation: string;
   searchId: string;
 }
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   authType: string;
   ticketData: TicketData;
 }

@@ -13,7 +13,7 @@ import { selectCheckout as selectCheckoutPreSales } from "../harness/admin-pre-s
 import scenariosRaw from "./0-json-data/admin-pre-sale-dynamic-documents.json" with { type: "json" };
 const scenarios = scenariosRaw as unknown as ScenarioData[];
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 
 interface StepParams {
   branchName: string;
@@ -28,7 +28,7 @@ interface StepParams {
   subsidiaryCode: string;
 }
 
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   authType: string;
   targetPath: string;
   subsidiaryName: string;

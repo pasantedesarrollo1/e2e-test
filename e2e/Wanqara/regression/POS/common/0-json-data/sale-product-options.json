@@ -1,6 +1,7 @@
 [
   {
     "id": "SALE-PRODUCT-OPTIONS-001",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -30,6 +31,7 @@
   },
   {
     "id": "SALE-PRODUCT-OPTIONS-002",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",

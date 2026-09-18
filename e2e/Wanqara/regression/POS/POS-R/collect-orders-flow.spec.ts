@@ -1,3 +1,5 @@
+ 
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
@@ -28,9 +30,10 @@ interface ScenarioData {
   };
 }
 
-const scenarios = JSON.parse(
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "collect-orders-flow.json"), "utf-8")
-) as ScenarioData[];
+));
 
 import {
   finalizeSaleWithPayment,

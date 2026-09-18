@@ -1,6 +1,7 @@
 [
   {
     "id": "CART-DUPLICATION-001",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -43,6 +44,7 @@
   },
   {
     "id": "CART-DUPLICATION-002",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -86,6 +88,7 @@
   },
   {
     "id": "CART-DUPLICATION-003",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -133,6 +136,7 @@
   },
   {
     "id": "CART-DUPLICATION-004",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -175,6 +179,7 @@
   },
   {
     "id": "CART-DUPLICATION-005",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -213,6 +218,7 @@
   },
   {
     "id": "CART-DUPLICATION-006",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -250,6 +256,7 @@
   },
   {
     "id": "CART-DUPLICATION-007",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -284,6 +291,7 @@
   },
   {
     "id": "CART-DUPLICATION-008",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -322,6 +330,7 @@
   },
   {
     "id": "CART-DUPLICATION-009",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",

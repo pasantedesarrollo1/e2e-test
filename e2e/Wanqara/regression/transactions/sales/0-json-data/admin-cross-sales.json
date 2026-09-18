@@ -1,6 +1,7 @@
 [
   {
     "id": "ADMIN-CROSS-SALES-001-1",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -46,6 +47,7 @@
   },
   {
     "id": "ADMIN-CROSS-SALES-001-2",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -87,6 +89,7 @@
   },
   {
     "id": "ADMIN-CROSS-SALES-001-3",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -128,6 +131,7 @@
   },
   {
     "id": "ADMIN-CROSS-SALES-002-1",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -173,6 +177,7 @@
   },
   {
     "id": "ADMIN-CROSS-SALES-002-2",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -214,6 +219,7 @@
   },
   {
     "id": "ADMIN-CROSS-SALES-002-3",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

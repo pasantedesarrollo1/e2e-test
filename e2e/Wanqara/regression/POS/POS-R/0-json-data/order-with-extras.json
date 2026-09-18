@@ -1,6 +1,7 @@
 [
   {
     "id": "ORDER-WITH-EXTRAS-001",
+    "fixture": "stage",
     "only": false,
     "skip": false,
     "skipReason": "",

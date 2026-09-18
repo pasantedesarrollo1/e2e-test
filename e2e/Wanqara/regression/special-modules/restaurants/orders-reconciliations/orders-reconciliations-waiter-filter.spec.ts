@@ -1,6 +1,6 @@
 /* eslint-disable */
 import type { WaiterFilterData } from "@/e2e/Wanqara/regression/special-modules/restaurants/harness/restaurant-helpers.ts";
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   authType: string;
   filterData: WaiterFilterData;
 }
@@ -9,9 +9,11 @@ import { requirePosCredentials } from "../../../../harness/config/settings.js";
 import { ensureAuthenticated } from "../../../../harness/helpers/auth/auth.js";
 import { filterByWaiter } from "../harness/restaurant-helpers.js";
 
-import scenarios from "./0-json-data/orders-reconciliations-waiter-filter.json" with { type: "json" };
+import rawScenarios from "./0-json-data/orders-reconciliations-waiter-filter.json" with { type: "json" };
+const scenarios = parseScenarios<ScenarioData>(rawScenarios);
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 test.describe("Orders Reconciliations - Waiter Filter", () => {
   generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {

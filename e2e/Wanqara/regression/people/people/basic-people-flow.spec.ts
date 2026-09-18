@@ -2,11 +2,12 @@
 import { test } from "@/e2e/Wanqara/harness/fixtures/admin.fixture.js";
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
 import { createPerson, deactivatePerson, ensureCleanPerson, searchPerson, verifyDeactivatedStrikethrough } from "./harness/people-helpers.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 // @ts-ignore
 import type { PersonData } from './harness/people-helpers.js';
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   subsidiaryName: string;
   subsidiaryCode: string;
   authType: string;
@@ -21,8 +22,9 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scenarios = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "0-json-data", "basic-people-flow.json"), "utf-8")
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "basic-people-flow.json"), "utf-8"))
 );
 
 test.describe("People Management (Basic Flow)", () => {

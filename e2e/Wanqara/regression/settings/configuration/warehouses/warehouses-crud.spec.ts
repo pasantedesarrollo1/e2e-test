@@ -6,11 +6,13 @@ import { deleteRecordFromList } from "@/e2e/Wanqara/harness/helpers/crud/crud-he
 import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/ui/action-tooltips.js";
 import { createWarehouse } from "./harness/warehouses-helpers.js";
 
-import scenarios from "./0-json-data/warehouses-crud.json" with { type: "json" };
+import rawScenarios from "./0-json-data/warehouses-crud.json" with { type: "json" };
+const scenarios = parseScenarios<ScenarioData>(rawScenarios);
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import type { WarehouseOptions } from '@/e2e/Wanqara/regression/settings/configuration/warehouses/harness/warehouses-helpers.js';
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   authType: string;
   warehouseData: WarehouseOptions;
 }

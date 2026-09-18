@@ -1,6 +1,7 @@
 [
   {
     "id": "ADMIN-PRE-SALE-DISPATCH-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -25,6 +26,7 @@
   },
   {
     "id": "ADMIN-PRE-SALE-DISPATCH-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

@@ -1,3 +1,5 @@
+/* eslint-disable */
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
@@ -29,9 +31,10 @@ interface ScenarioData {
   };
 }
 
-const scenarios = JSON.parse(
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
   fs.readFileSync(path.join(__dirname, "0-json-data", "close-orders-flow.json"), "utf-8")
-) as ScenarioData[];
+));
 
 for (const scenario of scenarios) {
   test.describe.serial(`POS ${scenario.description} - Close Orders Flow @${scenario.metadata?.testScope || 'regression'}`, () => {

@@ -1,4 +1,4 @@
-/* eslint-disable */
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
@@ -6,8 +6,51 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scenarios = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "0-json-data", "sales-with-tips-combinations.json"), "utf-8")
+
+interface PrecisionUI {
+  subtotal: string;
+  impuestos: string;
+  tip: string;
+  total: string;
+  [key: string]: unknown;
+}
+interface PrecisionCase {
+  ui: PrecisionUI;
+  summary: Record<string, unknown>;
+  root: { additional_tip: string | number };
+  [key: string]: unknown;
+}
+interface ProductsMap {
+  estandar: string;
+  combo: string;
+  servicio: string;
+  elaborado: string;
+}
+interface ScenarioData {
+  description: string;
+  openingAmount: string;
+  authType: string;
+  loginMode: 'fresh' | 'cached' | '';
+  subsidiaryName: string;
+  subsidiaryCode: string;
+  chefAuthType?: string;
+  chefLogin?: Record<string, unknown>;
+  chefSubsidiary?: string;
+  chefSubsidiaryCode?: string;
+  products: ProductsMap;
+  paymentMethod: string;
+  tipToType: string;
+  case1: PrecisionCase;
+  case2: PrecisionCase;
+  case3: PrecisionCase;
+  case4: PrecisionCase;
+  case5: PrecisionCase;
+  metadata?: { testScope?: string; ws?: string; [key: string]: unknown };
+}
+
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sales-with-tips-combinations.json"), "utf-8"))
 );
 
 import { applyGeneralDiscount, applyManualSurcharge, assertPaymentModalUI, assertPaymentPayloadPrecision, assertSalePanelUI, assertSummaryPrecision } from "@/e2e/Wanqara/regression/POS/harness/financials/pos-financial-assertions.js";
@@ -60,9 +103,12 @@ for (const scenario of scenarios) {
       await completePayment(page, { paymentMethod: scenario.paymentMethod });
 
       const request = await requestPromise;
-      const body = request.postDataJSON();
+      const body = request.postDataJSON() as Record<string, any>;
+       
       assertSummaryPrecision(body, precision.summary);
+       
       expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+       
       assertPaymentPayloadPrecision(body, precision);
     });
 
@@ -88,9 +134,12 @@ for (const scenario of scenarios) {
       await completePayment(page, { paymentMethod: scenario.paymentMethod });
 
       const request = await requestPromise;
-      const body = request.postDataJSON();
+      const body = request.postDataJSON() as Record<string, any>;
+       
       assertSummaryPrecision(body, precision.summary);
+       
       expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+       
       assertPaymentPayloadPrecision(body, precision);
     });
 
@@ -116,9 +165,12 @@ for (const scenario of scenarios) {
       await completePayment(page, { paymentMethod: scenario.paymentMethod });
 
       const request = await requestPromise;
-      const body = request.postDataJSON();
+      const body = request.postDataJSON() as Record<string, any>;
+       
       assertSummaryPrecision(body, precision.summary);
+       
       expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+       
       assertPaymentPayloadPrecision(body, precision);
     });
   });

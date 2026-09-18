@@ -4,7 +4,7 @@ interface QuoteParams {
   paymentMethod: string;
   [key: string]: any;
 }
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   businessType: string;
   quoteParams: QuoteParams;
 }
@@ -12,7 +12,8 @@ interface ScenarioData extends ScenarioDefinition, TestMetadata {
 import path from "path";
 import { fileURLToPath } from "url";
 import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { completePayment } from "@/e2e/Wanqara/regression/POS/harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "@/e2e/Wanqara/regression/POS/harness/products/pos-search.js";
 import { openDrawer } from "@/e2e/Wanqara/regression/POS/harness/sales/pos-drawer-helpers.js";
@@ -21,8 +22,9 @@ import { expect, test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scenarios = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-quotations.json"), "utf-8")
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "sale-quotations.json"), "utf-8"))
 );
 
 async function runQuoteFlow(page: Page, { businessType, quoteParams, pdfChoice }: any) {

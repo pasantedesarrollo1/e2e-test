@@ -1,6 +1,7 @@
 [
   {
     "id": "DISPATCH-CRUD-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

@@ -1,6 +1,7 @@
 [
   {
     "id": "SUPPORT-TICKETS-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

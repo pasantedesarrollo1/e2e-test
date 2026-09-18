@@ -1,6 +1,7 @@
 [
   {
     "id": "ADMIN-SALE-CANCEL-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -29,6 +30,7 @@
   },
   {
     "id": "ADMIN-SALE-CANCEL-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

@@ -1,6 +1,7 @@
 [
   {
     "id": "PROD-RECIPE-001",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -24,6 +25,7 @@
   },
   {
     "id": "PROD-RECIPE-002",
+    "fixture": "admin",
     "only": false,
     "skip": false,
     "skipReason": "",

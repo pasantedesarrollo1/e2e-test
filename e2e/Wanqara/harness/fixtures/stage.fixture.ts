@@ -16,7 +16,7 @@ export interface StageSetupOrderOptions {
 }
 
 export interface StageSetupOptions {
-  createOrder?: boolean | StageSetupOrderOptions;
+  createOrder?: StageSetupOrderOptions;
 }
 
 export type StageFixtures = {
@@ -105,9 +105,7 @@ export const test = base.extend<StageFixtures>({
       });
 
       if (stageSetupOptions?.createOrder) {
-        const orderOpts = stageSetupOptions.createOrder === true 
-          ? (stageSetupOptions as unknown as StageSetupOrderOptions) 
-          : stageSetupOptions.createOrder;
+        const orderOpts = stageSetupOptions.createOrder;
         
         const activeTableName = await createChefOrder(chefPage, {
            productName: orderOpts.productName,

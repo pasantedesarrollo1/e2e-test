@@ -1,4 +1,4 @@
-/* eslint-disable */
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
 import fs from "fs";
 import path from "path";
@@ -7,8 +7,35 @@ import { annotateTicket } from "@/e2e/Wanqara/harness/helpers/reporting/annotate
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const scenarios = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "0-json-data", "order-with-extras.json"), "utf-8")
+
+interface ExtrasData {
+  baseProduct: string;
+  categoryName: string;
+  sinStockExtra: string;
+  conStockExtra: string;
+  outOfStockLabelText: string;
+}
+
+interface ScenarioData {
+  description: string;
+  openingAmount: string;
+  authType: string;
+  loginMode: 'fresh' | 'cached' | '';
+  subsidiaryName: string;
+  subsidiaryCode: string;
+  chefAuthType?: string;
+  chefLogin?: Record<string, unknown>;
+  chefSubsidiary?: string;
+  chefSubsidiaryCode?: string;
+  extrasData: ExtrasData;
+  clientCedula: string;
+  paymentMethod: string;
+  metadata?: { testScope?: string; ws?: string; [key: string]: unknown };
+}
+
+const scenarios = parseScenarios<ScenarioData>(
+  JSON.parse(
+  fs.readFileSync(path.join(__dirname, "0-json-data", "order-with-extras.json"), "utf-8"))
 );
 
 import { searchAndSelectProduct, selectTable, submitOrder } from "./harness/chef-orders-flow.js";
@@ -40,20 +67,20 @@ for (const scenario of scenarios) {
       chefSubsidiaryCode: scenario.chefSubsidiaryCode
     });
 
-    let baseProduct = scenario.extrasData.baseProduct;
-    let categoryName = scenario.extrasData.categoryName;
-    let sinStockExtra = scenario.extrasData.sinStockExtra;
-    let conStockExtra = scenario.extrasData.conStockExtra;
-    let outOfStockLabelText = scenario.extrasData.outOfStockLabelText;
+    const baseProduct = scenario.extrasData.baseProduct;
+    const categoryName = scenario.extrasData.categoryName;
+    const sinStockExtra = scenario.extrasData.sinStockExtra;
+    const conStockExtra = scenario.extrasData.conStockExtra;
+    const outOfStockLabelText = scenario.extrasData.outOfStockLabelText;
 
     if (scenario.metadata && scenario.metadata.ws) {
       annotateTicket(test, scenario.metadata);
     }
 
     test.beforeEach(async ({ chefContext }) => {
-      await expect(chefContext as any).toHaveURL(/\/tables/);
+      await expect(chefContext!).toHaveURL(/\/tables/);
       await expect(
-        (chefContext as any).locator("ion-segment-button").filter({ hasText: "Todos" })
+        chefContext!.locator("ion-segment-button").filter({ hasText: "Todos" })
       ).toBeVisible();
     });
 
@@ -81,9 +108,9 @@ for (const scenario of scenarios) {
       });
       
       await test.step("Open order in POS and process payment", async () => {
-        await openAndSelectOrder(posPage!, tableName);
+        await openAndSelectOrder(posPage, tableName);
         await collectOrder(posPage);
-        await finalizeSaleWithPayment(posPage!, scenario.clientCedula, scenario.paymentMethod);
+        await finalizeSaleWithPayment(posPage, scenario.clientCedula, scenario.paymentMethod);
       });
     });
   });

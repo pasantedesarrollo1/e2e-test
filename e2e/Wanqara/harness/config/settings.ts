@@ -1,35 +1,19 @@
 import { buildSafeTenantUrl } from '@/e2e/Wanqara/harness/helpers/url-builder.js';
 import type { TestType } from '@playwright/test';
 
-export interface UserCredentials {
-  email?: string;
-  password?: string;
-}
+import type {
+  UserCredentials,
+  ChefUserCredentials,
+  PlaywrightHarnessConfig,
+  ChefHarnessConfig,
+} from '../types/config.types.js';
 
-export interface ChefUserCredentials extends UserCredentials {
-  ruc?: string;
-}
-
-export interface PlaywrightHarnessConfig {
-  publicBaseUrl: string;
-  tenantRuc: string;
-  users: {
-    actor1: UserCredentials;
-    actor2: UserCredentials;
-    actor3: UserCredentials;
-  };
-  seeded: {
-    enabled: boolean;
-    adminRoutes: string[];
-  };
-}
-
-export interface ChefHarnessConfig {
-  baseUrl: string;
-  users: {
-    actor1: ChefUserCredentials;
-  };
-}
+export type { 
+  UserCredentials, 
+  ChefUserCredentials, 
+  PlaywrightHarnessConfig, 
+  ChefHarnessConfig 
+} from '../types/config.types.js';
 
 const tenantRuc = process.env.PLAYWRIGHT_TENANT_RUC;
 if (!tenantRuc) throw new Error("❌ PLAYWRIGHT_TENANT_RUC is not defined in the .env file.");

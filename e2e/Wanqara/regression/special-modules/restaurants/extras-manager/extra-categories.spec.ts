@@ -4,7 +4,7 @@ interface ExtrasData {
   searchTerm: string;
   productsToAssign: string[];
 }
-interface ScenarioData extends ScenarioDefinition, TestMetadata {
+interface ScenarioData extends FlatScenario {
   authType: string;
   extrasData: ExtrasData;
 }
@@ -22,7 +22,7 @@ import {
 import scenariosRaw from "./0-json-data/extra-categories.json" with { type: "json" };
 const scenarios = scenariosRaw as unknown as ScenarioData[];
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 
 test.describe.serial("Extras Manager - Extra Categories", () => {
   generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
@@ -48,11 +48,13 @@ test.describe.serial("Extras Manager - Extra Categories", () => {
           const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
           await expect(categorySearchInput).toBeVisible();
           await categorySearchInput.fill(categoryName);
+           
           await page.waitForTimeout(1000); 
 
           const categoryItem = page.getByText(categoryName, { exact: true }).first();
           if (await categoryItem.isVisible()) {
             await categoryItem.click();
+             
             await page.waitForTimeout(1000);
             
             const removeButtons = page.getByRole("button", { name: /Quitar producto/i });
@@ -82,10 +84,12 @@ test.describe.serial("Extras Manager - Extra Categories", () => {
           await goToList();
           const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
           await categorySearchInput.fill(categoryName);
+           
           await page.waitForTimeout(1000);
           
           const categoryItem = page.getByText(categoryName, { exact: true }).first();
           await categoryItem.click();
+           
           await page.waitForTimeout(1000);
 
           await verifyDeletionConstraintsAndRemoveProducts(page);
@@ -95,10 +99,12 @@ test.describe.serial("Extras Manager - Extra Categories", () => {
           await goToList();
           const categorySearchInput = page.getByPlaceholder(/Buscar categor.a/i);
           await categorySearchInput.fill(categoryName);
+           
           await page.waitForTimeout(1000);
           
           const categoryItem = page.getByText(categoryName, { exact: true }).first();
           await categoryItem.click();
+           
           await page.waitForTimeout(1000);
 
           await deleteExtraCategory(page);

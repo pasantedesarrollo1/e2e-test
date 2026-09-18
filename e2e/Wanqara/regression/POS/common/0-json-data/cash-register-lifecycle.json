@@ -1,6 +1,7 @@
 [
   {
     "id": "CASH-REGISTER-001",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -27,6 +28,7 @@
   },
   {
     "id": "CASH-REGISTER-002",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",

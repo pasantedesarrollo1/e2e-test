@@ -1,6 +1,7 @@
 [
   {
     "id": "SALE-FINANCIAL-PRECISION-001",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
@@ -250,6 +251,7 @@
   },
   {
     "id": "SALE-FINANCIAL-PRECISION-002",
+    "fixture": "pos",
     "only": false,
     "skip": false,
     "skipReason": "",
