@@ -15,6 +15,8 @@
     },
     "description": "validates dynamic document type restrictions when switching subsidiaries in Pre-sales",
     "authType": "actor1",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "targetPath": "/admin/pre-sale/add",
     "steps": [
       {
@@ -31,8 +33,6 @@
         "electronicKeyword": "Factura",
         "subsidiaryName": "Wanqara Comercios"
       }
-    ],
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    ]
   }
 ]

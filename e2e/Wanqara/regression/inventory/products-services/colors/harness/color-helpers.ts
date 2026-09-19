@@ -1,5 +1,5 @@
 import { expect, type Page } from "@playwright/test";
-import { deleteRecordFromList, saveFormAndVerify, verifyRecordInList } from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
+import { deleteRecordFromList, saveFormAndVerify, verifyRecordInList } from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
 
 export interface CreateColorOptions {
   name: string;

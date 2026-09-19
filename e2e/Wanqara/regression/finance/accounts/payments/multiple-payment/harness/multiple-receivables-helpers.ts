@@ -1,5 +1,5 @@
 import { expect, type Page, type Locator } from "@playwright/test";
-import { selectClientFromSearchModal } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
+import { selectClientFromSearchModal } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
 
 export interface ReceivableClientOptions {
   cedula: string;

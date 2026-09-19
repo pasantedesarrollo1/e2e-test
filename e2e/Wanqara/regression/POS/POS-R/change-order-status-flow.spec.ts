@@ -1,5 +1,5 @@
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
-import { test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
+import { test } from "@/e2e/Wanqara/harness/fixtures/restaurant.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -59,8 +59,10 @@ for (const scenario of scenarios) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test("creates an order in Chef, prints preticket, and changes status back to pending in POS", async ({ stageEnvironment, chefContext  }) => {
-      const { page } = stageEnvironment;
+    // Assertions are encapsulated in Page Object helpers.
+    // eslint-disable-next-line playwright/expect-expect
+    test("creates an order in Chef, prints preticket, and changes status back to pending in POS", async ({ restaurantEnvironment, chefContext  }) => {
+      const { page } = restaurantEnvironment;
       test.setTimeout(180_000);
 
       await test.step("Create order and print preticket from Chef", async () => {

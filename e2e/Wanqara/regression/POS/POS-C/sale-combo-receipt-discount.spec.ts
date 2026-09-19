@@ -1,5 +1,5 @@
 import fs from "fs";
-interface ScenarioData extends FlatScenario {
+type ScenarioData = PosScenario & {
   documentType: string;
   productName: string;
   discountValue: string;
@@ -8,7 +8,7 @@ interface ScenarioData extends FlatScenario {
 
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { completePayment } from "@/e2e/Wanqara/regression/POS/harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "@/e2e/Wanqara/regression/POS/harness/products/pos-search.js";
@@ -24,8 +24,9 @@ const scenarios = parseScenarios<ScenarioData>(
 );
 
 test.describe("POS Sale - Combo con Recibo y Descuento", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     
+    // eslint-disable-next-line playwright/expect-expect
     test(`Vender un producto combo con recibos y descuento`, async ({ posEnvironment }) => {
       const { page } = posEnvironment;
       test.setTimeout(120_000);

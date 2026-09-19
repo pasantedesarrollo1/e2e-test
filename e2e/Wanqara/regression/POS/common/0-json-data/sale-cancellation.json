@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Retail (100) - Creates a POS sale and cancels it, verifying that the inventory switch is displayed",
     "metadata": {
       "ws": "WS-840",
       "tes": "TES-198",
@@ -15,7 +14,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Retail (100) - Creates a POS sale and cancels it, verifying that the inventory switch is displayed",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "expectSwitch": true,
     "expectMessage": false,
     "saleParams": {
@@ -23,12 +26,9 @@
       "clientCedula": "0000000001",
       "paymentMethod": "EFECTIVO"
     },
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "SALE-CANCELLATION-002",
@@ -36,7 +36,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Dispatch (101) - Creates a POS sale and cancels it, verifying that the message is displayed without the switch",
     "metadata": {
       "ws": "WS-840",
       "tes": "TES-198",
@@ -46,7 +45,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Dispatch (101) - Creates a POS sale and cancels it, verifying that the message is displayed without the switch",
     "authType": "actor2",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
     "expectSwitch": false,
     "expectMessage": true,
     "saleParams": {
@@ -55,11 +58,8 @@
       "paymentMethod": "EFECTIVO"
     },
     "openingAmount": "100.00",
-    "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios",
+    "forceBusinessType": "Comercios",
     "dispatchEnabled": true
   },
   {
@@ -68,7 +68,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Restaurant (001) - Creates a POS sale and cancels it, verifying that the message is displayed without the switch",
     "metadata": {
       "ws": "WS-840",
       "tes": "TES-198",
@@ -78,7 +77,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Restaurant (001) - Creates a POS sale and cancels it, verifying that the message is displayed without the switch",
     "authType": "actor1",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "expectSwitch": false,
     "expectMessage": true,
     "saleParams": {
@@ -86,11 +89,8 @@
       "clientCedula": "0000000001",
       "paymentMethod": "EFECTIVO"
     },
-    "subsidiaryName": "Wanqara",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Restaurante"
+    "forceBusinessType": "Restaurante"
   }
 ]

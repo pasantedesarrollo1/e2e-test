@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Retail",
     "metadata": {
       "ws": "WS-1002",
       "tes": "TES-211",
@@ -14,7 +13,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Retail",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "includeDynamicDocumentTest": true,
     "cartParams": {
       "productName": "Caja de alitas de pollo (100 u)",
@@ -23,12 +26,9 @@
       "dynamicDocumentType": "Recibos",
       "paymentMethod": "EFECTIVO"
     },
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "SALE-CART-002",
@@ -36,7 +36,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Restaurant",
     "metadata": {
       "ws": "WS-1002",
       "tes": "TES-211",
@@ -45,18 +44,19 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Restaurant",
     "authType": "actor1",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "includeDynamicDocumentTest": false,
     "cartParams": {
       "productName": "Caja de alitas de pollo (100 u)",
       "restrictedAmount": "14",
       "testClientCedula": "0000000001"
     },
-    "subsidiaryName": "Wanqara",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Restaurante"
+    "forceBusinessType": "Restaurante"
   }
 ]

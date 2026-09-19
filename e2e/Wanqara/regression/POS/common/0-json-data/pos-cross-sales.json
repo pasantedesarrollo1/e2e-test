@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "POS sale in branch 100 with receipts",
     "metadata": {
       "ws": "WS-1004",
       "tes": "TES-213",
@@ -14,8 +13,12 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "type": "retail-sale",
+    "description": "POS sale in branch 100 with receipts",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
+    "type": "retail-sale",
     "saleParams": {
       "productName": "Caja de alitas de pollo (100 u)",
       "printTicket": false,
@@ -23,12 +26,9 @@
       "clientCedula": "0000000001"
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "POS-CROSS-SALES-002",
@@ -36,7 +36,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "POS sale in branch 101 with receipts",
     "metadata": {
       "ws": "WS-1004",
       "tes": "TES-213",
@@ -45,8 +44,12 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "type": "retail-sale",
+    "description": "POS sale in branch 101 with receipts",
     "authType": "actor2",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
+    "type": "retail-sale",
     "saleParams": {
       "productName": "Caja de alitas de pollo (100 u)",
       "printTicket": false,
@@ -54,21 +57,17 @@
       "clientCedula": "0000000001"
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara Comercios Dispatch",
     "openingAmount": "100.00",
-    "subsidiaryCode": "101",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios",
+    "forceBusinessType": "Comercios",
     "dispatchEnabled": true
   },
   {
     "id": "POS-CROSS-SALES-003",
-    "fixture": "stage",
+    "fixture": "restaurant",
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Creates order in Chef and charges it verifying access_key",
     "metadata": {
       "ws": "WS-1004",
       "tes": "TES-213",
@@ -77,17 +76,18 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
-    "type": "restaurant-flow",
+    "description": "Creates order in Chef and charges it verifying access_key",
     "authType": "actor1",
-    "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara",
-    "openingAmount": "100.00",
-    "subsidiaryCode": "001",
     "loginMode": "cached",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "type": "restaurant-flow",
+    "paymentMethod": "EFECTIVO",
+    "openingAmount": "100.00",
     "cashRegisterMode": "fresh",
-    "businessType": "Restaurante",
+    "forceBusinessType": "Restaurante",
     "chefAuthType": "actor1",
-    "stageSetupOptions": {
+    "restaurantSetupOptions": {
       "createOrder": {
         "productName": "Caja de alitas de pollo (100 u)"
       }

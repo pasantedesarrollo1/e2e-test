@@ -1,5 +1,5 @@
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
-import { expect, test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
+import { expect, test } from "@/e2e/Wanqara/harness/fixtures/restaurant.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -53,8 +53,8 @@ for (const scenario of scenarios) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test("navigates to close orders screen and closes an order", async ({ stageEnvironment, chefContext  }) => {
-      const { page } = stageEnvironment;
+    test("navigates to close orders screen and closes an order", async ({ restaurantEnvironment, chefContext  }) => {
+      const { page } = restaurantEnvironment;
       test.setTimeout(180_000);
 
       await test.step("Create order in Chef manually", async () => {

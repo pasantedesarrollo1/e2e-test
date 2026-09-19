@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { expect, type Page } from "@playwright/test";
 import { ensureAuthenticated } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
-import { selectClientByCedula } from '@/e2e/Wanqara/harness/helpers/people/client-helpers.js';
+import { selectClientByCedula } from '@/e2e/Wanqara/harness/helpers/shared/client-picker.js';
 
 import { selectCheckout as _selectCheckout } from './admin-checkout-helpers.js';
 
@@ -11,7 +11,7 @@ export const selectCheckout = (page: Page, options: SelectCheckoutOptions = {}) 
 import { selectDocumentType } from './admin-document-helpers.js';
 export { selectDocumentType };
 
-  export { selectClientByCedula } from '@/e2e/Wanqara/harness/helpers/people/client-helpers.js';
+  export { selectClientByCedula } from '@/e2e/Wanqara/harness/helpers/shared/client-picker.js';
 
 import { searchAndSelectProduct } from './admin-checkout-helpers.js';
 export { searchAndSelectProduct };
@@ -49,6 +49,7 @@ export interface AdminPreSaleFlowOptions {
   authType: string;
   documentType?: string;
   clientCedula?: string;
+  identityType?: string;
   productName?: string;
   searchTerm?: string | null;
   beforeFinish?: (page: Page) => Promise<void>;

@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Retail",
     "metadata": {
       "ws": "WS-1025",
       "tes": "TES-217",
@@ -14,13 +13,14 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Retail",
     "authType": "actor3",
-    "businessType": "Comercios",
-    "searchKeyword": "alitas",
+    "loginMode": "cached",
     "subsidiaryName": "Wanqara Comercios",
     "subsidiaryCode": "100",
+    "forceBusinessType": "Comercios",
+    "searchKeyword": "alitas",
     "openingAmount": "100.00",
-    "loginMode": "cached",
     "dispatchEnabled": false,
     "cashRegisterMode": "fresh"
   }

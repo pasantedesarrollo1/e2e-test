@@ -33,6 +33,8 @@ export async function validateOutOfStockExtra(page: Page, extraName: string, out
   await expect(outOfStockLabel).toBeVisible();
   
   const incrementWrapper = extraRow.locator('.relative.inline-block');
+  // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+  // eslint-disable-next-line playwright/no-force-option
   await incrementWrapper.click({ force: true });
   
   const toastMsg = page.getByText(/No hay stock disponible para/i);

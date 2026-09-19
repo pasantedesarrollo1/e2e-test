@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Retail",
     "metadata": {
       "ws": "WS-995",
       "tes": "TES-214",
@@ -14,7 +13,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Retail",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "shareData": {
       "productName": "Caja de alitas de pollo (100 u)",
       "clientCedula": "0000000001",
@@ -22,11 +25,8 @@
         "label": "EFECTIVO"
       }
     },
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "10",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   }
 ]

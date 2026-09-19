@@ -1,5 +1,5 @@
 import { expect, type Page, type Locator } from "@playwright/test";
-import { expectSnackbar, selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { expectSnackbar, selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export interface IdentityModalOptions {
   identityType?: string;
@@ -24,6 +24,8 @@ export async function fillIdentityModal(page: Page, modalLocator: Locator, {
   await idInput.fill(identityNumber);
 
   const searchBtn = modalLocator.locator("button").filter({ has: page.locator(".mdi-magnify") }).first();
+  // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+  // eslint-disable-next-line playwright/no-force-option
   await searchBtn.click({ force: true });
 
   if (expectedName) {
@@ -40,6 +42,7 @@ export interface SelectClientOptions {
   expectModalClosed?: boolean;
   snackbarRequired?: boolean;
   assertCedulaOnMain?: boolean;
+  identityType?: string;
 }
 
 export async function selectClientByCedula(page: Page, cedula: string, options: SelectClientOptions = {}): Promise<void> {
@@ -49,7 +52,8 @@ export async function selectClientByCedula(page: Page, cedula: string, options: 
     clientModalSelector = ".v-overlay--active .v-overlay__content:not(.v-snackbar__wrapper)",
     expectModalClosed = true,
     snackbarRequired = false,
-    assertCedulaOnMain = false
+    assertCedulaOnMain = false,
+    identityType = "CEDULA"
   } = options;
 
   const cedulaInput = exactCedulaPlaceholder
@@ -89,7 +93,7 @@ export async function selectClientByCedula(page: Page, cedula: string, options: 
 
     if (await alertMessage.isVisible()) {
       await fillIdentityModal(page, clientModal, {
-        identityType: "CEDULA",
+        identityType: identityType,
         identityNumber: cedula
       });
       await expect(saveBtn.or(successSnackbar)).toBeVisible({ timeout: 15000 });
@@ -97,6 +101,8 @@ export async function selectClientByCedula(page: Page, cedula: string, options: 
 
     if (await saveBtn.isVisible()) {
       await expect(saveBtn).toBeEnabled({ timeout: 10000 });
+      // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+      // eslint-disable-next-line playwright/no-force-option
       await saveBtn.click({ force: true });
       if (expectModalClosed) {
         await expect(clientModal).not.toBeVisible({ timeout: 5000 });

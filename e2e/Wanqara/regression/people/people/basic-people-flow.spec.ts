@@ -2,12 +2,12 @@
 import { test } from "@/e2e/Wanqara/harness/fixtures/admin.fixture.js";
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
 import { createPerson, deactivatePerson, ensureCleanPerson, searchPerson, verifyDeactivatedStrikethrough } from "./harness/people-helpers.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 // @ts-ignore
 import type { PersonData } from './harness/people-helpers.js';
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   subsidiaryName: string;
   subsidiaryCode: string;
   authType: string;
@@ -30,7 +30,7 @@ const scenarios = parseScenarios<ScenarioData>(
 test.describe("People Management (Basic Flow)", () => {
   requirePosCredentials(test);
 
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     
     test.use({ 
       targetPath: "/admin/people/list",

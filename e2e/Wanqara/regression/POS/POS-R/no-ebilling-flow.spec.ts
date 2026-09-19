@@ -1,5 +1,5 @@
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
-import { expect, test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
+import { expect, test } from "@/e2e/Wanqara/harness/fixtures/restaurant.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -20,7 +20,7 @@ interface ScenarioData {
   ebillingEnabled?: boolean;
   productName: string;
   paymentMethod: string;
-  businessType: string;
+  forceBusinessType: string;
   dispatchEnabled?: boolean;
   metadata?: { testScope?: string; ws?: string; [key: string]: unknown };
 }
@@ -46,8 +46,8 @@ for (const scenario of scenarios) {
       
     });
 
-    test("Direct Sale with Electronic Billing Disabled", async ({ stageEnvironment }) => {
-      const { page } = stageEnvironment;
+    test("Direct Sale with Electronic Billing Disabled", async ({ restaurantEnvironment }) => {
+      const { page } = restaurantEnvironment;
       test.setTimeout(120_000);
 
       await test.step("1. Validar que la Facturación Electrónica no esté disponible", async () => {
@@ -81,7 +81,7 @@ for (const scenario of scenarios) {
         await withSessionRetry(page, scenario.authType, async () => {
           await ensureAuthenticated(page, { targetPath: "/admin/home", authType: scenario.authType });
           await navigateToSubsidiaryDetail(page, scenario.subsidiaryName, scenario.subsidiaryCode);
-          await ensureSubsidiaryConfig(page, scenario.businessType, scenario.dispatchEnabled, true);
+          await ensureSubsidiaryConfig(page, scenario.forceBusinessType, scenario.dispatchEnabled, true);
           
           await logoutFromSession(page);
         });

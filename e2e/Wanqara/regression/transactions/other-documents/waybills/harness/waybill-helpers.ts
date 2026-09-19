@@ -1,8 +1,8 @@
 import { expect, type Page, type Locator } from "@playwright/test";
 import { ensureAuthenticated } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
-import { searchInList } from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
-import { fillIdentityModal } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
-import { expectSnackbar, selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { searchInList } from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
+import { fillIdentityModal } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
+import { expectSnackbar, selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export type CarrierMethod = "cedula" | "selector" | "form";
 
@@ -232,6 +232,8 @@ export async function submitWaybillAndVerify(page: Page): Promise<void> {
       res.request().method() === 'POST' && 
       res.status() === 201
     ),
+    // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+    // eslint-disable-next-line playwright/no-force-option
     saveBtn.click({ force: true })
   ]);
 

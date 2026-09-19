@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Retail",
     "metadata": {
       "ws": "WS-1003",
       "tes": "TES-212",
@@ -14,7 +13,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Retail",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "surchargeProducts": [
       {
         "afterSelectFn": "selectFirstVariant",
@@ -241,13 +244,10 @@
       "details": []
     },
     "surchargeClientCedula": "0000000001",
-    "subsidiaryName": "Wanqara Comercios",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "SALE-FINANCIAL-PRECISION-002",
@@ -255,7 +255,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Restaurant",
     "metadata": {
       "ws": "WS-1003",
       "tes": "TES-212",
@@ -264,7 +263,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Restaurant",
     "authType": "actor1",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "surchargeProducts": [
       {
         "afterSelectFn": null,
@@ -467,12 +470,9 @@
       "details": []
     },
     "surchargeClientCedula": "0000000001",
-    "subsidiaryName": "Wanqara",
     "paymentMethod": "EFECTIVO",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Restaurante"
+    "forceBusinessType": "Restaurante"
   }
 ]

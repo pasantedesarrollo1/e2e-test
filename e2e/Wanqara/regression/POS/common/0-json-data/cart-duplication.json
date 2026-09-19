@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Flow 1: Scanner and interface iteration",
     "metadata": {
       "ws": "WS-1025",
       "tes": "TES-211",
@@ -14,7 +13,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Flow 1: Scanner and interface iteration",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "actions": [
       {
         "type": "searchByCode",
@@ -35,12 +38,9 @@
     ],
     "productName": "Caja de alitas de pollo (100 u)",
     "productCode": "Caj000000001",
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "CART-DUPLICATION-002",
@@ -48,7 +48,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Flow 2: Manual override and increments",
     "metadata": {
       "ws": "WS-1025",
       "tes": "TES-211",
@@ -57,7 +56,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Flow 2: Manual override and increments",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "actions": [
       {
         "type": "clickCard",
@@ -79,12 +82,9 @@
     ],
     "productName": "Caja de alitas de pollo (100 u)",
     "productCode": "Caj000000001",
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "CART-DUPLICATION-003",
@@ -92,7 +92,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Flow 3: Chaos of sums and subtractions",
     "metadata": {
       "ws": "WS-1025",
       "tes": "TES-211",
@@ -101,7 +100,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Flow 3: Chaos of sums and subtractions",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "actions": [
       {
         "type": "clickCard",
@@ -127,12 +130,9 @@
     ],
     "productName": "Caja de alitas de pollo (100 u)",
     "productCode": "Caj000000001",
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "CART-DUPLICATION-004",
@@ -140,7 +140,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Flow 4: Rapid fire codes",
     "metadata": {
       "ws": "WS-1025",
       "tes": "TES-211",
@@ -149,7 +148,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Flow 4: Rapid fire codes",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "actions": [
       {
         "type": "searchByCode",
@@ -170,12 +173,9 @@
     ],
     "productName": "Caja de alitas de pollo (100 u)",
     "productCode": "Caj000000001",
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "CART-DUPLICATION-005",
@@ -183,7 +183,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Flow 5: Consecutive scans without delay (scanner race condition)",
     "metadata": {
       "ws": "WS-1025",
       "tes": "TES-211",
@@ -192,7 +191,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Flow 5: Consecutive scans without delay (scanner race condition)",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "actions": [
       {
         "type": "searchByCode",
@@ -209,12 +212,9 @@
     ],
     "productName": "Caja de alitas de pollo (100 u)",
     "productCode": "Caj000000001",
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "CART-DUPLICATION-006",
@@ -222,7 +222,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Flow 6: Double-click on badge (rapid badge race condition)",
     "metadata": {
       "ws": "WS-1025",
       "tes": "TES-211",
@@ -231,7 +230,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Flow 6: Double-click on badge (rapid badge race condition)",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "actions": [
       {
         "type": "clickCard",
@@ -247,12 +250,9 @@
     ],
     "productName": "Caja de alitas de pollo (100 u)",
     "productCode": "Caj000000001",
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "CART-DUPLICATION-007",
@@ -260,7 +260,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Flow 7: Double-click on product card (rapid card tap)",
     "metadata": {
       "ws": "WS-1025",
       "tes": "TES-211",
@@ -269,7 +268,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Flow 7: Double-click on product card (rapid card tap)",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "actions": [
       {
         "type": "clickCard",
@@ -282,12 +285,9 @@
     ],
     "productName": "Caja de alitas de pollo (100 u)",
     "productCode": "Caj000000001",
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "CART-DUPLICATION-008",
@@ -295,7 +295,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Flow 8: Manual amount set to 0, then re-add via card",
     "metadata": {
       "ws": "WS-1025",
       "tes": "TES-211",
@@ -304,7 +303,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Flow 8: Manual amount set to 0, then re-add via card",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "actions": [
       {
         "type": "clickCard",
@@ -321,12 +324,9 @@
     ],
     "productName": "Caja de alitas de pollo (100 u)",
     "productCode": "Caj000000001",
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "CART-DUPLICATION-009",
@@ -334,7 +334,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Flow 9: Scanner then badge plus, alternating mechanisms",
     "metadata": {
       "ws": "WS-1025",
       "tes": "TES-211",
@@ -343,7 +342,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Flow 9: Scanner then badge plus, alternating mechanisms",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "actions": [
       {
         "type": "searchByCode",
@@ -364,11 +367,8 @@
     ],
     "productName": "Caja de alitas de pollo (100 u)",
     "productCode": "Caj000000001",
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   }
 ]

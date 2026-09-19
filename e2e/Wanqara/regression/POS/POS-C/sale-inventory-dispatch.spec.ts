@@ -1,17 +1,26 @@
 
 import fs from "fs";
-interface ScenarioData extends FlatScenario {
+
+type CallbackKeys = 'selectFirstVariant' | 'selectFirstSerie';
+
+interface SaleProduct {
+  name: string;
+  type: string;
+  afterSelectCallback?: CallbackKeys;
+}
+
+interface ScenarioData extends PosScenario {
   dispatchEnabled: boolean;
-  products: any[];
+  products: SaleProduct[];
   paymentMethod: string;
 }
 
 import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
-import type { Page, Locator } from "@playwright/test";
+import type { Page } from "@playwright/test";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,16 +40,19 @@ const CALLBACK_MAP = {
   selectFirstSerie
 };
 
-async function executeSales(page: Page, { products, paymentMethod }: any) {
+async function executeSales(page: Page, { products, paymentMethod }: { products: SaleProduct[], paymentMethod: string }) {
   for (const product of products) {
-    const afterProductSelect = product.afterSelectCallback ? (CALLBACK_MAP as any)[product.afterSelectCallback] : null;
+    const afterProductSelect = product.afterSelectCallback ? CALLBACK_MAP[product.afterSelectCallback] : null;
 
     await test.step(`Sale [${product.type}] - ${product.name}`, async () => {
       await expect(page).toHaveURL(/\/pos\/(home|restaurant-home)/);
       await searchAndSelectProduct(page, { name: product.name, searchTerm: undefined });
+      
+      // eslint-disable-next-line playwright/no-conditional-in-test
       if (afterProductSelect) {
         await afterProductSelect(page);
       }
+      
       await clickFinishSale(page);
       await completePayment(page, { paymentMethod });
     });
@@ -50,7 +62,8 @@ async function executeSales(page: Page, { products, paymentMethod }: any) {
 test.describe.serial("POS Retail - Sale Inventory Dispatch", () => {
   requirePosCredentials(test);
 
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
+    // eslint-disable-next-line playwright/expect-expect
     test(`completes multiple sales seamlessly with dispatch ${scenario.dispatchEnabled ? 'enabled' : 'disabled'}`, async ({ posEnvironment }) => {
       const { page } = posEnvironment;
       test.setTimeout(180_000);

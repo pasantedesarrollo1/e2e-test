@@ -5,13 +5,13 @@ interface ProductOptionsParams {
   paymentMethod: string;
   [key: string]: any;
 }
-interface ScenarioData extends FlatScenario {
+type ScenarioData = PosScenario & {
   productOptionsParams: ProductOptionsParams;
 }
 
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { completePayment } from "@/e2e/Wanqara/regression/POS/harness/payments/pos-payment.js";
 import {
@@ -49,7 +49,7 @@ async function assertCartHasProduct(page: Page) {
 }
 
 test.describe("Product Options", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     
     test("validates product options modal for all price type and discount type combinations", async ({ posEnvironment }) => {
       const { page } = posEnvironment;

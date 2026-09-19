@@ -1,7 +1,7 @@
 /* eslint-disable */
 import type { Page, Locator } from "@playwright/test";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 interface CartAction {
@@ -10,7 +10,7 @@ interface CartAction {
   expectedQuantity?: number;
 }
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = PosScenario & {
   productName: string;
   productCode: string;
   actions: CartAction[];
@@ -28,7 +28,7 @@ const scenarios: ScenarioData[] = JSON.parse(
 );
 
 test.describe("Cart Duplication", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario) => {
     
     test("Execute Flow", async ({ posEnvironment }) => {
       const { page } = posEnvironment;

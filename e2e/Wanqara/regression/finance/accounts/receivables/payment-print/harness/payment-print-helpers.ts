@@ -1,6 +1,6 @@
 import { expect, type Page } from "@playwright/test";
-import { clickTableRowAction } from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
-import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/ui/action-tooltips.js";
+import { clickTableRowAction } from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/admin/action-tooltips.js";
 import { fillSingleReceivablePayment, searchReceivableAccount } from "@/e2e/Wanqara/regression/finance/accounts/payments/multiple-payment/harness/multiple-receivables-helpers.js";
 
 export interface PaymentPrintOptions {

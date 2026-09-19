@@ -4,43 +4,28 @@ import type { TestType } from "@playwright/test";
 
 import type { 
   ScenarioDefinition, 
-  TestMetadata, 
-  StageSetupOrderOptions, 
-  StageSetupOptions 
+  TestMetadata,
+  AdminScenario,
+  PosScenario,
+  RestaurantScenario
 } from "@/e2e/Wanqara/harness/types/scenarios.types.js";
 
-export type { ScenarioDefinition, TestMetadata };
-
-// Tipo auxiliar para specs que usan generateDataDrivenTests sin discriminar por fixture
-export type FlatScenario = {
-  id?: string;
-  description: string;
-  skip?: boolean;
-  skipReason?: string;
-  only?: boolean;
-  metadata?: TestMetadata;
-  authType?: string;
-  loginMode?: 'fresh' | 'cached' | '';
-  subsidiaryName?: string;
-  subsidiaryCode?: string;
-  openingAmount?: string;
-  businessType?: string;
-  dispatchEnabled?: boolean;
-  cashRegisterMode?: string;
-  chefAuthType?: string;
-  stageSetupOptions?: StageSetupOrderOptions | StageSetupOptions | null;
-  [key: string]: unknown;
+export type { 
+  ScenarioDefinition,
+  AdminScenario,
+  PosScenario,
+  RestaurantScenario, 
+  TestMetadata 
 };
 
-function buildGroupKey(scenario: FlatScenario): string {
+function buildGroupKey(scenario: ScenarioDefinition): string {
     const scope = scenario.metadata?.testScope ?? "regression";
     const loginMode = scenario.loginMode ?? (scope === "release" ? "fresh" : "cached");
     const authType = scenario.authType ?? "anonymous";
     return `${loginMode}::${authType}`;
 }
 
-
-function buildGroupUseConfig(scenario: FlatScenario): Record<string, unknown> {
+function buildGroupUseConfig(scenario: ScenarioDefinition): Record<string, unknown> {
     const scope = scenario.metadata?.testScope ?? "regression";
     const loginMode = scenario.loginMode ?? (scope === "release" ? "fresh" : "cached");
     const useConfig: Record<string, unknown> = {};
@@ -54,13 +39,18 @@ function buildGroupUseConfig(scenario: FlatScenario): Record<string, unknown> {
     return useConfig;
 }
 
-export function generateDataDrivenTests<T extends FlatScenario, Fixtures extends Record<string, any>>(test: TestType<Fixtures, any>, scenarios: T[], testFn: (scenario: T) => void): void {
+// We use 'any' here to support Playwright's polymorphic test object, which changes 
+// its signature depending on the custom fixtures extended in each spec file.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function generateDataDrivenTests<T extends ScenarioDefinition>(test: TestType<any, any>, scenarios: T[], testFn: (scenario: T) => void): void {
     const active: T[] = [];
     for (const scenario of scenarios) {
         if (scenario.skip) {
-            const reason = scenario.skipReason ?? "Omitido por configuración en JSON";
+            const reason = scenario.skipReason ?? "Omitido por configuracin en JSON";
 
+            // eslint-disable-next-line playwright/no-skipped-test
             test.describe.skip(`Escenario: ${scenario.description}`, () => {
+                // eslint-disable-next-line playwright/expect-expect
                 test(`Omitido: ${reason}`, async () => {});
             });
 
@@ -83,40 +73,49 @@ export function generateDataDrivenTests<T extends FlatScenario, Fixtures extends
 
         test.describe(`Grupo [${groupKey}]`, () => {
             if (Object.keys(useConfig).length > 0) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // By bypassing the type check, we allow dynamic injection of fixtures.
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unnecessary-type-assertion
                 test.use(useConfig as any);
             }
 
             for (const scenario of groupScenarios) {
                 const metadata = scenario.metadata!;
                 const executionTag = `@${metadata.testScope}`;
-                const describeBlock = scenario.only ? test.describe.only : test.describe;
+                
+                // We disable the 'valid-describe-callback' rule here because ESLint statically expects
+                // an inline arrow function, but we are safely passing our callback via the 'fn' parameter
+                // to dynamically route between .only and normal execution without duplicating code.
+                /* eslint-disable playwright/valid-describe-callback */
+                const runDescribe = scenario.only 
+                    ? (title: string, fn: () => void) => test.describe.only(title, fn)
+                    : (title: string, fn: () => void) => test.describe(title, fn);
+                /* eslint-enable playwright/valid-describe-callback */
 
                 const prefixContent: string[] = [];
                 if (metadata.ws) prefixContent.push(Array.isArray(metadata.ws) ? metadata.ws.join(", ") : metadata.ws);
                 if (scenario.id) prefixContent.push(scenario.id);
                 const prefix = prefixContent.length > 0 ? `[${prefixContent.join(' - ')}] ` : '';
                 
-                describeBlock(`Escenario: ${prefix}${scenario.description} ${executionTag}`, () => {
+                runDescribe(`Escenario: ${prefix}${scenario.description} ${executionTag}`, () => {
                     if (metadata.ws) {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
                         annotateTicket(test as any, metadata);
                     }
 
                     const scenarioOptions: Record<string, unknown> = {};
-                    if (scenario.subsidiaryName) scenarioOptions.subsidiaryName = scenario.subsidiaryName;
-                    if (scenario.subsidiaryCode) scenarioOptions.subsidiaryCode = scenario.subsidiaryCode;
-                    if (scenario.openingAmount) scenarioOptions.openingAmount = scenario.openingAmount;
+                    if ('subsidiaryName' in scenario && scenario.subsidiaryName) scenarioOptions.subsidiaryName = scenario.subsidiaryName;
+                    if ('subsidiaryCode' in scenario && scenario.subsidiaryCode) scenarioOptions.subsidiaryCode = scenario.subsidiaryCode;
+                    if ('openingAmount' in scenario && scenario.openingAmount) scenarioOptions.openingAmount = scenario.openingAmount;
                     if (scenario.authType) scenarioOptions.authType = scenario.authType;
                     if (scenario.loginMode) scenarioOptions.loginMode = scenario.loginMode;
-                    if (scenario.businessType) scenarioOptions.businessType = scenario.businessType;
-                    if (scenario.dispatchEnabled !== undefined) scenarioOptions.dispatchEnabled = scenario.dispatchEnabled;
-                    if (scenario.cashRegisterMode) scenarioOptions.cashRegisterMode = scenario.cashRegisterMode;
-                    if (scenario.chefAuthType) scenarioOptions.chefAuthType = scenario.chefAuthType;
-                    if (scenario.stageSetupOptions) scenarioOptions.stageSetupOptions = scenario.stageSetupOptions;
+                    if ('forceBusinessType' in scenario && scenario.forceBusinessType) scenarioOptions.forceBusinessType = scenario.forceBusinessType;
+                    if ('dispatchEnabled' in scenario && scenario.dispatchEnabled !== undefined) scenarioOptions.dispatchEnabled = scenario.dispatchEnabled;
+                    if ('cashRegisterMode' in scenario && scenario.cashRegisterMode) scenarioOptions.cashRegisterMode = scenario.cashRegisterMode;
+                    if ('chefAuthType' in scenario && scenario.chefAuthType) scenarioOptions.chefAuthType = scenario.chefAuthType;
+                    if ('restaurantSetupOptions' in scenario && scenario.restaurantSetupOptions) scenarioOptions.restaurantSetupOptions = scenario.restaurantSetupOptions;
 
                     if (Object.keys(scenarioOptions).length > 0) {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unnecessary-type-assertion
                         test.use(scenarioOptions as any);
                     }
 

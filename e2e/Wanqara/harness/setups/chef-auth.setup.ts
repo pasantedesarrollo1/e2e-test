@@ -12,11 +12,15 @@ for (const actorKey of Object.keys(chefHarness.users)) {
     const sessionPath = getChefSessionPath(actorKey);
     fs.mkdirSync(path.dirname(sessionPath), { recursive: true });
 
+    // Conditional logic is required in Setups to manage session caching and CI degradation.
+    // eslint-disable-next-line playwright/no-conditional-in-test
     if (isSessionFresh(sessionPath)) {
       console.log(`[Setup] Caché activa encontrada para CHEF ${actorKey}. Saltando login ⚡`);
       return;
     }
 
+    // Conditional logic is required in Setups to manage session caching and CI degradation.
+    // eslint-disable-next-line playwright/no-conditional-in-test
     if (!hasChefCredentials()) {
       fs.writeFileSync(sessionPath, JSON.stringify({ cookies: [], origins: [] }));
       return;

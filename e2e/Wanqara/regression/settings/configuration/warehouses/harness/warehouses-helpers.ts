@@ -2,7 +2,7 @@
 import type { Page } from '@playwright/test';
 export interface WarehouseOptions { name: string; code: string; address: string; description: string; }
 import { expect } from '@playwright/test';
-import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export async function createWarehouse(page: Page, { name, code, address, description }: WarehouseOptions): Promise<void> {
   await page.getByRole('link', { name: /Agregar Bodega/i }).first().click();

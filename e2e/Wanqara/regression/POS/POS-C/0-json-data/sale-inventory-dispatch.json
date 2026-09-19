@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Sales WITH Post-Sale Inventory Dispatch (Actor 3)",
     "metadata": {
       "ws": "WS-1009",
       "tes": "TES-218",
@@ -14,8 +13,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Sales WITH Post-Sale Inventory Dispatch (Actor 3)",
     "authType": "actor3",
     "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "dispatchEnabled": true,
     "products": [
       {
@@ -34,9 +36,8 @@
         "afterSelectCallback": "selectFirstVariant"
       }
     ],
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
     "paymentMethod": "EFECTIVO",
-    "openingAmount": "100.00"
+    "openingAmount": "100.00",
+    "forceBusinessType": "Comercios"
   }
 ]

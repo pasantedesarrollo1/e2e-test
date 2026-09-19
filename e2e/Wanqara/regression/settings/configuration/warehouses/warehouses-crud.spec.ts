@@ -2,17 +2,17 @@
 import { test } from '@playwright/test';
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
 import { ensureAuthenticated } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
-import { deleteRecordFromList } from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
-import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/ui/action-tooltips.js";
+import { deleteRecordFromList } from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/admin/action-tooltips.js";
 import { createWarehouse } from "./harness/warehouses-helpers.js";
 
 import rawScenarios from "./0-json-data/warehouses-crud.json" with { type: "json" };
 const scenarios = parseScenarios<ScenarioData>(rawScenarios);
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import type { WarehouseOptions } from '@/e2e/Wanqara/regression/settings/configuration/warehouses/harness/warehouses-helpers.js';
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   authType: string;
   warehouseData: WarehouseOptions;
 }
@@ -20,7 +20,7 @@ interface ScenarioData extends FlatScenario {
 
 
 test.describe('Warehouse Management CRUD', () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     requirePosCredentials(test);
 
     test(

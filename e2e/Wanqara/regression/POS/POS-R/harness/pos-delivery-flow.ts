@@ -1,6 +1,6 @@
 import { expect, type Page, type Locator } from "@playwright/test";
-import { fillIdentityModal } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
-import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { fillIdentityModal } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
+import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export const DELIVERY_SEED = {
   phone: "0999999922",
@@ -96,6 +96,8 @@ export async function addClientFromDeliveryForm(page: Page, form: Locator, { ced
     page.waitForResponse(
       (res) => res.url().includes("/api/v1/pos/people") && res.request().method() === "GET" && res.status() === 200
     ),
+    // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+    // eslint-disable-next-line playwright/no-force-option
     saveBtn.click({ force: true }),
   ]);
 
@@ -125,6 +127,8 @@ export async function saveDeliveryForm(page: Page): Promise<void> {
     page.waitForResponse(
       (res) => res.url().includes("/api/v1/restaurant/deliveries") && res.request().method() === "POST" && res.status() === 201
     ),
+    // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+    // eslint-disable-next-line playwright/no-force-option
     saveBtn.click({ force: true }),
   ]);
 

@@ -1,11 +1,10 @@
 [
   {
     "id": "COLLECT-ORDERS-FLOW-001",
-    "fixture": "stage",
+    "fixture": "restaurant",
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Restaurant",
     "metadata": {
       "ws": "WS-1037",
       "tes": "TES-232",
@@ -14,14 +13,15 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Restaurant",
     "authType": "actor1",
-    "paymentMethod": "EFECTIVO",
+    "loginMode": "cached",
     "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "paymentMethod": "EFECTIVO",
     "productName": "Caja de alitas de pollo (100 u)",
     "clientCedula": "0000000001",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "cached",
     "chefAuthType": "actor1",
     "chefSubsidiary": "Wanqara",
     "chefSubsidiaryCode": "001"

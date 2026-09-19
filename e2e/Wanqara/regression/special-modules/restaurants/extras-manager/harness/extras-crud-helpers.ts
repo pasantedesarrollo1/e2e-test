@@ -1,5 +1,5 @@
 import { expect, type Page } from "@playwright/test";
-import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 const categoryCreatedMsg = /Categor.a( extra)? creada/i;
 const changesSavedMsg = /Cambios de productos extra guardados/i;

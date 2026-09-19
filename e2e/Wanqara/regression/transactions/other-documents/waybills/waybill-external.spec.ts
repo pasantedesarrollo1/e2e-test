@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { expect, test } from "@playwright/test";
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
-import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
+import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
 import { selectCheckout, searchAndSelectProduct, selectPaymentMethod, submitAdminSale } from "../../sales/harness/admin-checkout-helpers.js";
 import { waitForFormDefaults } from "../../sales/harness/admin-dynamic-documents-helpers.js";
 import { ensureAuthenticated } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
@@ -12,11 +12,12 @@ import {
 } from "./harness/waybill-helpers.js";
 
 import scenariosRaw from "./0-json-data/waybill-external.json" with { type: "json" };
-const scenarios = scenariosRaw as unknown as ScenarioData[];
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+const scenarios = parseScenarios<ScenarioData>(scenariosRaw);
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 
 // @ts-ignore
 import type { TransporterInfo } from './harness/waybill-helpers.js';
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 interface WaybillData {
   isLongProductSale?: boolean;
   checkoutName: string;
@@ -29,14 +30,14 @@ interface WaybillData {
   shipmentAmountExternal?: string;
 }
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   authType: string;
   waybillData: WaybillData;
 }
 
 
 test.describe.serial("Waybills - External Waybill", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     requirePosCredentials(test);
 
     test(
@@ -51,7 +52,7 @@ test.describe.serial("Waybills - External Waybill", () => {
             await page.waitForURL(/\/admin\/ventas\/add/);
             await waitForFormDefaults(page);
             await selectCheckout(page, { warehouseName: scenario.waybillData.checkoutName });
-            await selectClientByCedula(page, scenario.waybillData.saleParams.clientCedula);
+            await selectClientByCedula(page, scenario.waybillData.saleParams.clientCedula, {  identityType: scenario.waybillData.saleParams.identityType });
             await searchAndSelectProduct(page, { name: scenario.waybillData.saleParams.productName });
             await selectPaymentMethod(page, scenario.waybillData.saleParams.paymentMethod);
             await submitAdminSale(page);

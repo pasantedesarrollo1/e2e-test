@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
-import { test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
+import { test } from "@/e2e/Wanqara/harness/fixtures/restaurant.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -49,7 +49,7 @@ for (const scenario of scenarios) {
       chefLogin: scenario.chefLogin,
       chefSubsidiary: scenario.chefSubsidiary,
       chefSubsidiaryCode: scenario.chefSubsidiaryCode,
-      stageSetupOptions: {
+      restaurantSetupOptions: {
         createOrder: {
           productName: scenario.productName
         }
@@ -60,8 +60,8 @@ for (const scenario of scenarios) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test("closes an existing order from the POS", async ({ stageEnvironment }) => {
-      const { page } = stageEnvironment;
+    test("closes an existing order from the POS", async ({ restaurantEnvironment }) => {
+      const { page } = restaurantEnvironment;
       test.setTimeout(180_000);
       
       await test.step("Navigate to close order screen", async () => {

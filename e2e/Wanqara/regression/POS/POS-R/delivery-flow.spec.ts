@@ -1,23 +1,16 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 interface DeliveryData {
   phone: string;
   clientName: string;
   observation: string;
   cedula: string;
-  address: any;
+  address: DeliveryAddressOptions;
 }
-interface ScenarioData extends FlatScenario {
-  description: string;
-  metadata?: any;
-  openingAmount: string;
-  authType: string;
-  loginMode?: "fresh" | "cached" | "";
-  subsidiaryName: string;
-  subsidiaryCode: string;
+type ScenarioData = PosScenario & {
   productName: string;
   paymentMethod: string;
   chefAuthType: string;
@@ -48,10 +41,12 @@ import {
   selectDeliveryMode,
   selectExistingDeliveryAddress,
   verifyDeliveryConfirmed,
+  type DeliveryAddressOptions,
 } from "./harness/pos-delivery-flow.js";
 
 test.describe.serial("POS Restaurant - Delivery Flow", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
+    // eslint-disable-next-line playwright/expect-expect
     test("creates or selects a delivery address depending on prior state", async ({ posEnvironment }) => {
       const { page } = posEnvironment;
       test.info().annotations.push({
@@ -78,6 +73,8 @@ test.describe.serial("POS Restaurant - Delivery Flow", () => {
         return await ensureDeliveryPhoneAndAddress(page, modal, scenario.deliveryData.phone);
       });
 
+      // This is a dynamic robust test that handles both new and existing customer flows based on state.
+      // eslint-disable-next-line playwright/no-conditional-in-test
       if (isNew) {
         await test.step("Fill delivery contact info", async () => {
           await fillDeliveryFormInfo(page, form!, {

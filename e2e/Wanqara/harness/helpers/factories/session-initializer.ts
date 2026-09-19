@@ -85,11 +85,11 @@ export class SessionInitializer {
         
         if (targetPath && targetPath !== "/pos/home") {
           await page.goto(targetPath);
-          // eslint-disable-next-line playwright/no-networkidle
           // EXPLICACIÓN: Se requiere 'networkidle' porque el estado de sesión 
-    // depende de peticiones de fondo de hidratación del carrito/estado inicial
-    // que no tienen un endpoint único predecible y fallarían las validaciones iniciales.
-    await page.waitForLoadState("networkidle");
+          // depende de peticiones de fondo de hidratación del carrito/estado inicial
+          // que no tienen un endpoint único predecible y fallarían las validaciones iniciales.
+          // eslint-disable-next-line playwright/no-networkidle
+          await page.waitForLoadState("networkidle");
         }
       }
     }

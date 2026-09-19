@@ -1,11 +1,10 @@
 [
   {
     "id": "SALES-WITH-TIPS-COMBINATIONS-001",
-    "fixture": "stage",
+    "fixture": "restaurant",
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Restaurant",
     "metadata": {
       "ws": "WS-1040",
       "tes": "TES-235",
@@ -14,8 +13,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Restaurant",
     "authType": "actor1",
+    "loginMode": "cached",
     "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "tipToType": "3.3337373372323",
     "products": {
       "estandar": "Caja de alitas de pollo (100 u)",
@@ -107,8 +109,6 @@
     "paymentMethod": "EFECTIVO",
     "productName": "Caja de alitas de pollo (100 u)",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "cached",
     "chefAuthType": "actor1",
     "chefSubsidiary": "Wanqara",
     "chefSubsidiaryCode": "001"

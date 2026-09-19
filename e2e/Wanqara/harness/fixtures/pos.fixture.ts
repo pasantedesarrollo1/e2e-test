@@ -12,7 +12,7 @@ export type PosFixtures = {
   openingAmount: string;
   authType: string;
   loginMode: "fresh" | "cached" | "";
-  businessType: string;
+  forceBusinessType: string;
   dispatchEnabled: boolean;
   cashRegisterMode: string;
   posEnvironment: { page: Page; contextType: string };
@@ -24,11 +24,11 @@ export const test = base.extend<PosFixtures>({
   openingAmount: ["", { option: true }],
   authType: ["", { option: true }],
   loginMode: ["", { option: true }],
-  businessType: ["", { option: true }],
+  forceBusinessType: ["", { option: true }],
   dispatchEnabled: [false, { option: true }],
   cashRegisterMode: ["", { option: true }],
 
-  posEnvironment: async ({ page, subsidiaryName, subsidiaryCode, openingAmount, authType, loginMode, businessType, dispatchEnabled, cashRegisterMode }, use, testInfo) => {
+  posEnvironment: async ({ page, subsidiaryName, subsidiaryCode, openingAmount, authType, loginMode, forceBusinessType, dispatchEnabled, cashRegisterMode }, use, testInfo) => {
     grantSetupHeadroom(testInfo, 60_000);
 
     if (!subsidiaryName) throw new Error("page fixture requires subsidiaryName option");
@@ -39,11 +39,11 @@ export const test = base.extend<PosFixtures>({
 
     await SessionInitializer.setup(page, scenario, { targetPath: "/admin/home" });
 
-    if (businessType) {
-      await runEnvSetupFlow(page, { authType, businessType, dispatchEnabled, subsidiaryName, subsidiaryCode });
+    if (forceBusinessType) {
+      await runEnvSetupFlow(page, { authType, forceBusinessType, dispatchEnabled, subsidiaryName, subsidiaryCode });
     }
 
-    const targetUrl = businessType === "Restaurante" ? "/pos/restaurant-home" : "/pos/home";
+    const targetUrl = forceBusinessType === "Restaurante" ? "/pos/restaurant-home" : "/pos/home";
     await handleCashRegisterState(page, cashRegisterMode, openingAmount, subsidiaryName, subsidiaryCode, targetUrl);
 
     const homeIndicator = page.getByText(/Cliente:/i).first();

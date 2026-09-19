@@ -13,15 +13,15 @@
     },
     "description": "Retail - Flujo Base de Descuento (Pre-clean, Create, Search, Delete)",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "discountData": {
       "name": "Descuento E2E Base Flow",
       "description": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)",
       "applicationMethod": "always",
       "type": "fijo",
       "discount": 10
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

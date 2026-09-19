@@ -11,12 +11,13 @@ import {
 } from "./harness/admin-dynamic-documents-helpers.js";
 
 import scenariosRaw from "./0-json-data/admin-sale-dynamic-documents.json" with { type: "json" };
-const scenarios = scenariosRaw as unknown as ScenarioData[];
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+const scenarios = parseScenarios<ScenarioData>(scenariosRaw);
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 interface StepParams { description: string; expectedDefault: string; electronicKeyword: string; expectElectronicOption: boolean; subsidiaryName: string; subsidiaryCode: string; branchName: string; warehouseName?: string; }
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   authType: string;
   targetPath: string;
   subsidiaryName: string;
@@ -34,7 +35,7 @@ async function ensureUIReady(page: Page) {
 }
 
 test.describe("Admin Sales - Dynamic Document Types (WS-981)", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     requirePosCredentials(test);
 
     test(

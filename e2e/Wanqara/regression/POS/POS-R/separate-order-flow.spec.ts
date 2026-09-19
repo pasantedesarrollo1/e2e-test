@@ -1,5 +1,5 @@
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
-import { expect, test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
+import { expect, test } from "@/e2e/Wanqara/harness/fixtures/restaurant.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -24,6 +24,7 @@ interface ScenarioData {
     productName: string;
   };
   clientCedula: string;
+  identityType?: string;
   paymentMethod: string;
   metadata?: {
     testScope?: string;
@@ -59,7 +60,7 @@ for (const scenario of scenarios) {
       chefLogin: scenario.chefLogin,
       chefSubsidiary: scenario.chefSubsidiary,
       chefSubsidiaryCode: scenario.chefSubsidiaryCode,
-      stageSetupOptions: {
+      restaurantSetupOptions: {
         createOrder: {
           productName: scenario.productName
         }
@@ -70,8 +71,8 @@ for (const scenario of scenarios) {
       annotateTicket(test, scenario.metadata);
     }
 
-    test("separates a product from an existing order and completes the sale", async ({ stageEnvironment }) => {
-      const { page } = stageEnvironment;
+    test("separates a product from an existing order and completes the sale", async ({ restaurantEnvironment }) => {
+      const { page } = restaurantEnvironment;
       test.setTimeout(180_000);
       
       await test.step("Navigate to separate order screen", async () => {

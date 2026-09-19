@@ -14,12 +14,12 @@
     "description": "Retail - Flujo Base de Color (Pre-clean, Create, Search, Delete) - Wanqara Comercios",
     "authType": "actor3",
     "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "colorData": {
       "name": "Color E2E Base Flow",
       "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    }
   },
   {
     "id": "CLR-BASE-002",
@@ -36,11 +36,11 @@
     "description": "Retail - Flujo Base de Color (Pre-clean, Create, Search, Delete) - Wanqara Comercios Dispatch",
     "authType": "actor3",
     "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
     "colorData": {
       "name": "Color E2E Base Flow",
       "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
-    },
-    "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    }
   }
 ]

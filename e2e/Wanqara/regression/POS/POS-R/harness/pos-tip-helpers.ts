@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 import { openDrawer } from "@/e2e/Wanqara/regression/POS/harness/sales/pos-drawer-helpers.js";
 
 export async function assignTipToSale(page: Page, amount: number | string): Promise<void> {

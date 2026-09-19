@@ -6,20 +6,20 @@ interface ClientParams {
   consumidorFinalCedula: string;
   productName: string;
 }
-interface ScenarioData extends FlatScenario {
+type ScenarioData = PosScenario & {
   clientParams: ClientParams;
 }
 
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { completePayment } from "@/e2e/Wanqara/regression/POS/harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "@/e2e/Wanqara/regression/POS/harness/products/pos-search.js";
 import { clickFinishSale } from "@/e2e/Wanqara/regression/POS/harness/sales/pos-checkout-helpers.js";
 import type { Page, Locator } from "@playwright/test";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
-import { selectClientFromSearchModal } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
+import { selectClientFromSearchModal } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,7 +45,7 @@ async function confirmClientModal(page: Page) {
 }
 
 test.describe("Sales with Customer Assignment", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     
     test("validates all customer assignment methods and completes the sale", async ({ posEnvironment }) => {
       const { page } = posEnvironment;

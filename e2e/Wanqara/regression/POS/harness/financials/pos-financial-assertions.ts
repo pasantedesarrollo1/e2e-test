@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { selectClientByCedula } from '@/e2e/Wanqara/harness/helpers/people/client-helpers.js';
+import { selectClientByCedula } from '@/e2e/Wanqara/harness/helpers/shared/client-picker.js';
 import { completePayment, type PaymentMethodOption } from "@/e2e/Wanqara/regression/POS/harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "@/e2e/Wanqara/regression/POS/harness/products/pos-search.js";
 import { captureSaleMutation } from '@/e2e/Wanqara/regression/POS/harness/sales/pos-checkout-helpers.js';
@@ -93,6 +93,8 @@ export async function runFinancialPrecisionFlow(page: Page, {
 
   await test.step("Add product", async () => {
     await searchAndSelectProduct(page, { name: product.name, searchTerm: product.searchTerm ?? undefined });
+    // Conditional logic is required in helpers for parametric data-driven assertions or state checks.
+    // eslint-disable-next-line playwright/no-conditional-in-test
     if (afterProductSelect) await afterProductSelect(page);
   });
 

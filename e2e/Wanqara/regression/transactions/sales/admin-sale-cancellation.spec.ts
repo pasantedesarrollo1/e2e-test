@@ -7,7 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
 import { ensureAuthenticated } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
-import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
+import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
 
 
 import { cancelFirstSaleAndVerify } from "./harness/cancel-sale-helpers.js";
@@ -19,13 +19,14 @@ const scenarios = parseScenarios<ScenarioData>(
   fs.readFileSync(path.join(__dirname, "0-json-data", "admin-sale-cancellation.json"), "utf-8"))
 );
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 interface SaleParams {
   warehouseName?: string;
   documentType: string;
   clientCedula: string;
+  identityType?: string;
   productName: string;
   paymentMethod: string;
 }
@@ -35,7 +36,7 @@ interface CancellationParams {
   expectMessage?: boolean;
 }
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   authType: string;
   saleParams: SaleParams;
   cancellationParams: CancellationParams;
@@ -44,7 +45,7 @@ interface ScenarioData extends FlatScenario {
 
 
 test.describe.serial("Cancel Normal Sales (Admin)", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     requirePosCredentials(test);
 
     test("Creates a normal sale and cancels it", async ({ page }) => {
@@ -55,7 +56,7 @@ test.describe.serial("Cancel Normal Sales (Admin)", () => {
             await page.waitForURL(/\/admin\/ventas\/add/);
             await selectCheckout(page, { warehouseName: scenario.saleParams.warehouseName });
             await selectDocumentType(page, scenario.saleParams.documentType);
-            await selectClientByCedula(page, scenario.saleParams.clientCedula);
+            await selectClientByCedula(page, scenario.saleParams.clientCedula, {  identityType: scenario.saleParams.identityType });
             await searchAndSelectProduct(page, { name: scenario.saleParams.productName });
             await selectPaymentMethod(page, scenario.saleParams.paymentMethod);
             await submitAdminSale(page);

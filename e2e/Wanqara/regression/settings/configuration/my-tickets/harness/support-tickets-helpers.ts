@@ -1,7 +1,7 @@
  
 import { expect, type Page } from "@playwright/test";
 import { ensureAuthenticated } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
-import { selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export async function navigateToCreateTicket(page: Page, authType: string): Promise<void> {
   await ensureAuthenticated(page, {

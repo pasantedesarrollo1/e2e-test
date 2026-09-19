@@ -1,5 +1,5 @@
 import { expect, type Page } from "@playwright/test";
-import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 const relationDeletedMsg = "Relaci.n eliminada";
 const noCategoriesMsg = "A.n no hay categor.as relacionadas";
@@ -74,6 +74,8 @@ export async function testByProductFlow(page: Page, categoryName: string, produc
     await expect(productSearchInput).toBeVisible();
     
     const loadingIndicator = dialog.getByText(new RegExp(loadingProductsMsg, "i"));
+    // Vuetify dynamic animations require safe conditional waits.
+    // eslint-disable-next-line playwright/no-conditional-expect
     await expect(loadingIndicator).toBeHidden({ timeout: 15000 }).catch(() => {});
 
     await productSearchInput.fill(productSearchTerm);

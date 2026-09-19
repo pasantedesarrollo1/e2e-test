@@ -2,8 +2,8 @@ import { expect, type Page } from "@playwright/test";
 import { chefHarness, playwrightHarness, type ChefUserCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
 import { ensureAuthenticated, loginAndSelectSubsidiary } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
 import { ensureChefAuthenticated } from "@/e2e/Wanqara/harness/helpers/auth/chef-auth.js";
-import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
-import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
+import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 import { completePayment } from "@/e2e/Wanqara/regression/POS/harness/payments/pos-payment.js";
 import { openDrawer } from "@/e2e/Wanqara/regression/POS/harness/sales/pos-drawer-helpers.js";
@@ -182,6 +182,8 @@ export async function navigateToCloseOrderFromOptions(page: Page): Promise<void>
     .first();
     
   await expect(closeOrderOption).toBeVisible();
+  // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+  // eslint-disable-next-line playwright/no-force-option
   await closeOrderOption.click({ force: true }); 
 
   await page.waitForURL(/\/pos\/close-restaurant-order/);
@@ -190,6 +192,8 @@ export async function navigateToCloseOrderFromOptions(page: Page): Promise<void>
 export async function openAndSelectOrder(page: Page, tableName: string): Promise<void> {
   const cobrarBtn = page.getByRole("button", { name: /Cobrar pedidos/i });
   await expect(cobrarBtn).toBeVisible();
+  // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+  // eslint-disable-next-line playwright/no-force-option
   await cobrarBtn.click({ force: true });
 
   const orderCard = page
@@ -198,6 +202,8 @@ export async function openAndSelectOrder(page: Page, tableName: string): Promise
     .first();
 
   await expect(orderCard).toBeVisible({ timeout: 20000 });
+  // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+  // eslint-disable-next-line playwright/no-force-option
   await orderCard.click({ force: true });
 }
 

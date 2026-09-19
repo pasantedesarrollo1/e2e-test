@@ -1,6 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 import { openDrawer } from '@/e2e/Wanqara/regression/POS/harness/sales/pos-drawer-helpers.js';
-import { formatPosSubsidiary } from '@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js';
+import { formatPosSubsidiary } from '@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js';
 
 export async function ensureCashRegisterOpen(page: Page, amount: string, subsidiaryName: string, subsidiaryCode: string, homePath: string = '/pos/home'): Promise<void> {
   if (!subsidiaryName) throw new Error("subsidiaryName is required");
@@ -83,6 +83,8 @@ export async function closeCashRegister(page: Page, options: CloseCashRegisterOp
   
   const drawer = await openDrawer(page, triggerLocator, drawerFilter);
   const closeOption = drawer.getByRole("button", { name: /Cierre de Caja/i }).first();
+  // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+  // eslint-disable-next-line playwright/no-force-option
   await closeOption.click({ force: true });
   
   const formIndicator = page.getByText('Composición del Efectivo').first();

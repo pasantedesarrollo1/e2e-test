@@ -1,7 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 // @ts-ignore
-import { selectClientByCedula } from "../../people/client-helpers.js";
+import { selectClientByCedula } from "../../shared/client-picker.js";
 // @ts-ignore
 import { ensureCashRegisterOpen } from "@/e2e/Wanqara/regression/POS/harness/cash-register/cash-register-helpers.js";
 // @ts-ignore
@@ -28,7 +28,7 @@ export class PosNormalSaleStrategy implements PosSaleStrategy {
         }
 
         if (workflow.clientCedula) {
-            await selectClientByCedula(page, workflow.clientCedula);
+            await selectClientByCedula(page, workflow.clientCedula, {  identityType: workflow.identityType });
         }
 
         if (workflow.productName) {

@@ -4,7 +4,7 @@ interface ExtrasData {
   searchTerm: string;
   productsToAssign: string[];
 }
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   authType: string;
   extrasData: ExtrasData;
 }
@@ -20,12 +20,13 @@ import {
 } from "@/e2e/Wanqara/regression/special-modules/restaurants/extras-manager/harness/extras-crud-helpers.js";
 
 import scenariosRaw from "./0-json-data/extra-categories.json" with { type: "json" };
-const scenarios = scenariosRaw as unknown as ScenarioData[];
+const scenarios = parseScenarios<ScenarioData>(scenariosRaw);
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 test.describe.serial("Extras Manager - Extra Categories", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     requirePosCredentials(test);
 
     test(

@@ -14,6 +14,9 @@
       "testScope": "regression"
     },
     "description": "validates dynamic document type restrictions when switching subsidiaries in Sales",
+    "authType": "actor1",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "targetPath": "/admin/ventas/add",
     "steps": [
       {
@@ -40,9 +43,6 @@
         "electronicKeyword": "Factura",
         "subsidiaryName": "Wanqara"
       }
-    ],
-    "authType": "actor1",
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    ]
   }
 ]

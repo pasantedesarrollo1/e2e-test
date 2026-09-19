@@ -3,8 +3,8 @@ import {
   deleteRecordFromList,
   saveFormAndVerify,
   verifyRecordInList
-} from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
-import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/ui/action-tooltips.js";
+} from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/admin/action-tooltips.js";
 
 export type ApplicationMethod = "always" | "every_to" | "from_to";
 export type DiscountType = "porcentaje" | "fijo";

@@ -13,16 +13,16 @@
     },
     "description": "Retail - Resumen: Siempre + Porcentaje",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "discountData": {
       "name": "Siempre 10%",
       "description": "Prueba de UI",
       "applicationMethod": "always",
       "type": "porcentaje",
       "discount": 10
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   },
   {
     "id": "DSC-SUM-002",
@@ -38,6 +38,9 @@
     },
     "description": "Retail - Resumen: Por Cada + Fijo",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "discountData": {
       "name": "Por Cada 2 Fijo 5",
       "description": "Prueba de UI",
@@ -45,10 +48,7 @@
       "type": "fijo",
       "discount": 5,
       "quantity": 2
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   },
   {
     "id": "DSC-SUM-003",
@@ -64,6 +64,9 @@
     },
     "description": "Retail - Resumen: A partir de + Porcentaje",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "discountData": {
       "name": "A partir de 3, 15%",
       "description": "Prueba de UI",
@@ -71,9 +74,6 @@
       "type": "porcentaje",
       "discount": 15,
       "quantity": 3
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

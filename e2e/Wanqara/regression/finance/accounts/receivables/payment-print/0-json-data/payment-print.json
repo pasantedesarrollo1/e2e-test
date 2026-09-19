@@ -15,14 +15,14 @@
     },
     "description": "Validar envío correcto de montos a la impresora en cuentas por cobrar",
     "authType": "actor1",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "paymentData": {
       "cedula": "0000000001",
       "amount": "0.01",
       "description": "Automated test payment",
       "paymentMethodRegex": "^Efectivo$"
-    },
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+    }
   }
 ]

@@ -4,15 +4,15 @@ interface QuoteParams {
   paymentMethod: string;
   [key: string]: any;
 }
-interface ScenarioData extends FlatScenario {
-  businessType: string;
+type ScenarioData = PosScenario & {
+  forceBusinessType: string;
   quoteParams: QuoteParams;
 }
 
 import path from "path";
 import { fileURLToPath } from "url";
-import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import { completePayment } from "@/e2e/Wanqara/regression/POS/harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "@/e2e/Wanqara/regression/POS/harness/products/pos-search.js";
@@ -27,8 +27,8 @@ const scenarios = parseScenarios<ScenarioData>(
   fs.readFileSync(path.join(__dirname, "0-json-data", "sale-quotations.json"), "utf-8"))
 );
 
-async function runQuoteFlow(page: Page, { businessType, quoteParams, pdfChoice }: any) {
-  const homePath = businessType === "Restaurante" ? "/pos/restaurant-home" : "/pos/home";
+async function runQuoteFlow(page: Page, { forceBusinessType, quoteParams, pdfChoice }: any) {
+  const homePath = forceBusinessType === "Restaurante" ? "/pos/restaurant-home" : "/pos/home";
   
   await page.goto(homePath);
   await page.waitForURL(new RegExp(homePath));
@@ -36,7 +36,7 @@ async function runQuoteFlow(page: Page, { businessType, quoteParams, pdfChoice }
   await expect(page.getByText(/Cliente:/i)).toBeVisible();
   await page.getByPlaceholder("Ingresa Cédula o RUC").clear();
 
-  await selectClientByCedula(page, quoteParams.clientCedula);
+  await selectClientByCedula(page, quoteParams.clientCedula, {  identityType: quoteParams.identityType });
   await searchAndSelectProduct(page, { name: quoteParams.productName });
 
   const cotizarButton = page.getByRole("button", { name: /Cotizar/i }).first();
@@ -98,7 +98,7 @@ async function selectFirstQuoteAndBill(page: Page) {
 }
 
 test.describe("Quotation Workflow", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     
     test("creates quotations with and without PDF generation", async ({ posEnvironment }) => {
       const { page } = posEnvironment;
@@ -106,7 +106,7 @@ test.describe("Quotation Workflow", () => {
 
       await test.step("Create a quotation with PDF", async () => {
         await runQuoteFlow(page, {
-          businessType: scenario.businessType,
+          forceBusinessType: scenario.forceBusinessType,
           quoteParams: scenario.quoteParams,
           pdfChoice: null,
         });
@@ -114,7 +114,7 @@ test.describe("Quotation Workflow", () => {
 
       await test.step("Create a quotation without generating a PDF", async () => {
         await runQuoteFlow(page, {
-          businessType: scenario.businessType,
+          forceBusinessType: scenario.forceBusinessType,
           quoteParams: scenario.quoteParams,
           pdfChoice: "No mostrar PDF",
         });

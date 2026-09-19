@@ -2,7 +2,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 interface OptionsParams {
@@ -12,7 +12,7 @@ interface OptionsParams {
   savedSaleAlias: string;
 }
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = PosScenario & {
   optionsParams: OptionsParams;
 }
 
@@ -76,7 +76,7 @@ async function fillAliasAndSave(page: Page, alias: any) {
 }
 
 test.describe("Sale Options", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario) => {
     
     test("validates adding a note and completing a sale from the Sale Options panel", async ({ posEnvironment }) => {
       const { page } = posEnvironment;

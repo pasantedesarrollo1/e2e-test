@@ -3,23 +3,25 @@ import { test } from "@playwright/test";
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
 import { selectCheckout, selectPaymentMethod, searchAndSelectProduct, submitAdminSale } from "./harness/admin-checkout-helpers.js";
 import { selectDocumentType } from "./harness/admin-document-helpers.js";
-import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
+import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
 import { switchAdminSubsidiary } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
 
 import scenariosRaw from "./0-json-data/admin-cross-sales.json" with { type: "json" };
-const scenarios = scenariosRaw as unknown as ScenarioData[];
+const scenarios = parseScenarios<ScenarioData>(scenariosRaw);
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 interface TransactionParams {
   path: string;
   clientCedula: string;
+  identityType?: string;
   productName: string;
   paymentMethod: string;
   endpoint: string;
 }
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   sucursales: { name: string; code: string; combinations: any[] }[];
   transaction: TransactionParams;
   subsidiaryName: string;
@@ -28,7 +30,7 @@ interface ScenarioData extends FlatScenario {
 
 
 test.describe("Admin Sales - Anti-Cross Validation", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     requirePosCredentials(test);
 
     test(
@@ -57,7 +59,7 @@ test.describe("Admin Sales - Anti-Cross Validation", () => {
                 urlPattern: new RegExp(scenario.transaction.path.replace(/\//g, '\\/'))
               });
               await selectDocumentType(page, "Recibos");
-              await selectClientByCedula(page, scenario.transaction.clientCedula);
+              await selectClientByCedula(page, scenario.transaction.clientCedula, {  identityType: scenario.transaction.identityType });
               await searchAndSelectProduct(page, { name: scenario.transaction.productName });
               await selectPaymentMethod(page, scenario.transaction.paymentMethod);
 

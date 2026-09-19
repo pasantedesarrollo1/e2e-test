@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Cash Register Income and Expense Transactions (Retail)",
     "metadata": {
       "ws": "WS-1031",
       "tes": "TES-225",
@@ -14,9 +13,13 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Cash Register Income and Expense Transactions (Retail)",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "basePath": "/pos/home",
-    "businessType": "Comercios",
+    "forceBusinessType": "Comercios",
     "cashRegisterMode": "fresh",
     "actions": [
       "in",
@@ -27,11 +30,8 @@
       "monto": "1",
       "descripcion": "test automatizado"
     },
-    "subsidiaryName": "Wanqara Comercios",
     "paymentMethod": "EFECTIVO",
-    "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    "openingAmount": "100.00"
   },
   {
     "id": "CASH-MOVEMENTS-002",
@@ -39,7 +39,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Cash Register Income and Expense Transactions (Restaurant)",
     "metadata": {
       "ws": "WS-1031",
       "tes": "TES-225",
@@ -48,9 +47,13 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Cash Register Income and Expense Transactions (Restaurant)",
     "authType": "actor1",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "basePath": "/pos/restaurant-home",
-    "businessType": "Restaurante",
+    "forceBusinessType": "Restaurante",
     "cashRegisterMode": "fresh",
     "actions": [
       "in",
@@ -61,11 +64,8 @@
       "monto": "1",
       "descripcion": "test automatizado"
     },
-    "subsidiaryName": "Wanqara",
     "paymentMethod": "EFECTIVO",
-    "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+    "openingAmount": "100.00"
   },
   {
     "id": "CASH-MOVEMENTS-003",
@@ -73,7 +73,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Direct Income/Expense on Fresh Register (Retail)",
     "metadata": {
       "ws": "WS-1114",
       "tes": "TES-222",
@@ -82,9 +81,13 @@
       "addedToRegression": "false",
       "testScope": "release"
     },
+    "description": "Direct Income/Expense on Fresh Register (Retail)",
     "authType": "actor1",
+    "loginMode": "fresh",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "basePath": "/pos/home",
-    "businessType": "Comercios",
+    "forceBusinessType": "Comercios",
     "cashRegisterMode": "fresh",
     "skipPriorSale": true,
     "actions": [
@@ -95,10 +98,7 @@
       "monto": "1",
       "descripcion": "test automatizado directo"
     },
-    "subsidiaryName": "Wanqara",
-    "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "fresh"
+    "openingAmount": "100.00"
   },
   {
     "id": "CASH-MOVEMENTS-004",
@@ -106,7 +106,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Direct Income/Expense on Fresh Register (Restaurant)",
     "metadata": {
       "ws": "WS-1114",
       "tes": "TES-222",
@@ -115,9 +114,13 @@
       "addedToRegression": "false",
       "testScope": "release"
     },
+    "description": "Direct Income/Expense on Fresh Register (Restaurant)",
     "authType": "actor1",
+    "loginMode": "fresh",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "basePath": "/pos/restaurant-home",
-    "businessType": "Restaurante",
+    "forceBusinessType": "Restaurante",
     "cashRegisterMode": "fresh",
     "skipPriorSale": true,
     "actions": [
@@ -128,9 +131,6 @@
       "monto": "1",
       "descripcion": "test automatizado directo"
     },
-    "subsidiaryName": "Wanqara",
-    "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "fresh"
+    "openingAmount": "100.00"
   }
 ]

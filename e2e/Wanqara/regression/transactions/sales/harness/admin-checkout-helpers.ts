@@ -8,6 +8,8 @@ async function assignManualBodega(page: Page, warehouseName?: string): Promise<v
   
   await expect(async () => {
     const dropdownTrigger = bodegaWrapper.locator('.v-field').first();
+    // Vuetify DOM overlaps and animations require forced interactions to bypass strict actionability checks.
+    // eslint-disable-next-line playwright/no-force-option
     await dropdownTrigger.click({ force: true, delay: 100 });
     
     const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
@@ -36,6 +38,8 @@ async function assignManualCaja(page: Page): Promise<void> {
   
   await expect(async () => {
     const dropdownTrigger = cajaWrapper.locator('.v-field').first();
+    // Vuetify DOM overlaps and animations require forced interactions to bypass strict actionability checks.
+    // eslint-disable-next-line playwright/no-force-option
     await dropdownTrigger.click({ force: true, delay: 100 });
     
     const listbox = page.locator(".v-overlay-container .v-overlay--active [role='listbox']").first();
@@ -83,6 +87,8 @@ export async function selectCheckout(page: Page, { urlPattern = /\/admin\/ventas
   }
 
   await page.keyboard.press("Escape");
+  // Vuetify DOM overlaps require forced interactions and safe conditional waits.
+  // eslint-disable-next-line playwright/no-conditional-expect
   await expect(page.locator(".v-overlay-container .v-overlay--active")).not.toBeVisible({ timeout: 2000 }).catch(() => {});
 }
 
@@ -98,6 +104,8 @@ export async function searchAndSelectProduct(page: Page, { name, searchTerm }: S
   const profileOverlay = page.locator(".v-overlay--active").filter({ hasText: /Cerrar Sesión/i });
   if (await profileOverlay.isVisible()) {
     await page.keyboard.press("Escape");
+    // Vuetify DOM overlaps require forced interactions and safe conditional waits.
+    // eslint-disable-next-line playwright/no-conditional-expect
     await expect(profileOverlay).not.toBeVisible({ timeout: 3000 }).catch(() => {});
   }
 
@@ -116,6 +124,8 @@ export async function searchAndSelectProduct(page: Page, { name, searchTerm }: S
   await productItem.click();
   
   const overlayContent = page.locator(".v-overlay-container .v-overlay__content").filter({ has: productItem });
+  // Vuetify DOM overlaps require forced interactions and safe conditional waits.
+  // eslint-disable-next-line playwright/no-conditional-expect
   await expect(overlayContent).not.toBeVisible({ timeout: 10000 }).catch(() => {});
 }
 
@@ -123,6 +133,8 @@ export async function selectPaymentMethod(page: Page, methodName: string | RegEx
   if (!methodName) throw new Error("selectPaymentMethod requires methodName parameter.");
   const methodItem = page.getByText(methodName, { exact: true }).first();
   await methodItem.scrollIntoViewIfNeeded();
+  // Vuetify DOM overlaps and animations require forced interactions to bypass strict actionability checks.
+  // eslint-disable-next-line playwright/no-force-option
   await methodItem.click({ force: true });
 }
 
@@ -137,6 +149,8 @@ export async function submitAdminSale(page: Page, endpoint = "/api/v2/billing/sa
       (res) => res.url().includes(endpoint) && res.request().method() === "POST",
       { timeout: 30000 }
     ),
+    // Vuetify DOM overlaps and animations require forced interactions to bypass strict actionability checks.
+    // eslint-disable-next-line playwright/no-force-option
     saveBtn.click({ force: true }),
   ]);
 

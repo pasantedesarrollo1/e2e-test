@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
-import { clickTableRowAction } from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
-import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/ui/action-tooltips.js";
+import { clickTableRowAction } from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/admin/action-tooltips.js";
 
 export interface CancelSaleOptions {
   expectSwitch: boolean;
@@ -48,12 +48,16 @@ export async function cancelFirstSaleAndVerify(page: Page, {
     const inventorySwitch = modal.locator('.v-switch').filter({ hasText: /Mover inventario/i });
     const noInventoryMsg = modal.getByText(/Esta venta no tiene movimientos de inventario/i);
 
+    // Conditional logic is required in helpers to handle dynamic UI states during the cancellation flow.
+    // eslint-disable-next-line playwright/no-conditional-in-test
     if (expectSwitch) {
       await expect(inventorySwitch).toBeVisible();
     } else {
       await expect(inventorySwitch).toBeHidden();
     }
 
+    // Conditional logic is required in helpers to handle dynamic UI states during the cancellation flow.
+    // eslint-disable-next-line playwright/no-conditional-in-test
     if (expectMessage) {
       await expect(noInventoryMsg).toBeVisible();
     } else {
@@ -71,8 +75,12 @@ export async function cancelFirstSaleAndVerify(page: Page, {
       const observationInput = modal.getByRole("textbox", { name: /Motivo de anulación/i });
       await observationInput.fill(annulmentReason);
 
+      // Conditional logic is required in helpers to handle dynamic UI states during the cancellation flow.
+      // eslint-disable-next-line playwright/no-conditional-in-test
       if (expectSwitch) {
         const inventorySwitch = modal.locator('.v-switch').filter({ hasText: /Mover inventario/i });
+        // Vuetify DOM overlaps and animations require forced interactions to bypass strict actionability checks.
+        // eslint-disable-next-line playwright/no-force-option
         await inventorySwitch.locator('input[type="checkbox"]').check({ force: true });
       }
 
@@ -89,6 +97,8 @@ export async function cancelFirstSaleAndVerify(page: Page, {
       expect(postData).toHaveProperty('moves_inventory');
       expect(typeof postData.moves_inventory).toBe('boolean');
       
+      // Conditional logic is required in helpers to handle dynamic UI states during the cancellation flow.
+      // eslint-disable-next-line playwright/no-conditional-in-test
       if (expectSwitch) {
         expect(postData.moves_inventory).toBe(true);
       } else {

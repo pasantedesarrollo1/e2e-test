@@ -11,8 +11,8 @@ export interface ToggleDispatchTypeOptions {
   name: string;
   expectedSnackbarText: any;
 }
-import { clickTableRowAction } from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
-import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/ui/action-tooltips.js";
+import { clickTableRowAction } from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/admin/action-tooltips.js";
 
 export async function createDispatchType(page: Page, { name, type, description }: DispatchTypeOptions): Promise<void> {
   await page.goto("/admin/dispatch-types/list");

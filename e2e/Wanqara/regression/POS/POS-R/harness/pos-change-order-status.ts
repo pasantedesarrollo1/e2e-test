@@ -1,5 +1,5 @@
 import { expect, type Page } from "@playwright/test";
-import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export async function selectOrderToChangeStatus(page: Page): Promise<void> {
   const orderCard = page.locator(".tw-cursor-pointer.tw-group").first();

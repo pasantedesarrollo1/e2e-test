@@ -1,11 +1,10 @@
 [
   {
     "id": "ORDER-WITH-EXTRAS-001",
-    "fixture": "stage",
+    "fixture": "restaurant",
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Order with Extras",
     "metadata": {
       "ws": "WS-1038",
       "tes": "TES-214",
@@ -14,7 +13,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Order with Extras",
     "authType": "actor1",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "extrasData": {
       "baseProduct": "Caja de alitas de pollo",
       "sinStockExtra": "extra alitas sin stock",
@@ -23,13 +26,10 @@
       "outOfStockLabelText": "Sin stock disponible"
     },
     "paymentMethod": "EFECTIVO",
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001",
     "clientCedula": "0000000001",
     "openingAmount": "100.00",
     "chefAuthType": "actor1",
     "chefSubsidiary": "Wanqara",
-    "chefSubsidiaryCode": "001",
-    "loginMode": "cached"
+    "chefSubsidiaryCode": "001"
   }
 ]

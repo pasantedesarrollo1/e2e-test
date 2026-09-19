@@ -1,5 +1,5 @@
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
-import { expect, test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
+import { expect, test } from "@/e2e/Wanqara/harness/fixtures/restaurant.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -29,6 +29,7 @@ interface ScenarioData {
   chefSubsidiaryCode?: string;
   extrasData: ExtrasData;
   clientCedula: string;
+  identityType?: string;
   paymentMethod: string;
   metadata?: { testScope?: string; ws?: string; [key: string]: unknown };
 }
@@ -84,8 +85,10 @@ for (const scenario of scenarios) {
       ).toBeVisible();
     });
 
-    test("creates an order with extras validating stock and completes the payment", async ({ stageEnvironment, chefContext }) => {
-      const posPage = stageEnvironment.page;
+    // Assertions are encapsulated in Page Object helpers.
+    // eslint-disable-next-line playwright/expect-expect
+    test("creates an order with extras validating stock and completes the payment", async ({ restaurantEnvironment, chefContext }) => {
+      const posPage = restaurantEnvironment.page;
       const chefPage = chefContext;
       test.setTimeout(180_000);
       

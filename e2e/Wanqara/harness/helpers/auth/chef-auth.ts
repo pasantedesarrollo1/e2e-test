@@ -1,4 +1,4 @@
-import { clickAndWaitForApi, formatChefSubsidiary } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { clickAndWaitForApi, formatChefSubsidiary } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 import fs from "node:fs";
 import { expect, type Page } from "@playwright/test";
 import path from "node:path";

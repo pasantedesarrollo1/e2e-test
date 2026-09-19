@@ -17,6 +17,7 @@ export interface SaleStrategyPayload {
     dispatchDetails: { warehouseName: string } | null;
     documentType: string | null;
     clientCedula: string | null;
+  identityType?: string;
     items: ReadonlyArray<SaleItem>;
     customActions: ReadonlyArray<(page: Page) => Promise<void>>;
     paymentMethod: string | null;
@@ -36,6 +37,7 @@ export class AdminSaleWorkflow {
     private authType: string | null = null;
     private documentType: string | null = null;
     private clientCedula: string | null = null;
+  identityType?: string;
     private items: SaleItem[] = [];
     private paymentMethod: string | null = null;
     private dispatchDetails: { warehouseName: string } | null = null;

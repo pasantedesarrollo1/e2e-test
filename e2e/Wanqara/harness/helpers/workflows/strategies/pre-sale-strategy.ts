@@ -16,7 +16,7 @@ import type { SaleStrategy, SaleStrategyPayload } from "@/e2e/Wanqara/harness/he
 
 export class PreSaleStrategy implements SaleStrategy {
     async execute(workflow: SaleStrategyPayload): Promise<void> {
-        const { page, skipNavigation, authType, dispatchDetails, documentType, clientCedula, items, customActions, paymentMethod } = workflow;
+        const { page, skipNavigation, authType, dispatchDetails, documentType, clientCedula, identityType, items, customActions, paymentMethod }= workflow;
 
         if (!skipNavigation) {
             await ensureAuthenticated(page, { targetPath: "/admin/pre-sale/add", authType });

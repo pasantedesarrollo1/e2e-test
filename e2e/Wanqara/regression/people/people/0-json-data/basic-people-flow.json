@@ -13,6 +13,9 @@
     },
     "description": "Retail - CRUD Completo de Cliente",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "personData": {
       "name": "CRUD Cliente Automatizado",
       "identity": "1283728939",
@@ -20,10 +23,7 @@
       "roles": [
         "^Cliente$"
       ]
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   },
   {
     "id": "PPL-CRUD-002",
@@ -39,6 +39,9 @@
     },
     "description": "Retail - CRUD Completo de Empleado",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "personData": {
       "name": "CRUD Empleado Automatizado",
       "identity": "1283728939",
@@ -46,9 +49,6 @@
       "roles": [
         "^Empleado$"
       ]
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

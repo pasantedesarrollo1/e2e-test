@@ -1,11 +1,10 @@
 [
   {
     "id": "POS-NO-EBILLING-001",
-    "fixture": "stage",
+    "fixture": "restaurant",
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Validar Venta sin Facturación Electrónica",
     "metadata": {
       "ws": "WS-1053,WS-940",
       "tes": "TES-224",
@@ -14,13 +13,14 @@
       "addedToRegression": "true",
       "testScope": "release"
     },
+    "description": "Validar Venta sin Facturación Electrónica",
     "authType": "actor1",
+    "loginMode": "fresh",
     "subsidiaryName": "Wanqara",
     "subsidiaryCode": "001",
     "openingAmount": "100.00",
-    "loginMode": "fresh",
     "ebillingEnabled": false,
-    "businessType": "Restaurante",
+    "forceBusinessType": "Restaurante",
     "productName": "Caja de alitas de pollo (100 u)",
     "paymentMethod": "EFECTIVO"
   }

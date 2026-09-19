@@ -1,7 +1,7 @@
 # ARCHITECTURE.md
 
 ## 1. ¿Qué es este proyecto?
-Este proyecto es un entorno de pruebas end-to-end (E2E) robusto basado en Playwright para validar el ecosistema de **Wanqara**, un sistema integral de Punto de Venta (POS) y administración (ERP ligero). Su propósito es automatizar los flujos de negocio tanto para la plataforma central (Dashboard Administrativo, POS de Retail y POS de Restaurante) como para los módulos operativos de los empleados (como aplicaciones para meseros). Las pruebas garantizan la calidad de los despliegues (mediante suites de *smoke* y *release*) y evitan regresiones.
+Este proyecto es un entorno de pruebas end-to-end (E2E) robusto basado en Playwright para validar el ecosistema de **Wanqara**, un sistema integral de Punto de Venta (POS) y administración (ERP ligero). Su propósito es automatizar los flujos de negocio tanto para la plataforma central (Dashboard Administrativo, POS de Comercios y POS de Restaurante) como para los módulos operativos de los empleados (como aplicaciones para meseros). Las pruebas garantizan la calidad de los despliegues (mediante suites de *smoke* y *release*) y evitan regresiones.
 
 ## 2. Stack tecnológico
 Las versiones principales detectadas en el `package.json` son:
@@ -12,7 +12,7 @@ Las versiones principales detectadas en el `package.json` son:
 - **Knip**: `^6.36.0` (Para encontrar dependencias/exports no usados)
 
 ## 3. Módulos principales
-- **Wanqara**: Es el módulo principal (core). Contiene las pruebas para el entorno de administración centralizada (`Admin-Inventory`, flujos de finanzas, productos, usuarios) y los puntos de venta (`POS-Retail`, `POS-Restaurant`).
+- **Wanqara**: Es el módulo principal (core). Contiene las pruebas para el entorno de administración centralizada (`Admin-Inventory`, flujos de finanzas, productos, usuarios) y los puntos de venta (`POS-Comercios`, `POS-Restaurant`).
 - **WanqaraChef**: Módulo enfocado a las operaciones de restaurantes desde el punto de vista del empleado (meseros). Se divide en perfiles de estación de trabajo compartida (`Workstation`) y perfiles de uso personal (`Personal`).
 - **WanqaraKDS**: Directorio existente en `e2e/`. Presuntamente destinado para el "Kitchen Display System" (pantallas de cocina), aunque no posee proyectos configurados en `playwright.config.ts`.
 - **WanqaraCentral**: Directorio existente en `e2e/`. Presuntamente para pruebas de administración global o franquicias multi-tenant, pero sin configuración activa explícita.
@@ -83,17 +83,17 @@ El flujo de consumo de datos es puramente *Data-Driven*:
 Dada la naturaleza guiada por datos (JSON) del framework, el sistema actual con `any` y `unknown` representa un riesgo alto. Se debe migrar hacia una arquitectura de tipos estricta:
 
 1. **Validación en Tiempo de Ejecución (Zod/Yup)**: Al cargar archivos `.json` mediante `JSON.parse()`, el motor de Node asume un tipo `any`. Se deben crear esquemas con *Zod* (ej. `ScenarioSchema.parse(scenarios)`) para validar que el JSON tenga exactamente las llaves requeridas antes de que inicie la ejecución de Playwright, evitando fallos a mitad de prueba por campos omitidos o mal escritos.
-2. **Uniones Discriminadas (Discriminated Unions)**: En lugar de interfaces gigantes llenas de campos opcionales, el framework implementa uniones discriminadas (`ScenarioDefinition = PosScenario | AdminScenario | StageScenario`) exportadas desde `types/scenarios.types.ts`. Esto asegura que los *payloads* respeten el contexto de la prueba de forma estricta en el orquestador.
+2. **Uniones Discriminadas (Discriminated Unions)**: En lugar de interfaces gigantes llenas de campos opcionales, el framework implementa uniones discriminadas (`ScenarioDefinition = PosScenario | AdminScenario | RestaurantScenario`) exportadas desde `types/scenarios.types.ts`. Esto asegura que los *payloads* respeten el contexto de la prueba de forma estricta en el orquestador.
 3. **Tipos Literales para el Estado (Literal Types)**: Las opciones de los *fixtures* y el JSON (como `authType`, `loginMode`) no deben ser un `string` abierto. Deben ser limitados mediante literales (`type AuthType = 'actor1' | 'actor2' | 'admin'`) para prevenir errores de tipeo que impidan inyectar la caché correcta.
 4. **Eliminación del Anti-patrón \`any\` en Genéricos**: La firma del orquestador `generateDataDrivenTests` ha sido refactorizada para inferir `TestType<Fixtures, WorkerFixtures>` directamente de Playwright. Además, se aplican conversores estrictos en las inyecciones dinámicas (`Parameters<typeof test.use>[0]`), erradicando la evasión de chequeos de Playwright que existía con el uso de `any`.
 5. **Organización de Archivos y Carpetas de Tipos (Separación de Concerns)**: Para escalar correctamente y evitar importaciones circulares, los dominios de tipos han sido extraídos a un directorio dedicado (`e2e/Wanqara/harness/types/`). Allí residen los contratos de autenticación (`auth.types.ts`), tipos de esquemas JSON y *Discriminated Unions* (`scenarios.types.ts`), y tipos compartidos de UI (`ui.types.ts`), manteniendo la lógica de ejecución limpia y centralizada a través del barril `index.ts`.
 6. **Estandarización Estricta de Datos (Archivos JSON)**: Todos los archivos estáticos en los directorios `0-json-data/` han sido unificados para incluir explícitamente el tipo de fixture (`admin`, `pos`, `stage`) y evitar cadenas de texto mágicas o vacías (como `loginMode: "none"` en lugar de `""`). Esto previene fallos silenciosos y permite que el sistema de tipos enrute los escenarios correctamente.
 7. **Remediación de Deuda Técnica (Linter)**: Se eliminaron los errores críticos de TypeScript y se removieron los timeouts estáticos en helpers clave para cumplir QA_RULES, pasando exitosamente el linter.
-8. **Desacoplamiento de Fixtures (Inversión de Dependencias)**: Los fixtures globales (`pos.fixture.ts` y `stage.fixture.ts`) han sido desacoplados de módulos específicos. Ahora utilizan funciones inyectables (`cashRegisterSetup`, `createChefOrderHook`, etc.) configuradas explícitamente desde cada archivo de pruebas (specs) a través de `test.use()`. Adicionalmente, el `admin.fixture.ts` desacopló su validación de estado inicial, haciendo el `readinessSelector` configurable.
+8. **Desacoplamiento de Fixtures (Inversión de Dependencias)**: Los fixtures globales (`pos.fixture.ts` y `restaurant.fixture.ts`) han sido desacoplados de módulos específicos. Ahora utilizan funciones inyectables (`cashRegisterSetup`, `createChefOrderHook`, etc.) configuradas explícitamente desde cada archivo de pruebas (specs) a través de `test.use()`. Adicionalmente, el `admin.fixture.ts` desacopló su validación de estado inicial, haciendo el `readinessSelector` configurable.
 
 9. **Validación de Esquema JSON con Zod**: Se ha integrado Zod para validar estrictamente la estructura de los archivos JSON de datos antes de que Playwright inicie la ejecución. Los specs ahora utilizan parseScenarios asegurando que cualquier JSON malformado se detenga en tiempo de carga con un error claro.
 
-10. **Patrón de Doble `test.use()` y `FlatScenario`**: Se ha estandarizado la restricción `T extends FlatScenario` en el orquestador (`test-generator.ts`). Para soportar retrocompatibilidad con archivos JSON heredados sin forzar el discriminador `fixture`, el orquestador emplea un patrón de doble `test.use()`: uno a nivel de grupo (heredado) y otro en caliente dentro del bloque `test.describe` por cada escenario iterado, eliminando la necesidad del `any` y previniendo el error TS2769 de Playwright.
+10. **Patrón de Doble `test.use()` y `FlatScenario`**: Se ha estandarizado la restricción estricta de tipos `T extends ScenarioDefinition` en el orquestador (`test-generator.ts`). Para soportar retrocompatibilidad con archivos JSON heredados, el orquestador emplea un patrón de doble `test.use()`: uno a nivel de grupo (heredado) y otro en caliente dentro del bloque `test.describe` por cada escenario iterado, eliminando la necesidad del `any` y previniendo el error TS2769 de Playwright.
 
 ## 12. Locators Intocables (Política de Modificación)
 
@@ -125,7 +125,7 @@ Dada la naturaleza guiada por datos (JSON) del framework, el sistema actual con 
 - Interfaz global de Vuetify: `.v-overlay-container .v-overlay--active`, `[role="option"]`
 - Alertas y Snackbars: `.v-snackbar`, `.v-btn.v-btn--flat.v-btn--icon.v-btn--slim` (Botón de cierre del snackbar)
 
-**`harness/fixtures/stage.fixture.ts`**
+**`harness/fixtures/restaurant.fixture.ts`**
 - Selectores por texto/rol: `/Cliente:/i`, `button` (Abrir Caja)
 
 

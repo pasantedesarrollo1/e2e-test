@@ -2,8 +2,6 @@ import { buildSafeTenantUrl } from '@/e2e/Wanqara/harness/helpers/url-builder.js
 import type { TestType } from '@playwright/test';
 
 import type {
-  UserCredentials,
-  ChefUserCredentials,
   PlaywrightHarnessConfig,
   ChefHarnessConfig,
 } from '../types/config.types.js';
@@ -26,19 +24,23 @@ export const playwrightHarness: PlaywrightHarnessConfig = {
   
   users: {
     actor1: {
-      email: process.env.PLAYWRIGHT_ACTOR_1_EMAIL ?? process.env.PLAYWRIGHT_RESTAURANT_EMAIL ?? "",
-      password: process.env.PLAYWRIGHT_ACTOR_1_PASSWORD ?? process.env.PLAYWRIGHT_RESTAURANT_PASSWORD ?? ""},
+      email: process.env.PLAYWRIGHT_ACTOR_1_EMAIL ?? "",
+      password: process.env.PLAYWRIGHT_ACTOR_1_PASSWORD ?? ""
+    },
     actor2: {
-      email: process.env.PLAYWRIGHT_ACTOR_2_EMAIL ?? process.env.PLAYWRIGHT_DISPATCH_EMAIL ?? process.env.PLAYWRIGHT_ACTOR_1_EMAIL ?? "",
-      password: process.env.PLAYWRIGHT_ACTOR_2_PASSWORD ?? process.env.PLAYWRIGHT_DISPATCH_PASSWORD ?? process.env.PLAYWRIGHT_ACTOR_1_PASSWORD ?? ""},
+      email: process.env.PLAYWRIGHT_ACTOR_2_EMAIL ?? "",
+      password: process.env.PLAYWRIGHT_ACTOR_2_PASSWORD ?? ""
+    },
     actor3: {
-      email: process.env.PLAYWRIGHT_ACTOR_3_EMAIL ?? process.env.PLAYWRIGHT_RETAIL_EMAIL ?? process.env.PLAYWRIGHT_ACTOR_1_EMAIL ?? "",
-      password: process.env.PLAYWRIGHT_ACTOR_3_PASSWORD ?? process.env.PLAYWRIGHT_RETAIL_PASSWORD ?? process.env.PLAYWRIGHT_ACTOR_1_PASSWORD ?? ""}
+      email: process.env.PLAYWRIGHT_ACTOR_3_EMAIL ?? "",
+      password: process.env.PLAYWRIGHT_ACTOR_3_PASSWORD ?? ""
+    }
   },
 
   seeded: {
     enabled: process.env.PLAYWRIGHT_SEEDED === "true",
-    adminRoutes: []}
+    adminRoutes: []
+  }
 };
 
 export const chefHarness: ChefHarnessConfig = {
@@ -76,6 +78,9 @@ export const getTenantBaseUrl = (): string => playwrightHarness.publicBaseUrl;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function requirePosCredentials(test: TestType<any, any>): void {
+  // We disable the no-skipped-test rule here because we explicitly want to skip
+  // execution if the environment does not have the required credentials.
+  // eslint-disable-next-line playwright/no-skipped-test
   test.skip(
     !hasTenantData() || !hasLoginCredentials(),
     "Requires PLAYWRIGHT_TENANT_RUC and all specific actor credentials (Actor 1, Actor 2, Actor 3)",
@@ -84,6 +89,9 @@ export function requirePosCredentials(test: TestType<any, any>): void {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function requireChefCredentials(test: TestType<any, any>): void {
+  // We disable the no-skipped-test rule here to allow dynamic test skipping
+  // when Chef credentials are not configured in the environment.
+  // eslint-disable-next-line playwright/no-skipped-test
   test.skip(
     !hasChefCredentials(),
     "Requires PLAYWRIGHT_CHEF_RUC, PLAYWRIGHT_CHEF_EMAIL and PLAYWRIGHT_CHEF_PASSWORD",

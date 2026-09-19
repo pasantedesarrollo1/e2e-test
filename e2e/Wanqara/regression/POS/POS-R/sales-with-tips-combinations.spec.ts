@@ -1,5 +1,5 @@
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
-import { expect, test } from "@/e2e/Wanqara/harness/fixtures/stage.fixture.js";
+import { expect, test } from "@/e2e/Wanqara/harness/fixtures/restaurant.fixture.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -81,8 +81,8 @@ for (const scenario of scenarios) {
       subsidiaryCode: scenario.subsidiaryCode
     });
 
-    test("Case 1: Direct Sale with Mix (Standard + Combo + Service) and Tip", async ({ stageEnvironment }) => {
-      const { page } = stageEnvironment;
+    test("Case 1: Direct Sale with Mix (Standard + Combo + Service) and Tip", async ({ restaurantEnvironment }) => {
+      const { page } = restaurantEnvironment;
       test.setTimeout(150_000);
       const precision = scenario.case1;
 
@@ -103,17 +103,17 @@ for (const scenario of scenarios) {
       await completePayment(page, { paymentMethod: scenario.paymentMethod });
 
       const request = await requestPromise;
-      const body = request.postDataJSON() as Record<string, any>;
+      const body = request.postDataJSON() as Record<string, unknown>;
        
       assertSummaryPrecision(body, precision.summary);
        
-      expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+      expect(String(body['additional_tip'])).toBe(String(precision.root.additional_tip));
        
       assertPaymentPayloadPrecision(body, precision);
     });
 
-    test("Case 2: Direct Sale with General Discount and Tip", async ({ stageEnvironment }) => {
-      const { page } = stageEnvironment;
+    test("Case 2: Direct Sale with General Discount and Tip", async ({ restaurantEnvironment }) => {
+      const { page } = restaurantEnvironment;
       test.setTimeout(120_000);
       const precision = scenario.case2;
 
@@ -134,17 +134,17 @@ for (const scenario of scenarios) {
       await completePayment(page, { paymentMethod: scenario.paymentMethod });
 
       const request = await requestPromise;
-      const body = request.postDataJSON() as Record<string, any>;
+      const body = request.postDataJSON() as Record<string, unknown>;
        
       assertSummaryPrecision(body, precision.summary);
        
-      expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+      expect(String(body['additional_tip'])).toBe(String(precision.root.additional_tip));
        
       assertPaymentPayloadPrecision(body, precision);
     });
 
-    test("Case 5: Direct Sale with Surcharge and Tip", async ({ stageEnvironment }) => {
-      const { page } = stageEnvironment;
+    test("Case 5: Direct Sale with Surcharge and Tip", async ({ restaurantEnvironment }) => {
+      const { page } = restaurantEnvironment;
       test.setTimeout(120_000);
       const precision = scenario.case5;
 
@@ -165,11 +165,11 @@ for (const scenario of scenarios) {
       await completePayment(page, { paymentMethod: scenario.paymentMethod });
 
       const request = await requestPromise;
-      const body = request.postDataJSON() as Record<string, any>;
+      const body = request.postDataJSON() as Record<string, unknown>;
        
       assertSummaryPrecision(body, precision.summary);
        
-      expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+      expect(String(body['additional_tip'])).toBe(String(precision.root.additional_tip));
        
       assertPaymentPayloadPrecision(body, precision);
     });
@@ -187,14 +187,14 @@ for (const scenario of scenarios) {
       chefLogin: scenario.chefLogin,
       chefSubsidiary: scenario.chefSubsidiary,
       chefSubsidiaryCode: scenario.chefSubsidiaryCode,
-      stageSetupOptions: {
+      restaurantSetupOptions: {
         createOrder: { productName: scenario.products.estandar },
         
       }
     });
 
-    test("Case 3: Full Table Payment with Composite Inventory and Tip", async ({ stageEnvironment }) => {
-      const { page } = stageEnvironment;
+    test("Case 3: Full Table Payment with Composite Inventory and Tip", async ({ restaurantEnvironment }) => {
+      const { page } = restaurantEnvironment;
       test.setTimeout(180_000);
       const precision = scenario.case3;
 
@@ -226,15 +226,15 @@ for (const scenario of scenarios) {
         await completePayment(page, { paymentMethod: scenario.paymentMethod });
         
         const request = await requestPromise;
-        const body = request.postDataJSON();
+        const body = request.postDataJSON() as Record<string, unknown>;
         assertSummaryPrecision(body, precision.summary);
-        expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+        expect(String(body['additional_tip'])).toBe(String(precision.root.additional_tip));
         assertPaymentPayloadPrecision(body, precision);
       });
     });
 
-    test("Case 4: Separate Check Payment with Tip", async ({ stageEnvironment }) => {
-      const { page } = stageEnvironment;
+    test("Case 4: Separate Check Payment with Tip", async ({ restaurantEnvironment }) => {
+      const { page } = restaurantEnvironment;
       test.setTimeout(180_000);
       const precision = scenario.case4;
 
@@ -263,9 +263,9 @@ for (const scenario of scenarios) {
         await completePayment(page, { paymentMethod: scenario.paymentMethod });
         
         const request = await requestPromise;
-        const body = request.postDataJSON();
+        const body = request.postDataJSON() as Record<string, unknown>;
         assertSummaryPrecision(body, precision.summary);
-        expect(String(body.additional_tip)).toBe(String(precision.root.additional_tip));
+        expect(String(body['additional_tip'])).toBe(String(precision.root.additional_tip));
         assertPaymentPayloadPrecision(body, precision);
       });
     });

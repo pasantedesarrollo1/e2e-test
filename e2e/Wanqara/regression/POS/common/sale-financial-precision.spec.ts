@@ -10,7 +10,7 @@ interface DiscountCase {
 interface SurchargeProduct {
   type: string;
 }
-interface ScenarioData extends FlatScenario {
+type ScenarioData = PosScenario & {
   discountName?: string;
   discountCases?: DiscountCase[];
   paymentMethod: string;
@@ -22,8 +22,8 @@ interface ScenarioData extends FlatScenario {
 
 import path from "path";
 import { fileURLToPath } from "url";
-import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import {
   applyGeneralDiscount,
@@ -83,7 +83,7 @@ async function runAllProductsSurchargeFlow(page: Page, { productsToAdd, precisio
 }
 
 test.describe("Financial Calculation Accuracy", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     
     for (const { product, requiresClient, precision, precisionHoliday } of scenario.discountCases!) {
       test(`validates financial calculations for [${product.type}] with ${scenario.discountName}`, async ({ posEnvironment }) => {

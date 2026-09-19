@@ -1,5 +1,5 @@
 import { expect, type Page, type Locator, type Response } from "@playwright/test";
-import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { expectSnackbar } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 async function ensureActionButton(page: Page, locator: Locator, shouldBeActive: boolean): Promise<void> {
   await expect(locator).toHaveClass(/summary-action-btn--(active|inactive)/);
@@ -59,6 +59,8 @@ export async function completePayment(page: Page, {
       res.request().method() === 'POST' && 
       res.status() === 200
     ),
+    // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+    // eslint-disable-next-line playwright/no-force-option
     finalizarVentaButton.click({ force: true })
   ]);
 

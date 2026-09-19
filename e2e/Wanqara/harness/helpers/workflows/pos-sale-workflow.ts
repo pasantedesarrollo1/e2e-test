@@ -40,6 +40,7 @@ export class PosSaleWorkflow {
     private searchTerm: string | null = null;
     private documentType: string | null = null;
     private clientCedula: string | null = null;
+    private identityType?: string;
     private paymentMethod: string | null = null;
     private printTicket: boolean = false;
     private openDrawer: boolean = false;
@@ -68,7 +69,7 @@ export class PosSaleWorkflow {
         
         if (scenarioData.documentType) workflow.withDocumentType(scenarioData.documentType);
         if (scenarioData.productName) workflow.withProduct(scenarioData.productName, scenarioData.searchTerm);
-        if (scenarioData.clientCedula) workflow.withClient(scenarioData.clientCedula);
+        if (scenarioData.clientCedula) workflow.withClient(scenarioData.clientCedula, scenarioData.identityType);
         if (scenarioData.paymentMethod) workflow.withPaymentMethod(scenarioData.paymentMethod);
         if (scenarioData.printTicket !== undefined || scenarioData.openDrawer !== undefined || scenarioData.printPdf !== undefined) {
             workflow.withDocumentOptions({
@@ -104,7 +105,7 @@ export class PosSaleWorkflow {
         return this;
     }
 
-    withClient(cedula: string): this {
+    withClient(cedula: string, identityType?: string): this {
         this.clientCedula = cedula;
         return this;
     }
@@ -141,6 +142,7 @@ export class PosSaleWorkflow {
             targetPath: this.targetPath,
             documentType: this.documentType,
             clientCedula: this.clientCedula,
+            identityType: this.identityType,
             productName: this.productName,
             searchTerm: this.searchTerm,
             paymentMethod: this.paymentMethod,

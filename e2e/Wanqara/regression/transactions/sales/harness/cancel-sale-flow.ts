@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { expect, test, type Page } from "@playwright/test";
-import { clickTableRowAction } from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
-import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/ui/action-tooltips.js";
+import { clickTableRowAction } from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/admin/action-tooltips.js";
 
 export interface CancelFirstSaleOptions {
   expectSwitch?: boolean;

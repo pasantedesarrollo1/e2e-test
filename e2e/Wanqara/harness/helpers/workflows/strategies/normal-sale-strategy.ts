@@ -17,7 +17,7 @@ import type { SaleStrategy, SaleStrategyPayload } from "@/e2e/Wanqara/harness/he
 
 export class NormalSaleStrategy implements SaleStrategy {
     async execute(workflow) {
-        const { page, skipNavigation, authType, dispatchDetails, documentType, clientCedula, items, customActions, paymentMethod } = workflow;
+        const { page, skipNavigation, authType, dispatchDetails, documentType, clientCedula, identityType, items, customActions, paymentMethod }= workflow;
 
         if (!skipNavigation) {
             await ensureAuthenticated(page, { targetPath: "/admin/ventas/add", authType });

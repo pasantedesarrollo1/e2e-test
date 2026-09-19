@@ -4,21 +4,22 @@ import fs from "fs";
 interface ShareData {
   productName: string;
   clientCedula: string;
+  identityType?: string;
   paymentMethod?: any;
 }
-interface ScenarioData extends FlatScenario {
+type ScenarioData = PosScenario & {
   shareData: ShareData;
   paymentMethod?: string;
 }
 
 import path from "path";
 import { fileURLToPath } from "url";
-import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
+import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
 import { completePayment } from "@/e2e/Wanqara/regression/POS/harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "@/e2e/Wanqara/regression/POS/harness/products/pos-search.js";
 import type { Page, Locator } from "@playwright/test";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,7 +32,7 @@ const scenarios = parseScenarios<ScenarioData>(
 test.describe("POS Public Document Share", () => {
   test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
 
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     test(scenario.description, async ({ posEnvironment, browser  }) => {
       const { page } = posEnvironment;
       test.setTimeout(180_000);
@@ -44,7 +45,7 @@ test.describe("POS Public Document Share", () => {
       });
 
       await test.step("Search and select client", async () => {
-        await selectClientByCedula(page, scenario.shareData.clientCedula, { snackbarRequired: true });
+        await selectClientByCedula(page, scenario.shareData.clientCedula, {  snackbarRequired: true , identityType: scenario.shareData.identityType });
       });
 
       await test.step("Proceed to payment and finish sale", async () => {

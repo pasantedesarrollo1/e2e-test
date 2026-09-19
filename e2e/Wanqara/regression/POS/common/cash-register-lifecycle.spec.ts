@@ -2,19 +2,20 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = PosScenario & {
   subsidiaryName: string;
   openingAmount: string;
   basePath: string;
   clientCedula: string;
+  identityType?: string;
   productName: string;
   paymentMethod: string;
 }
 
-import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/people/client-helpers.js";
+import { selectClientByCedula } from "@/e2e/Wanqara/harness/helpers/shared/client-picker.js";
 import { closeCashRegister } from "@/e2e/Wanqara/regression/POS/harness/cash-register/cash-register-helpers.js";
 import { completePayment } from "@/e2e/Wanqara/regression/POS/harness/payments/pos-payment.js";
 import { searchAndSelectProduct } from "@/e2e/Wanqara/regression/POS/harness/products/pos-search.js";
@@ -29,7 +30,7 @@ const scenarios: ScenarioData[] = JSON.parse(
 );
 
 test.describe("POS - Cash Register Lifecycle @regression", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario) => {
     test(scenario.description, async ({ posEnvironment }) => {
       const { page } = posEnvironment;
       test.setTimeout(180_000);
@@ -66,7 +67,7 @@ test.describe("POS - Cash Register Lifecycle @regression", () => {
       });
 
       await test.step("Realizar venta de prueba", async () => {
-        await selectClientByCedula(page, scenario.clientCedula);
+        await selectClientByCedula(page, scenario.clientCedula, {  identityType: scenario.identityType });
         await searchAndSelectProduct(page, { name: scenario.productName, searchTerm: undefined });
         await clickFinishSale(page);
         await completePayment(page, { paymentMethod: scenario.paymentMethod });

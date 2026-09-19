@@ -7,10 +7,10 @@ import { createDispatchType, toggleDispatchTypeState } from "./harness/dispatch-
 import rawScenarios from "./0-json-data/dispatch-types-crud.json" with { type: "json" };
 const scenarios = parseScenarios<ScenarioData>(rawScenarios);
 
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 import type { DispatchTypeOptions } from '@/e2e/Wanqara/regression/settings/configuration/dispatch-types/harness/dispatch-types-helpers.js';
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   authType: string;
   dispatchData: DispatchTypeOptions;
 }
@@ -18,7 +18,7 @@ interface ScenarioData extends FlatScenario {
 
 
 test.describe("Settings - Dispatch Types CRUD", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     requirePosCredentials(test);
 
     test(

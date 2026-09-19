@@ -1,16 +1,16 @@
 import { expect, type Page, type Locator } from "@playwright/test";
 import { ensureAuthenticated, logoutAndLoginAgain } from "@/e2e/Wanqara/harness/helpers/auth/auth.js";
 import { playwrightHarness } from "@/e2e/Wanqara/harness/config/settings.js";
-import { searchInList } from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
+import { searchInList } from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
 
 export async function ensureSubsidiaryConfig(
   page: Page,
-  businessType: string,
+  forceBusinessType: string,
   dispatchEnabled: boolean = false,
   ebillingEnabled: boolean | undefined = undefined
 ): Promise<boolean> {
   const typeOption = page.locator("div[style*='min-width: 90px']")
-    .filter({ hasText: new RegExp(businessType, "i") })
+    .filter({ hasText: new RegExp(forceBusinessType, "i") })
     .first();
   await expect(typeOption).toBeVisible({ timeout: 15000 });
 
@@ -115,19 +115,19 @@ export async function navigateToSubsidiaryDetail(page: Page, subsidiaryName: str
 
 export interface EnvSetupFlowOptions {
   authType: string;
-  businessType: string;
+  forceBusinessType: string;
   dispatchEnabled: boolean;
   ebillingEnabled?: boolean | undefined;
   subsidiaryName: string;
   subsidiaryCode: string;
 }
 
-export async function runEnvSetupFlow(page: Page, { authType, businessType, dispatchEnabled, ebillingEnabled, subsidiaryName, subsidiaryCode }: EnvSetupFlowOptions): Promise<void> {
+export async function runEnvSetupFlow(page: Page, { authType, forceBusinessType, dispatchEnabled, ebillingEnabled, subsidiaryName, subsidiaryCode }: EnvSetupFlowOptions): Promise<void> {
   await ensureAuthenticated(page, { targetPath: "/admin/home", authType });
 
   await navigateToSubsidiaryDetail(page, subsidiaryName, subsidiaryCode);
 
-  const requiresRelogin = await ensureSubsidiaryConfig(page, businessType, dispatchEnabled, ebillingEnabled);
+  const requiresRelogin = await ensureSubsidiaryConfig(page, forceBusinessType, dispatchEnabled, ebillingEnabled);
 
   if (requiresRelogin) {
     const loginCredentials = playwrightHarness.users[authType as keyof typeof playwrightHarness.users];

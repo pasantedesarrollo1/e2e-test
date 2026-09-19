@@ -6,12 +6,14 @@ import { AdminSaleWorkflow, PreSaleStrategy } from "@/e2e/Wanqara/harness/helper
 import { cancelFirstSaleAndVerify } from "@/e2e/Wanqara/regression/transactions/sales/harness/cancel-sale-helpers.js";
 
 import scenariosRaw from "./0-json-data/admin-pre-sale-cancellation.json" with { type: "json" };
-const scenarios = scenariosRaw as unknown as ScenarioData[];
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+const scenarios = parseScenarios<ScenarioData>(scenariosRaw);
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 interface SaleParams {
   documentType: string;
   clientCedula: string;
+  identityType?: string;
   productName: string;
   paymentMethod: string;
 }
@@ -21,7 +23,7 @@ interface CancelParams {
   expectMessage?: boolean;
 }
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   authType: string;
   saleParams: SaleParams;
   cancelParams: CancelParams;
@@ -29,7 +31,7 @@ interface ScenarioData extends FlatScenario {
 
 
 test.describe.serial("Cancel Pre-Sales (Admin)", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     requirePosCredentials(test);
 
     test(

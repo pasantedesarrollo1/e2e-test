@@ -13,12 +13,12 @@
     },
     "description": "Retail - Flujo Base de Talla (Pre-clean, Create, Search, Delete)",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "sizeData": {
       "name": "Talla E2E Base Flow",
       "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

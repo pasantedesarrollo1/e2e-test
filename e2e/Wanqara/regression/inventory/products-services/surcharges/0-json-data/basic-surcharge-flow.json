@@ -13,12 +13,12 @@
     },
     "description": "Retail - Flujo Base de Recargo (Pre-clean, Create, Search, Delete)",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "surchargeData": {
       "name": "Recargo E2E Base Flow",
       "percentage": "12"
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

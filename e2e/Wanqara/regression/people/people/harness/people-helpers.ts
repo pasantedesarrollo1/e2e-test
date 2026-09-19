@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
-import { clickTableRowAction, searchInList } from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
-import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/ui/action-tooltips.js";
-import { selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { clickTableRowAction, searchInList } from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/admin/action-tooltips.js";
+import { selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export interface PersonData {
   name: string;

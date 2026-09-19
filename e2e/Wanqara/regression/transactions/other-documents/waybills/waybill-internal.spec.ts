@@ -8,8 +8,9 @@ import {
 } from "./harness/waybill-helpers.js";
 
 import scenariosRaw from "./0-json-data/waybill-internal.json" with { type: "json" };
-const scenarios = scenariosRaw as unknown as ScenarioData[];
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+const scenarios = parseScenarios<ScenarioData>(scenariosRaw);
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 interface WaybillData {
   isLongProductSale?: boolean;
@@ -25,14 +26,14 @@ interface WaybillData {
   shipmentAmountInternal: string;
 }
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   authType: string;
   waybillData: WaybillData;
 }
 
 
 test.describe.serial("Waybills - Internal Waybill", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     requirePosCredentials(test);
 
     test(

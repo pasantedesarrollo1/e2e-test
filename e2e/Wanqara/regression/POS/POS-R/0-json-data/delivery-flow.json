@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Restaurant",
     "metadata": {
       "ws": "WS-871",
       "tes": "TES-233",
@@ -14,7 +13,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Restaurant",
     "authType": "actor1",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "deliveryData": {
       "phone": "0999999922",
       "clientName": "Cliente Delivery Test",
@@ -26,10 +29,7 @@
       },
       "cedula": "0000000001"
     },
-    "subsidiaryName": "Wanqara",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "cached",
-    "businessType": "Restaurante"
+    "forceBusinessType": "Restaurante"
   }
 ]

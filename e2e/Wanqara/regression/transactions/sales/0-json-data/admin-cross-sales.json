@@ -15,6 +15,8 @@
     },
     "description": "Admin Sales Anti-Cross Validation for Wanqara 001 (Ventas)",
     "authType": "actor1",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "transaction": {
       "path": "/admin/ventas/add",
       "endpoint": "/api/v2/billing/sales",
@@ -41,9 +43,7 @@
         ],
         "code": "001"
       }
-    ],
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    ]
   },
   {
     "id": "ADMIN-CROSS-SALES-001-2",
@@ -61,6 +61,8 @@
     },
     "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios 100 (Ventas)",
     "authType": "actor3",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "transaction": {
       "path": "/admin/ventas/add",
       "endpoint": "/api/v2/billing/sales",
@@ -83,9 +85,7 @@
         ],
         "code": "100"
       }
-    ],
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    ]
   },
   {
     "id": "ADMIN-CROSS-SALES-001-3",
@@ -103,6 +103,8 @@
     },
     "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios Dispatch 101 (Ventas)",
     "authType": "actor2",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
     "transaction": {
       "path": "/admin/ventas/add",
       "endpoint": "/api/v2/billing/sales",
@@ -125,9 +127,7 @@
         ],
         "code": "101"
       }
-    ],
-    "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    ]
   },
   {
     "id": "ADMIN-CROSS-SALES-002-1",
@@ -145,6 +145,8 @@
     },
     "description": "Admin Sales Anti-Cross Validation for Wanqara 001 (Pre-Ventas)",
     "authType": "actor1",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "transaction": {
       "path": "/admin/pre-sale/add",
       "endpoint": "/api/v2/billing/pre-sales",
@@ -171,9 +173,7 @@
         ],
         "code": "001"
       }
-    ],
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001"
+    ]
   },
   {
     "id": "ADMIN-CROSS-SALES-002-2",
@@ -191,6 +191,8 @@
     },
     "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios 100 (Pre-Ventas)",
     "authType": "actor3",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "transaction": {
       "path": "/admin/pre-sale/add",
       "endpoint": "/api/v2/billing/pre-sales",
@@ -213,9 +215,7 @@
         ],
         "code": "100"
       }
-    ],
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100"
+    ]
   },
   {
     "id": "ADMIN-CROSS-SALES-002-3",
@@ -233,6 +233,8 @@
     },
     "description": "Admin Sales Anti-Cross Validation for Wanqara Comercios Dispatch 101 (Pre-Ventas)",
     "authType": "actor2",
+    "subsidiaryName": "Wanqara Comercios Dispatch",
+    "subsidiaryCode": "101",
     "transaction": {
       "path": "/admin/pre-sale/add",
       "endpoint": "/api/v2/billing/pre-sales",
@@ -255,8 +257,6 @@
         ],
         "code": "101"
       }
-    ],
-    "subsidiaryName": "Wanqara Comercios Dispatch",
-    "subsidiaryCode": "101"
+    ]
   }
 ]

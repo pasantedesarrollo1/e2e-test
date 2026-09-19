@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Retail",
     "metadata": {
       "ws": "WS-1053,WS-945",
       "tes": "TES-223",
@@ -14,11 +13,12 @@
       "addedToRegression": "true",
       "testScope": "release"
     },
+    "description": "Retail",
     "authType": "actor1",
-    "subsidiaryCode": "001",
-    "subsidiaryName": "Wanqara",
-    "businessType": "Comercios",
     "loginMode": "fresh",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
+    "forceBusinessType": "Comercios",
     "cashRegisterMode": "fresh",
     "openingAmount": "100.00",
     "productName": "Combo alitas",

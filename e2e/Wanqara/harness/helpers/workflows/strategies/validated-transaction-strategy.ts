@@ -17,7 +17,7 @@ import type { SaleStrategy, SaleStrategyPayload } from "@/e2e/Wanqara/harness/he
 
 export class ValidatedTransactionStrategy implements SaleStrategy {
     async execute(workflow, endpoint) {
-        const { page, skipNavigation, authType, customCheckout, customDocumentType, documentType, clientCedula, items, customActions, paymentMethod } = workflow;
+        const { page, skipNavigation, authType, customCheckout, customDocumentType, documentType, clientCedula, identityType, items, customActions, paymentMethod }= workflow;
 
         if (!skipNavigation) {
             await ensureAuthenticated(page, { targetPath: "/admin/ventas/add", authType });

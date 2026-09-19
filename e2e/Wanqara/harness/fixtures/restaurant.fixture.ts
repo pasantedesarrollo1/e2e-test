@@ -9,17 +9,17 @@ import { closeAllActiveOrders, createChefOrder, openAndSelectOrder, type ChefOrd
 
 const grantSetupHeadroom = (testInfo: TestInfo, ms: number): void => testInfo.setTimeout(testInfo.timeout + ms);
 
-export interface StageSetupOrderOptions {
+export interface RestaurantSetupOrderOptions {
   productName: string;
   quantity?: number;
   extras?: ChefOrderExtras | null;
 }
 
-export interface StageSetupOptions {
-  createOrder?: StageSetupOrderOptions;
+export interface RestaurantSetupOptions {
+  createOrder?: RestaurantSetupOrderOptions;
 }
 
-export type StageFixtures = {
+export type RestaurantFixtures = {
   subsidiaryName: string;
   subsidiaryCode: string;
   openingAmount: string;
@@ -34,13 +34,13 @@ export type StageFixtures = {
   chefSubsidiary: string;
   chefSubsidiaryCode: string;
   
-  stageSetupOptions: StageSetupOptions | null;
+  restaurantSetupOptions: RestaurantSetupOptions | null;
   
-  stageEnvironment: { page: Page; contextType: string };
+  restaurantEnvironment: { page: Page; contextType: string };
   chefContext: Page | null;
 };
 
-export const test = base.extend<StageFixtures>({
+export const test = base.extend<RestaurantFixtures>({
   subsidiaryName: ["", { option: true }],
   subsidiaryCode: ["", { option: true }],
   openingAmount: ["", { option: true }],
@@ -55,9 +55,9 @@ export const test = base.extend<StageFixtures>({
   chefSubsidiary: ["", { option: true }],
   chefSubsidiaryCode: ["", { option: true }],
 
-  stageSetupOptions: [null, { option: true }],
+  restaurantSetupOptions: [null, { option: true }],
 
-  stageEnvironment: async ({ page, subsidiaryName, subsidiaryCode, openingAmount, authType, loginMode, dispatchEnabled, ebillingEnabled, cashRegisterMode }, use, testInfo) => {
+  restaurantEnvironment: async ({ page, subsidiaryName, subsidiaryCode, openingAmount, authType, loginMode, dispatchEnabled, ebillingEnabled, cashRegisterMode }, use, testInfo) => {
     grantSetupHeadroom(testInfo, 120_000);
 
     if (!subsidiaryName) throw new Error("page fixture requires subsidiaryName option");
@@ -67,7 +67,7 @@ export const test = base.extend<StageFixtures>({
     const posScenario = { authType, loginMode: loginMode as "fresh" | "cached", subsidiaryName, subsidiaryCode };
     await SessionInitializer.setup(page, posScenario, { targetPath: "/admin/home" });
 
-    await runEnvSetupFlow(page, { authType, businessType: "Restaurante", dispatchEnabled, ebillingEnabled, subsidiaryName, subsidiaryCode });
+    await runEnvSetupFlow(page, { authType, forceBusinessType: "Restaurante", dispatchEnabled, ebillingEnabled, subsidiaryName, subsidiaryCode });
     await handleCashRegisterState(page, cashRegisterMode, openingAmount, subsidiaryName, subsidiaryCode, "/pos/restaurant-home");
 
     const homeIndicator = page.getByText(/Cliente:/i).first();
@@ -82,11 +82,11 @@ export const test = base.extend<StageFixtures>({
       await targetIndicator.waitFor({ state: "visible", timeout: 15_000 });
     }
 
-    await use({ page, contextType: "stage" });
+    await use({ page, contextType: "restaurant" });
   },
 
-  chefContext: [async ({ browser, stageEnvironment, chefAuthType, chefLogin, chefSubsidiary, chefSubsidiaryCode, stageSetupOptions, subsidiaryName }, use) => {
-    const { page } = stageEnvironment;
+  chefContext: [async ({ browser, restaurantEnvironment, chefAuthType, chefLogin, chefSubsidiary, chefSubsidiaryCode, restaurantSetupOptions, subsidiaryName }, use) => {
+    const { page } = restaurantEnvironment;
     let chefPage: Page | null = null;
 
     if (chefAuthType) {
@@ -104,8 +104,8 @@ export const test = base.extend<StageFixtures>({
         chefAuthType
       });
 
-      if (stageSetupOptions?.createOrder) {
-        const orderOpts = stageSetupOptions.createOrder;
+      if (restaurantSetupOptions?.createOrder) {
+        const orderOpts = restaurantSetupOptions.createOrder;
         
         const activeTableName = await createChefOrder(chefPage, {
            productName: orderOpts.productName,

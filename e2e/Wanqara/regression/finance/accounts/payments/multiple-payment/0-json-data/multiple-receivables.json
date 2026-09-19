@@ -14,15 +14,15 @@
     },
     "description": "Retail - Flujo completo de multicobros (Pago, PDF, Eliminación)",
     "authType": "actor1",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "paymentData": {
       "cedula": "0000000001",
       "paymentAmount": "0.01",
       "paymentDescription": "Automated test payment",
       "initialDeleteReason": "test",
       "finalDeleteReason": "test deletion reason"
-    },
-    "subsidiaryName": "Wanqara",
-    "subsidiaryCode": "001",
-    "loginMode": "cached"
+    }
   }
 ]

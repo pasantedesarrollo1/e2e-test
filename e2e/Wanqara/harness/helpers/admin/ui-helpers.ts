@@ -44,6 +44,8 @@ export async function selectDropdownOption(page: Page, {
   try {
     await option.waitFor({ state: "visible", timeout });
   } catch {
+    // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+    // eslint-disable-next-line playwright/no-force-option
     await triggerLocator.click({ force: true, delay: 100 });
     await option.waitFor({ state: "visible", timeout: retryTimeout });
   }
@@ -65,7 +67,11 @@ export async function expectSnackbar(page: Page, messageRegex?: RegExp | string 
   
   const closeBtn = snackbar.locator('.v-btn.v-btn--flat.v-btn--icon.v-btn--slim').first();
   if (await closeBtn.isVisible().catch(() => false)) {
+    // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+    // eslint-disable-next-line playwright/no-force-option
     await closeBtn.click({ force: true }).catch(() => {});
+    // Vuetify dynamic animations require safe conditional waits.
+    // eslint-disable-next-line playwright/no-conditional-expect
     await expect(snackbar).toBeHidden({ timeout: 5000 }).catch(() => {});
   }
 }
@@ -86,6 +92,8 @@ export async function clickAndWaitForApi(page: Page, locator: Locator, { endpoin
       const statusMatches = Array.isArray(status) ? status.includes(res.status()) : res.status() === status;
       return urlMatches && res.request().method() === method && statusMatches;
     }),
+    // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+    // eslint-disable-next-line playwright/no-force-option
     locator.click({ force: true })
   ]);
   return response;

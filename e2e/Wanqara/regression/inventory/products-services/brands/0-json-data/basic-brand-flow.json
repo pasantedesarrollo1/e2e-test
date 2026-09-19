@@ -13,13 +13,13 @@
     },
     "description": "Retail - Flujo Base de Marca (Pre-clean, Create, Search, Delete)",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "brandData": {
       "name": "Marca E2E Base Flow",
       "order": "1",
       "observation": "Ensamblado via Legos (Pre-Clean -> Create -> Search -> Delete)"
-    },
-    "subsidiaryName": "Wanqara Comercios",
-    "subsidiaryCode": "100",
-    "loginMode": "cached"
+    }
   }
 ]

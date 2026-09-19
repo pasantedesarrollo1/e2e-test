@@ -1,6 +1,6 @@
  
 import { expect, type Page } from "@playwright/test";
-import { selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export async function selectDocumentType(page: Page, documentType: string | undefined): Promise<void> {
   if (!documentType) return;

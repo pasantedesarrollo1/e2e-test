@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Botón flotante de WhatsApp en el Login",
     "metadata": {
       "ws": "WS-1067",
       "tes": "TES-225",
@@ -13,6 +12,7 @@
       "summary": "Verificar apertura de WhatsApp desde el Login",
       "addedToRegression": "true",
       "testScope": "release"
-    }
+    },
+    "description": "Botón flotante de WhatsApp en el Login"
   }
 ]

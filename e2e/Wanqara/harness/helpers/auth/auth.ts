@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { playwrightHarness, type UserCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
-import { formatPosSubsidiary, selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { formatPosSubsidiary, selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export const getSessionPath = (authType: string): string => path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),

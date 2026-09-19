@@ -1,10 +1,10 @@
 /* eslint-disable */
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/admin.fixture.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 import type { MultiplePaymentOptions } from '@/e2e/Wanqara/regression/finance/accounts/payments/multiple-payment/harness/multiple-receivables-helpers.js';
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   subsidiaryName: string;
   subsidiaryCode: string;
   authType: string;
@@ -13,8 +13,8 @@ interface ScenarioData extends FlatScenario {
 }
 
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
-import { clickTableRowAction } from "@/e2e/Wanqara/harness/helpers/crud/crud-helpers.js";
-import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/ui/action-tooltips.js";
+import { clickTableRowAction } from "@/e2e/Wanqara/harness/helpers/admin/crud-helpers.js";
+import { ACTION_TOOLTIPS } from "@/e2e/Wanqara/harness/helpers/admin/action-tooltips.js";
 import {
   confirmFinalDeletion,
   fillPaymentDetailsAndSubmit,
@@ -40,7 +40,7 @@ const scenarios = parseScenarios<ScenarioData>(
 test.describe("Finance - Accounts - Multiple Receivables (E2E)", () => {
   requirePosCredentials(test);
 
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     
     test.use({ 
       targetPath: "/admin/payments/add/multiple-receivables",

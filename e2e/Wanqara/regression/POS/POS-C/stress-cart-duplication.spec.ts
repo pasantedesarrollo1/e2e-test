@@ -4,16 +4,15 @@ interface ActionData {
   type: string;
   name: string;
 }
-interface ScenarioData extends FlatScenario {
+type ScenarioData = PosScenario & {
   searchKeyword: string;
   actions: ActionData[];
 }
 
 import path from "path";
 import { fileURLToPath } from "url";
-import type { Page, Locator } from "@playwright/test";
 import { expect, test } from "@/e2e/Wanqara/harness/fixtures/pos.fixture.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,7 +23,7 @@ const scenarios = parseScenarios<ScenarioData>(
 );
 
 test.describe("Product Selection Stress & Rapid-Click Testing", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario: ScenarioData) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario: ScenarioData) => {
     
     test('should not duplicate cart rows or corrupt store state under rapid random clicks', async ({ posEnvironment }) => {
       const { page } = posEnvironment;
@@ -49,7 +48,7 @@ test.describe("Product Selection Stress & Rapid-Click Testing", () => {
       const cardCount = await visibleCards.count();
       expect(cardCount).toBeGreaterThan(0);
 
-      const clickTrackers: any = {}; 
+      const clickTrackers: Record<string, number> = {}; 
       let addedCount = 0;
 
       const cartRows = page.locator('div.tw-border-l-2.tw-border-secondary');
@@ -61,9 +60,15 @@ test.describe("Product Selection Stress & Rapid-Click Testing", () => {
         const stockDot = card.locator('.stock-dot');
         const classes = await stockDot.getAttribute('class');
         
+        // This is a randomized stress test; conditional paths are required to handle dynamic state.
+        // eslint-disable-next-line playwright/no-conditional-in-test
         if ((classes || "").includes('tw-text-red')) {
+          // force: true is used to rapidly blast clicks, intentionally bypassing Playwright's stabilization waits.
+          // eslint-disable-next-line playwright/no-force-option
           await card.click({ force: true });
           const snackbar = page.getByRole('status').filter({ hasText: /No se puede agregar el/i }).first();
+          // We conditionally expect the out-of-stock snackbar only when an out-of-stock item is randomly clicked.
+          // eslint-disable-next-line playwright/no-conditional-expect
           await expect(snackbar).toBeVisible({ timeout: 5000 });
           continue; 
         }
@@ -71,6 +76,8 @@ test.describe("Product Selection Stress & Rapid-Click Testing", () => {
         clickTrackers[productTitle] = 1;
         addedCount++;
         
+        // force: true is used to rapidly blast clicks, intentionally bypassing Playwright's stabilization waits.
+        // eslint-disable-next-line playwright/no-force-option
         await card.click({ force: true });
         await expect(cartRows).toHaveCount(addedCount);
       }
@@ -84,6 +91,8 @@ test.describe("Product Selection Stress & Rapid-Click Testing", () => {
         
         const stockDot = targetCard.locator('.stock-dot');
         const classes = await stockDot.getAttribute('class');
+        // This is a randomized stress test; conditional paths are required to handle dynamic state.
+        // eslint-disable-next-line playwright/no-conditional-in-test
         if ((classes || "").includes('tw-text-red')) {
           continue; 
         }
@@ -94,11 +103,15 @@ test.describe("Product Selection Stress & Rapid-Click Testing", () => {
         clickTrackers[productTitle] += randomClicks;
 
         for (let click = 0; click < randomClicks; click++) {
+          // force: true is used to rapidly blast clicks, intentionally bypassing Playwright's stabilization waits.
+          // eslint-disable-next-line playwright/no-force-option
           await targetCard.click({ force: true });
         }
       }
 
       const pingPongCycles = 10;
+      // Conditional branching is required here based on the dynamic number of products rendered.
+      // eslint-disable-next-line playwright/no-conditional-in-test
       if (cardCount > 1) {
         for (let cycle = 0; cycle < pingPongCycles; cycle++) {
           const idxA = Math.floor(Math.random() * cardCount);
@@ -113,6 +126,8 @@ test.describe("Product Selection Stress & Rapid-Click Testing", () => {
           const classesA = await cardA.locator('.stock-dot').getAttribute('class');
           const classesB = await cardB.locator('.stock-dot').getAttribute('class');
 
+          // This is a randomized stress test; conditional paths are required to handle dynamic state.
+          // eslint-disable-next-line playwright/no-conditional-in-test
           if ((classesA || "").includes('tw-text-red') || (classesB || "").includes('tw-text-red')) {
             continue;
           }
@@ -125,7 +140,10 @@ test.describe("Product Selection Stress & Rapid-Click Testing", () => {
           clickTrackers[titleB] += pingPongClicks;
 
           for (let i = 0; i < pingPongClicks; i++) {
+            // force: true is used to rapidly blast clicks, intentionally bypassing Playwright's stabilization waits.
+            // eslint-disable-next-line playwright/no-force-option
             await cardA.click({ force: true });
+            // eslint-disable-next-line playwright/no-force-option
             await cardB.click({ force: true });
           }
         }

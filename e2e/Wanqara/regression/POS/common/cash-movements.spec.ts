@@ -2,10 +2,10 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type PosScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = PosScenario & {
   cashMovement: { monto: string; descripcion: string };
   skipPriorSale?: boolean;
   productName: string;
@@ -69,7 +69,7 @@ async function fillAndSubmitCashForm(page: Page, type: string, scenario: any) {
 }
 
 test.describe("POS - Cash Register Income and Expense Transactions", () => {
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario) => {
     test(scenario.description, async ({ posEnvironment }) => {
       const { page } = posEnvironment;
       test.setTimeout(180_000);

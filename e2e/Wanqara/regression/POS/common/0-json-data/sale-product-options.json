@@ -5,7 +5,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Retail",
     "metadata": {
       "ws": "WS-1006",
       "tes": "TES-215",
@@ -14,7 +13,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Retail",
     "authType": "actor3",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara Comercios",
+    "subsidiaryCode": "100",
     "productOptionsParams": {
       "quantity": "3.3337373372323",
       "unitPrice": "3.3337373372323",
@@ -22,12 +25,9 @@
       "paymentMethod": "EFECTIVO",
       "productName": "Caja de alitas de pollo (100 u)"
     },
-    "subsidiaryName": "Wanqara Comercios",
     "openingAmount": "100.00",
-    "subsidiaryCode": "100",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Comercios"
+    "forceBusinessType": "Comercios"
   },
   {
     "id": "SALE-PRODUCT-OPTIONS-002",
@@ -35,7 +35,6 @@
     "only": false,
     "skip": false,
     "skipReason": "",
-    "description": "Restaurant",
     "metadata": {
       "ws": "WS-1006",
       "tes": "TES-215",
@@ -44,7 +43,11 @@
       "addedToRegression": "true",
       "testScope": "regression"
     },
+    "description": "Restaurant",
     "authType": "actor1",
+    "loginMode": "cached",
+    "subsidiaryName": "Wanqara",
+    "subsidiaryCode": "001",
     "productOptionsParams": {
       "quantity": "3.3337373372323",
       "unitPrice": "3.3337373372323",
@@ -52,11 +55,8 @@
       "paymentMethod": "EFECTIVO",
       "productName": "Caja de alitas de pollo (100 u)"
     },
-    "subsidiaryName": "Wanqara",
     "openingAmount": "100.00",
-    "subsidiaryCode": "001",
-    "loginMode": "cached",
     "cashRegisterMode": "fresh",
-    "businessType": "Restaurante"
+    "forceBusinessType": "Restaurante"
   }
 ]

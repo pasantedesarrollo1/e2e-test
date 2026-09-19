@@ -1,4 +1,4 @@
-import type { BusinessType, CashRegisterMode } from './auth.types.js';
+import type { forceBusinessType, CashRegisterMode } from './auth.types.js';
 
 export interface TestMetadata {
   ws?: string | string[] | null;
@@ -24,6 +24,9 @@ export interface AdminScenario extends BaseScenario {
   fixture: 'admin';
   subsidiaryName?: string;
   subsidiaryCode?: string;
+    forceBusinessType?: forceBusinessType;
+  dispatchEnabled?: boolean;
+  ebillingEnabled?: boolean;
   [key: string]: unknown;
 }
 
@@ -32,36 +35,36 @@ export interface PosScenario extends BaseScenario {
   subsidiaryName?: string;
   subsidiaryCode?: string;
   openingAmount?: string;
-  businessType?: BusinessType;
+  forceBusinessType: forceBusinessType;
   dispatchEnabled?: boolean;
   cashRegisterMode?: CashRegisterMode;
   [key: string]: unknown;
 }
 
-export interface StageSetupOrderOptions {
+export interface RestaurantSetupOrderOptions {
   productName: string;
   quantity?: number;
   extras?: unknown;
 }
 
-export interface StageSetupOptions {
-  createOrder?: StageSetupOrderOptions;
+export interface RestaurantSetupOptions {
+  createOrder?: RestaurantSetupOrderOptions;
 }
 
-export interface StageScenario extends BaseScenario {
-  fixture: 'stage';
+export interface RestaurantScenario extends BaseScenario {
+  fixture: 'restaurant';
   subsidiaryName?: string;
   subsidiaryCode?: string;
   openingAmount?: string;
   chefAuthType?: string;
-  stageSetupOptions?: StageSetupOptions | null;
+  restaurantSetupOptions?: RestaurantSetupOptions | null;
   [key: string]: unknown;
 }
 
-export type ScenarioDefinition = AdminScenario | PosScenario | StageScenario;
+export type ScenarioDefinition = AdminScenario | PosScenario | RestaurantScenario;
 
 export const isPosScenario = (s: ScenarioDefinition): s is PosScenario => s.fixture === 'pos';
-export const isStageScenario = (s: ScenarioDefinition): s is StageScenario => s.fixture === 'stage';
+export const isRestaurantScenario = (s: ScenarioDefinition): s is RestaurantScenario => s.fixture === 'restaurant';
 export const isAdminScenario = (s: ScenarioDefinition): s is AdminScenario => s.fixture === 'admin';
 
 

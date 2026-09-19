@@ -1,5 +1,5 @@
 import { expect, type Page, type Locator } from "@playwright/test";
-import { expectSnackbar, clickAndWaitForApi } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { expectSnackbar, clickAndWaitForApi } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export async function searchInList(page: Page, searchName: string): Promise<void> {
   const searchField = page.getByRole("textbox", { name: /Busca lo que necesites|Buscar por Nombre|Buscar/i }).first();
@@ -84,7 +84,11 @@ export async function clickTableRowAction(page: Page, rowLocator: Locator, toolt
   
   if (isSpeedDial || hasDotsMenu || cellButtons.length === 1) {
     const trigger = actionsCell.locator("button.v-btn").last();
+    // We use force: true because Vuetify tooltips/speed dials often overlap the button, failing strict checks.
+    // eslint-disable-next-line playwright/no-force-option
     await trigger.click({ force: true });
+    // This 'expect' is used intentionally as a soft wait mechanism for the UI overlay to appear.
+    // eslint-disable-next-line playwright/no-conditional-expect
     await expect(page.locator(".v-overlay-container .v-overlay--active").first()).toBeVisible({ timeout: 5000 }).catch(() => {});
   }
 
@@ -98,6 +102,7 @@ export async function clickTableRowAction(page: Page, rowLocator: Locator, toolt
     if (!(await btn.isVisible().catch(() => false))) continue;
     if (await btn.isDisabled({ timeout: 500 }).catch(() => true)) continue;
 
+    // eslint-disable-next-line playwright/no-force-option
     await btn.hover({ force: true });
 
     const tooltip = page
@@ -107,6 +112,7 @@ export async function clickTableRowAction(page: Page, rowLocator: Locator, toolt
 
     try {
       await tooltip.waitFor({ state: "visible", timeout: 600 });
+      // eslint-disable-next-line playwright/no-force-option
       await btn.click({ force: true });
       return; 
     } catch {
@@ -133,6 +139,7 @@ export async function clickTableRowAction(page: Page, rowLocator: Locator, toolt
       await btn.locator(".mdi-delete, .mdi-trash-can").count() > 0 ||
       html.includes("delete") || html.includes("trash")
     )) {
+      // eslint-disable-next-line playwright/no-force-option
       await btn.click({ force: true });
       return;
     }
@@ -140,6 +147,7 @@ export async function clickTableRowAction(page: Page, rowLocator: Locator, toolt
       await btn.locator(".mdi-pencil, .mdi-eye, .mdi-details").count() > 0 ||
       html.includes("pencil") || html.includes("edit") || html.includes("details")
     )) {
+      // eslint-disable-next-line playwright/no-force-option
       await btn.click({ force: true });
       return;
     }

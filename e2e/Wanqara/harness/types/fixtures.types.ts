@@ -10,6 +10,6 @@ export interface PosFixtures {
   posEnvironment: { page: Page; contextType: string };
 }
 
-export interface StageFixtures {
-  stageEnvironment: { adminPage: Page; chefPage: Page; posPage: Page; contextType: string };
+export interface RestaurantFixtures {
+  restaurantEnvironment: { adminPage: Page; chefPage: Page; posPage: Page; contextType: string };
 }

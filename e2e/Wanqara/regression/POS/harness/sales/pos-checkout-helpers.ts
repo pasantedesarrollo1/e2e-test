@@ -26,6 +26,8 @@ export async function selectDocumentTypePos(page: Page, documentType?: string): 
 
 export async function clickFinishSale(page: Page): Promise<void> {
   const finishSaleButton = page.getByRole("button", { name: /Terminar Venta/i });
+  // Vuetify DOM overlaps require forced interactions to bypass strict actionability checks.
+  // eslint-disable-next-line playwright/no-force-option
   await finishSaleButton.click({ force: true });
   await page.waitForURL(/\/pos\/(restaurant-)?payments/);
 }

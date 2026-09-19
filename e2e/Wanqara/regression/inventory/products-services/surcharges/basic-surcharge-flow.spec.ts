@@ -2,10 +2,10 @@
 import { test } from "@/e2e/Wanqara/harness/fixtures/admin.fixture.js";
 import { requirePosCredentials } from "@/e2e/Wanqara/harness/config/settings.js";
 import { createSurcharge, deleteSurcharge, searchSurcharge , type CreateSurchargeOptions } from "./harness/surcharge-helpers.js";
-import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type FlatScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
+import { generateDataDrivenTests, type TestMetadata, type ScenarioDefinition, type AdminScenario } from "@/e2e/Wanqara/harness/helpers/test-generator.js";
 import { parseScenarios } from "@/e2e/Wanqara/harness/helpers/schema/scenario-schema.js";
 
-interface ScenarioData extends FlatScenario {
+type ScenarioData = AdminScenario & {
   loginMode?: 'fresh' | 'cached';
   subsidiaryName?: string;
   subsidiaryCode?: string;
@@ -28,7 +28,7 @@ const scenarios = parseScenarios<ScenarioData>(
 test.describe("Inventory - Surcharges (Basic Flow)", () => {
   requirePosCredentials(test);
 
-  generateDataDrivenTests<ScenarioData, any>(test, scenarios, (scenario) => {
+  generateDataDrivenTests<ScenarioData>(test, scenarios, (scenario) => {
 
     test.use({ 
       targetPath: "/admin/surcharges/list",

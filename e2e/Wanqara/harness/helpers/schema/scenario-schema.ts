@@ -24,6 +24,9 @@ const AdminScenarioSchema = BaseScenarioSchema.extend({
   fixture: z.literal('admin'),
   subsidiaryName: z.string().optional(),
   subsidiaryCode: z.string().optional(),
+  forceBusinessType: z.enum(['Restaurante', 'Comercios']).optional(),
+  dispatchEnabled: z.boolean().optional(),
+  ebillingEnabled: z.boolean().optional(),
 }).passthrough();
 
 const PosScenarioSchema = BaseScenarioSchema.extend({
@@ -31,24 +34,24 @@ const PosScenarioSchema = BaseScenarioSchema.extend({
   subsidiaryName: z.string().optional(),
   subsidiaryCode: z.string().optional(),
   openingAmount: z.string().optional(),
-  businessType: z.enum(['Restaurante', 'Retail', 'Comercios', '']).optional(),
+  forceBusinessType: z.enum(['Restaurante', 'Comercios']),
   dispatchEnabled: z.boolean().optional(),
   cashRegisterMode: z.enum(['ensure-open', 'ensure-closed', 'fresh', '']).optional(),
 }).passthrough();
 
-const StageScenarioSchema = BaseScenarioSchema.extend({
-  fixture: z.literal('stage'),
+const RestaurantScenarioSchema = BaseScenarioSchema.extend({
+  fixture: z.literal('restaurant'),
   subsidiaryName: z.string().optional(),
   subsidiaryCode: z.string().optional(),
   openingAmount: z.string().optional(),
   chefAuthType: z.string().optional(),
-  stageSetupOptions: z.any().optional(),
+  restaurantSetupOptions: z.any().optional(),
 }).passthrough();
 
 export const ScenarioArraySchema = z.discriminatedUnion('fixture', [
   AdminScenarioSchema,
   PosScenarioSchema,
-  StageScenarioSchema,
+  RestaurantScenarioSchema,
 ]);
 
 export function parseScenarios<T>(rawData: unknown): T[] {

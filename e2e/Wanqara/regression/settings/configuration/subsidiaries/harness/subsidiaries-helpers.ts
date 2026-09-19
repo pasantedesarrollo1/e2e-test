@@ -2,7 +2,7 @@
 import type { Page } from '@playwright/test';
 export interface SubsidiaryOptions { name: string; code: string; isRestaurant?: boolean; hasDispatch?: boolean; }
 import { expect } from '@playwright/test';
-import { expectSnackbar, selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/ui/ui-helpers.js";
+import { expectSnackbar, selectDropdownOption } from "@/e2e/Wanqara/harness/helpers/admin/ui-helpers.js";
 
 export async function createSubsidiary(page: Page, { name, code, isRestaurant, hasDispatch, address = "Av. Principal 123", phone = "0999999999", email = "test@wanqara.com" }: any) {
   await page.getByRole('link', { name: /Nueva Sucursal/i }).first().click();
